@@ -26,14 +26,5 @@ func Retag(sourceRef, targetRef string) error {
 		return errors.Join(fmt.Errorf("failed to fetch %q", sourceRef), err)
 	}
 
-	img, err := desc.Image()
-	if err != nil {
-		return errors.Join(fmt.Errorf("failed to read image from %q", sourceRef), err)
-	}
-
-	if err := remote.Write(dst, img); err != nil {
-		return errors.Join(fmt.Errorf("failed to write tag %q", targetRef), err)
-	}
-
-	return nil
+	return remote.Tag(dst, desc)
 }
