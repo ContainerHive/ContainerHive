@@ -26,7 +26,7 @@ func TestIntegration_DependencyProject(t *testing.T) {
 	}
 
 	distPath := filepath.Join(t.TempDir(), "dist")
-	if err := rendering.RenderProject(t.Context(), project, distPath); err != nil {
+	if err := rendering.RenderProject(t.Context(), project, distPath, nil); err != nil {
 		t.Fatalf("rendering failed: %v", err)
 	}
 
