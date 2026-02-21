@@ -70,11 +70,6 @@ func main() {
 	}
 	log.Printf("Build order: %v", buildOrder.Order())
 
-	reportDir := "example/reports"
-	if err := os.MkdirAll(reportDir, 0755); err != nil {
-		log.Fatal(err)
-	}
-
 	// Initialize BuildKit client
 	log.Println("Connecting to BuildKit...")
 	bkClient, err := build.NewClient(ctx, buildkitAddr)
@@ -136,7 +131,7 @@ func main() {
 			log.Printf("No container-structure-test definitions for %s, skipping", imageTag)
 			return
 		}
-		reportFile := cst.ReportFileName(reportDir, imageTag)
+		reportFile := cst.ReportFileName(filepath.Dir(tarFile), imageTag)
 		log.Printf("Running container-structure-tests for %s (%d test file(s))...", imageTag, len(testDefs))
 		if err := cstRunner.RunTests(tarFile, testDefs, reportFile); err != nil {
 			log.Printf("Warning: Container structure tests failed for %s: %v", imageTag, err)
