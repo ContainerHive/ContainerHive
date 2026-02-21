@@ -9,26 +9,26 @@
       
       
       
+        <link rel="prev" href="003-container-structure-tests.html">
       
-        <link rel="next" href="adr/001-buildkit-integration.html">
       
       
         
       
       
-      <link rel="icon" href="images/logo.png">
+      <link rel="icon" href="../images/logo.png">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.1">
     
     
       
-        <title>ContainerHive</title>
+        <title>004 - Embedded local registry for inter-image dependency resolution - ContainerHive</title>
       
     
     
-      <link rel="stylesheet" href="assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
       
         
-        <link rel="stylesheet" href="assets/stylesheets/palette.ab4e12ef.min.css">
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
       
       
 
@@ -47,7 +47,7 @@
       
     
     
-    <script>__md_scope=new URL(".",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -72,7 +72,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#home" class="md-skip">
+        <a href="#004-embedded-local-registry-for-inter-image-dependency-resolution" class="md-skip">
           Skip to content
         </a>
       
@@ -86,9 +86,9 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="index.html" title="ContainerHive" class="md-header__button md-logo" aria-label="ContainerHive" data-md-component="logo">
+    <a href="../index.html" title="ContainerHive" class="md-header__button md-logo" aria-label="ContainerHive" data-md-component="logo">
       
-  <img src="images/logo.png" alt="logo">
+  <img src="../images/logo.png" alt="logo">
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -105,7 +105,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Home
+              004 - Embedded local registry for inter-image dependency resolution
             
           </span>
         </div>
@@ -184,11 +184,9 @@
   
   
   
-    
   
-  
-    <li class="md-tabs__item md-tabs__item--active">
-      <a href="index.html" class="md-tabs__link">
+    <li class="md-tabs__item">
+      <a href="../index.html" class="md-tabs__link">
         
   
   
@@ -205,6 +203,8 @@
   
   
   
+    
+  
   
     
     
@@ -212,11 +212,13 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="adr/001-buildkit-integration.html" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="001-buildkit-integration.html" class="md-tabs__link">
           
   
   
@@ -253,9 +255,9 @@
 
 <nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="index.html" title="ContainerHive" class="md-nav__button md-logo" aria-label="ContainerHive" data-md-component="logo">
+    <a href="../index.html" title="ContainerHive" class="md-nav__button md-logo" aria-label="ContainerHive" data-md-component="logo">
       
-  <img src="images/logo.png" alt="logo">
+  <img src="../images/logo.png" alt="logo">
 
     </a>
     ContainerHive
@@ -279,19 +281,10 @@
       
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-      <a href="index.html" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../index.html" class="md-nav__link">
         
   
   
@@ -307,7 +300,6 @@
   
 
       </a>
-      
     </li>
   
 
@@ -316,24 +308,29 @@
       
   
   
+    
   
   
+  
     
     
     
     
-      
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
         
           
-          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
             
   
   
@@ -351,7 +348,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_2">
             <span class="md-nav__icon md-icon"></span>
             
@@ -366,6 +363,8 @@
                 
   
   
+    
+  
   
   
     
@@ -376,11 +375,11 @@
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_1" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_1" checked>
         
           
           <label class="md-nav__link" for="__nav_2_1" id="__nav_2_1_label" tabindex="0">
@@ -401,7 +400,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_1_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_1_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_2_1">
             <span class="md-nav__icon md-icon"></span>
             
@@ -419,7 +418,7 @@
   
   
     <li class="md-nav__item">
-      <a href="adr/001-buildkit-integration.html" class="md-nav__link">
+      <a href="001-buildkit-integration.html" class="md-nav__link">
         
   
   
@@ -454,7 +453,7 @@
   
   
     <li class="md-nav__item">
-      <a href="adr/002-sbom-generation.html" class="md-nav__link">
+      <a href="002-sbom-generation.html" class="md-nav__link">
         
   
   
@@ -489,7 +488,7 @@
   
   
     <li class="md-nav__item">
-      <a href="adr/003-container-structure-tests.html" class="md-nav__link">
+      <a href="003-container-structure-tests.html" class="md-nav__link">
         
   
   
@@ -521,10 +520,19 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="adr/004-embedded-local-registry.html" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+      <a href="004-embedded-local-registry.html" class="md-nav__link md-nav__link--active">
         
   
   
@@ -547,6 +555,7 @@
   
 
       </a>
+      
     </li>
   
 
@@ -603,6 +612,72 @@
   
 
 
+  <nav class="md-path" aria-label="Navigation" >
+    <ol class="md-path__list">
+      
+        
+  
+  
+    <li class="md-path__item">
+      <a href="../index.html" class="md-path__link">
+        
+  <span class="md-ellipsis">
+    Home
+  </span>
+
+      </a>
+    </li>
+  
+
+      
+      
+        
+  
+  
+    
+    
+      
+  
+  
+    
+    
+      <li class="md-path__item">
+        <a href="001-buildkit-integration.html" class="md-path__link">
+          
+  <span class="md-ellipsis">
+    Development
+  </span>
+
+        </a>
+      </li>
+    
+  
+
+    
+  
+
+      
+        
+  
+  
+    
+    
+      <li class="md-path__item">
+        <a href="001-buildkit-integration.html" class="md-path__link">
+          
+  <span class="md-ellipsis">
+    Architecture Decision Records
+  </span>
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ol>
+  </nav>
+
               
               <article class="md-content__inner md-typeset">
                 
@@ -613,20 +688,107 @@
   
 
 
-<h1 id="home">Home</h1>
-<blockquote>
-<p>This project is under active development. It is not yet in any usable state. Use at your own risk.</p>
-</blockquote>
-<figure>
-<img alt="Logo" src="images/logo_with_text_line.png" width="512" />
-</figure>
-<p>Swarm it. Build it. Run it. — Managing container base and library images has never been easier.</p>
+<h1 id="004-embedded-local-registry-for-inter-image-dependency-resolution">004 - Embedded local registry for inter-image dependency resolution</h1>
+<table>
+<tr><td><strong>Status</strong></td><td><span style='color: white;background:#28a745;padding:.4em;border-radius:8px;font-size:100%;'>accepted</span></td></tr>
+<tr><td><strong>Date</strong></td><td>2026-02-21</td></tr>
+</table>
+<h1 id="embedded-local-registry-for-inter-image-dependency-resolution">Embedded local registry for inter-image dependency resolution</h1>
+<h2 id="context-and-problem-statement">Context and Problem Statement</h2>
+<p>ContainerHive allows images within a project to depend on each other using <code>__hive__/</code> references in Dockerfiles (e.g.
+<code>FROM __hive__/base:1.0</code>). At build time these references are rewritten to point at a real registry so BuildKit can pull
+the base image. In CI a production registry is available and images will be pushed there with a build-number suffix or
+similar. But during local development and testing, requiring developers to configure and run an external registry just
+to build images that reference each other creates unnecessary friction. How should ContainerHive resolve inter-image
+dependencies locally without requiring external infrastructure?</p>
+<h2 id="decision-drivers">Decision Drivers</h2>
+<ul>
+<li>Local builds must work out of the box without external services beyond BuildKit</li>
+<li>Developers need a fast feedback loop — spinning up infrastructure slows iteration</li>
+<li>The solution must be transparent: the same <code>__hive__/</code> Dockerfile syntax should work identically in local and CI
+  builds</li>
+<li>No images should leak to a production registry during local testing</li>
+<li>In CI the production registry should be used directly — no extra infrastructure needed</li>
+</ul>
+<h2 id="considered-options">Considered Options</h2>
+<ul>
+<li>Option 1: Embedded in-process OCI registry (zot)</li>
+<li>Option 2: Docker load + FROM via local Docker daemon</li>
+<li>Option 3: Combine dependent images into a single BuildKit solve call</li>
+<li>Option 4: Reference OCI layout directories directly in FROM</li>
+<li>Option 5: Always require a real registry, even locally</li>
+</ul>
+<h2 id="decision-outcome">Decision Outcome</h2>
+<p>Chosen option: "Option 1 — Embedded in-process OCI registry (zot)", because it provides a zero-configuration local
+experience while keeping the same <code>__hive__/</code> rewriting mechanism used in CI. The registry starts in-process on a random
+port, lives only for the duration of the build, and is discarded afterwards. In CI the same Registry interface switches
+to a remote passthrough that pushes to the production registry instead.</p>
+<h2 id="pros-and-cons-of-the-options">Pros and Cons of the Options</h2>
+<h3 id="option-1-embedded-in-process-oci-registry-zot">Option 1: Embedded in-process OCI registry (zot)</h3>
+<p>Start an embedded zot instance on localhost during builds. Built images are pushed to it so that dependent images can
+pull them via standard BuildKit FROM. The <code>__hive__/</code> prefix is rewritten to <code>127.0.0.1:&lt;port&gt;/</code> at build time.</p>
+<ul>
+<li>Good, because fully self-contained — no external services needed for local builds</li>
+<li>Good, because the registry is ephemeral, started and stopped automatically per build session</li>
+<li>Good, because the same <code>__hive__/</code> rewriting works for both local zot and a remote CI registry</li>
+<li>Good, because zot is a pure Go library, avoiding subprocess or Docker-in-Docker overhead</li>
+<li>Good, because nothing is pushed externally — safe for testing without polluting a production registry</li>
+<li>Bad, because it adds zot as a dependency, increasing binary size</li>
+<li>Bad, because the in-process registry must be ready before dependent builds start, adding a small startup delay</li>
+</ul>
+<h3 id="option-2-docker-load-from-via-local-docker-daemon">Option 2: Docker load + FROM via local Docker daemon</h3>
+<p>After each image build, load the OCI tar into the local Docker daemon (<code>docker load</code>). Dependent images then reference
+them as regular Docker images.</p>
+<ul>
+<li>Good, because it uses existing Docker infrastructure that developers likely have</li>
+<li>Bad, because it requires a running Docker daemon, which may not be available (e.g. rootless BuildKit setups)</li>
+<li>Bad, because it pollutes the local Docker image store with intermediate build artifacts</li>
+<li>Bad, because <code>docker load</code> is slow for large images</li>
+<li>Bad, because the rewriting mechanism would differ between local (Docker image names) and CI (registry references)</li>
+</ul>
+<h3 id="option-3-combine-dependent-images-into-a-single-buildkit-solve-call">Option 3: Combine dependent images into a single BuildKit solve call</h3>
+<p>Express all inter-image dependencies as a single BuildKit build graph so BuildKit resolves them internally.</p>
+<ul>
+<li>Good, because no registry or external tooling is needed at all</li>
+<li>Bad, because BuildKit's LLB API does not natively support referencing independently-defined Dockerfiles as stages</li>
+<li>Bad, because it would require fundamentally changing how ContainerHive renders and builds images</li>
+<li>Bad, because error reporting and caching become harder when everything is a single solve</li>
+</ul>
+<h3 id="option-4-reference-oci-layout-directories-directly-in-from">Option 4: Reference OCI layout directories directly in FROM</h3>
+<p>Use the built OCI tar / layout path directly in FROM instructions, bypassing a registry entirely.</p>
+<ul>
+<li>Good, because it avoids any network component</li>
+<li>Bad, because BuildKit does not support <code>FROM file:///path/to/layout</code> — there is no standard mechanism for this</li>
+<li>Bad, because it would require a custom BuildKit frontend or source provider, adding significant complexity</li>
+</ul>
+<h3 id="option-5-always-require-a-real-registry-even-locally">Option 5: Always require a real registry, even locally</h3>
+<p>Require developers to run a registry (e.g. via Docker Compose) or point at a remote one for all builds.</p>
+<ul>
+<li>Good, because the build path is identical everywhere — no local/CI divergence</li>
+<li>Good, because it is simpler to implement (no embedded registry code)</li>
+<li>Bad, because it breaks the zero-configuration local experience — developers must manage extra infrastructure</li>
+<li>Bad, because pushing to a remote registry during local testing wastes bandwidth and may pollute tag namespaces</li>
+<li>Bad, because it slows down the feedback loop, especially with large images over the network</li>
+</ul>
+<h2 id="links">Links</h2>
+<ul>
+<li><a href="https://zotregistry.dev/">Zot registry</a> — OCI-native container registry used as the embedded implementation</li>
+<li>Relates to <a href="001-buildkit-integration.html">ADR-001: BuildKit Integration</a> — the registry is needed because BuildKit
+  builds each image independently</li>
+<li><code>internal/registry/zot.go</code> — embedded zot implementation</li>
+<li><code>internal/registry/remote.go</code> — CI remote registry passthrough</li>
+<li><code>internal/buildkit/build_context/dockerfile.go</code> — <code>__hive__/</code> prefix rewriting</li>
+</ul>
+<!-- markdownlint-disable-file MD013 -->
 
 
 
 
 
 
+
+  
+  
 
 
 
@@ -670,10 +832,10 @@
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": ".", "features": ["navigation.instant", "navigation.instant.prefetch", "navigation.tracking", "navigation.tabs", "navigation.path", "navigation.collapse"], "search": "assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.instant", "navigation.instant.prefetch", "navigation.tracking", "navigation.tabs", "navigation.path", "navigation.collapse"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
       
     
   </body>
