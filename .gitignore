@@ -1,6 +1,7 @@
 dist/
 .idea/
-ch
-main
+/ch
+/main
 example/dist
 example/reports
+.claude/worktrees
