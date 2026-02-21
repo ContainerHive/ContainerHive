@@ -1,0 +1,14 @@
+buildkit:
+  address: tcp://127.0.0.1:8502
+
+cache:
+  type: s3
+  endpoint: http://localhost:39505
+  bucket: buildkit-cache
+  region: garage
+  access_key_id: AKTEST
+  secret_access_key: secrettest
+  use_path_style: true
+
+registry:
+  address: localhost:5000

@@ -33,5 +33,26 @@ type ImageDefinitionConfig struct {
 	DependsOn []string        `yaml:"depends_on" json:"depends_on,omitempty" jsonschema:"Names of other images in this project that must be built before this image"`
 }
 
+type BuildKitConfig struct {
+	Address string `yaml:"address" json:"address" jsonschema:"BuildKit daemon address (e.g. tcp://127.0.0.1:8502)"`
+}
+
+type CacheConfig struct {
+	Type            string `yaml:"type" json:"type" jsonschema:"Cache type (s3)"`
+	Endpoint        string `yaml:"endpoint" json:"endpoint" jsonschema:"Cache endpoint URL"`
+	Bucket          string `yaml:"bucket" json:"bucket" jsonschema:"Cache bucket name"`
+	Region          string `yaml:"region" json:"region" jsonschema:"Cache region"`
+	AccessKeyId     string `yaml:"access_key_id" json:"access_key_id" jsonschema:"Cache access key ID"`
+	SecretAccessKey  string `yaml:"secret_access_key" json:"secret_access_key" jsonschema:"Cache secret access key"`
+	UsePathStyle    bool   `yaml:"use_path_style" json:"use_path_style,omitempty" jsonschema:"Use path-style S3 URLs"`
+}
+
+type RegistryConfig struct {
+	Address string `yaml:"address" json:"address" jsonschema:"Container registry address"`
+}
+
 type HiveProjectConfig struct {
+	BuildKit *BuildKitConfig `yaml:"buildkit,omitempty" json:"buildkit,omitempty" jsonschema:"BuildKit daemon configuration"`
+	Cache    *CacheConfig    `yaml:"cache,omitempty" json:"cache,omitempty" jsonschema:"Build cache configuration"`
+	Registry *RegistryConfig `yaml:"registry,omitempty" json:"registry,omitempty" jsonschema:"Container registry configuration"`
 }

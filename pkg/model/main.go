@@ -40,6 +40,7 @@ type ImageVariant struct {
 type ContainerHiveProject struct {
 	RootDir            string
 	ConfigFilePath     string
+	Config             HiveProjectConfig
 	ImagesByIdentifier map[string]*Image
 	ImagesByName       map[string][]*Image
 }
