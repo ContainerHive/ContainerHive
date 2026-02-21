@@ -38,13 +38,20 @@ type BuildKitConfig struct {
 }
 
 type CacheConfig struct {
-	Type            string `yaml:"type" json:"type" jsonschema:"Cache type (s3)"`
-	Endpoint        string `yaml:"endpoint" json:"endpoint" jsonschema:"Cache endpoint URL"`
-	Bucket          string `yaml:"bucket" json:"bucket" jsonschema:"Cache bucket name"`
-	Region          string `yaml:"region" json:"region" jsonschema:"Cache region"`
-	AccessKeyId     string `yaml:"access_key_id" json:"access_key_id" jsonschema:"Cache access key ID"`
-	SecretAccessKey  string `yaml:"secret_access_key" json:"secret_access_key" jsonschema:"Cache secret access key"`
-	UsePathStyle    bool   `yaml:"use_path_style" json:"use_path_style,omitempty" jsonschema:"Use path-style S3 URLs"`
+	// Type discriminates the cache backend: "s3" or "registry"
+	Type string `yaml:"type" json:"type" jsonschema:"Cache type (s3, registry),required"`
+
+	// S3 fields (type: s3)
+	Endpoint        string `yaml:"endpoint,omitempty" json:"endpoint,omitempty" jsonschema:"S3 endpoint URL"`
+	Bucket          string `yaml:"bucket,omitempty" json:"bucket,omitempty" jsonschema:"S3 bucket name"`
+	Region          string `yaml:"region,omitempty" json:"region,omitempty" jsonschema:"S3 region"`
+	AccessKeyId     string `yaml:"access_key_id,omitempty" json:"access_key_id,omitempty" jsonschema:"S3 access key ID"`
+	SecretAccessKey string `yaml:"secret_access_key,omitempty" json:"secret_access_key,omitempty" jsonschema:"S3 secret access key"`
+	UsePathStyle    bool   `yaml:"use_path_style,omitempty" json:"use_path_style,omitempty" jsonschema:"Use path-style S3 URLs"`
+
+	// Registry fields (type: registry)
+	Ref      string `yaml:"ref,omitempty" json:"ref,omitempty" jsonschema:"Registry cache ref (e.g. registry:5000/cache)"`
+	Insecure bool   `yaml:"insecure,omitempty" json:"insecure,omitempty" jsonschema:"Allow insecure registry connections"`
 }
 
 type RegistryConfig struct {

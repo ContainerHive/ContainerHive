@@ -44,8 +44,8 @@ type ProjectBuildOpts struct {
 	OnBuild func(imageTag, tarFile string)
 }
 
-// dirTag returns the tag directory name, accounting for BuildID suffix.
-func (o *ProjectBuildOpts) dirTag(tagName string) string {
+// pushTag returns the tag to use when pushing to the registry, with build-id suffix if set.
+func (o *ProjectBuildOpts) pushTag(tagName string) string {
 	if o.BuildID != "" {
 		return tagName + "+" + o.BuildID
 	}
@@ -120,9 +120,9 @@ func buildWithDeps(ctx context.Context, client *Client, opts *ProjectBuildOpts) 
 
 				// Push variant if dependents exist
 				if opts.Registry != nil && len(opts.BuildOrder.Dependents(imgName)) > 0 {
-					variantDirTag := opts.dirTag(tagName) + variantDef.TagSuffix
-					pushTag := tagName + variantDef.TagSuffix
-					tf := TarFilePath(opts.DistPath, imgName, variantDirTag)
+					variantTag := tagName + variantDef.TagSuffix
+					tf := TarFilePath(opts.DistPath, imgName, variantTag)
+					pushTag := opts.pushTag(variantTag)
 					if err := opts.Registry.Push(ctx, imgName, pushTag, tf); err != nil {
 						log.Printf("Warning: Failed to push variant %s:%s to registry: %v", imgName, pushTag, err)
 					}
@@ -131,9 +131,10 @@ func buildWithDeps(ctx context.Context, client *Client, opts *ProjectBuildOpts) 
 
 			// Push base tag if dependents exist
 			if opts.Registry != nil && len(opts.BuildOrder.Dependents(imgName)) > 0 {
-				tf := TarFilePath(opts.DistPath, imgName, opts.dirTag(tagName))
-				if err := opts.Registry.Push(ctx, imgName, tagName, tf); err != nil {
-					log.Printf("Warning: Failed to push %s:%s to registry: %v", imgName, tagName, err)
+				tf := TarFilePath(opts.DistPath, imgName, tagName)
+				pushTag := opts.pushTag(tagName)
+				if err := opts.Registry.Push(ctx, imgName, pushTag, tf); err != nil {
+					log.Printf("Warning: Failed to push %s:%s to registry: %v", imgName, pushTag, err)
 				}
 			}
 		}
@@ -149,15 +150,14 @@ func buildWithoutDeps(ctx context.Context, client *Client, opts *ProjectBuildOpt
 					continue
 				}
 
-				dirTag := opts.dirTag(tagName)
-				dockerfilePath := filepath.Join(opts.DistPath, imageDef.Name, dirTag, "Dockerfile")
+				dockerfilePath := filepath.Join(opts.DistPath, imageDef.Name, tagName, "Dockerfile")
 				if _, err := os.Stat(dockerfilePath); os.IsNotExist(err) {
 					log.Printf("Warning: Dockerfile not found for %s:%s at %s", imageDef.Name, tagName, dockerfilePath)
 					continue
 				}
 
 				imageTag := fmt.Sprintf("%s:%s", imageDef.Name, tagName)
-				tf := TarFilePath(opts.DistPath, imageDef.Name, dirTag)
+				tf := TarFilePath(opts.DistPath, imageDef.Name, tagName)
 
 				err := client.Build(ctx, &BuildOpts{
 					ImageName:  imageTag,
@@ -181,8 +181,7 @@ func buildWithoutDeps(ctx context.Context, client *Client, opts *ProjectBuildOpt
 }
 
 func buildTag(ctx context.Context, client *Client, opts *ProjectBuildOpts, imageDef *model.Image, tagName string) error {
-	dirTag := opts.dirTag(tagName)
-	dockerfilePath := filepath.Join(opts.DistPath, imageDef.Name, dirTag, "Dockerfile")
+	dockerfilePath := filepath.Join(opts.DistPath, imageDef.Name, tagName, "Dockerfile")
 	if _, err := os.Stat(dockerfilePath); os.IsNotExist(err) {
 		return fmt.Errorf("Dockerfile not found for %s:%s at %s", imageDef.Name, tagName, dockerfilePath)
 	}
@@ -195,7 +194,7 @@ func buildTag(ctx context.Context, client *Client, opts *ProjectBuildOpts, image
 
 	root, _ := filepath.Abs(filepath.Dir(patchedPath))
 	imageTag := fmt.Sprintf("%s:%s", imageDef.Name, tagName)
-	tf := TarFilePath(opts.DistPath, imageDef.Name, dirTag)
+	tf := TarFilePath(opts.DistPath, imageDef.Name, tagName)
 
 	config, err := ResolveTagConfig(imageDef, imageDef.Tags[tagName])
 	if err != nil {
@@ -225,8 +224,8 @@ func buildTag(ctx context.Context, client *Client, opts *ProjectBuildOpts, image
 }
 
 func buildVariant(ctx context.Context, client *Client, opts *ProjectBuildOpts, imageDef *model.Image, tagName, variantName string, variantDef *model.ImageVariant) error {
-	variantDirTag := opts.dirTag(tagName) + variantDef.TagSuffix
-	variantDockerfilePath := filepath.Join(opts.DistPath, imageDef.Name, variantDirTag, "Dockerfile")
+	variantTagName := tagName + variantDef.TagSuffix
+	variantDockerfilePath := filepath.Join(opts.DistPath, imageDef.Name, variantTagName, "Dockerfile")
 	if _, err := os.Stat(variantDockerfilePath); os.IsNotExist(err) {
 		log.Printf("Warning: Dockerfile not found for variant %s:%s:%s at %s", imageDef.Name, tagName, variantName, variantDockerfilePath)
 		return nil
@@ -240,7 +239,7 @@ func buildVariant(ctx context.Context, client *Client, opts *ProjectBuildOpts, i
 
 	root, _ := filepath.Abs(filepath.Dir(patchedPath))
 	variantTag := fmt.Sprintf("%s:%s%s", imageDef.Name, tagName, variantDef.TagSuffix)
-	tf := TarFilePath(opts.DistPath, imageDef.Name, variantDirTag)
+	tf := TarFilePath(opts.DistPath, imageDef.Name, variantTagName)
 
 	config, err := ResolveVariantConfig(imageDef, variantDef, imageDef.Tags[tagName])
 	if err != nil {

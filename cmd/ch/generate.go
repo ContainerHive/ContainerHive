@@ -17,7 +17,6 @@ func generateCmd() *cli.Command {
 		Usage: "Discover project and render to dist/",
 		Action: func(ctx context.Context, cmd *cli.Command) error {
 			projectRoot := cmd.String("project")
-			buildID := cmd.String("build-id")
 
 			project, err := discovery.DiscoverProject(ctx, projectRoot)
 			if err != nil {
@@ -25,8 +24,7 @@ func generateCmd() *cli.Command {
 			}
 
 			distPath := filepath.Join(projectRoot, "dist")
-			opts := &rendering.RenderOpts{BuildID: buildID}
-			if err := rendering.RenderProject(ctx, project, distPath, opts); err != nil {
+			if err := rendering.RenderProject(ctx, project, distPath); err != nil {
 				return fmt.Errorf("rendering failed: %w", err)
 			}
 

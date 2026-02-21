@@ -54,8 +54,11 @@ func buildCmd() *cli.Command {
 			}
 			log.Printf("Build order: %v", buildOrder.Order())
 
-			// Connect to BuildKit
+			// Connect to BuildKit (hive.yml > BUILDKIT_HOST env > default)
 			buildkitAddr := "tcp://127.0.0.1:8502"
+			if envAddr := os.Getenv("BUILDKIT_HOST"); envAddr != "" {
+				buildkitAddr = envAddr
+			}
 			if project.Config.BuildKit != nil && project.Config.BuildKit.Address != "" {
 				buildkitAddr = project.Config.BuildKit.Address
 			}
@@ -80,7 +83,10 @@ func buildCmd() *cli.Command {
 			defer cstRunner.Close()
 
 			// Configure cache
-			s3Cache := buildCacheFromConfig(project.Config.Cache, "ch-build")
+			buildCache, err := buildCacheFromConfig(project.Config.Cache, "ch-build")
+			if err != nil {
+				return fmt.Errorf("cache configuration failed: %w", err)
+			}
 
 			// OnBuild callback
 			onBuild := func(imageTag, tarFile string) {
@@ -119,7 +125,7 @@ func buildCmd() *cli.Command {
 				BuildOrder:  buildOrder,
 				DistPath:    distPath,
 				Platform:    platform,
-				Cache:       s3Cache,
+				Cache:       buildCache,
 				ProgressOut: os.Stdout,
 				OnBuild:     onBuild,
 				Filters:     filters,
