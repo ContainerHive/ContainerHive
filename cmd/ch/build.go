@@ -98,7 +98,7 @@ func buildCmd() *cli.Command {
 					return fmt.Errorf("build failed: %w", err)
 				}
 
-				if err := reg.RetagAllAliases(project, filters); err != nil {
+				if err := reg.RetagAllAliases(project, filters, buildID); err != nil {
 					return fmt.Errorf("retagging failed: %w", err)
 				}
 			} else {
