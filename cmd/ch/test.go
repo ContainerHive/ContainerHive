@@ -24,6 +24,9 @@ func testCmd() *cli.Command {
 			filters := parseFilters(cmd.Args().Slice())
 			platform := "linux/" + runtime.GOARCH
 			distPath := filepath.Join(projectRoot, "dist")
+			if _, err := os.Stat(distPath); err != nil {
+				return fmt.Errorf("dist/ not found — run 'ch generate' first: %w", err)
+			}
 
 			project, err := discovery.DiscoverProject(ctx, projectRoot)
 			if err != nil {

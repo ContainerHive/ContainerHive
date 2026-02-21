@@ -13,7 +13,6 @@ import (
 	"github.com/timo-reymann/ContainerHive/pkg/deps"
 	"github.com/timo-reymann/ContainerHive/pkg/discovery"
 	"github.com/timo-reymann/ContainerHive/pkg/registry"
-	"github.com/timo-reymann/ContainerHive/pkg/rendering"
 	"github.com/timo-reymann/ContainerHive/pkg/sbom"
 	"github.com/urfave/cli/v3"
 )
@@ -31,7 +30,6 @@ func buildCmd() *cli.Command {
 		},
 		Action: func(ctx context.Context, cmd *cli.Command) error {
 			projectRoot := cmd.String("project")
-			buildID := cmd.String("build-id")
 			useRegistry := cmd.Bool("registry") || os.Getenv("CI") != ""
 			filters := parseFilters(cmd.Args().Slice())
 			platform := "linux/" + runtime.GOARCH
@@ -42,13 +40,11 @@ func buildCmd() *cli.Command {
 				return fmt.Errorf("discovery failed: %w", err)
 			}
 
-			// Render
+			// Expect dist/ to already exist (created by `ch generate`)
 			distPath := filepath.Join(projectRoot, "dist")
-			opts := &rendering.RenderOpts{BuildID: buildID}
-			if err := rendering.RenderProject(ctx, project, distPath, opts); err != nil {
-				return fmt.Errorf("rendering failed: %w", err)
+			if _, err := os.Stat(distPath); err != nil {
+				return fmt.Errorf("dist/ not found — run 'ch generate' first: %w", err)
 			}
-			log.Printf("Rendered %d image(s) to %s", len(project.ImagesByIdentifier), distPath)
 
 			// Resolve dependency build order
 			buildOrder, err := deps.ResolveOrder(distPath, project)

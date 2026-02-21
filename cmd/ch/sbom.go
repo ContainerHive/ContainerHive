@@ -21,6 +21,9 @@ func sbomCmd() *cli.Command {
 			projectRoot := cmd.String("project")
 			filters := parseFilters(cmd.Args().Slice())
 			distPath := filepath.Join(projectRoot, "dist")
+			if _, err := os.Stat(distPath); err != nil {
+				return fmt.Errorf("dist/ not found — run 'ch generate' first: %w", err)
+			}
 
 			project, err := discovery.DiscoverProject(ctx, projectRoot)
 			if err != nil {
