@@ -38,7 +38,7 @@ type ProjectBuildOpts struct {
 	Registry   Registry // nil when no inter-image dependencies exist
 	ProgressOut io.Writer
 	Filters    []Filter // empty = build everything
-	BuildID    string   // if set, tag directories are suffixed with +<BuildID>
+	BuildID    string   // if set, registry push/retag uses tags suffixed with +<BuildID>
 
 	// OnBuild is called after each successful build with the image tag and tar path.
 	OnBuild func(imageTag, tarFile string)
