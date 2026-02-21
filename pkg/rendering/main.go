@@ -45,14 +45,25 @@ func ResolveAliases(tags []string) map[string]string {
 	return aliases
 }
 
-func processImagesForName(ctx context.Context, rootPath string, images []*model.Image) error {
+// RenderOpts controls optional rendering behavior.
+type RenderOpts struct {
+	BuildID string // appended as +<id> to all tag names
+}
+
+func processImagesForName(ctx context.Context, rootPath string, images []*model.Image, opts *RenderOpts) error {
+	buildIDSuffix := ""
+	if opts != nil && opts.BuildID != "" {
+		buildIDSuffix = "+" + opts.BuildID
+	}
+
 	// Collect all tags (including variant tags) to resolve aliases with highest version
 	var allTags []string
 	for _, imageDef := range images {
 		for tag := range imageDef.Tags {
-			allTags = append(allTags, tag)
+			dirTag := tag + buildIDSuffix
+			allTags = append(allTags, dirTag)
 			for _, variantDef := range imageDef.Variants {
-				allTags = append(allTags, tag+variantDef.TagSuffix)
+				allTags = append(allTags, dirTag+variantDef.TagSuffix)
 			}
 		}
 	}
@@ -73,9 +84,10 @@ func processImagesForName(ctx context.Context, rootPath string, images []*model.
 		for tag, tagDef := range imageDef.Tags {
 			tag := tag
 			tagDef := tagDef
+			dirTag := tag + buildIDSuffix
 
 			eg.Go(func() error {
-				tagPath := filepath.Join(rootPath, tag)
+				tagPath := filepath.Join(rootPath, dirTag)
 				if err := setupImageTagDir(tagPath, imageDef, tagDef); err != nil {
 					return err
 				}
@@ -83,7 +95,7 @@ func processImagesForName(ctx context.Context, rootPath string, images []*model.
 				for _, variantDef := range imageDef.Variants {
 					rootPath := rootPath
 					variantDef := variantDef
-					variantTag := tag + variantDef.TagSuffix
+					variantTag := dirTag + variantDef.TagSuffix
 
 					eg.Go(func() error {
 						variantPath := filepath.Join(rootPath, variantTag)
@@ -201,7 +213,7 @@ func setupVariantDir(variantPath string, image *model.Image, tag *model.Tag, var
 	return nil
 }
 
-func RenderProject(ctx context.Context, project *model.ContainerHiveProject, targetPath string) error {
+func RenderProject(ctx context.Context, project *model.ContainerHiveProject, targetPath string, opts *RenderOpts) error {
 	_ = os.RemoveAll(targetPath)
 
 	err := mkdir(targetPath)
@@ -219,7 +231,7 @@ func RenderProject(ctx context.Context, project *model.ContainerHiveProject, tar
 		}
 
 		eg.Go(func() error {
-			return processImagesForName(ctx, nameRootPath, images)
+			return processImagesForName(ctx, nameRootPath, images, opts)
 		})
 	}
 

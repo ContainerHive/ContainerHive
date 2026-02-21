@@ -57,7 +57,7 @@ func main() {
 	}
 
 	distPath := "example/dist"
-	if err := rendering.RenderProject(ctx, project, distPath); err != nil {
+	if err := rendering.RenderProject(ctx, project, distPath, nil); err != nil {
 		log.Fatal(err)
 	}
 	log.Println("Rendered project to", distPath)

@@ -16,7 +16,7 @@ func discoverAndRender(t *testing.T, projectPath string) string {
 		t.Fatalf("failed to discover project: %v", err)
 	}
 	targetPath := filepath.Join(t.TempDir(), "dist")
-	if err := RenderProject(t.Context(), project, targetPath); err != nil {
+	if err := RenderProject(t.Context(), project, targetPath, nil); err != nil {
 		t.Fatalf("failed to render project: %v", err)
 	}
 	return targetPath
@@ -315,6 +315,32 @@ func TestRenderProject_SimpleProject_Aliases(t *testing.T) {
 
 		assertFileContent(t, filepath.Join(pythonDir, "3.13"), "3.13.7")
 		assertFileContent(t, filepath.Join(pythonDir, "3"), "3.13.7")
+	})
+}
+
+func TestRenderProject_BuildID(t *testing.T) {
+	project, err := discovery.DiscoverProject(t.Context(), "../testdata/minimal-project")
+	if err != nil {
+		t.Fatalf("failed to discover project: %v", err)
+	}
+	targetPath := filepath.Join(t.TempDir(), "dist")
+	opts := &RenderOpts{BuildID: "abc123"}
+	if err := RenderProject(t.Context(), project, targetPath, opts); err != nil {
+		t.Fatalf("failed to render project: %v", err)
+	}
+
+	t.Run("creates tag directory with build-id suffix", func(t *testing.T) {
+		assertDirExists(t, filepath.Join(targetPath, "nginx", "1.27+abc123"))
+	})
+
+	t.Run("alias file points to build-id suffixed tag", func(t *testing.T) {
+		aliasPath := filepath.Join(targetPath, "nginx", "1.27")
+		assertFileExists(t, aliasPath)
+		assertFileContent(t, aliasPath, "1.27+abc123")
+	})
+
+	t.Run("tag directory has Dockerfile", func(t *testing.T) {
+		assertFileExists(t, filepath.Join(targetPath, "nginx", "1.27+abc123", "Dockerfile"))
 	})
 }
 
