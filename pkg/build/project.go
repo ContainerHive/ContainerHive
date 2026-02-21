@@ -47,7 +47,7 @@ type ProjectBuildOpts struct {
 // pushTag returns the tag to use when pushing to the registry, with build-id suffix if set.
 func (o *ProjectBuildOpts) pushTag(tagName string) string {
 	if o.BuildID != "" {
-		return tagName + "+" + o.BuildID
+		return tagName + "." + o.BuildID
 	}
 	return tagName
 }
