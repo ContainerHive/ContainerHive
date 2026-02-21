@@ -73,12 +73,12 @@ func TestRetagAllAliases_FilterMatch(t *testing.T) {
 	reg := &Registry{inner: &noopRegistry{}}
 
 	// Filter to only "app" — should not error (no actual retag since tags aren't semver)
-	if err := reg.RetagAllAliases(project, "app"); err != nil {
+	if err := reg.RetagAllAliases(project, []string{"app"}); err != nil {
 		t.Fatal(err)
 	}
 
 	// Empty filter — processes all
-	if err := reg.RetagAllAliases(project, ""); err != nil {
+	if err := reg.RetagAllAliases(project, nil); err != nil {
 		t.Fatal(err)
 	}
 }

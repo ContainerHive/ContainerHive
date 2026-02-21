@@ -76,11 +76,12 @@ func (r *Registry) RetagAliases(imageDef *model.Image) error {
 	return nil
 }
 
-// RetagAllAliases retags aliases for all images in the project. If imageFilter
-// is non-empty, only images matching that name are processed.
-func (r *Registry) RetagAllAliases(project *model.ContainerHiveProject, imageFilter string) error {
+// RetagAllAliases retags aliases for all images in the project. If
+// imageFilters is non-empty, only images whose name appears in the list are
+// processed.
+func (r *Registry) RetagAllAliases(project *model.ContainerHiveProject, imageFilters []string) error {
 	for _, img := range project.ImagesByIdentifier {
-		if imageFilter != "" && img.Name != imageFilter {
+		if len(imageFilters) > 0 && !containsString(imageFilters, img.Name) {
 			continue
 		}
 		if err := r.RetagAliases(img); err != nil {
@@ -88,4 +89,13 @@ func (r *Registry) RetagAllAliases(project *model.ContainerHiveProject, imageFil
 		}
 	}
 	return nil
+}
+
+func containsString(ss []string, s string) bool {
+	for _, v := range ss {
+		if v == s {
+			return true
+		}
+	}
+	return false
 }
