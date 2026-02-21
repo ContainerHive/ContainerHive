@@ -8,9 +8,36 @@ import (
 
 	"github.com/timo-reymann/ContainerHive/internal/buildconfig_resolver"
 	"github.com/timo-reymann/ContainerHive/internal/file_resolver"
+	"github.com/timo-reymann/ContainerHive/internal/semantic_tags"
 	"github.com/timo-reymann/ContainerHive/pkg/model"
 	"golang.org/x/sync/errgroup"
 )
+
+func writeAlias(rootPath, tag, tagAlias string) error {
+	tagAliasFile := filepath.Join(rootPath, tagAlias)
+	if err := os.WriteFile(tagAliasFile, []byte(tag), 0644); err != nil {
+		return errors.Join(errors.New("failed to write tag alias"), err)
+	}
+	return nil
+}
+
+func writeAliases(rootPath, tag string) (int, error) {
+	ver, err := semantic_tags.NewSemanticVersion(tag)
+	if err != nil {
+		return 0, nil
+	}
+
+	written := 0
+	for _, lver := range ver.GetLowerVariants() {
+		err := writeAlias(rootPath, tag, lver)
+		if err != nil {
+			return 0, err
+		}
+		written++
+	}
+
+	return written, nil
+}
 
 func processImagesForName(ctx context.Context, rootPath string, images []*model.Image) error {
 	eg, _ := errgroup.WithContext(ctx)
@@ -20,6 +47,11 @@ func processImagesForName(ctx context.Context, rootPath string, images []*model.
 		for tag, tagDef := range imageDef.Tags {
 			tag := tag
 			tagDef := tagDef
+
+			eg.Go(func() error {
+				_, err := writeAliases(rootPath, tag)
+				return err
+			})
 
 			// Tag and variant are safe to run in parallel
 			eg.Go(func() error {
@@ -31,9 +63,15 @@ func processImagesForName(ctx context.Context, rootPath string, images []*model.
 				for _, variantDef := range imageDef.Variants {
 					rootPath := rootPath
 					variantDef := variantDef
+					variantTag := tag + variantDef.TagSuffix
 
 					eg.Go(func() error {
-						variantPath := filepath.Join(rootPath, tag+variantDef.TagSuffix)
+						_, err := writeAliases(rootPath, variantTag)
+						return err
+					})
+
+					eg.Go(func() error {
+						variantPath := filepath.Join(rootPath, variantTag)
 						if err := setupVariantDir(variantPath, imageDef, tagDef, variantDef); err != nil {
 							return err
 						}

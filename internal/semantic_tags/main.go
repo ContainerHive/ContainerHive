@@ -1,4 +1,4 @@
-package main
+package semantic_tags
 
 import (
 	"fmt"
@@ -7,11 +7,11 @@ import (
 	"strings"
 )
 
-// Pattern: optional prefix + major.minor.patch.build + optional build metadata (with +)
+// Pattern: optional prefix + major.minor.patch.build + optional suffix (with -) + optional build metadata (with +)
 // Where prefix can be any non-digit characters at the start
 // All version components except major are optional
-// Supports formats like: 1.2.3, 1.2.3.4, v1.2.3, version1.2.3+build123, etc.
-var versionPattern = regexp.MustCompile(`^([^\d]*)(\d+)(?:\.(\d+))?(?:\.(\d+))?(?:\.(\d+))?(?:\+([^\s]+))?$`)
+// Supports formats like: 1.2.3, 1.2.3.4, v1.2.3, 1.2.3-alpine, version1.2.3+build123, etc.
+var versionPattern = regexp.MustCompile(`^([^\d]*)(\d+)(?:\.(\d+))?(?:\.(\d+))?(?:\.(\d+))?(?:-([a-zA-Z0-9][a-zA-Z0-9.\-]*))?(?:\+([^\s]+))?$`)
 
 type SemanticTagVersion struct {
 	Prefix string
@@ -19,6 +19,7 @@ type SemanticTagVersion struct {
 	Minor  string
 	Patch  string
 	Build  string
+	Suffix string
 }
 
 func NewSemanticVersion(tag string) (*SemanticTagVersion, error) {
@@ -40,7 +41,8 @@ func NewSemanticVersion(tag string) (*SemanticTagVersion, error) {
 	minor := matches[3]
 	patch := matches[4]
 	build := matches[5]
-	metadata := matches[6]
+	suffix := matches[6]
+	metadata := matches[7]
 
 	// Validate that we have at least major version
 	if major == "" {
@@ -60,6 +62,7 @@ func NewSemanticVersion(tag string) (*SemanticTagVersion, error) {
 		Minor:  minor,
 		Patch:  patch,
 		Build:  finalBuild,
+		Suffix: suffix,
 	}, nil
 }
 
@@ -69,8 +72,13 @@ func NewSemanticVersion(tag string) (*SemanticTagVersion, error) {
 func (v *SemanticTagVersion) GetLowerVariants() []string {
 	variants := []string{}
 
+	suffix := ""
+	if v.Suffix != "" {
+		suffix = "-" + v.Suffix
+	}
+
 	buildVariant := func(parts ...string) string {
-		return v.Prefix + strings.Join(parts, ".")
+		return v.Prefix + strings.Join(parts, ".") + suffix
 	}
 
 	if v.Build != "" {
@@ -174,6 +182,10 @@ func (v *SemanticTagVersion) String() string {
 
 	if v.Build != "" {
 		versionStr += "." + v.Build
+	}
+
+	if v.Suffix != "" {
+		versionStr += "-" + v.Suffix
 	}
 
 	return versionStr

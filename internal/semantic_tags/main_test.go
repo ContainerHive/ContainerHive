@@ -1,4 +1,4 @@
-package main
+package semantic_tags
 
 import (
 	"testing"
@@ -110,10 +110,28 @@ func TestNewSemanticVersion(t *testing.T) {
 			shouldError: true,
 		},
 		{
-			name:        "Version with prerelease (should fail - no longer supported)",
-			input:       "1.2.3-alpha.1",
-			expected:    nil,
-			shouldError: true,
+			name:  "Version with suffix",
+			input: "1.2.3-alpha.1",
+			expected: &SemanticTagVersion{
+				Prefix: "",
+				Major:  "1",
+				Minor:  "2",
+				Patch:  "3",
+				Suffix: "alpha.1",
+			},
+			shouldError: false,
+		},
+		{
+			name:  "Version with suffix and prefix",
+			input: "v1.0.0-alpine",
+			expected: &SemanticTagVersion{
+				Prefix: "v",
+				Major:  "1",
+				Minor:  "0",
+				Patch:  "0",
+				Suffix: "alpine",
+			},
+			shouldError: false,
 		},
 		{
 			name:  "Version with build metadata",
@@ -124,6 +142,19 @@ func TestNewSemanticVersion(t *testing.T) {
 				Minor:  "2",
 				Patch:  "3",
 				Build:  "build123",
+			},
+			shouldError: false,
+		},
+		{
+			name:  "Version with suffix and build metadata",
+			input: "1.2.3-alpine+build123",
+			expected: &SemanticTagVersion{
+				Prefix: "",
+				Major:  "1",
+				Minor:  "2",
+				Patch:  "3",
+				Build:  "build123",
+				Suffix: "alpine",
 			},
 			shouldError: false,
 		},
@@ -267,6 +298,27 @@ func TestGetLowerVariants(t *testing.T) {
 			},
 			expected: []string{"version-1.2", "version-1"},
 		},
+		{
+			name: "Major.minor.patch with suffix",
+			version: &SemanticTagVersion{
+				Major:  "1",
+				Minor:  "2",
+				Patch:  "3",
+				Suffix: "alpine",
+			},
+			expected: []string{"1.2-alpine", "1-alpine"},
+		},
+		{
+			name: "Prefixed major.minor.patch with suffix",
+			version: &SemanticTagVersion{
+				Prefix: "v",
+				Major:  "1",
+				Minor:  "2",
+				Patch:  "3",
+				Suffix: "alpine",
+			},
+			expected: []string{"v1.2-alpine", "v1-alpine"},
+		},
 	}
 
 	for _, tc := range testCases {
@@ -405,6 +457,16 @@ func TestSemanticVersionString(t *testing.T) {
 			name:     "Custom prefix",
 			version:  &SemanticTagVersion{Prefix: "version-", Major: "1", Minor: "2", Patch: "3"},
 			expected: "version-1.2.3",
+		},
+		{
+			name:     "With suffix",
+			version:  &SemanticTagVersion{Major: "1", Minor: "2", Patch: "3", Suffix: "alpine"},
+			expected: "1.2.3-alpine",
+		},
+		{
+			name:     "With prefix and suffix",
+			version:  &SemanticTagVersion{Prefix: "v", Major: "1", Minor: "0", Patch: "0", Suffix: "slim"},
+			expected: "v1.0.0-slim",
 		},
 	}
 
