@@ -5,6 +5,7 @@ import (
 	"sort"
 	"testing"
 
+	"github.com/timo-reymann/ContainerHive/pkg/build"
 	"github.com/timo-reymann/ContainerHive/pkg/model"
 )
 
@@ -73,7 +74,7 @@ func TestRetagAllAliases_FilterMatch(t *testing.T) {
 	reg := &Registry{inner: &noopRegistry{}}
 
 	// Filter to only "app" — should not error (no actual retag since tags aren't semver)
-	if err := reg.RetagAllAliases(project, []string{"app"}); err != nil {
+	if err := reg.RetagAllAliases(project, []build.Filter{{ImageName: "app"}}); err != nil {
 		t.Fatal(err)
 	}
 

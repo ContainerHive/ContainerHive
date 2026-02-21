@@ -30,6 +30,7 @@ func buildCmd() *cli.Command {
 		},
 		Action: func(ctx context.Context, cmd *cli.Command) error {
 			projectRoot := cmd.String("project")
+			buildID := cmd.String("build-id")
 			useRegistry := cmd.Bool("registry") || os.Getenv("CI") != ""
 			filters := parseFilters(cmd.Args().Slice())
 			platform := "linux/" + runtime.GOARCH
@@ -122,6 +123,7 @@ func buildCmd() *cli.Command {
 				ProgressOut: os.Stdout,
 				OnBuild:     onBuild,
 				Filters:     filters,
+				BuildID:     buildID,
 			}
 
 			if useRegistry || buildOrder.HasDependencies() {
@@ -137,14 +139,7 @@ func buildCmd() *cli.Command {
 					return fmt.Errorf("build failed: %w", err)
 				}
 
-				// Extract image filter names for retagging
-				var imageFilterNames []string
-				for _, f := range filters {
-					if f.ImageName != "" {
-						imageFilterNames = append(imageFilterNames, f.ImageName)
-					}
-				}
-				if err := reg.RetagAllAliases(project, imageFilterNames); err != nil {
+				if err := reg.RetagAllAliases(project, filters); err != nil {
 					return fmt.Errorf("retagging failed: %w", err)
 				}
 			} else {

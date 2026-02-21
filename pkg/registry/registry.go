@@ -7,6 +7,7 @@ import (
 
 	"github.com/timo-reymann/ContainerHive/internal/gcr"
 	internalregistry "github.com/timo-reymann/ContainerHive/internal/registry"
+	"github.com/timo-reymann/ContainerHive/pkg/build"
 	"github.com/timo-reymann/ContainerHive/pkg/model"
 	"github.com/timo-reymann/ContainerHive/pkg/rendering"
 )
@@ -76,12 +77,11 @@ func (r *Registry) RetagAliases(imageDef *model.Image) error {
 	return nil
 }
 
-// RetagAllAliases retags aliases for all images in the project. If
-// imageFilters is non-empty, only images whose name appears in the list are
-// processed.
-func (r *Registry) RetagAllAliases(project *model.ContainerHiveProject, imageFilters []string) error {
+// RetagAllAliases retags aliases for all images in the project. If filters
+// is non-empty, only images matching at least one filter are processed.
+func (r *Registry) RetagAllAliases(project *model.ContainerHiveProject, filters []build.Filter) error {
 	for _, img := range project.ImagesByIdentifier {
-		if len(imageFilters) > 0 && !containsString(imageFilters, img.Name) {
+		if !matchesImageFilter(filters, img.Name) {
 			continue
 		}
 		if err := r.RetagAliases(img); err != nil {
@@ -91,9 +91,14 @@ func (r *Registry) RetagAllAliases(project *model.ContainerHiveProject, imageFil
 	return nil
 }
 
-func containsString(ss []string, s string) bool {
-	for _, v := range ss {
-		if v == s {
+// matchesImageFilter returns true if the image name matches at least one
+// filter, or if the filter list is empty (match all).
+func matchesImageFilter(filters []build.Filter, imageName string) bool {
+	if len(filters) == 0 {
+		return true
+	}
+	for _, f := range filters {
+		if f.ImageName == "" || f.ImageName == imageName {
 			return true
 		}
 	}

@@ -35,7 +35,7 @@ func sbomCmd() *cli.Command {
 				return fmt.Errorf("failed to initialize SBOM generator: %w", err)
 			}
 
-			var generated int
+			var generated, skipped int
 			for _, img := range project.ImagesByIdentifier {
 				for tagName := range img.Tags {
 					if !matchesFilter(filters, img.Name, tagName) {
@@ -45,7 +45,8 @@ func sbomCmd() *cli.Command {
 					tagDir := filepath.Join(distPath, img.Name, tagName)
 					tarFile := filepath.Join(tagDir, "image.tar")
 					if _, err := os.Stat(tarFile); err != nil {
-						log.Printf("Skipping %s:%s — no image.tar found", img.Name, tagName)
+						log.Printf("Skipping %s:%s — no image.tar found, please build the image first", img.Name, tagName)
+						skipped++
 						continue
 					}
 
@@ -62,6 +63,10 @@ func sbomCmd() *cli.Command {
 					log.Printf("SBOM written: %s (%d bytes)", sbomPath, len(sbomData))
 					generated++
 				}
+			}
+
+			if generated == 0 && skipped > 0 {
+				return fmt.Errorf("no SBOMs generated — %d image(s) have no image.tar, please build images first", skipped)
 			}
 
 			log.Printf("Generated %d SBOM(s)", generated)
