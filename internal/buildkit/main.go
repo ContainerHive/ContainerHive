@@ -13,7 +13,7 @@ import (
 	"github.com/moby/buildkit/session/auth/authprovider"
 	"github.com/moby/buildkit/session/secrets/secretsprovider"
 	"github.com/timo-reymann/ContainerHive/internal/buildkit/build_context"
-	"github.com/timo-reymann/ContainerHive/internal/buildkit/cache"
+	"github.com/timo-reymann/ContainerHive/pkg/cache"
 	"github.com/timo-reymann/ContainerHive/internal/utils"
 	"golang.org/x/sync/errgroup"
 )
