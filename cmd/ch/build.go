@@ -9,11 +9,9 @@ import (
 	"runtime"
 
 	"github.com/timo-reymann/ContainerHive/pkg/build"
-	"github.com/timo-reymann/ContainerHive/pkg/cst"
 	"github.com/timo-reymann/ContainerHive/pkg/deps"
 	"github.com/timo-reymann/ContainerHive/pkg/discovery"
 	"github.com/timo-reymann/ContainerHive/pkg/registry"
-	"github.com/timo-reymann/ContainerHive/pkg/sbom"
 	"github.com/urfave/cli/v3"
 )
 
@@ -69,54 +67,10 @@ func buildCmd() *cli.Command {
 			}
 			defer bkClient.Close()
 
-			// Initialize SBOM generator
-			sbomGen, err := sbom.NewGenerator()
-			if err != nil {
-				return fmt.Errorf("failed to initialize SBOM generator: %w", err)
-			}
-
-			// Initialize container structure test runner
-			cstRunner, err := cst.NewRunner(platform)
-			if err != nil {
-				return fmt.Errorf("failed to initialize CST runner: %w", err)
-			}
-			defer cstRunner.Close()
-
 			// Configure cache
 			buildCache, err := buildCacheFromConfig(project.Config.Cache, "ch-build")
 			if err != nil {
 				return fmt.Errorf("cache configuration failed: %w", err)
-			}
-
-			// OnBuild callback
-			onBuild := func(imageTag, tarFile string) {
-				// SBOM
-				log.Printf("Generating SBOM for %s ...", imageTag)
-				sbomData, err := sbomGen.Generate(ctx, tarFile, "spdx-json")
-				if err != nil {
-					log.Printf("Warning: SBOM generation failed for %s: %v", imageTag, err)
-				} else {
-					sbomPath := filepath.Join(filepath.Dir(tarFile), "sbom.spdx.json")
-					if err := os.WriteFile(sbomPath, sbomData, 0644); err != nil {
-						log.Printf("Warning: Failed to write SBOM for %s: %v", imageTag, err)
-					} else {
-						log.Printf("SBOM written for %s -> %s (%d bytes)", imageTag, sbomPath, len(sbomData))
-					}
-				}
-
-				// Container structure tests
-				testDefs := cst.CollectTestDefinitions(filepath.Dir(tarFile))
-				if len(testDefs) == 0 {
-					log.Printf("No container-structure-test definitions for %s, skipping", imageTag)
-					return
-				}
-				reportFile := cst.ReportFileName(filepath.Dir(tarFile), imageTag)
-				log.Printf("Running container-structure-tests for %s (%d test file(s))...", imageTag, len(testDefs))
-				if err := cstRunner.RunTests(tarFile, testDefs, reportFile); err != nil {
-					log.Printf("Warning: Container structure tests failed for %s: %v", imageTag, err)
-					return
-				}
-				log.Printf("Container structure tests passed for %s -> %s", imageTag, reportFile)
 			}
 
 			// Build
@@ -127,7 +81,6 @@ func buildCmd() *cli.Command {
 				Platform:    platform,
 				Cache:       buildCache,
 				ProgressOut: os.Stdout,
-				OnBuild:     onBuild,
 				Filters:     filters,
 				BuildID:     buildID,
 			}
