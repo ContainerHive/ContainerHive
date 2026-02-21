@@ -19,6 +19,7 @@ import (
 	"github.com/timo-reymann/ContainerHive/internal/container_structure_test"
 	"github.com/timo-reymann/ContainerHive/internal/dependency"
 	"github.com/timo-reymann/ContainerHive/internal/docker"
+	"github.com/timo-reymann/ContainerHive/internal/gcr"
 	"github.com/timo-reymann/ContainerHive/internal/registry"
 	"github.com/timo-reymann/ContainerHive/internal/syft"
 	"github.com/timo-reymann/ContainerHive/pkg/discovery"
@@ -131,6 +132,29 @@ func runContainerStructureTests(dockerClient *docker.Client, tarFile string, tes
 		return
 	}
 	log.Printf("Container structure tests passed for %s -> %s", imageTag, reportFile)
+}
+
+// retagAliases creates semantic version tag aliases in the registry for an image.
+// It collects all tags (including variant tags), resolves aliases to the highest
+// version, and retags them in the registry.
+func retagAliases(registryAddr string, imageDef *model.Image) {
+	var allTags []string
+	for tagName := range imageDef.Tags {
+		allTags = append(allTags, tagName)
+		for _, variantDef := range imageDef.Variants {
+			allTags = append(allTags, tagName+variantDef.TagSuffix)
+		}
+	}
+
+	aliases := rendering.ResolveAliases(allTags)
+	for alias, tag := range aliases {
+		sourceRef := fmt.Sprintf("%s/%s:%s", registryAddr, imageDef.Name, tag)
+		targetRef := fmt.Sprintf("%s/%s:%s", registryAddr, imageDef.Name, alias)
+		log.Printf("Tagging alias %s:%s -> %s:%s", imageDef.Name, alias, imageDef.Name, tag)
+		if err := gcr.Retag(sourceRef, targetRef); err != nil {
+			log.Printf("Warning: Failed to retag %s -> %s: %v", sourceRef, targetRef, err)
+		}
+	}
 }
 
 func main() {
@@ -354,6 +378,9 @@ func main() {
 					}
 				}
 			}
+
+			// Create semantic version tag aliases in the registry
+			retagAliases(reg.Address(), imageDef)
 		}
 	} else {
 		log.Println("No inter-image dependencies, building without registry")

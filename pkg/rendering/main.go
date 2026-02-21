@@ -21,25 +21,51 @@ func writeAlias(rootPath, tag, tagAlias string) error {
 	return nil
 }
 
-func writeAliases(rootPath, tag string) (int, error) {
-	ver, err := semantic_tags.NewSemanticVersion(tag)
-	if err != nil {
-		return 0, nil
-	}
+// ResolveAliases computes the alias map for a set of tags, ensuring each alias
+// points to the highest version that claims it.
+func ResolveAliases(tags []string) map[string]string {
+	aliases := make(map[string]string)
+	aliasVersions := make(map[string]*semantic_tags.SemanticTagVersion)
 
-	written := 0
-	for _, lver := range ver.GetLowerVariants() {
-		err := writeAlias(rootPath, tag, lver)
+	for _, tag := range tags {
+		ver, err := semantic_tags.NewSemanticVersion(tag)
 		if err != nil {
-			return 0, err
+			continue
 		}
-		written++
+
+		for _, alias := range ver.GetLowerVariants() {
+			existing, ok := aliasVersions[alias]
+			if !ok || ver.Greater(existing) {
+				aliases[alias] = tag
+				aliasVersions[alias] = ver
+			}
+		}
 	}
 
-	return written, nil
+	return aliases
 }
 
 func processImagesForName(ctx context.Context, rootPath string, images []*model.Image) error {
+	// Collect all tags (including variant tags) to resolve aliases with highest version
+	var allTags []string
+	for _, imageDef := range images {
+		for tag := range imageDef.Tags {
+			allTags = append(allTags, tag)
+			for _, variantDef := range imageDef.Variants {
+				allTags = append(allTags, tag+variantDef.TagSuffix)
+			}
+		}
+	}
+
+	// Write aliases using the highest version per alias
+	aliases := ResolveAliases(allTags)
+	for alias, tag := range aliases {
+		if err := writeAlias(rootPath, tag, alias); err != nil {
+			return err
+		}
+	}
+
+	// Build tag and variant directories in parallel
 	eg, _ := errgroup.WithContext(ctx)
 	for _, imageDef := range images {
 		imageDef := imageDef
@@ -48,12 +74,6 @@ func processImagesForName(ctx context.Context, rootPath string, images []*model.
 			tag := tag
 			tagDef := tagDef
 
-			eg.Go(func() error {
-				_, err := writeAliases(rootPath, tag)
-				return err
-			})
-
-			// Tag and variant are safe to run in parallel
 			eg.Go(func() error {
 				tagPath := filepath.Join(rootPath, tag)
 				if err := setupImageTagDir(tagPath, imageDef, tagDef); err != nil {
@@ -66,16 +86,8 @@ func processImagesForName(ctx context.Context, rootPath string, images []*model.
 					variantTag := tag + variantDef.TagSuffix
 
 					eg.Go(func() error {
-						_, err := writeAliases(rootPath, variantTag)
-						return err
-					})
-
-					eg.Go(func() error {
 						variantPath := filepath.Join(rootPath, variantTag)
-						if err := setupVariantDir(variantPath, imageDef, tagDef, variantDef); err != nil {
-							return err
-						}
-						return nil
+						return setupVariantDir(variantPath, imageDef, tagDef, variantDef)
 					})
 				}
 				return nil

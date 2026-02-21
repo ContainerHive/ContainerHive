@@ -242,6 +242,82 @@ func TestRenderProject_DependencyTemplateProject(t *testing.T) {
 	})
 }
 
+func TestResolveAliases(t *testing.T) {
+	t.Run("picks highest version per alias", func(t *testing.T) {
+		tags := []string{"8.0.100", "8.0.200", "8.0.300"}
+		aliases := ResolveAliases(tags)
+
+		if got := aliases["8.0"]; got != "8.0.300" {
+			t.Errorf("alias 8.0: expected 8.0.300, got %q", got)
+		}
+		if got := aliases["8"]; got != "8.0.300" {
+			t.Errorf("alias 8: expected 8.0.300, got %q", got)
+		}
+	})
+
+	t.Run("handles variant suffixes independently", func(t *testing.T) {
+		tags := []string{"8.0.100", "8.0.300", "8.0.100-node", "8.0.300-node"}
+		aliases := ResolveAliases(tags)
+
+		if got := aliases["8.0"]; got != "8.0.300" {
+			t.Errorf("alias 8.0: expected 8.0.300, got %q", got)
+		}
+		if got := aliases["8.0-node"]; got != "8.0.300-node" {
+			t.Errorf("alias 8.0-node: expected 8.0.300-node, got %q", got)
+		}
+		if got := aliases["8-node"]; got != "8.0.300-node" {
+			t.Errorf("alias 8-node: expected 8.0.300-node, got %q", got)
+		}
+	})
+
+	t.Run("skips non-semver tags", func(t *testing.T) {
+		tags := []string{"latest", "1.2.3"}
+		aliases := ResolveAliases(tags)
+
+		if got := aliases["1.2"]; got != "1.2.3" {
+			t.Errorf("alias 1.2: expected 1.2.3, got %q", got)
+		}
+		if _, ok := aliases["latest"]; ok {
+			t.Error("expected no alias for 'latest'")
+		}
+	})
+
+	t.Run("single tag with no lower variants", func(t *testing.T) {
+		tags := []string{"1"}
+		aliases := ResolveAliases(tags)
+
+		if len(aliases) != 0 {
+			t.Errorf("expected no aliases for major-only tag, got %v", aliases)
+		}
+	})
+}
+
+func TestRenderProject_SimpleProject_Aliases(t *testing.T) {
+	dist := discoverAndRender(t, "../testdata/simple-project")
+
+	t.Run("dotnet aliases point to highest version", func(t *testing.T) {
+		dotnetDir := filepath.Join(dist, "dotnet")
+
+		// 8.0.300 is the highest of 8.0.100, 8.0.200, 8.0.300
+		assertFileContent(t, filepath.Join(dotnetDir, "8.0"), "8.0.300")
+		assertFileContent(t, filepath.Join(dotnetDir, "8"), "8.0.300")
+	})
+
+	t.Run("dotnet variant aliases point to highest version", func(t *testing.T) {
+		dotnetDir := filepath.Join(dist, "dotnet")
+
+		assertFileContent(t, filepath.Join(dotnetDir, "8.0-node"), "8.0.300-node")
+		assertFileContent(t, filepath.Join(dotnetDir, "8-node"), "8.0.300-node")
+	})
+
+	t.Run("python aliases", func(t *testing.T) {
+		pythonDir := filepath.Join(dist, "python")
+
+		assertFileContent(t, filepath.Join(pythonDir, "3.13"), "3.13.7")
+		assertFileContent(t, filepath.Join(pythonDir, "3"), "3.13.7")
+	})
+}
+
 func TestRenderProject_MultiVariantProject(t *testing.T) {
 	dist := discoverAndRender(t, "../testdata/multi-variant-project")
 
