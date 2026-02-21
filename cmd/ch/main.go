@@ -122,7 +122,7 @@ func main() {
 		if err != nil {
 			log.Printf("Warning: SBOM generation failed for %s: %v", imageTag, err)
 		} else {
-			sbomPath := tarFile + ".sbom.spdx.json"
+			sbomPath := filepath.Join(filepath.Dir(tarFile), "sbom.spdx.json")
 			if err := os.WriteFile(sbomPath, sbomData, 0644); err != nil {
 				log.Printf("Warning: Failed to write SBOM for %s: %v", imageTag, err)
 			} else {
@@ -168,8 +168,7 @@ func main() {
 			log.Fatalf("Build failed: %v", err)
 		}
 
-		// Create semantic version tag aliases
-		if err := reg.RetagAllAliases(project, ""); err != nil {
+		if err := reg.RetagAllAliases(project, []string{}); err != nil {
 			log.Fatalf("Retagging failed: %v", err)
 		}
 	} else {
