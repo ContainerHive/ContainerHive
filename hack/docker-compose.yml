@@ -56,10 +56,31 @@ services:
     depends_on:
       - registry
 
+  buildkitd-config:
+    image: alpine:latest
+    volumes:
+      - buildkitd-config:/config
+    environment:
+      HOST_IP: "${HOST_IP:?Set HOST_IP to your local network IP (e.g. HOST_IP=192.168.178.168)}"
+    entrypoint: [ "/bin/sh", "-c" ]
+    command:
+      - |
+        cat > /config/buildkitd.toml <<EOF
+        [registry."$$HOST_IP:5051"]
+          http = true
+        EOF
+    restart: "no"
+
   buildkitd:
     image: moby/buildkit
-    command: [ "--addr","tcp://0.0.0.0:8502" ]
-    network_mode: host
+    command: [ "--addr","tcp://0.0.0.0:8502", "--config", "/etc/buildkit/buildkitd.toml" ]
+    depends_on:
+      buildkitd-config:
+        condition: service_completed_successfully
+    ports:
+      - "8502:8502"
+    volumes:
+      - buildkitd-config:/etc/buildkit:ro
     security_opt:
       - seccomp=unconfined
       - apparmor=unconfined
@@ -70,3 +91,4 @@ volumes:
   garage-meta:
   garage-data:
   registry-data:
+  buildkitd-config:
