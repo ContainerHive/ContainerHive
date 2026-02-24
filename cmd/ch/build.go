@@ -86,7 +86,7 @@ func buildCmd() *cli.Command {
 			}
 
 			if useRegistry || buildOrder.HasDependencies() {
-				reg := registry.NewRegistry()
+				reg := registry.NewRegistry(filepath.Join(distPath, ".registry"))
 				if err := reg.Start(ctx); err != nil {
 					return fmt.Errorf("failed to start registry: %w", err)
 				}

@@ -34,7 +34,7 @@ func TestNewRegistry_CI(t *testing.T) {
 	t.Run("returns remote registry when CI is set", func(t *testing.T) {
 		t.Setenv("CI", "true")
 		t.Setenv("CONTAINER_HIVE_REGISTRY", "")
-		reg := NewRegistry()
+		reg := NewRegistry("")
 		if reg.IsLocal() {
 			t.Error("expected remote registry in CI mode")
 		}
@@ -46,7 +46,7 @@ func TestNewRegistry_CI(t *testing.T) {
 	t.Run("uses CONTAINER_HIVE_REGISTRY when set", func(t *testing.T) {
 		t.Setenv("CI", "true")
 		t.Setenv("CONTAINER_HIVE_REGISTRY", "ghcr.io/myorg")
-		reg := NewRegistry()
+		reg := NewRegistry("")
 		if reg.Address() != "ghcr.io/myorg" {
 			t.Errorf("expected ghcr.io/myorg, got %s", reg.Address())
 		}
@@ -54,7 +54,7 @@ func TestNewRegistry_CI(t *testing.T) {
 
 	t.Run("returns zot registry when CI is not set", func(t *testing.T) {
 		t.Setenv("CI", "")
-		reg := NewRegistry()
+		reg := NewRegistry("")
 		if !reg.IsLocal() {
 			t.Error("expected local (zot) registry when CI not set")
 		}

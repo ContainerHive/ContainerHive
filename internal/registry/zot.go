@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"net"
 	"net/http"
 	"os"
 	"time"
@@ -21,25 +22,35 @@ import (
 type ZotRegistry struct {
 	ctlr    *api.Controller
 	dataDir string
+	tempDir bool
 	port    int
 }
 
 // NewZotRegistry creates a new ZotRegistry instance.
-func NewZotRegistry() *ZotRegistry {
-	return &ZotRegistry{}
+// If dataDir is non-empty, it is used as persistent storage (created if needed).
+// Otherwise a temporary directory is used and cleaned up on Stop.
+func NewZotRegistry(dataDir string) *ZotRegistry {
+	return &ZotRegistry{dataDir: dataDir}
 }
 
 func (z *ZotRegistry) Start(ctx context.Context) error {
-	dataDir, err := os.MkdirTemp("", "containerhive-zot-*")
-	if err != nil {
-		return errors.Join(errors.New("failed to create zot data directory"), err)
+	if z.dataDir == "" {
+		dataDir, err := os.MkdirTemp("", "containerhive-zot-*")
+		if err != nil {
+			return errors.Join(errors.New("failed to create zot data directory"), err)
+		}
+		z.dataDir = dataDir
+		z.tempDir = true
+	} else {
+		if err := os.MkdirAll(z.dataDir, 0755); err != nil {
+			return errors.Join(errors.New("failed to create zot data directory"), err)
+		}
 	}
-	z.dataDir = dataDir
 
 	conf := config.New()
-	conf.HTTP.Address = "127.0.0.1"
-	conf.HTTP.Port = "0"
-	conf.Storage.RootDirectory = dataDir
+	conf.HTTP.Address = "0.0.0.0"
+	conf.HTTP.Port = "5051"
+	conf.Storage.RootDirectory = z.dataDir
 	conf.Storage.GC = false
 	conf.Storage.Dedupe = false
 	conf.Log = &config.LogConfig{
@@ -50,7 +61,9 @@ func (z *ZotRegistry) Start(ctx context.Context) error {
 	z.ctlr = api.NewController(conf)
 
 	if err := z.ctlr.Init(); err != nil {
-		os.RemoveAll(dataDir)
+		if z.tempDir {
+			os.RemoveAll(z.dataDir)
+		}
 		return errors.Join(errors.New("failed to initialize zot"), err)
 	}
 
@@ -62,7 +75,9 @@ func (z *ZotRegistry) Start(ctx context.Context) error {
 
 	if err := z.waitForReady(ctx); err != nil {
 		z.ctlr.Shutdown()
-		os.RemoveAll(dataDir)
+		if z.tempDir {
+			os.RemoveAll(z.dataDir)
+		}
 		return errors.Join(errors.New("zot failed to become ready"), err)
 	}
 
@@ -85,7 +100,7 @@ func (z *ZotRegistry) waitForReady(ctx context.Context) error {
 			if port <= 0 {
 				continue
 			}
-			url := fmt.Sprintf("http://127.0.0.1:%d/v2/", port)
+			url := fmt.Sprintf("http://0.0.0.0:%d/v2/", port)
 			resp, err := http.Get(url)
 			if err == nil {
 				resp.Body.Close()
@@ -100,14 +115,24 @@ func (z *ZotRegistry) Stop(_ context.Context) error {
 	if z.ctlr != nil {
 		z.ctlr.Shutdown()
 	}
-	if z.dataDir != "" {
+	if z.tempDir && z.dataDir != "" {
 		os.RemoveAll(z.dataDir)
 	}
 	return nil
 }
 
 func (z *ZotRegistry) Address() string {
-	return fmt.Sprintf("127.0.0.1:%d", z.port)
+	return fmt.Sprintf("%s:%d", outboundIP(), z.port)
+}
+
+// outboundIP returns the preferred local IP address used for outbound connections.
+func outboundIP() string {
+	conn, err := net.Dial("udp", "8.8.8.8:80")
+	if err != nil {
+		return "127.0.0.1"
+	}
+	defer conn.Close()
+	return conn.LocalAddr().(*net.UDPAddr).IP.String()
 }
 
 func (z *ZotRegistry) IsLocal() bool {

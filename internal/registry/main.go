@@ -17,7 +17,9 @@ type Registry interface {
 // NewRegistry creates a Registry based on the environment.
 // In CI (CI env var set), it returns a remote registry passthrough.
 // Otherwise, it returns an embedded zot registry for local builds.
-func NewRegistry() Registry {
+// The dataDir parameter sets persistent storage for the local registry;
+// if empty, a temporary directory is used.
+func NewRegistry(dataDir string) Registry {
 	if ci := os.Getenv("CI"); ci != "" {
 		remoteAddr := os.Getenv("CONTAINER_HIVE_REGISTRY")
 		if remoteAddr == "" {
@@ -26,5 +28,5 @@ func NewRegistry() Registry {
 		}
 		return NewRemoteRegistry(remoteAddr)
 	}
-	return NewZotRegistry()
+	return NewZotRegistry(dataDir)
 }

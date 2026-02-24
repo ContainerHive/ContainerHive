@@ -18,8 +18,10 @@ type Registry struct {
 }
 
 // NewRegistry creates a Registry based on the environment (local zot or remote).
-func NewRegistry() *Registry {
-	return &Registry{inner: internalregistry.NewRegistry()}
+// The dataDir parameter sets persistent storage for the local registry;
+// if empty, a temporary directory is used.
+func NewRegistry(dataDir string) *Registry {
+	return &Registry{inner: internalregistry.NewRegistry(dataDir)}
 }
 
 // Start initializes the registry.

@@ -69,7 +69,7 @@ func TestZotRegistry(t *testing.T) {
 	}
 
 	t.Run("starts and responds to health check", func(t *testing.T) {
-		reg := NewZotRegistry()
+		reg := NewZotRegistry("")
 		if err := reg.Start(t.Context()); err != nil {
 			t.Fatalf("failed to start zot: %v", err)
 		}
@@ -92,7 +92,7 @@ func TestZotRegistry(t *testing.T) {
 	})
 
 	t.Run("push image and verify via catalog", func(t *testing.T) {
-		reg := NewZotRegistry()
+		reg := NewZotRegistry("")
 		if err := reg.Start(t.Context()); err != nil {
 			t.Fatalf("failed to start zot: %v", err)
 		}
@@ -130,7 +130,7 @@ func TestZotRegistry(t *testing.T) {
 	})
 
 	t.Run("is local", func(t *testing.T) {
-		reg := NewZotRegistry()
+		reg := NewZotRegistry("")
 		if !reg.IsLocal() {
 			t.Error("expected IsLocal() to be true")
 		}
