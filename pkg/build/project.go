@@ -23,9 +23,8 @@ type Registry interface {
 // Filter selects a subset of images/tags to build.
 // Empty fields match everything.
 type Filter struct {
-	ImageName       string
-	TagName         string
-	IncludeVariants bool
+	ImageName string
+	TagName   string
 }
 
 // ProjectBuildOpts holds shared configuration for a project-wide build.
@@ -52,7 +51,12 @@ func (o *ProjectBuildOpts) pushTag(tagName string) string {
 	return tagName
 }
 
-func matchesFilters(filters []Filter, imageName, tagName string, isVariant bool) bool {
+// matchesFilters checks whether a tag should be built.
+// Matching rules:
+//   - No tag filter (e.g. "dotnet") → matches all tags and variants
+//   - Exact tag filter (e.g. "dotnet:8.0.300") → matches only that exact tag
+//   - Exact variant filter (e.g. "dotnet:8.0.300-node") → matches only that variant
+func matchesFilters(filters []Filter, imageName, tagName string) bool {
 	if len(filters) == 0 {
 		return true
 	}
@@ -61,9 +65,6 @@ func matchesFilters(filters []Filter, imageName, tagName string, isVariant bool)
 			continue
 		}
 		if f.TagName != "" && f.TagName != tagName {
-			continue
-		}
-		if isVariant && !f.IncludeVariants {
 			continue
 		}
 		return true
@@ -99,18 +100,27 @@ func buildWithDeps(ctx context.Context, client *Client, opts *ProjectBuildOpts) 
 		}
 
 		for tagName := range imageDef.Tags {
-			if !matchesFilters(opts.Filters, imgName, tagName, false) {
-				continue
-			}
+			buildBase := matchesFilters(opts.Filters, imgName, tagName)
 
-			if err := buildTag(ctx, client, opts, imageDef, tagName); err != nil {
-				return err
+			if buildBase {
+				if err := buildTag(ctx, client, opts, imageDef, tagName); err != nil {
+					return err
+				}
+
+				// Push to registry
+				if opts.Registry != nil {
+					tf := TarFilePath(opts.DistPath, imgName, tagName)
+					pushTag := opts.pushTag(tagName)
+					if err := opts.Registry.Push(ctx, imgName, pushTag, tf); err != nil {
+						log.Printf("Warning: Failed to push %s:%s to registry: %v", imgName, pushTag, err)
+					}
+				}
 			}
 
 			// Build variants
 			for variantName, variantDef := range imageDef.Variants {
 				variantTagName := tagName + variantDef.TagSuffix
-				if !matchesFilters(opts.Filters, imgName, variantTagName, true) {
+				if !matchesFilters(opts.Filters, imgName, variantTagName) {
 					continue
 				}
 
@@ -118,23 +128,13 @@ func buildWithDeps(ctx context.Context, client *Client, opts *ProjectBuildOpts) 
 					return err
 				}
 
-				// Push variant if dependents exist
-				if opts.Registry != nil && len(opts.BuildOrder.Dependents(imgName)) > 0 {
-					variantTag := tagName + variantDef.TagSuffix
-					tf := TarFilePath(opts.DistPath, imgName, variantTag)
-					pushTag := opts.pushTag(variantTag)
+				// Push variant to registry
+				if opts.Registry != nil {
+					tf := TarFilePath(opts.DistPath, imgName, variantTagName)
+					pushTag := opts.pushTag(variantTagName)
 					if err := opts.Registry.Push(ctx, imgName, pushTag, tf); err != nil {
 						log.Printf("Warning: Failed to push variant %s:%s to registry: %v", imgName, pushTag, err)
 					}
-				}
-			}
-
-			// Push base tag if dependents exist
-			if opts.Registry != nil && len(opts.BuildOrder.Dependents(imgName)) > 0 {
-				tf := TarFilePath(opts.DistPath, imgName, tagName)
-				pushTag := opts.pushTag(tagName)
-				if err := opts.Registry.Push(ctx, imgName, pushTag, tf); err != nil {
-					log.Printf("Warning: Failed to push %s:%s to registry: %v", imgName, pushTag, err)
 				}
 			}
 		}
@@ -146,7 +146,7 @@ func buildWithoutDeps(ctx context.Context, client *Client, opts *ProjectBuildOpt
 	for _, images := range opts.Project.ImagesByName {
 		for _, imageDef := range images {
 			for tagName := range imageDef.Tags {
-				if !matchesFilters(opts.Filters, imageDef.Name, tagName, false) {
+				if !matchesFilters(opts.Filters, imageDef.Name, tagName) {
 					continue
 				}
 

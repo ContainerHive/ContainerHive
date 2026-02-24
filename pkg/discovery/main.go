@@ -3,7 +3,6 @@ package discovery
 import (
 	"context"
 	"errors"
-	"fmt"
 	"io/fs"
 	"os"
 	"path/filepath"
@@ -77,7 +76,6 @@ func discoverImages(ctx context.Context, rootPath string) (map[string]*model.Ima
 				return nil
 			})
 
-			go fmt.Println(image)
 		}
 		return nil
 	})

@@ -63,12 +63,16 @@ func collectAllTags(imageDef *model.Image) []string {
 
 // retagAliases creates semantic version tag aliases in the registry for a
 // single image. If buildID is set, source and target refs are suffixed with
-// .<buildID> to match the tags used during push.
-func (r *Registry) retagAliases(imageDef *model.Image, buildID string) error {
+// .<buildID> to match the tags used during push. Only tags matching the
+// filters are retagged.
+func (r *Registry) retagAliases(imageDef *model.Image, filters []build.Filter, buildID string) error {
 	allTags := collectAllTags(imageDef)
 	aliases := rendering.ResolveAliases(allTags)
 
 	for alias, tag := range aliases {
+		if !matchesTagFilter(filters, imageDef.Name, tag) {
+			continue
+		}
 		sourceTag := tag
 		targetTag := alias
 		if buildID != "" {
@@ -93,7 +97,7 @@ func (r *Registry) RetagAllAliases(project *model.ContainerHiveProject, filters 
 		if !matchesImageFilter(filters, img.Name) {
 			continue
 		}
-		if err := r.retagAliases(img, buildID); err != nil {
+		if err := r.retagAliases(img, filters, buildID); err != nil {
 			return err
 		}
 	}
@@ -110,6 +114,25 @@ func matchesImageFilter(filters []build.Filter, imageName string) bool {
 		if f.ImageName == "" || f.ImageName == imageName {
 			return true
 		}
+	}
+	return false
+}
+
+// matchesTagFilter returns true if the image:tag matches at least one filter,
+// or if the filter list is empty (match all). Variant tags are matched by
+// checking if the tag starts with the filter's tag name.
+func matchesTagFilter(filters []build.Filter, imageName, tagName string) bool {
+	if len(filters) == 0 {
+		return true
+	}
+	for _, f := range filters {
+		if f.ImageName != "" && f.ImageName != imageName {
+			continue
+		}
+		if f.TagName != "" && f.TagName != tagName {
+			continue
+		}
+		return true
 	}
 	return false
 }
