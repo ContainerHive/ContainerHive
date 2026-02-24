@@ -33,5 +33,33 @@ type ImageDefinitionConfig struct {
 	DependsOn []string        `yaml:"depends_on" json:"depends_on,omitempty" jsonschema:"Names of other images in this project that must be built before this image"`
 }
 
+type BuildKitConfig struct {
+	Address string `yaml:"address" json:"address" jsonschema:"BuildKit daemon address (e.g. tcp://127.0.0.1:8502)"`
+}
+
+type CacheConfig struct {
+	// Type discriminates the cache backend: "s3" or "registry"
+	Type string `yaml:"type" json:"type" jsonschema:"Cache type (s3, registry),required"`
+
+	// S3 fields (type: s3)
+	Endpoint        string `yaml:"endpoint,omitempty" json:"endpoint,omitempty" jsonschema:"S3 endpoint URL"`
+	Bucket          string `yaml:"bucket,omitempty" json:"bucket,omitempty" jsonschema:"S3 bucket name"`
+	Region          string `yaml:"region,omitempty" json:"region,omitempty" jsonschema:"S3 region"`
+	AccessKeyId     string `yaml:"access_key_id,omitempty" json:"access_key_id,omitempty" jsonschema:"S3 access key ID"`
+	SecretAccessKey string `yaml:"secret_access_key,omitempty" json:"secret_access_key,omitempty" jsonschema:"S3 secret access key"`
+	UsePathStyle    bool   `yaml:"use_path_style,omitempty" json:"use_path_style,omitempty" jsonschema:"Use path-style S3 URLs"`
+
+	// Registry fields (type: registry)
+	Ref      string `yaml:"ref,omitempty" json:"ref,omitempty" jsonschema:"Registry cache ref (e.g. registry:5000/cache)"`
+	Insecure bool   `yaml:"insecure,omitempty" json:"insecure,omitempty" jsonschema:"Allow insecure registry connections"`
+}
+
+type RegistryConfig struct {
+	Address string `yaml:"address" json:"address" jsonschema:"Container registry address"`
+}
+
 type HiveProjectConfig struct {
+	BuildKit *BuildKitConfig `yaml:"buildkit,omitempty" json:"buildkit,omitempty" jsonschema:"BuildKit daemon configuration"`
+	Cache    *CacheConfig    `yaml:"cache,omitempty" json:"cache,omitempty" jsonschema:"Build cache configuration"`
+	Registry *RegistryConfig `yaml:"registry,omitempty" json:"registry,omitempty" jsonschema:"Container registry configuration"`
 }

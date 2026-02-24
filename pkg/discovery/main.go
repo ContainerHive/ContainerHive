@@ -103,6 +103,11 @@ func DiscoverProject(ctx context.Context, root string) (*model.ContainerHiveProj
 		return nil, errors.Join(errors.New("failed to determine absolute config path"), err)
 	}
 
+	hiveConfig, err := parseHiveConfigFile(absoluteConfigPath)
+	if err != nil {
+		return nil, errors.Join(errors.New("failed to parse ContainerHive config"), err)
+	}
+
 	images, err := discoverImages(ctx, filepath.Join(absoluteRoot, "images"))
 	if err != nil {
 		return nil, errors.Join(errors.New("failed to discover images"), err)
@@ -115,6 +120,7 @@ func DiscoverProject(ctx context.Context, root string) (*model.ContainerHiveProj
 	project := &model.ContainerHiveProject{
 		RootDir:            absoluteRoot,
 		ConfigFilePath:     absoluteConfigPath,
+		Config:             *hiveConfig,
 		ImagesByIdentifier: images,
 		ImagesByName:       imagesByName,
 	}

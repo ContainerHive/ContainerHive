@@ -4,6 +4,9 @@ import (
 	"errors"
 	"os"
 	"path/filepath"
+
+	"github.com/timo-reymann/ContainerHive/pkg/model"
+	"gopkg.in/yaml.v3"
 )
 
 var hiveConfigFileNames = []string{
@@ -27,4 +30,18 @@ func getContainerHiveConfigFile(root string) (string, error) {
 	}
 
 	return "", errors.New("no ContainerHive config file found")
+}
+
+func parseHiveConfigFile(path string) (*model.HiveProjectConfig, error) {
+	data, err := os.ReadFile(path)
+	if err != nil {
+		return nil, errors.Join(errors.New("failed to read ContainerHive config file"), err)
+	}
+
+	var config model.HiveProjectConfig
+	if err := yaml.Unmarshal(data, &config); err != nil {
+		return nil, errors.Join(errors.New("failed to parse ContainerHive config file"), err)
+	}
+
+	return &config, nil
 }

@@ -7,6 +7,7 @@ import (
 
 	"github.com/timo-reymann/ContainerHive/internal/gcr"
 	internalregistry "github.com/timo-reymann/ContainerHive/internal/registry"
+	"github.com/timo-reymann/ContainerHive/pkg/build"
 	"github.com/timo-reymann/ContainerHive/pkg/model"
 	"github.com/timo-reymann/ContainerHive/pkg/rendering"
 )
@@ -58,17 +59,23 @@ func collectAllTags(imageDef *model.Image) []string {
 	return allTags
 }
 
-// RetagAliases creates semantic version tag aliases in the registry for a
-// single image. It collects all tags (including variant tags), resolves
-// aliases, and retags them.
-func (r *Registry) RetagAliases(imageDef *model.Image) error {
+// retagAliases creates semantic version tag aliases in the registry for a
+// single image. If buildID is set, source and target refs are suffixed with
+// .<buildID> to match the tags used during push.
+func (r *Registry) retagAliases(imageDef *model.Image, buildID string) error {
 	allTags := collectAllTags(imageDef)
 	aliases := rendering.ResolveAliases(allTags)
 
 	for alias, tag := range aliases {
-		sourceRef := fmt.Sprintf("%s/%s:%s", r.Address(), imageDef.Name, tag)
-		targetRef := fmt.Sprintf("%s/%s:%s", r.Address(), imageDef.Name, alias)
-		log.Printf("Tagging alias %s:%s -> %s:%s", imageDef.Name, alias, imageDef.Name, tag)
+		sourceTag := tag
+		targetTag := alias
+		if buildID != "" {
+			sourceTag = tag + "." + buildID
+			targetTag = alias + "." + buildID
+		}
+		sourceRef := fmt.Sprintf("%s/%s:%s", r.Address(), imageDef.Name, sourceTag)
+		targetRef := fmt.Sprintf("%s/%s:%s", r.Address(), imageDef.Name, targetTag)
+		log.Printf("Tagging alias %s:%s -> %s:%s", imageDef.Name, targetTag, imageDef.Name, sourceTag)
 		if err := gcr.Retag(sourceRef, targetRef); err != nil {
 			log.Printf("Warning: Failed to retag %s -> %s: %v", sourceRef, targetRef, err)
 		}
@@ -76,24 +83,29 @@ func (r *Registry) RetagAliases(imageDef *model.Image) error {
 	return nil
 }
 
-// RetagAllAliases retags aliases for all images in the project. If
-// imageFilters is non-empty, only images whose name appears in the list are
-// processed.
-func (r *Registry) RetagAllAliases(project *model.ContainerHiveProject, imageFilters []string) error {
+// RetagAllAliases retags aliases for all images in the project. If filters
+// is non-empty, only images matching at least one filter are processed.
+// If buildID is set, tags are suffixed with .<buildID> to match pushed tags.
+func (r *Registry) RetagAllAliases(project *model.ContainerHiveProject, filters []build.Filter, buildID string) error {
 	for _, img := range project.ImagesByIdentifier {
-		if len(imageFilters) > 0 && !containsString(imageFilters, img.Name) {
+		if !matchesImageFilter(filters, img.Name) {
 			continue
 		}
-		if err := r.RetagAliases(img); err != nil {
+		if err := r.retagAliases(img, buildID); err != nil {
 			return err
 		}
 	}
 	return nil
 }
 
-func containsString(ss []string, s string) bool {
-	for _, v := range ss {
-		if v == s {
+// matchesImageFilter returns true if the image name matches at least one
+// filter, or if the filter list is empty (match all).
+func matchesImageFilter(filters []build.Filter, imageName string) bool {
+	if len(filters) == 0 {
+		return true
+	}
+	for _, f := range filters {
+		if f.ImageName == "" || f.ImageName == imageName {
 			return true
 		}
 	}
