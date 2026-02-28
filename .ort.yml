@@ -3,3 +3,13 @@ resolutions:
     - message: "GoMod failed to resolve dependencies.*"
       reason: "BUILD_TOOL_ISSUE"
       comment: "Go dependency resolution fails in ORT Docker container due to network connectivity issues"
+
+excludes:
+  paths:
+  - pattern: "docs/**"
+    reason: "DOCUMENTATION_OF"
+    comment: "Only used for documentation, not provided as source"
+  - pattern: "requirements-docs.txt"
+    reason: "DOCUMENTATION_OF"
+    comment: "Only used for documentation, not provided as source"
+  - pattern: "python_wrapper/pydoctor-theme/**"
