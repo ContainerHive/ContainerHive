@@ -1,0 +1,5 @@
+resolutions:
+  issues:
+    - message: "GoMod failed to resolve dependencies.*"
+      reason: "BUILD_TOOL_ISSUE"
+      comment: "Go dependency resolution fails in ORT Docker container due to network connectivity issues"
