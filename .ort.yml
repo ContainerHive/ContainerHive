@@ -6,10 +6,9 @@ resolutions:
 
 excludes:
   paths:
-  - pattern: "docs/**"
-    reason: "DOCUMENTATION_OF"
-    comment: "Only used for documentation, not provided as source"
-  - pattern: "requirements-docs.txt"
-    reason: "DOCUMENTATION_OF"
-    comment: "Only used for documentation, not provided as source"
-  - pattern: "python_wrapper/pydoctor-theme/**"
+    - pattern: "docs/**"
+      reason: "DOCUMENTATION_OF"
+      comment: "Only used for documentation, not provided as source"
+    - pattern: "requirements-docs.txt"
+      reason: "DOCUMENTATION_OF"
+      comment: "Only used for documentation, not provided as source"
