@@ -616,4 +616,4 @@ require (
 
 // go-archive v0.2.0 removed deprecated type aliases that docker/docker@v28.x still references,
 // v0.1.0 is a strict API superset so this is safe for all consumers
-replace github.com/moby/go-archive => github.com/moby/go-archive v0.1.0
+replace github.com/moby/go-archive => github.com/moby/go-archive v0.2.0
