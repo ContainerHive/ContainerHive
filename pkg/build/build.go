@@ -2,6 +2,7 @@ package build
 
 import (
 	"context"
+	"fmt"
 	"io"
 	"os"
 
@@ -34,7 +35,18 @@ type BuildOpts struct {
 }
 
 // NewClient connects to a BuildKit daemon at the given endpoint.
+// If endpoint is empty, it falls back to BUILDKIT_HOST environment variable.
 func NewClient(ctx context.Context, endpoint string) (*Client, error) {
+	if endpoint == "" {
+		if envAddr := os.Getenv("BUILDKIT_HOST"); envAddr != "" {
+			endpoint = envAddr
+		}
+	}
+
+	if endpoint == "" {
+		return nil, fmt.Errorf("no BuildKit endpoint provided and BUILDKIT_HOST not set")
+	}
+
 	c, err := buildkit.NewClient(ctx, endpoint)
 	if err != nil {
 		return nil, err
