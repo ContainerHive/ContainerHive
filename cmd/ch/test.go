@@ -6,11 +6,11 @@ import (
 	"log"
 	"os"
 	"path/filepath"
-	"runtime"
 
 	"github.com/timo-reymann/ContainerHive/pkg/build"
 	"github.com/timo-reymann/ContainerHive/pkg/cst"
 	"github.com/timo-reymann/ContainerHive/pkg/discovery"
+	"github.com/timo-reymann/ContainerHive/pkg/platform"
 	"github.com/urfave/cli/v3"
 )
 
@@ -22,7 +22,6 @@ func testCmd() *cli.Command {
 		Action: func(ctx context.Context, cmd *cli.Command) error {
 			projectRoot := cmd.String("project")
 			filters := parseFilters(cmd.Args().Slice())
-			platform := "linux/" + runtime.GOARCH
 			distPath := filepath.Join(projectRoot, "dist")
 			if _, err := os.Stat(distPath); err != nil {
 				return fmt.Errorf("dist/ not found — run 'ch generate' first: %w", err)
@@ -33,12 +32,6 @@ func testCmd() *cli.Command {
 				return fmt.Errorf("discovery failed: %w", err)
 			}
 
-			cstRunner, err := cst.NewRunner(platform)
-			if err != nil {
-				return fmt.Errorf("failed to initialize CST runner: %w", err)
-			}
-			defer cstRunner.Close()
-
 			var tested, failed int
 			for _, img := range project.ImagesByIdentifier {
 				for tagName := range img.Tags {
@@ -46,28 +39,40 @@ func testCmd() *cli.Command {
 						continue
 					}
 
+					// Test definitions are in the tag dir (not platform-specific)
 					tagDir := filepath.Join(distPath, img.Name, tagName)
-					tarFile := filepath.Join(tagDir, "image.tar")
-					if _, err := os.Stat(tarFile); err != nil {
-						log.Printf("Skipping %s:%s — no image.tar found", img.Name, tagName)
-						continue
-					}
-
 					testDefs := cst.CollectTestDefinitions(tagDir)
 					if len(testDefs) == 0 {
 						log.Printf("No test definitions for %s:%s, skipping", img.Name, tagName)
 						continue
 					}
 
-					reportFile := cst.ReportFileName(tagDir, img.Name+":"+tagName)
-					log.Printf("Testing %s:%s (%d test file(s))...", img.Name, tagName, len(testDefs))
-					tested++
-					if err := cstRunner.RunTests(tarFile, testDefs, reportFile); err != nil {
-						log.Printf("FAIL %s:%s: %v", img.Name, tagName, err)
-						failed++
-						continue
+					platforms := platform.Resolve(project.Config.Platforms, img.Platforms, nil)
+					for _, platformStr := range platforms {
+						platDir := filepath.Join(distPath, img.Name, tagName, platform.Sanitize(platformStr))
+						tarFile := filepath.Join(platDir, "image.tar")
+						if _, err := os.Stat(tarFile); err != nil {
+							log.Printf("Skipping %s:%s [%s] — no image.tar found", img.Name, tagName, platformStr)
+							continue
+						}
+
+						cstRunner, err := cst.NewRunner(platformStr)
+						if err != nil {
+							return fmt.Errorf("failed to initialize CST runner for %s: %w", platformStr, err)
+						}
+
+						reportFile := cst.ReportFileName(platDir, img.Name+":"+tagName)
+						log.Printf("Testing %s:%s [%s] (%d test file(s))...", img.Name, tagName, platformStr, len(testDefs))
+						tested++
+						if err := cstRunner.RunTests(tarFile, testDefs, reportFile); err != nil {
+							log.Printf("FAIL %s:%s [%s]: %v", img.Name, tagName, platformStr, err)
+							failed++
+							cstRunner.Close()
+							continue
+						}
+						log.Printf("PASS %s:%s [%s] -> %s", img.Name, tagName, platformStr, reportFile)
+						cstRunner.Close()
 					}
-					log.Printf("PASS %s:%s -> %s", img.Name, tagName, reportFile)
 				}
 			}
 

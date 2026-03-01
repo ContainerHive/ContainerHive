@@ -27,6 +27,7 @@ func main() {
 		Commands: []*cli.Command{
 			generateCmd(),
 			buildCmd(),
+			finalizeCmd(),
 			testCmd(),
 			sbomCmd(),
 			verifyCmd(),

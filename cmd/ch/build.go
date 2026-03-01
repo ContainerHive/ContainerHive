@@ -6,7 +6,6 @@ import (
 	"log"
 	"os"
 	"path/filepath"
-	"runtime"
 
 	"github.com/timo-reymann/ContainerHive/pkg/build"
 	"github.com/timo-reymann/ContainerHive/pkg/deps"
@@ -25,18 +24,29 @@ func buildCmd() *cli.Command {
 				Name:  "registry",
 				Usage: "Use registry from config (auto-enabled in CI)",
 			},
+			&cli.StringSliceFlag{
+				Name:  "platform",
+				Usage: "Target platform(s) to build (e.g. linux/amd64), overrides hive.yml",
+			},
 		},
 		Action: func(ctx context.Context, cmd *cli.Command) error {
 			projectRoot := cmd.String("project")
 			buildID := cmd.String("build-id")
 			useRegistry := cmd.Bool("registry") || os.Getenv("CI") != ""
 			filters := parseFilters(cmd.Args().Slice())
-			platform := "linux/" + runtime.GOARCH
 
 			// Discover project
 			project, err := discovery.DiscoverProject(ctx, projectRoot)
 			if err != nil {
 				return fmt.Errorf("discovery failed: %w", err)
+			}
+
+			if cliPlatforms := cmd.StringSlice("platform"); len(cliPlatforms) > 0 {
+				project.Config.Platforms = cliPlatforms
+			}
+
+			if len(project.Config.Platforms) == 0 {
+				return fmt.Errorf("no platforms configured — set platforms in hive.yml or pass --platform")
 			}
 
 			// Expect dist/ to already exist (created by `ch generate`)
@@ -74,7 +84,6 @@ func buildCmd() *cli.Command {
 				Project:     project,
 				BuildOrder:  buildOrder,
 				DistPath:    distPath,
-				Platform:    platform,
 				Cache:       buildCache,
 				ProgressOut: os.Stdout,
 				Filters:     filters,
@@ -82,7 +91,10 @@ func buildCmd() *cli.Command {
 			}
 
 			if useRegistry || buildOrder.HasDependencies() {
-				reg := registry.NewRegistry(filepath.Join(distPath, ".registry"))
+				reg, err := registry.NewRegistry(filepath.Join(distPath, ".registry"), project.Config.Registry)
+				if err != nil {
+					return fmt.Errorf("failed to create registry: %w", err)
+				}
 				if err := reg.Start(ctx); err != nil {
 					return fmt.Errorf("failed to start registry: %w", err)
 				}
@@ -92,10 +104,6 @@ func buildCmd() *cli.Command {
 				buildOpts.Registry = reg
 				if err := build.BuildProject(ctx, bkClient, buildOpts); err != nil {
 					return fmt.Errorf("build failed: %w", err)
-				}
-
-				if err := reg.RetagAllAliases(project, filters, buildID); err != nil {
-					return fmt.Errorf("retagging failed: %w", err)
 				}
 			} else {
 				log.Println("No inter-image dependencies, building without registry")
