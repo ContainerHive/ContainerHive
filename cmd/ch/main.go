@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"os/signal"
 
 	"github.com/urfave/cli/v3"
 )
@@ -34,7 +35,10 @@ func main() {
 		},
 	}
 
-	if err := app.Run(context.Background(), os.Args); err != nil {
+	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
+	defer stop()
+
+	if err := app.Run(ctx, os.Args); err != nil {
 		fmt.Fprintf(os.Stderr, "Error: %v\n", err)
 		os.Exit(1)
 	}
