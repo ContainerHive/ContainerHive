@@ -12,3 +12,6 @@ cache:
 
 registry:
   address: localhost:5000
+
+platforms:
+  - linux/amd64

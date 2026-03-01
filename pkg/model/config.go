@@ -22,6 +22,7 @@ type VariantConfig struct {
 	TagSuffix string    `yaml:"tag_suffix" json:"tag_suffix" jsonschema:"Suffix to append to the tag name for this variant"`
 	Versions  Versions  `yaml:"versions" json:"versions,omitempty" jsonschema:"Versions to use for this variant"`
 	BuildArgs BuildArgs `yaml:"build_args" json:"build_args,omitempty" jsonschema:"Build args to add for this variant"`
+	Platforms []string  `yaml:"platforms,omitempty" json:"platforms,omitempty" jsonschema:"Target platforms for this variant (e.g. linux/amd64)"`
 }
 
 type ImageDefinitionConfig struct {
@@ -31,6 +32,7 @@ type ImageDefinitionConfig struct {
 	BuildArgs BuildArgs       `yaml:"build_args" json:"build_args,omitempty" jsonschema:"Build args to add for this image"`
 	Secrets   Secrets         `yaml:"secrets" json:"secrets,omitempty" jsonschema:"Secrets to resolve for this image"`
 	DependsOn []string        `yaml:"depends_on" json:"depends_on,omitempty" jsonschema:"Names of other images in this project that must be built before this image"`
+	Platforms []string        `yaml:"platforms,omitempty" json:"platforms,omitempty" jsonschema:"Target platforms for this image (e.g. linux/amd64)"`
 }
 
 type BuildKitConfig struct {
@@ -59,7 +61,8 @@ type RegistryConfig struct {
 }
 
 type HiveProjectConfig struct {
-	BuildKit *BuildKitConfig `yaml:"buildkit,omitempty" json:"buildkit,omitempty" jsonschema:"BuildKit daemon configuration"`
-	Cache    *CacheConfig    `yaml:"cache,omitempty" json:"cache,omitempty" jsonschema:"Build cache configuration"`
-	Registry *RegistryConfig `yaml:"registry,omitempty" json:"registry,omitempty" jsonschema:"Container registry configuration"`
+	BuildKit  *BuildKitConfig `yaml:"buildkit,omitempty" json:"buildkit,omitempty" jsonschema:"BuildKit daemon configuration"`
+	Cache     *CacheConfig    `yaml:"cache,omitempty" json:"cache,omitempty" jsonschema:"Build cache configuration"`
+	Registry  *RegistryConfig `yaml:"registry,omitempty" json:"registry,omitempty" jsonschema:"Container registry configuration"`
+	Platforms []string        `yaml:"platforms,omitempty" json:"platforms,omitempty" jsonschema:"Default target platforms for all images (e.g. linux/amd64)"`
 }
