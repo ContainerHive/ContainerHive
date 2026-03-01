@@ -15,4 +15,6 @@ cache:
   use_path_style: true
 
 registry:
-  address: localhost:8500
+  # TODO: Support pull and push different or fix up local setup
+  #address: registry:5000
+   address: localhost:8500
