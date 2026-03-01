@@ -13,14 +13,6 @@ import (
 	"golang.org/x/sync/errgroup"
 )
 
-func writeAlias(rootPath, tag, tagAlias string) error {
-	tagAliasFile := filepath.Join(rootPath, tagAlias)
-	if err := os.WriteFile(tagAliasFile, []byte(tag), 0644); err != nil {
-		return errors.Join(errors.New("failed to write tag alias"), err)
-	}
-	return nil
-}
-
 // ResolveAliases computes the alias map for a set of tags, ensuring each alias
 // points to the highest version that claims it.
 func ResolveAliases(tags []string) map[string]string {
@@ -46,25 +38,6 @@ func ResolveAliases(tags []string) map[string]string {
 }
 
 func processImagesForName(ctx context.Context, rootPath string, images []*model.Image) error {
-	// Collect all tags (including variant tags) to resolve aliases with highest version
-	var allTags []string
-	for _, imageDef := range images {
-		for tag := range imageDef.Tags {
-			allTags = append(allTags, tag)
-			for _, variantDef := range imageDef.Variants {
-				allTags = append(allTags, tag+variantDef.TagSuffix)
-			}
-		}
-	}
-
-	// Write aliases using the highest version per alias
-	aliases := ResolveAliases(allTags)
-	for alias, tag := range aliases {
-		if err := writeAlias(rootPath, tag, alias); err != nil {
-			return err
-		}
-	}
-
 	// Build tag and variant directories in parallel
 	eg, _ := errgroup.WithContext(ctx)
 	for _, imageDef := range images {
