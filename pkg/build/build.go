@@ -32,6 +32,12 @@ type BuildOpts struct {
 	// Dockerfile is the relative path to the Dockerfile within ContextDir.
 	// Defaults to "Dockerfile" if empty.
 	Dockerfile string
+
+	// RegistryRef is the full image reference for direct registry push
+	// (e.g. "localhost:8500/ubuntu:22.04.linux-amd64").
+	RegistryRef string
+	// RegistryInsecure allows pushing over HTTP.
+	RegistryInsecure bool
 }
 
 // NewClient connects to a BuildKit daemon at the given endpoint.
@@ -69,12 +75,14 @@ func (c *Client) Build(ctx context.Context, opts *BuildOpts, w io.Writer) error 
 	statusHandler := newProgressHandler(w)
 
 	return c.inner.Build(ctx, &buildkit.BuildOpts{
-		ImageName: opts.ImageName,
-		Platform:  opts.Platform,
-		TarFile:   opts.TarFile,
-		BuildArgs: opts.BuildArgs,
-		Secrets:   opts.Secrets,
-		Cache:     opts.Cache,
+		ImageName:        opts.ImageName,
+		Platform:         opts.Platform,
+		TarFile:          opts.TarFile,
+		BuildArgs:        opts.BuildArgs,
+		Secrets:          opts.Secrets,
+		Cache:            opts.Cache,
+		RegistryRef:      opts.RegistryRef,
+		RegistryInsecure: opts.RegistryInsecure,
 		BuildContext: &build_context.DockerfileBuildContext{
 			Root:       opts.ContextDir,
 			Dockerfile: opts.Dockerfile,
