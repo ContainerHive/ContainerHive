@@ -5,7 +5,7 @@ go 1.25.6
 require (
 	github.com/GoogleContainerTools/container-structure-test v1.22.1
 	github.com/anchore/syft v1.41.2
-	github.com/docker/cli v29.1.5+incompatible
+	github.com/docker/cli v29.2.1+incompatible
 	github.com/docker/docker v28.5.2+incompatible
 	github.com/google/go-cmp v0.7.0
 	github.com/google/go-containerregistry v0.20.7
