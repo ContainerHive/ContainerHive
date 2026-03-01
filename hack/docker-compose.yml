@@ -1,6 +1,6 @@
 services:
   garage:
-    image: dxflrs/garage:v2.1.0
+    image: dxflrs/garage:v2.2.0
     volumes:
       - garage-meta:/var/lib/garage/meta
       - garage-data:/var/lib/garage/data
