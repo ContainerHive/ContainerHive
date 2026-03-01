@@ -53,14 +53,10 @@ func buildCmd() *cli.Command {
 			log.Printf("Build order: %v", buildOrder.Order())
 
 			// Connect to BuildKit (BUILDKIT_HOST env > hive.yml > default)
-			buildkitAddr := "tcp://127.0.0.1:8502"
+			buildkitAddr := ""
 			if project.Config.BuildKit != nil && project.Config.BuildKit.Address != "" {
 				buildkitAddr = project.Config.BuildKit.Address
 			}
-			if envAddr := os.Getenv("BUILDKIT_HOST"); envAddr != "" {
-				buildkitAddr = envAddr
-			}
-			log.Printf("Connecting to BuildKit at %s...", buildkitAddr)
 			bkClient, err := build.NewClient(ctx, buildkitAddr)
 			if err != nil {
 				return fmt.Errorf("failed to connect to BuildKit at %s: %w", buildkitAddr, err)
