@@ -150,45 +150,63 @@ func buildWithoutDeps(ctx context.Context, client *Client, opts *ProjectBuildOpt
 	for _, images := range opts.Project.ImagesByName {
 		for _, imageDef := range images {
 			for tagName := range imageDef.Tags {
-				if !matchesFilters(opts.Filters, imageDef.Name, tagName) {
-					continue
+				if matchesFilters(opts.Filters, imageDef.Name, tagName) {
+					platforms := platform.Resolve(opts.Project.Config.Platforms, imageDef.Platforms, nil)
+					for _, platformStr := range platforms {
+						if err := buildNoDeps(ctx, client, opts, imageDef.Name, tagName, platformStr); err != nil {
+							return err
+						}
+					}
 				}
 
-				dockerfilePath := filepath.Join(opts.DistPath, imageDef.Name, tagName, "Dockerfile")
-				if _, err := os.Stat(dockerfilePath); os.IsNotExist(err) {
-					log.Printf("Warning: Dockerfile not found for %s:%s at %s", imageDef.Name, tagName, dockerfilePath)
-					continue
-				}
-
-				platforms := platform.Resolve(opts.Project.Config.Platforms, imageDef.Platforms, nil)
-				for _, platformStr := range platforms {
-					imageTag := fmt.Sprintf("%s:%s", imageDef.Name, tagName)
-					tf := TarFilePath(opts.DistPath, imageDef.Name, tagName, platformStr)
-
-					if err := os.MkdirAll(filepath.Dir(tf), 0755); err != nil {
-						return fmt.Errorf("failed to create platform dir for %s: %w", imageTag, err)
+				for _, variantDef := range imageDef.Variants {
+					variantTag := tagName + variantDef.TagSuffix
+					if !matchesFilters(opts.Filters, imageDef.Name, variantTag) {
+						continue
 					}
-
-					err := client.Build(ctx, &BuildOpts{
-						ImageName:        imageTag,
-						Platform:         platformStr,
-						TarFile:          tf,
-						Cache:            opts.Cache,
-						ContextDir:       filepath.Dir(dockerfilePath),
-						RegistryRef:      opts.registryRef(imageDef.Name, tagName, platformStr),
-						RegistryInsecure: opts.registryInsecure(),
-					}, opts.ProgressOut)
-					if err != nil {
-						return fmt.Errorf("build failed for %s (%s): %w", imageTag, platformStr, err)
-					}
-					log.Printf("Built %s [%s] -> %s", imageTag, platformStr, tf)
-
-					if opts.OnBuild != nil {
-						opts.OnBuild(imageTag, tf)
+					platforms := platform.Resolve(opts.Project.Config.Platforms, imageDef.Platforms, variantDef.Platforms)
+					for _, platformStr := range platforms {
+						if err := buildNoDeps(ctx, client, opts, imageDef.Name, variantTag, platformStr); err != nil {
+							return err
+						}
 					}
 				}
 			}
 		}
+	}
+	return nil
+}
+
+func buildNoDeps(ctx context.Context, client *Client, opts *ProjectBuildOpts, imageName, tagName, platformStr string) error {
+	dockerfilePath := filepath.Join(opts.DistPath, imageName, tagName, "Dockerfile")
+	if _, err := os.Stat(dockerfilePath); os.IsNotExist(err) {
+		log.Printf("Warning: Dockerfile not found for %s:%s at %s", imageName, tagName, dockerfilePath)
+		return nil
+	}
+
+	imageTag := fmt.Sprintf("%s:%s", imageName, tagName)
+	tf := TarFilePath(opts.DistPath, imageName, tagName, platformStr)
+
+	if err := os.MkdirAll(filepath.Dir(tf), 0755); err != nil {
+		return fmt.Errorf("failed to create platform dir for %s: %w", imageTag, err)
+	}
+
+	err := client.Build(ctx, &BuildOpts{
+		ImageName:        imageTag,
+		Platform:         platformStr,
+		TarFile:          tf,
+		Cache:            opts.Cache,
+		ContextDir:       filepath.Dir(dockerfilePath),
+		RegistryRef:      opts.registryRef(imageName, tagName, platformStr),
+		RegistryInsecure: opts.registryInsecure(),
+	}, opts.ProgressOut)
+	if err != nil {
+		return fmt.Errorf("build failed for %s (%s): %w", imageTag, platformStr, err)
+	}
+	log.Printf("Built %s [%s] -> %s", imageTag, platformStr, tf)
+
+	if opts.OnBuild != nil {
+		opts.OnBuild(imageTag, tf)
 	}
 	return nil
 }
