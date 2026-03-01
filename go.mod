@@ -16,7 +16,7 @@ require (
 	github.com/urfave/cli/v3 v3.7.0
 	golang.org/x/sync v0.19.0
 	gopkg.in/yaml.v3 v3.0.1
-	modernc.org/sqlite v1.44.3
+	modernc.org/sqlite v1.46.1
 	zotregistry.dev/zot/v2 v2.1.14
 )
 
