@@ -3,6 +3,12 @@ resolutions:
     - message: "GoMod failed to resolve dependencies.*"
       reason: "BUILD_TOOL_ISSUE"
       comment: "Go dependency resolution fails in ORT Docker container due to network connectivity issues"
+    - message: "IOException: Could not resolve provenance for package.*HTTP request got response 404.*"
+      reason: "SCANNER_ISSUE"
+      comment: "Go proxy returns 404 for source artifacts of packages with uppercase letters in their path"
+    - message: "IOException: Could not resolve (provenance|revision) for package 'Go::github.com/aquasecurity/trivy.*"
+      reason: "SCANNER_ISSUE"
+      comment: "Git revision referenced by Go module metadata no longer exists in the upstream repository"
 
 excludes:
   paths:
