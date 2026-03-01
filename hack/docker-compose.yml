@@ -37,7 +37,7 @@ services:
     restart: "no"
 
   registry:
-    image: registry:2
+    image: registry:3
     ports:
       - "127.0.0.1:8500:5000"
     volumes:
