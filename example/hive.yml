@@ -1,0 +1,18 @@
+buildkit:
+  address: tcp://127.0.0.1:8502
+
+platforms:
+  - linux/amd64
+  - linux/arm64
+
+cache:
+  type: s3
+  endpoint: http://garage:3900
+  bucket: buildkit-cache
+  region: garage
+  access_key_id: GK31337cafe000000000000000
+  secret_access_key: 1337cafe0000000000000000000000000000000000000000000000000000dead
+  use_path_style: true
+
+registry:
+  address: localhost:8500
