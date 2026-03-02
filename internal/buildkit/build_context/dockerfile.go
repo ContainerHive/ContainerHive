@@ -3,9 +3,7 @@ package build_context
 import (
 	"context"
 	"errors"
-	"os"
 	"path/filepath"
-	"strings"
 
 	"github.com/moby/buildkit/frontend/dockerfile/builder"
 	gatewayClient "github.com/moby/buildkit/frontend/gateway/client"
@@ -13,19 +11,6 @@ import (
 )
 
 var defaultDockerfile = "Dockerfile"
-
-const hivePrefix = "__hive__/"
-
-// RewriteHiveRefs replaces all __hive__/ prefixes in a Dockerfile with the actual registry address.
-func RewriteHiveRefs(src, target string, registryAddress string) error {
-	content, err := os.ReadFile(src)
-	if err != nil {
-		return errors.Join(errors.New("failed to read Dockerfile for rewriting"), err)
-	}
-
-	replaced := strings.ReplaceAll(string(content), hivePrefix, registryAddress+"/")
-	return os.WriteFile(target, []byte(replaced), 0644)
-}
 
 type DockerfileBuildContext struct {
 	Root       string

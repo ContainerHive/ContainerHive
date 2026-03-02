@@ -7,6 +7,7 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/containerd/containerd/v2/core/content"
 	"github.com/docker/cli/cli/config"
 	"github.com/moby/buildkit/client"
 	"github.com/moby/buildkit/session"
@@ -37,6 +38,13 @@ type BuildOpts struct {
 	RegistryRef string
 	// RegistryInsecure allows pushing over HTTP (for local registries).
 	RegistryInsecure bool
+
+	// OCIStores maps store IDs to content stores for OCI layout named contexts.
+	// Used to resolve inter-image dependencies without a registry.
+	OCIStores map[string]content.Store
+	// NamedContexts maps frontend attribute keys (e.g. "context:__hive__/ubuntu:22.04")
+	// to OCI layout references (e.g. "oci-layout:hive-ubuntu-22.04@sha256:...").
+	NamedContexts map[string]string
 }
 
 func NewClient(ctx context.Context, endpoint string) (*Client, error) {
@@ -92,6 +100,7 @@ func (c *Client) Build(ctx context.Context, opts *BuildOpts, statusUpdateHandler
 
 	utils.MergeMapWithPrefix("label:", frontendAttrs, opts.Labels)
 	utils.MergeMapWithPrefix("build-arg:", frontendAttrs, opts.BuildArgs)
+	utils.MergeMap(frontendAttrs, opts.NamedContexts)
 
 	dockerConfig := config.LoadDefaultConfigFile(os.Stderr)
 	solveOpts := client.SolveOpt{
@@ -101,10 +110,11 @@ func (c *Client) Build(ctx context.Context, opts *BuildOpts, statusUpdateHandler
 			}),
 			secretsprovider.FromMap(opts.Secrets),
 		},
-		CacheExports: buildCache,
-		CacheImports: buildCache,
-		Exports: buildExports(opts),
+		CacheExports:  buildCache,
+		CacheImports:  buildCache,
+		Exports:       buildExports(opts),
 		LocalMounts:   localMounts,
+		OCIStores:     opts.OCIStores,
 		Frontend:      opts.BuildContext.FrontendType(),
 		FrontendAttrs: frontendAttrs,
 	}

@@ -217,13 +217,15 @@ func buildTag(ctx context.Context, client *Client, opts *ProjectBuildOpts, image
 		return fmt.Errorf("Dockerfile not found for %s:%s at %s", imageDef.Name, tagName, dockerfilePath)
 	}
 
-	patchedPath, cleanup, err := PatchHiveRefs(dockerfilePath, opts.Registry.Address())
+	hiveDeps, err := ResolveHiveDeps(dockerfilePath, opts.DistPath, platformStr)
 	if err != nil {
-		return fmt.Errorf("failed to rewrite hive refs for %s:%s: %w", imageDef.Name, tagName, err)
+		return fmt.Errorf("failed to resolve hive deps for %s:%s: %w", imageDef.Name, tagName, err)
 	}
-	defer cleanup()
+	if hiveDeps != nil {
+		defer hiveDeps.Cleanup()
+	}
 
-	root, _ := filepath.Abs(filepath.Dir(patchedPath))
+	root, _ := filepath.Abs(filepath.Dir(dockerfilePath))
 	imageTag := fmt.Sprintf("%s:%s", imageDef.Name, tagName)
 	tf := TarFilePath(opts.DistPath, imageDef.Name, tagName, platformStr)
 
@@ -236,18 +238,24 @@ func buildTag(ctx context.Context, client *Client, opts *ProjectBuildOpts, image
 		return fmt.Errorf("failed to resolve build args for %s:%s: %w", imageDef.Name, tagName, err)
 	}
 
-	err = client.Build(ctx, &BuildOpts{
+	buildOpts := &BuildOpts{
 		ImageName:        imageTag,
 		Platform:         platformStr,
 		TarFile:          tf,
 		Cache:            opts.Cache,
 		ContextDir:       root,
-		Dockerfile:       "Dockerfile.patched",
 		BuildArgs:        config.BuildArgs,
 		Secrets:          config.Secrets,
 		RegistryRef:      opts.registryRef(imageDef.Name, tagName, platformStr),
 		RegistryInsecure: opts.registryInsecure(),
-	}, opts.ProgressOut)
+	}
+	if hiveDeps != nil {
+		buildOpts.OCIStores = hiveDeps.OCIStores
+		buildOpts.NamedContexts = hiveDeps.NamedContexts
+		buildOpts.Dockerfile = filepath.Base(hiveDeps.Dockerfile)
+	}
+
+	err = client.Build(ctx, buildOpts, opts.ProgressOut)
 	if err != nil {
 		log.Printf("Warning: Build failed for %s [%s]: %v", imageTag, platformStr, err)
 		return nil
@@ -268,13 +276,15 @@ func buildVariant(ctx context.Context, client *Client, opts *ProjectBuildOpts, i
 		return nil
 	}
 
-	patchedPath, cleanup, err := PatchHiveRefs(variantDockerfilePath, opts.Registry.Address())
+	hiveDeps, err := ResolveHiveDeps(variantDockerfilePath, opts.DistPath, platformStr)
 	if err != nil {
-		return fmt.Errorf("failed to rewrite hive refs for variant %s:%s:%s: %w", imageDef.Name, tagName, variantName, err)
+		return fmt.Errorf("failed to resolve hive deps for variant %s:%s:%s: %w", imageDef.Name, tagName, variantName, err)
 	}
-	defer cleanup()
+	if hiveDeps != nil {
+		defer hiveDeps.Cleanup()
+	}
 
-	root, _ := filepath.Abs(filepath.Dir(patchedPath))
+	root, _ := filepath.Abs(filepath.Dir(variantDockerfilePath))
 	variantTag := fmt.Sprintf("%s:%s%s", imageDef.Name, tagName, variantDef.TagSuffix)
 	tf := TarFilePath(opts.DistPath, imageDef.Name, variantTagName, platformStr)
 
@@ -287,18 +297,24 @@ func buildVariant(ctx context.Context, client *Client, opts *ProjectBuildOpts, i
 		return fmt.Errorf("failed to resolve build args for variant %s:%s:%s: %w", imageDef.Name, tagName, variantName, err)
 	}
 
-	err = client.Build(ctx, &BuildOpts{
+	buildOpts := &BuildOpts{
 		ImageName:        variantTag,
 		Platform:         platformStr,
 		TarFile:          tf,
 		Cache:            opts.Cache,
 		ContextDir:       root,
-		Dockerfile:       "Dockerfile.patched",
 		BuildArgs:        config.BuildArgs,
 		Secrets:          config.Secrets,
 		RegistryRef:      opts.registryRef(imageDef.Name, variantTagName, platformStr),
 		RegistryInsecure: opts.registryInsecure(),
-	}, opts.ProgressOut)
+	}
+	if hiveDeps != nil {
+		buildOpts.OCIStores = hiveDeps.OCIStores
+		buildOpts.NamedContexts = hiveDeps.NamedContexts
+		buildOpts.Dockerfile = filepath.Base(hiveDeps.Dockerfile)
+	}
+
+	err = client.Build(ctx, buildOpts, opts.ProgressOut)
 	if err != nil {
 		log.Printf("Warning: Build failed for variant %s [%s]: %v", variantTag, platformStr, err)
 		return nil

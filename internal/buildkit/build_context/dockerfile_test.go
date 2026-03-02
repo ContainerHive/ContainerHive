@@ -3,7 +3,6 @@ package build_context
 import (
 	"os"
 	"path/filepath"
-	"strings"
 	"testing"
 )
 
@@ -148,60 +147,4 @@ func TestDockerfileBuildContext_ToLocalMounts(t *testing.T) {
 			}
 		})
 	}
-}
-
-func TestRewriteHiveRefs(t *testing.T) {
-	t.Run("replaces __hive__/ with registry address", func(t *testing.T) {
-		dir := t.TempDir()
-		df := filepath.Join(dir, "Dockerfile")
-		os.WriteFile(df, []byte("FROM __hive__/ubuntu:22.04\nRUN echo hello"), 0644)
-
-		err := RewriteHiveRefs(df, df, "localhost:5123")
-		if err != nil {
-			t.Fatalf("unexpected error: %v", err)
-		}
-
-		got, _ := os.ReadFile(df)
-		expected := "FROM localhost:5123/ubuntu:22.04\nRUN echo hello"
-		if string(got) != expected {
-			t.Errorf("expected %q, got %q", expected, string(got))
-		}
-	})
-
-	t.Run("replaces multiple __hive__/ references", func(t *testing.T) {
-		dir := t.TempDir()
-		df := filepath.Join(dir, "Dockerfile")
-		content := "FROM __hive__/ubuntu:22.04 AS base\nFROM __hive__/node:20 AS builder\nRUN echo hello"
-		os.WriteFile(df, []byte(content), 0644)
-
-		err := RewriteHiveRefs(df, df, "registry.example.com")
-		if err != nil {
-			t.Fatalf("unexpected error: %v", err)
-		}
-
-		got, _ := os.ReadFile(df)
-		if !strings.Contains(string(got), "FROM registry.example.com/ubuntu:22.04") {
-			t.Errorf("expected replaced ubuntu ref, got %q", string(got))
-		}
-		if !strings.Contains(string(got), "FROM registry.example.com/node:20") {
-			t.Errorf("expected replaced node ref, got %q", string(got))
-		}
-	})
-
-	t.Run("no-op when no __hive__/ references", func(t *testing.T) {
-		dir := t.TempDir()
-		df := filepath.Join(dir, "Dockerfile")
-		content := "FROM ubuntu:22.04\nRUN echo hello"
-		os.WriteFile(df, []byte(content), 0644)
-
-		err := RewriteHiveRefs(df, df, "localhost:5123")
-		if err != nil {
-			t.Fatalf("unexpected error: %v", err)
-		}
-
-		got, _ := os.ReadFile(df)
-		if string(got) != content {
-			t.Errorf("expected unchanged content, got %q", string(got))
-		}
-	})
 }

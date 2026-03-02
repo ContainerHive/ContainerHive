@@ -6,6 +6,7 @@ import (
 	"io"
 	"os"
 
+	"github.com/containerd/containerd/v2/core/content"
 	"github.com/moby/buildkit/client"
 	"github.com/moby/buildkit/util/progress/progressui"
 	"github.com/timo-reymann/ContainerHive/internal/buildkit"
@@ -38,6 +39,11 @@ type BuildOpts struct {
 	RegistryRef string
 	// RegistryInsecure allows pushing over HTTP.
 	RegistryInsecure bool
+
+	// OCIStores maps store IDs to content stores for OCI layout named contexts.
+	OCIStores map[string]content.Store
+	// NamedContexts maps frontend attribute keys to OCI layout references.
+	NamedContexts map[string]string
 }
 
 // NewClient connects to a BuildKit daemon at the given endpoint.
@@ -83,6 +89,8 @@ func (c *Client) Build(ctx context.Context, opts *BuildOpts, w io.Writer) error 
 		Cache:            opts.Cache,
 		RegistryRef:      opts.RegistryRef,
 		RegistryInsecure: opts.RegistryInsecure,
+		OCIStores:        opts.OCIStores,
+		NamedContexts:    opts.NamedContexts,
 		BuildContext: &build_context.DockerfileBuildContext{
 			Root:       opts.ContextDir,
 			Dockerfile: opts.Dockerfile,

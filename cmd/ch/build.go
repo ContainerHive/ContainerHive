@@ -90,7 +90,11 @@ func buildCmd() *cli.Command {
 				BuildID:     buildID,
 			}
 
-			if useRegistry || buildOrder.HasDependencies() {
+			if buildOrder.HasDependencies() {
+				log.Println("Inter-image dependencies detected, using OCI layout named contexts")
+			}
+
+			if useRegistry {
 				reg, err := registry.NewRegistry(filepath.Join(distPath, ".registry"), project.Config.Registry)
 				if err != nil {
 					return fmt.Errorf("failed to create registry: %w", err)
@@ -102,14 +106,10 @@ func buildCmd() *cli.Command {
 				log.Printf("Registry started: local=%v address=%s", reg.IsLocal(), reg.Address())
 
 				buildOpts.Registry = reg
-				if err := build.BuildProject(ctx, bkClient, buildOpts); err != nil {
-					return fmt.Errorf("build failed: %w", err)
-				}
-			} else {
-				log.Println("No inter-image dependencies, building without registry")
-				if err := build.BuildProject(ctx, bkClient, buildOpts); err != nil {
-					return fmt.Errorf("build failed: %w", err)
-				}
+			}
+
+			if err := build.BuildProject(ctx, bkClient, buildOpts); err != nil {
+				return fmt.Errorf("build failed: %w", err)
 			}
 
 			return nil

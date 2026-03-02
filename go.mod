@@ -5,11 +5,14 @@ go 1.25.6
 require (
 	github.com/GoogleContainerTools/container-structure-test v1.22.1
 	github.com/anchore/syft v1.42.1
+	github.com/containerd/containerd/v2 v2.2.1
 	github.com/docker/cli v29.2.1+incompatible
 	github.com/docker/docker v28.5.2+incompatible
 	github.com/google/go-cmp v0.7.0
 	github.com/google/go-containerregistry v0.21.0
 	github.com/moby/buildkit v0.27.1
+	github.com/opencontainers/go-digest v1.0.0
+	github.com/opencontainers/image-spec v1.1.1
 	github.com/stretchr/testify v1.11.1
 	github.com/testcontainers/testcontainers-go v0.40.0
 	github.com/tonistiigi/fsutil v0.0.0-20251211185533-a2aa163d723f
@@ -160,7 +163,6 @@ require (
 	github.com/containerd/console v1.0.5 // indirect
 	github.com/containerd/containerd v1.7.29 // indirect
 	github.com/containerd/containerd/api v1.10.0 // indirect
-	github.com/containerd/containerd/v2 v2.2.1 // indirect
 	github.com/containerd/continuity v0.4.5 // indirect
 	github.com/containerd/errdefs v1.0.0 // indirect
 	github.com/containerd/errdefs/pkg v0.3.0 // indirect
@@ -273,7 +275,6 @@ require (
 	github.com/google/go-github/v62 v62.0.0 // indirect
 	github.com/google/go-github/v73 v73.0.0 // indirect
 	github.com/google/go-querystring v1.1.0 // indirect
-	github.com/google/jsonschema-go v0.4.2 // indirect
 	github.com/google/licensecheck v0.3.1 // indirect
 	github.com/google/licenseclassifier/v2 v2.0.0 // indirect
 	github.com/google/pprof v0.0.0-20250820193118-f64d9cf942d6 // indirect
@@ -404,8 +405,6 @@ require (
 	github.com/olekukonko/tablewriter v1.1.3 // indirect
 	github.com/open-policy-agent/opa v1.10.1 // indirect
 	github.com/opencontainers/distribution-spec/specs-go v0.0.0-20250123160558-a139cc423184 // indirect
-	github.com/opencontainers/go-digest v1.0.0 // indirect
-	github.com/opencontainers/image-spec v1.1.1 // indirect
 	github.com/opencontainers/runtime-spec v1.3.0 // indirect
 	github.com/opencontainers/selinux v1.13.1 // indirect
 	github.com/openvex/discovery v0.1.1-0.20240802171711-7c54efc57553 // indirect

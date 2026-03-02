@@ -17,4 +17,4 @@ cache:
 registry:
   # TODO: Support pull and push different or fix up local setup
   #address: registry:5000
-   address: localhost:8500
+  address: localhost:8500

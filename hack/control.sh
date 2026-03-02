@@ -1,5 +1,7 @@
 #!/bin/bash
 
+cd $(dirname $0)
+
 # Get the host IP address
 HOST_IP=$(ipconfig getifaddr en0)
 
@@ -10,4 +12,4 @@ echo "Host IP: $HOST_IP"
 export HOST_IP
 
 # Start the Docker Compose services
-docker-compose up
+docker-compose $@
