@@ -67,6 +67,16 @@
             "additionalProperties": {
               "type": "string"
             }
+          },
+          "platforms": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "type": "string"
+            },
+            "description": "Target platforms for this variant (e.g. linux/amd64)"
           }
         },
         "required": [
@@ -121,6 +131,16 @@
         "type": "string"
       },
       "description": "Names of other images in this project that must be built before this image"
+    },
+    "platforms": {
+      "type": [
+        "null",
+        "array"
+      ],
+      "items": {
+        "type": "string"
+      },
+      "description": "Target platforms for this image (e.g. linux/amd64)"
     }
   },
   "$id": "https://container-hive.timo-reymann.de/schemas/image.schema.json",
