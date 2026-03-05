@@ -112,6 +112,7 @@ func processImageConfig(projectRoot, configFilePath string) (*model.Image, error
 		Variants:            indexedVariants,
 		Tags:                processTags(parsedImageDef),
 		DependsOn:           parsedImageDef.DependsOn,
+		Platforms:           parsedImageDef.Platforms,
 	}, nil
 }
 
@@ -152,6 +153,7 @@ func processVariants(imageDef *model.ImageDefinitionConfig, imageRoot string) (m
 			Versions:            v.Versions,
 			BuildArgs:           v.BuildArgs,
 			RootFSDir:           variantFsRoot,
+			Platforms:           v.Platforms,
 		}
 
 		indexedVariants[v.Name] = variant

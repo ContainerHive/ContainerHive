@@ -68,6 +68,8 @@ services:
         cat > /config/buildkitd.toml <<EOF
         [registry."$$HOST_IP:5051"]
           http = true
+        [registry."registry:5000"]
+          http = true
         EOF
     restart: "no"
 

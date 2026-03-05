@@ -2,7 +2,10 @@ package registry
 
 import (
 	"context"
+	"fmt"
 	"os"
+
+	"github.com/timo-reymann/ContainerHive/pkg/model"
 )
 
 // Registry manages an OCI registry for staging local base images.
@@ -16,17 +19,23 @@ type Registry interface {
 
 // NewRegistry creates a Registry based on the environment.
 // In CI (CI env var set), it returns a remote registry passthrough.
+// The registry address is resolved with the following precedence:
+//  1. CONTAINER_HIVE_REGISTRY env var
+//  2. registry.address from hive.yml (passed via registryConfig)
+//
 // Otherwise, it returns an embedded zot registry for local builds.
 // The dataDir parameter sets persistent storage for the local registry;
 // if empty, a temporary directory is used.
-func NewRegistry(dataDir string) Registry {
+func NewRegistry(dataDir string, registryConfig *model.RegistryConfig) (Registry, error) {
 	if ci := os.Getenv("CI"); ci != "" {
 		remoteAddr := os.Getenv("CONTAINER_HIVE_REGISTRY")
-		if remoteAddr == "" {
-			// TODO Use actual config value from tbd global configuration file
-			remoteAddr = "docker.io"
+		if remoteAddr == "" && registryConfig != nil && registryConfig.Address != "" {
+			remoteAddr = registryConfig.Address
 		}
-		return NewRemoteRegistry(remoteAddr)
+		if remoteAddr == "" {
+			return nil, fmt.Errorf("CI detected but no registry configured: set CONTAINER_HIVE_REGISTRY env var or registry.address in hive.yml")
+		}
+		return NewRemoteRegistry(remoteAddr), nil
 	}
-	return NewZotRegistry(dataDir)
+	return NewZotRegistry(dataDir), nil
 }

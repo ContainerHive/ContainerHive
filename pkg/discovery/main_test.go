@@ -29,6 +29,9 @@ func TestDiscoverProject(t *testing.T) {
 			expected: &model.ContainerHiveProject{
 				RootDir:        mustAbs(t, "../testdata/simple-project"),
 				ConfigFilePath: mustAbs(t, "../testdata/simple-project/hive.yml"),
+				Config: model.HiveProjectConfig{
+					Platforms: []string{"linux/amd64"},
+				},
 				ImagesByIdentifier: map[string]*model.Image{
 					"dotnet/8": {
 						BuildEntryPointPath: mustAbs(t, "../testdata/simple-project/images/dotnet/8/Dockerfile"),

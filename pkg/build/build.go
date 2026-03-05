@@ -6,6 +6,7 @@ import (
 	"io"
 	"os"
 
+	"github.com/containerd/containerd/v2/core/content"
 	"github.com/moby/buildkit/client"
 	"github.com/moby/buildkit/util/progress/progressui"
 	"github.com/timo-reymann/ContainerHive/internal/buildkit"
@@ -32,6 +33,17 @@ type BuildOpts struct {
 	// Dockerfile is the relative path to the Dockerfile within ContextDir.
 	// Defaults to "Dockerfile" if empty.
 	Dockerfile string
+
+	// RegistryRef is the full image reference for direct registry push
+	// (e.g. "localhost:8500/ubuntu:22.04.linux-amd64").
+	RegistryRef string
+	// RegistryInsecure allows pushing over HTTP.
+	RegistryInsecure bool
+
+	// OCIStores maps store IDs to content stores for OCI layout named contexts.
+	OCIStores map[string]content.Store
+	// NamedContexts maps frontend attribute keys to OCI layout references.
+	NamedContexts map[string]string
 }
 
 // NewClient connects to a BuildKit daemon at the given endpoint.
@@ -69,12 +81,16 @@ func (c *Client) Build(ctx context.Context, opts *BuildOpts, w io.Writer) error 
 	statusHandler := newProgressHandler(w)
 
 	return c.inner.Build(ctx, &buildkit.BuildOpts{
-		ImageName: opts.ImageName,
-		Platform:  opts.Platform,
-		TarFile:   opts.TarFile,
-		BuildArgs: opts.BuildArgs,
-		Secrets:   opts.Secrets,
-		Cache:     opts.Cache,
+		ImageName:        opts.ImageName,
+		Platform:         opts.Platform,
+		TarFile:          opts.TarFile,
+		BuildArgs:        opts.BuildArgs,
+		Secrets:          opts.Secrets,
+		Cache:            opts.Cache,
+		RegistryRef:      opts.RegistryRef,
+		RegistryInsecure: opts.RegistryInsecure,
+		OCIStores:        opts.OCIStores,
+		NamedContexts:    opts.NamedContexts,
 		BuildContext: &build_context.DockerfileBuildContext{
 			Root:       opts.ContextDir,
 			Dockerfile: opts.Dockerfile,

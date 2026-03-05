@@ -4,11 +4,17 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"os"
+
+	v1 "github.com/google/go-containerregistry/pkg/v1"
+	"github.com/google/go-containerregistry/pkg/v1/layout"
 
 	"github.com/timo-reymann/ContainerHive/internal/gcr"
 	internalregistry "github.com/timo-reymann/ContainerHive/internal/registry"
+	"github.com/timo-reymann/ContainerHive/internal/utils"
 	"github.com/timo-reymann/ContainerHive/pkg/build"
 	"github.com/timo-reymann/ContainerHive/pkg/model"
+	"github.com/timo-reymann/ContainerHive/pkg/platform"
 	"github.com/timo-reymann/ContainerHive/pkg/rendering"
 )
 
@@ -20,8 +26,13 @@ type Registry struct {
 // NewRegistry creates a Registry based on the environment (local zot or remote).
 // The dataDir parameter sets persistent storage for the local registry;
 // if empty, a temporary directory is used.
-func NewRegistry(dataDir string) *Registry {
-	return &Registry{inner: internalregistry.NewRegistry(dataDir)}
+// The registryConfig is read from hive.yml and provides the registry address for CI pushes.
+func NewRegistry(dataDir string, registryConfig *model.RegistryConfig) (*Registry, error) {
+	inner, err := internalregistry.NewRegistry(dataDir, registryConfig)
+	if err != nil {
+		return nil, err
+	}
+	return &Registry{inner: inner}, nil
 }
 
 // Start initializes the registry.
@@ -61,10 +72,125 @@ func collectAllTags(imageDef *model.Image) []string {
 	return allTags
 }
 
+// loadImageFromTar extracts an OCI tar and returns the first image from the
+// layout. The caller must call the returned cleanup function after the image
+// is no longer needed (v1.Image reads blobs lazily from disk).
+func loadImageFromTar(ociTarPath string) (v1.Image, func(), error) {
+	tmpDir, err := os.MkdirTemp("", "oci-manifest-*")
+	if err != nil {
+		return nil, nil, err
+	}
+
+	if err := utils.ExtractTar(ociTarPath, tmpDir); err != nil {
+		os.RemoveAll(tmpDir)
+		return nil, nil, fmt.Errorf("failed to extract tar: %w", err)
+	}
+
+	layoutPath, err := layout.FromPath(tmpDir)
+	if err != nil {
+		os.RemoveAll(tmpDir)
+		return nil, nil, fmt.Errorf("failed to read OCI layout: %w", err)
+	}
+
+	idx, err := layoutPath.ImageIndex()
+	if err != nil {
+		os.RemoveAll(tmpDir)
+		return nil, nil, err
+	}
+
+	idxManifest, err := idx.IndexManifest()
+	if err != nil {
+		os.RemoveAll(tmpDir)
+		return nil, nil, err
+	}
+
+	if len(idxManifest.Manifests) == 0 {
+		os.RemoveAll(tmpDir)
+		return nil, nil, fmt.Errorf("no manifests in OCI layout")
+	}
+
+	img, err := layoutPath.Image(idxManifest.Manifests[0].Digest)
+	if err != nil {
+		os.RemoveAll(tmpDir)
+		return nil, nil, err
+	}
+
+	return img, func() { os.RemoveAll(tmpDir) }, nil
+}
+
+// createManifestForTag creates an OCI image index (manifest list) for a single
+// tag by loading images from local OCI tars. It uses remote.WriteIndex (same
+// approach as crane) which pushes all child manifests and layers before the
+// index, ensuring they are properly stored in the registry.
+func (r *Registry) createManifestForTag(imageName, tag string, platforms []string, buildID, distPath string) error {
+	var images []gcr.PlatformImage
+	var cleanups []func()
+	defer func() {
+		for _, fn := range cleanups {
+			fn()
+		}
+	}()
+
+	for _, p := range platforms {
+		tarPath := build.TarFilePath(distPath, imageName, tag, p)
+		img, cleanup, err := loadImageFromTar(tarPath)
+		if err != nil {
+			return fmt.Errorf("failed to load image for %s:%s [%s]: %w", imageName, tag, p, err)
+		}
+		cleanups = append(cleanups, cleanup)
+		images = append(images, gcr.PlatformImage{
+			Image:    img,
+			Platform: p,
+		})
+	}
+
+	manifestTag := tag
+	if buildID != "" {
+		manifestTag += "." + buildID
+	}
+	targetRef := fmt.Sprintf("%s/%s:%s", r.Address(), imageName, manifestTag)
+
+	log.Printf("Creating manifest %s:%s from %d platform(s)", imageName, manifestTag, len(platforms))
+	return gcr.CreateManifestList(targetRef, images)
+}
+
+// CreateAllManifests creates multi-arch manifest lists for all tags of all
+// images matching the filters. Each manifest combines the platform-specific
+// images whose OCI tars are in distPath. Descriptor info is read from local
+// tars to avoid registry compatibility issues with OCI manifest GET.
+func (r *Registry) CreateAllManifests(project *model.ContainerHiveProject, filters []build.Filter, buildID, distPath string) error {
+	for _, img := range project.ImagesByIdentifier {
+		if !matchesImageFilter(filters, img.Name) {
+			continue
+		}
+
+		for tagName := range img.Tags {
+			if matchesTagFilter(filters, img.Name, tagName) {
+				platforms := platform.Resolve(project.Config.Platforms, img.Platforms, nil)
+				if err := r.createManifestForTag(img.Name, tagName, platforms, buildID, distPath); err != nil {
+					return fmt.Errorf("failed to create manifest for %s:%s: %w", img.Name, tagName, err)
+				}
+			}
+
+			for _, variantDef := range img.Variants {
+				variantTag := tagName + variantDef.TagSuffix
+				if !matchesTagFilter(filters, img.Name, variantTag) {
+					continue
+				}
+				platforms := platform.Resolve(project.Config.Platforms, img.Platforms, variantDef.Platforms)
+				if err := r.createManifestForTag(img.Name, variantTag, platforms, buildID, distPath); err != nil {
+					return fmt.Errorf("failed to create manifest for %s:%s: %w", img.Name, variantTag, err)
+				}
+			}
+		}
+	}
+	return nil
+}
+
 // retagAliases creates semantic version tag aliases in the registry for a
-// single image. If buildID is set, source and target refs are suffixed with
-// .<buildID> to match the tags used during push. Only tags matching the
-// filters are retagged.
+// single image. Aliases are retagged from the multi-arch manifest (without
+// platform suffix). If buildID is set, it is appended to match pushed tags.
+// Only tags matching the filters are retagged.
 func (r *Registry) retagAliases(imageDef *model.Image, filters []build.Filter, buildID string) error {
 	allTags := collectAllTags(imageDef)
 	aliases := rendering.ResolveAliases(allTags)
@@ -76,8 +202,8 @@ func (r *Registry) retagAliases(imageDef *model.Image, filters []build.Filter, b
 		sourceTag := tag
 		targetTag := alias
 		if buildID != "" {
-			sourceTag = tag + "." + buildID
-			targetTag = alias + "." + buildID
+			sourceTag += "." + buildID
+			targetTag += "." + buildID
 		}
 		sourceRef := fmt.Sprintf("%s/%s:%s", r.Address(), imageDef.Name, sourceTag)
 		targetRef := fmt.Sprintf("%s/%s:%s", r.Address(), imageDef.Name, targetTag)
@@ -89,9 +215,11 @@ func (r *Registry) retagAliases(imageDef *model.Image, filters []build.Filter, b
 	return nil
 }
 
-// RetagAllAliases retags aliases for all images in the project. If filters
-// is non-empty, only images matching at least one filter are processed.
-// If buildID is set, tags are suffixed with .<buildID> to match pushed tags.
+// RetagAllAliases retags aliases for all images in the project. Aliases point
+// to multi-arch manifests (created by CreateAllManifests), not to
+// platform-specific images. If filters is non-empty, only images matching at
+// least one filter are processed. If buildID is set, tags are suffixed with
+// .<buildID> to match pushed tags.
 func (r *Registry) RetagAllAliases(project *model.ContainerHiveProject, filters []build.Filter, buildID string) error {
 	for _, img := range project.ImagesByIdentifier {
 		if !matchesImageFilter(filters, img.Name) {

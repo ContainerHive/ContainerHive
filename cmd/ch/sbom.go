@@ -8,6 +8,7 @@ import (
 	"path/filepath"
 
 	"github.com/timo-reymann/ContainerHive/pkg/discovery"
+	"github.com/timo-reymann/ContainerHive/pkg/platform"
 	"github.com/timo-reymann/ContainerHive/pkg/sbom"
 	"github.com/urfave/cli/v3"
 )
@@ -17,6 +18,12 @@ func sbomCmd() *cli.Command {
 		Name:      "sbom",
 		Usage:     "Generate SBOMs for built images",
 		ArgsUsage: "[image:tag ...]",
+		Flags: []cli.Flag{
+			&cli.StringSliceFlag{
+				Name:  "platform",
+				Usage: "Target platform(s) to generate SBOMs for (e.g. linux/amd64), overrides hive.yml",
+			},
+		},
 		Action: func(ctx context.Context, cmd *cli.Command) error {
 			projectRoot := cmd.String("project")
 			filters := parseFilters(cmd.Args().Slice())
@@ -28,6 +35,10 @@ func sbomCmd() *cli.Command {
 			project, err := discovery.DiscoverProject(ctx, projectRoot)
 			if err != nil {
 				return fmt.Errorf("discovery failed: %w", err)
+			}
+
+			if cliPlatforms := cmd.StringSlice("platform"); len(cliPlatforms) > 0 {
+				project.Config.Platforms = cliPlatforms
 			}
 
 			sbomGen, err := sbom.NewGenerator()
@@ -42,26 +53,29 @@ func sbomCmd() *cli.Command {
 						continue
 					}
 
-					tagDir := filepath.Join(distPath, img.Name, tagName)
-					tarFile := filepath.Join(tagDir, "image.tar")
-					if _, err := os.Stat(tarFile); err != nil {
-						log.Printf("Skipping %s:%s — no image.tar found, please build the image first", img.Name, tagName)
-						skipped++
-						continue
-					}
+					platforms := platform.Resolve(project.Config.Platforms, img.Platforms, nil)
+					for _, platformStr := range platforms {
+						platDir := filepath.Join(distPath, img.Name, tagName, platform.Sanitize(platformStr))
+						tarFile := filepath.Join(platDir, "image.tar")
+						if _, err := os.Stat(tarFile); err != nil {
+							log.Printf("Skipping %s:%s [%s] — no image.tar found, please build the image first", img.Name, tagName, platformStr)
+							skipped++
+							continue
+						}
 
-					log.Printf("Generating SBOM for %s:%s ...", img.Name, tagName)
-					sbomData, err := sbomGen.Generate(ctx, tarFile, "spdx-json")
-					if err != nil {
-						return fmt.Errorf("SBOM generation failed for %s:%s: %w", img.Name, tagName, err)
-					}
+						log.Printf("Generating SBOM for %s:%s [%s] ...", img.Name, tagName, platformStr)
+						sbomData, err := sbomGen.Generate(ctx, tarFile, "spdx-json")
+						if err != nil {
+							return fmt.Errorf("SBOM generation failed for %s:%s [%s]: %w", img.Name, tagName, platformStr, err)
+						}
 
-					sbomPath := filepath.Join(tagDir, "sbom.spdx.json")
-					if err := os.WriteFile(sbomPath, sbomData, 0644); err != nil {
-						return fmt.Errorf("failed to write SBOM for %s:%s: %w", img.Name, tagName, err)
+						sbomPath := filepath.Join(platDir, "sbom.spdx.json")
+						if err := os.WriteFile(sbomPath, sbomData, 0644); err != nil {
+							return fmt.Errorf("failed to write SBOM for %s:%s [%s]: %w", img.Name, tagName, platformStr, err)
+						}
+						log.Printf("SBOM written: %s (%d bytes)", sbomPath, len(sbomData))
+						generated++
 					}
-					log.Printf("SBOM written: %s (%d bytes)", sbomPath, len(sbomData))
-					generated++
 				}
 			}
 

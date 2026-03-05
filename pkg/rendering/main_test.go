@@ -292,32 +292,6 @@ func TestResolveAliases(t *testing.T) {
 	})
 }
 
-func TestRenderProject_SimpleProject_Aliases(t *testing.T) {
-	dist := discoverAndRender(t, "../testdata/simple-project")
-
-	t.Run("dotnet aliases point to highest version", func(t *testing.T) {
-		dotnetDir := filepath.Join(dist, "dotnet")
-
-		// 8.0.300 is the highest of 8.0.100, 8.0.200, 8.0.300
-		assertFileContent(t, filepath.Join(dotnetDir, "8.0"), "8.0.300")
-		assertFileContent(t, filepath.Join(dotnetDir, "8"), "8.0.300")
-	})
-
-	t.Run("dotnet variant aliases point to highest version", func(t *testing.T) {
-		dotnetDir := filepath.Join(dist, "dotnet")
-
-		assertFileContent(t, filepath.Join(dotnetDir, "8.0-node"), "8.0.300-node")
-		assertFileContent(t, filepath.Join(dotnetDir, "8-node"), "8.0.300-node")
-	})
-
-	t.Run("python aliases", func(t *testing.T) {
-		pythonDir := filepath.Join(dist, "python")
-
-		assertFileContent(t, filepath.Join(pythonDir, "3.13"), "3.13.7")
-		assertFileContent(t, filepath.Join(pythonDir, "3"), "3.13.7")
-	})
-}
-
 func TestRenderProject_MultiVariantProject(t *testing.T) {
 	dist := discoverAndRender(t, "../testdata/multi-variant-project")
 

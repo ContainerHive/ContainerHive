@@ -2,6 +2,8 @@ package registry
 
 import (
 	"testing"
+
+	"github.com/timo-reymann/ContainerHive/pkg/model"
 )
 
 func TestRemoteRegistry(t *testing.T) {
@@ -31,30 +33,48 @@ func TestRemoteRegistry(t *testing.T) {
 }
 
 func TestNewRegistry_CI(t *testing.T) {
-	t.Run("returns remote registry when CI is set", func(t *testing.T) {
+	t.Run("uses hive.yml registry address in CI", func(t *testing.T) {
 		t.Setenv("CI", "true")
 		t.Setenv("CONTAINER_HIVE_REGISTRY", "")
-		reg := NewRegistry("")
+		reg, err := NewRegistry("", &model.RegistryConfig{Address: "registry.example.com"})
+		if err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
 		if reg.IsLocal() {
 			t.Error("expected remote registry in CI mode")
 		}
-		if reg.Address() != "docker.io" {
-			t.Errorf("expected docker.io default, got %s", reg.Address())
+		if reg.Address() != "registry.example.com" {
+			t.Errorf("expected registry.example.com, got %s", reg.Address())
 		}
 	})
 
-	t.Run("uses CONTAINER_HIVE_REGISTRY when set", func(t *testing.T) {
+	t.Run("CONTAINER_HIVE_REGISTRY env var takes precedence over hive.yml", func(t *testing.T) {
 		t.Setenv("CI", "true")
 		t.Setenv("CONTAINER_HIVE_REGISTRY", "ghcr.io/myorg")
-		reg := NewRegistry("")
+		reg, err := NewRegistry("", &model.RegistryConfig{Address: "registry.example.com"})
+		if err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
 		if reg.Address() != "ghcr.io/myorg" {
 			t.Errorf("expected ghcr.io/myorg, got %s", reg.Address())
 		}
 	})
 
+	t.Run("errors when CI is set but no registry configured", func(t *testing.T) {
+		t.Setenv("CI", "true")
+		t.Setenv("CONTAINER_HIVE_REGISTRY", "")
+		_, err := NewRegistry("", nil)
+		if err == nil {
+			t.Error("expected error when no registry is configured in CI")
+		}
+	})
+
 	t.Run("returns zot registry when CI is not set", func(t *testing.T) {
 		t.Setenv("CI", "")
-		reg := NewRegistry("")
+		reg, err := NewRegistry("", nil)
+		if err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
 		if !reg.IsLocal() {
 			t.Error("expected local (zot) registry when CI not set")
 		}

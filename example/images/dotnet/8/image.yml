@@ -21,3 +21,6 @@ build_args:
 secrets:
   foo:
     value: bar
+
+platforms:
+  - linux/amd64

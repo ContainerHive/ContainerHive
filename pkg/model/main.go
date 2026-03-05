@@ -24,6 +24,7 @@ type Image struct {
 	Tags                map[string]*Tag
 	Variants            map[string]*ImageVariant
 	DependsOn           []string
+	Platforms           []string
 }
 
 type ImageVariant struct {
@@ -35,6 +36,7 @@ type ImageVariant struct {
 	TestConfigFilePath  string
 	Versions            Versions
 	BuildArgs           BuildArgs `yaml:"build_args"`
+	Platforms           []string
 }
 
 type ContainerHiveProject struct {
