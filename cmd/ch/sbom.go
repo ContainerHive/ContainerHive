@@ -7,9 +7,9 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/timo-reymann/ContainerHive/pkg/discovery"
 	"github.com/timo-reymann/ContainerHive/pkg/platform"
 	"github.com/timo-reymann/ContainerHive/pkg/sbom"
+	"github.com/timo-reymann/ContainerHive/pkg/utils"
 	"github.com/urfave/cli/v3"
 )
 
@@ -25,16 +25,15 @@ func sbomCmd() *cli.Command {
 			},
 		},
 		Action: func(ctx context.Context, cmd *cli.Command) error {
-			projectRoot := cmd.String("project")
-			filters := parseFilters(cmd.Args().Slice())
-			distPath := filepath.Join(projectRoot, "dist")
+			filters := utils.ParseFilters(cmd.Args().Slice())
+			distPath := getDistPath(cmd)
 			if _, err := os.Stat(distPath); err != nil {
 				return fmt.Errorf("dist/ not found — run 'ch generate' first: %w", err)
 			}
 
-			project, err := discovery.DiscoverProject(ctx, projectRoot)
+			project, err := discoverProject(ctx, cmd)
 			if err != nil {
-				return fmt.Errorf("discovery failed: %w", err)
+				return err
 			}
 
 			if cliPlatforms := cmd.StringSlice("platform"); len(cliPlatforms) > 0 {
@@ -49,7 +48,7 @@ func sbomCmd() *cli.Command {
 			var generated, skipped int
 			for _, img := range project.ImagesByIdentifier {
 				for tagName := range img.Tags {
-					if !matchesFilter(filters, img.Name, tagName) {
+					if !utils.MatchesFilter(filters, img.Name, tagName) {
 						continue
 					}
 

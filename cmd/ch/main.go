@@ -3,11 +3,49 @@ package main
 import (
 	"context"
 	"fmt"
+	"log"
 	"os"
 	"os/signal"
+	"path/filepath"
 
+	"github.com/timo-reymann/ContainerHive/pkg/discovery"
+	"github.com/timo-reymann/ContainerHive/pkg/model"
+	"github.com/timo-reymann/ContainerHive/pkg/registry"
 	"github.com/urfave/cli/v3"
 )
+
+// discoverProject is a helper method that discovers the project and handles common validation
+func discoverProject(ctx context.Context, cmd *cli.Command) (*model.ContainerHiveProject, error) {
+	projectRoot := cmd.String("project")
+
+	project, err := discovery.DiscoverProject(ctx, projectRoot)
+	if err != nil {
+		return nil, fmt.Errorf("discovery failed: %w", err)
+	}
+
+	return project, nil
+}
+
+// getDistPath returns the distribution path for the project
+func getDistPath(cmd *cli.Command) string {
+	projectRoot := cmd.String("project")
+	return filepath.Join(projectRoot, "dist")
+}
+
+// setupRegistry creates, starts, and returns a registry instance with proper cleanup
+func setupRegistry(ctx context.Context, distPath string, config *model.RegistryConfig) (*registry.Registry, error) {
+	reg, err := registry.NewRegistry(filepath.Join(distPath, ".registry"), config)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create registry: %w", err)
+	}
+	if err := reg.Start(ctx); err != nil {
+		return nil, fmt.Errorf("failed to start registry: %w", err)
+	}
+	// Note: caller is responsible for deferring reg.Stop(ctx)
+	log.Printf("Registry started: local=%v address=%s", reg.IsLocal(), reg.Address())
+
+	return reg, nil
+}
 
 func main() {
 	app := &cli.Command{

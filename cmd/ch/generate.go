@@ -4,9 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"path/filepath"
 
-	"github.com/timo-reymann/ContainerHive/pkg/discovery"
 	"github.com/timo-reymann/ContainerHive/pkg/rendering"
 	"github.com/urfave/cli/v3"
 )
@@ -16,14 +14,12 @@ func generateCmd() *cli.Command {
 		Name:  "generate",
 		Usage: "Discover project and render to dist/",
 		Action: func(ctx context.Context, cmd *cli.Command) error {
-			projectRoot := cmd.String("project")
-
-			project, err := discovery.DiscoverProject(ctx, projectRoot)
+			project, err := discoverProject(ctx, cmd)
 			if err != nil {
-				return fmt.Errorf("discovery failed: %w", err)
+				return err
 			}
 
-			distPath := filepath.Join(projectRoot, "dist")
+			distPath := getDistPath(cmd)
 			if err := rendering.RenderProject(ctx, project, distPath); err != nil {
 				return fmt.Errorf("rendering failed: %w", err)
 			}

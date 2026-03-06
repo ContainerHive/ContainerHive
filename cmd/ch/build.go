@@ -5,12 +5,11 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"path/filepath"
 
 	"github.com/timo-reymann/ContainerHive/pkg/build"
+	"github.com/timo-reymann/ContainerHive/pkg/cache"
 	"github.com/timo-reymann/ContainerHive/pkg/deps"
-	"github.com/timo-reymann/ContainerHive/pkg/discovery"
-	"github.com/timo-reymann/ContainerHive/pkg/registry"
+	"github.com/timo-reymann/ContainerHive/pkg/utils"
 	"github.com/urfave/cli/v3"
 )
 
@@ -30,15 +29,14 @@ func buildCmd() *cli.Command {
 			},
 		},
 		Action: func(ctx context.Context, cmd *cli.Command) error {
-			projectRoot := cmd.String("project")
 			buildID := cmd.String("build-id")
 			useRegistry := cmd.Bool("registry") || os.Getenv("CI") != ""
-			filters := parseFilters(cmd.Args().Slice())
+			filters := utils.ParseFilters(cmd.Args().Slice())
 
 			// Discover project
-			project, err := discovery.DiscoverProject(ctx, projectRoot)
+			project, err := discoverProject(ctx, cmd)
 			if err != nil {
-				return fmt.Errorf("discovery failed: %w", err)
+				return err
 			}
 
 			if cliPlatforms := cmd.StringSlice("platform"); len(cliPlatforms) > 0 {
@@ -50,7 +48,7 @@ func buildCmd() *cli.Command {
 			}
 
 			// Expect dist/ to already exist (created by `ch generate`)
-			distPath := filepath.Join(projectRoot, "dist")
+			distPath := getDistPath(cmd)
 			if _, err := os.Stat(distPath); err != nil {
 				return fmt.Errorf("dist/ not found — run 'ch generate' first: %w", err)
 			}
@@ -74,7 +72,7 @@ func buildCmd() *cli.Command {
 			defer bkClient.Close()
 
 			// Configure cache
-			buildCache, err := buildCacheFromConfig(project.Config.Cache, "ch-build")
+			buildCache, err := cache.BuildCacheFromConfig(project.Config.Cache, "ch-build")
 			if err != nil {
 				return fmt.Errorf("cache configuration failed: %w", err)
 			}
@@ -95,15 +93,11 @@ func buildCmd() *cli.Command {
 			}
 
 			if useRegistry {
-				reg, err := registry.NewRegistry(filepath.Join(distPath, ".registry"), project.Config.Registry)
+				reg, err := setupRegistry(ctx, distPath, project.Config.Registry)
 				if err != nil {
-					return fmt.Errorf("failed to create registry: %w", err)
-				}
-				if err := reg.Start(ctx); err != nil {
-					return fmt.Errorf("failed to start registry: %w", err)
+					return err
 				}
 				defer reg.Stop(ctx)
-				log.Printf("Registry started: local=%v address=%s", reg.IsLocal(), reg.Address())
 
 				buildOpts.Registry = reg
 			}
