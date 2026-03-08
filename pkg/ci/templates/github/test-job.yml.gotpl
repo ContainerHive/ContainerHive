@@ -20,5 +20,11 @@
         with:
           name: generated
           path: dist/
-      - run: ch test {{ .Image.Name }} --build-id "$SNAPSHOT_ID"
+{{- if $.Ctx.Artifacts }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: {{ .Image.Name }}-manifest
+          path: dist/
+{{- end }}
+      - run: ch test {{ .Image.Name }} --build-id "$SNAPSHOT_ID"{{ if not $.Ctx.Artifacts }} --pull{{ end }}
 {{- end }}

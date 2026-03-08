@@ -1,7 +1,7 @@
 {{ define "build-job.yml.gotpl" }}
 {{- range .Image.Platforms }}
 build-{{ $.Image.Name }}-{{ . }}:
-  extends: .build
+  extends: .build-{{ . }}
   stage: build-{{ $.Image.Name }}
   variables:
     IMAGE_NAME: {{ $.Image.Name }}

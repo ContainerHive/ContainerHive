@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"strings"
 
 	"github.com/timo-reymann/ContainerHive/pkg/ci"
 	"github.com/timo-reymann/ContainerHive/pkg/templating"
@@ -39,6 +40,10 @@ func templateCICmd() *cli.Command {
 				Name:  "template-dir",
 				Usage: "Custom template directory (overrides built-in templates)",
 			},
+			&cli.BoolFlag{
+				Name:  "artifacts",
+				Usage: "Upload/download build artifacts between jobs",
+			},
 		},
 		Action: func(ctx context.Context, cmd *cli.Command) error {
 			project, err := discoverProject(ctx, cmd)
@@ -46,10 +51,12 @@ func templateCICmd() *cli.Command {
 				return err
 			}
 
-			ciCtx, err := ci.BuildCIContext(project)
+			ciCtx, err := ci.BuildCIContext(project, cmd.Bool("artifacts"))
 			if err != nil {
 				return fmt.Errorf("failed to build CI context: %w", err)
 			}
+
+			ciCtx.Command = buildCICommand(cmd)
 
 			result, err := ci.Generate(cmd.String("provider"), ciCtx, cmd.String("template-dir"))
 			if err != nil {
@@ -88,7 +95,7 @@ func templateCustomCmd() *cli.Command {
 				return fmt.Errorf("failed to read template: %w", err)
 			}
 
-			ciCtx, err := ci.BuildCIContext(project)
+			ciCtx, err := ci.BuildCIContext(project, false)
 			if err != nil {
 				return fmt.Errorf("failed to build CI context: %w", err)
 			}
@@ -101,6 +108,20 @@ func templateCustomCmd() *cli.Command {
 			return writeOutput(cmd.String("output"), result)
 		},
 	}
+}
+
+func buildCICommand(cmd *cli.Command) string {
+	parts := []string{"ch template ci --provider", cmd.String("provider")}
+	if cmd.Bool("artifacts") {
+		parts = append(parts, "--artifacts")
+	}
+	if dir := cmd.String("template-dir"); dir != "" {
+		parts = append(parts, "--template-dir", dir)
+	}
+	if output := cmd.String("output"); output != "" {
+		parts = append(parts, "--output", output)
+	}
+	return strings.Join(parts, " ")
 }
 
 func writeOutput(outputPath string, data []byte) error {

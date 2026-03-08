@@ -3,7 +3,6 @@ package ci
 import (
 	"fmt"
 	"sort"
-	"time"
 
 	"github.com/timo-reymann/ContainerHive/pkg/model"
 )
@@ -19,11 +18,12 @@ type CIImage struct {
 
 // CIContext holds all data needed to render CI templates.
 type CIContext struct {
-	Images      []CIImage
-	Platforms   []string
-	Stages      []string
-	GeneratedAt string
-	Config      CIConfigContext
+	Images    []CIImage
+	Platforms []string
+	Stages    []string
+	Config    CIConfigContext
+	Artifacts bool
+	Command   string
 }
 
 // CIConfigContext holds project configuration relevant to CI.
@@ -33,7 +33,7 @@ type CIConfigContext struct {
 }
 
 // BuildCIContext creates a CIContext from a ContainerHive project.
-func BuildCIContext(project *model.ContainerHiveProject) (*CIContext, error) {
+func BuildCIContext(project *model.ContainerHiveProject, artifacts bool) (*CIContext, error) {
 	imageNames := make(map[string]bool)
 	for name := range project.ImagesByName {
 		imageNames[name] = true
@@ -123,11 +123,11 @@ func BuildCIContext(project *model.ContainerHiveProject) (*CIContext, error) {
 		Images:      ciImages,
 		Platforms:   platformList,
 		Stages:      stages,
-		GeneratedAt: time.Now().UTC().Format(time.RFC3339),
-		Config: CIConfigContext{
+Config: CIConfigContext{
 			Registry: project.Config.Registry,
 			Cache:    project.Config.Cache,
 		},
+		Artifacts: artifacts,
 	}, nil
 }
 

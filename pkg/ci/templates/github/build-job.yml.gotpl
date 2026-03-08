@@ -26,5 +26,12 @@
           path: dist/
       - run: ch build {{ $.Image.Name }} --platform {{ . }} --build-id "$SNAPSHOT_ID"
       - run: ch sbom {{ $.Image.Name }} --platform {{ . }} --build-id "$SNAPSHOT_ID"
+{{- if $.Ctx.Artifacts }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: {{ $.Image.Name }}-{{ . }}
+          path: dist/{{ $.Image.Name }}/*/linux-{{ . }}/
+          retention-days: 7
+{{- end }}
 {{ end }}
 {{- end }}

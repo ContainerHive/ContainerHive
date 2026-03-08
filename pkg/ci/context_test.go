@@ -21,7 +21,7 @@ func TestBuildCIContext_NoDeps(t *testing.T) {
 		},
 	}
 
-	ctx, err := BuildCIContext(project)
+	ctx, err := BuildCIContext(project, false)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -60,7 +60,7 @@ func TestBuildCIContext_WithDeps(t *testing.T) {
 		},
 	}
 
-	ctx, err := BuildCIContext(project)
+	ctx, err := BuildCIContext(project, false)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -96,7 +96,7 @@ func TestBuildCIContext_ImagePlatformOverride(t *testing.T) {
 		},
 	}
 
-	ctx, err := BuildCIContext(project)
+	ctx, err := BuildCIContext(project, false)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -116,7 +116,7 @@ func TestBuildCIContext_Stages(t *testing.T) {
 		},
 	}
 
-	ctx, err := BuildCIContext(project)
+	ctx, err := BuildCIContext(project, false)
 	if err != nil {
 		t.Fatal(err)
 	}

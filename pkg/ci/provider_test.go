@@ -36,7 +36,7 @@ func TestProviderRegistry(t *testing.T) {
 
 func TestGenerate(t *testing.T) {
 	tplFS := fstest.MapFS{
-		"main.gotpl": {Data: []byte("# Generated: {{ .GeneratedAt }}\n{{ range .Images }}Image: {{ .Name }}\n{{ end }}")},
+		"main.gotpl": {Data: []byte("# Command: {{ .Command }}\n{{ range .Images }}Image: {{ .Name }}\n{{ end }}")},
 	}
 
 	RegisterProvider(&Provider{
@@ -46,7 +46,7 @@ func TestGenerate(t *testing.T) {
 	})
 
 	ctx := &CIContext{
-		GeneratedAt: "2024-01-01T00:00:00Z",
+		Command: "ch template ci --provider test-gen",
 		Images: []CIImage{
 			{Name: "myapp", Depth: 0, Platforms: []string{"amd64"}},
 		},
@@ -57,8 +57,8 @@ func TestGenerate(t *testing.T) {
 		t.Fatal(err)
 	}
 	got := string(result)
-	if !strings.Contains(got, "Generated: 2024-01-01T00:00:00Z") {
-		t.Errorf("result should contain generated timestamp, got: %s", got)
+	if !strings.Contains(got, "Command: ch template ci --provider test-gen") {
+		t.Errorf("result should contain command, got: %s", got)
 	}
 	if !strings.Contains(got, "Image: myapp") {
 		t.Errorf("result should contain image name, got: %s", got)
