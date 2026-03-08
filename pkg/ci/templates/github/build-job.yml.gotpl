@@ -24,6 +24,7 @@
         with:
           name: generated
           path: dist/
+      - run: ch wait --docker-socket
       - run: ch build {{ $.Image.Name }} --platform {{ . }} --build-id "$SNAPSHOT_ID"
       - run: ch sbom {{ $.Image.Name }} --platform {{ . }} --build-id "$SNAPSHOT_ID"
 {{- if $.Ctx.Artifacts }}

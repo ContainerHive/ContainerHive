@@ -71,6 +71,7 @@ func main() {
 			sbomCmd(),
 			verifyCmd(),
 			templateCmd(),
+			waitCmd(),
 		},
 	}
 

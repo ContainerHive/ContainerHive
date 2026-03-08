@@ -26,5 +26,6 @@
           name: {{ .Image.Name }}-manifest
           path: dist/
 {{- end }}
+      - run: ch wait --docker-socket
       - run: ch test {{ .Image.Name }} --build-id "$SNAPSHOT_ID"{{ if not $.Ctx.Artifacts }} --pull{{ end }}
 {{- end }}

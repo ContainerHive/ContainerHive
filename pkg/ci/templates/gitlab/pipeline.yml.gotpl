@@ -21,6 +21,7 @@ variables:
   variables:
     BUILDKIT_HOST: tcp://buildkitd:8372
   script:
+    - ch wait --buildkitd
     - ch build ${IMAGE_NAME} --platform ${PLATFORM} --build-id "$SNAPSHOT_ID"
     - ch sbom ${IMAGE_NAME} --platform ${PLATFORM} --build-id "$SNAPSHOT_ID"
 {{ range .Platforms }}
@@ -42,6 +43,7 @@ variables:
     DOCKER_HOST: tcp://dind:2375
     DOCKER_TLS_CERTDIR: ""
   script:
+    - ch wait --docker-socket
     - ch test ${IMAGE_NAME} --build-id "$SNAPSHOT_ID"
 
 # === GENERATE ===
