@@ -1,0 +1,12 @@
+{{ define "manifest-job.yml.gotpl" }}
+manifest-{{ .Image.Name }}:
+  extends: .manifest
+  stage: manifest-{{ .Image.Name }}
+  variables:
+    IMAGE_NAME: {{ .Image.Name }}
+  needs:
+    - generate
+{{- range .Image.Platforms }}
+    - build-{{ $.Image.Name }}-{{ . }}
+{{- end }}
+{{- end }}

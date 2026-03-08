@@ -1,0 +1,24 @@
+{{ define "test-job.yml.gotpl" }}
+  test-{{ .Image.Name }}:
+    runs-on: ubuntu-latest
+    container: ch:latest
+    services:
+      dind:
+        image: docker:dind
+        options: --privileged
+        env:
+          DOCKER_TLS_CERTDIR: ""
+    env:
+      DOCKER_HOST: tcp://dind:2375
+    needs:
+      - manifest-{{ .Image.Name }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          lfs: true
+      - uses: actions/download-artifact@v4
+        with:
+          name: generated
+          path: dist/
+      - run: ch test {{ .Image.Name }} --build-id "$SNAPSHOT_ID"
+{{- end }}

@@ -1,0 +1,199 @@
+package ci
+
+import (
+	"fmt"
+	"sort"
+	"time"
+
+	"github.com/timo-reymann/ContainerHive/pkg/model"
+)
+
+// CIImage represents an image in the CI context.
+type CIImage struct {
+	Name         string
+	Tags         []string
+	Dependencies []string
+	Depth        int
+	Platforms    []string
+}
+
+// CIContext holds all data needed to render CI templates.
+type CIContext struct {
+	Images      []CIImage
+	Platforms   []string
+	Stages      []string
+	GeneratedAt string
+	Config      CIConfigContext
+}
+
+// CIConfigContext holds project configuration relevant to CI.
+type CIConfigContext struct {
+	Registry *model.RegistryConfig
+	Cache    *model.CacheConfig
+}
+
+// BuildCIContext creates a CIContext from a ContainerHive project.
+func BuildCIContext(project *model.ContainerHiveProject) (*CIContext, error) {
+	imageNames := make(map[string]bool)
+	for name := range project.ImagesByName {
+		imageNames[name] = true
+	}
+
+	// Build dependency map (only internal deps)
+	dependencies := make(map[string][]string)
+	for name, images := range project.ImagesByName {
+		depsSet := make(map[string]bool)
+		for _, img := range images {
+			for _, dep := range img.DependsOn {
+				if imageNames[dep] {
+					depsSet[dep] = true
+				}
+			}
+		}
+		if len(depsSet) > 0 {
+			deps := make([]string, 0, len(depsSet))
+			for d := range depsSet {
+				deps = append(deps, d)
+			}
+			sort.Strings(deps)
+			dependencies[name] = deps
+		}
+	}
+
+	// Calculate depths iteratively
+	depths := calculateDepths(imageNames, dependencies)
+
+	// Build CIImage list (deduplicated by name)
+	allPlatforms := make(map[string]bool)
+	var ciImages []CIImage
+
+	for name, images := range project.ImagesByName {
+		// Collect tags from all image variants with same name
+		tagSet := make(map[string]bool)
+		for _, img := range images {
+			for tagName := range img.Tags {
+				tagSet[tagName] = true
+			}
+		}
+		tags := make([]string, 0, len(tagSet))
+		for t := range tagSet {
+			tags = append(tags, t)
+		}
+		sort.Strings(tags)
+
+		// Resolve platforms: image-level or project default
+		platforms := resolvePlatforms(images[0], project.Config.Platforms)
+		for _, p := range platforms {
+			allPlatforms[p] = true
+		}
+
+		ciImages = append(ciImages, CIImage{
+			Name:         name,
+			Tags:         tags,
+			Dependencies: dependencies[name],
+			Depth:        depths[name],
+			Platforms:    platforms,
+		})
+	}
+
+	// Sort by (depth, name)
+	sort.Slice(ciImages, func(i, j int) bool {
+		if ciImages[i].Depth != ciImages[j].Depth {
+			return ciImages[i].Depth < ciImages[j].Depth
+		}
+		return ciImages[i].Name < ciImages[j].Name
+	})
+
+	// Generate stages
+	var stages []string
+	for _, img := range ciImages {
+		stages = append(stages, fmt.Sprintf("build-%s", img.Name))
+		stages = append(stages, fmt.Sprintf("manifest-%s", img.Name))
+	}
+	stages = append(stages, "test")
+
+	// Collect all unique platforms sorted
+	platformList := make([]string, 0, len(allPlatforms))
+	for p := range allPlatforms {
+		platformList = append(platformList, p)
+	}
+	sort.Strings(platformList)
+
+	return &CIContext{
+		Images:      ciImages,
+		Platforms:   platformList,
+		Stages:      stages,
+		GeneratedAt: time.Now().UTC().Format(time.RFC3339),
+		Config: CIConfigContext{
+			Registry: project.Config.Registry,
+			Cache:    project.Config.Cache,
+		},
+	}, nil
+}
+
+// calculateDepths computes dependency depth for each image.
+// Depth 0 = no dependencies, depth 1 = depends only on depth-0 images, etc.
+func calculateDepths(imageNames map[string]bool, dependencies map[string][]string) map[string]int {
+	depths := make(map[string]int)
+	remaining := make(map[string]bool)
+	for name := range imageNames {
+		remaining[name] = true
+	}
+
+	currentDepth := 0
+	for len(remaining) > 0 {
+		var ready []string
+		for name := range remaining {
+			deps := dependencies[name]
+			allResolved := true
+			for _, d := range deps {
+				if _, ok := depths[d]; !ok {
+					allResolved = false
+					break
+				}
+			}
+			if allResolved {
+				ready = append(ready, name)
+			}
+		}
+
+		if len(ready) == 0 {
+			// Circular dependency - assign remaining to current depth
+			for name := range remaining {
+				depths[name] = currentDepth
+			}
+			break
+		}
+
+		for _, name := range ready {
+			depths[name] = currentDepth
+			delete(remaining, name)
+		}
+		currentDepth++
+	}
+
+	return depths
+}
+
+// resolvePlatforms returns the effective platforms for an image.
+// Uses image-level platforms if set, otherwise falls back to project defaults.
+// Platform prefixes like "linux/" are stripped for CI use (e.g. "linux/amd64" -> "amd64").
+func resolvePlatforms(img *model.Image, projectPlatforms []string) []string {
+	platforms := img.Platforms
+	if len(platforms) == 0 {
+		platforms = projectPlatforms
+	}
+
+	result := make([]string, 0, len(platforms))
+	for _, p := range platforms {
+		// Strip os prefix (e.g. "linux/amd64" -> "amd64")
+		for i := len(p) - 1; i >= 0; i-- {
+			if p[i] == '/' {
+				p = p[i+1:]
+				break
+			}
+		}
+		result = append(result, p)
+	}
+	return result
+}

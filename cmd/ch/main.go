@@ -70,6 +70,7 @@ func main() {
 			testCmd(),
 			sbomCmd(),
 			verifyCmd(),
+			templateCmd(),
 		},
 	}
 

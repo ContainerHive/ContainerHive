@@ -1,0 +1,18 @@
+{{ define "manifest-job.yml.gotpl" }}
+  manifest-{{ .Image.Name }}:
+    runs-on: ubuntu-latest
+    container: ch:latest
+    needs:
+{{- range .Image.Platforms }}
+      - build-{{ $.Image.Name }}-{{ . }}
+{{- end }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          lfs: true
+      - uses: actions/download-artifact@v4
+        with:
+          name: generated
+          path: dist/
+      - run: ch finalize {{ .Image.Name }} --build-id "$SNAPSHOT_ID"
+{{- end }}
