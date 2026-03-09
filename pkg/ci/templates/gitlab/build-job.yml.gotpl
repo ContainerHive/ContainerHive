@@ -1,0 +1,15 @@
+{{ define "build-job.yml.gotpl" }}
+{{- range .Image.Platforms }}
+build-{{ $.Image.Name }}-{{ . }}:
+  extends: .build-{{ . }}
+  stage: build-{{ $.Image.Name }}
+  variables:
+    IMAGE_NAME: {{ $.Image.Name }}
+    PLATFORM: {{ . }}
+  needs:
+    - generate
+{{- range $.Image.Dependencies }}
+    - manifest-{{ . }}
+{{- end }}
+{{ end }}
+{{- end }}

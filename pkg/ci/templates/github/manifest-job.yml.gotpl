@@ -1,0 +1,35 @@
+{{ define "manifest-job.yml.gotpl" }}
+  manifest-{{ .Image.Name }}:
+    runs-on: ubuntu-latest
+    container: ch:latest
+    needs:
+{{- range .Image.Platforms }}
+      - build-{{ $.Image.Name }}-{{ . }}
+{{- end }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          lfs: true
+      - uses: actions/download-artifact@v4
+        with:
+          name: generated
+          path: dist/
+{{- if $.Ctx.Artifacts }}
+{{- range .Image.Platforms }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: {{ $.Image.Name }}-{{ . }}
+          path: dist/
+{{- end }}
+{{- end }}
+      - run: ch finalize {{ .Image.Name }} --build-id "$SNAPSHOT_ID"
+{{- if $.Ctx.Artifacts }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: {{ .Image.Name }}-manifest
+          path: |
+            dist/{{ .Image.Name }}/*/image.tar
+            dist/{{ .Image.Name }}/*/index.html
+          retention-days: 7
+{{- end }}
+{{- end }}

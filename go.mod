@@ -4,6 +4,7 @@ go 1.25.6
 
 require (
 	github.com/GoogleContainerTools/container-structure-test v1.22.1
+	github.com/Masterminds/sprig/v3 v3.3.0
 	github.com/anchore/syft v1.42.1
 	github.com/containerd/containerd/v2 v2.2.1
 	github.com/docker/cli v29.2.1+incompatible
@@ -57,7 +58,6 @@ require (
 	github.com/Masterminds/goutils v1.1.1 // indirect
 	github.com/Masterminds/semver v1.5.0 // indirect
 	github.com/Masterminds/semver/v3 v3.4.0 // indirect
-	github.com/Masterminds/sprig/v3 v3.3.0 // indirect
 	github.com/Masterminds/squirrel v1.5.4 // indirect
 	github.com/Microsoft/go-winio v0.6.2 // indirect
 	github.com/Microsoft/hcsshim v0.14.0-rc.1 // indirect

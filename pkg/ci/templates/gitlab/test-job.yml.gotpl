@@ -1,0 +1,9 @@
+{{ define "test-job.yml.gotpl" }}
+test-{{ .Image.Name }}:
+  extends: .test
+  variables:
+    IMAGE_NAME: {{ .Image.Name }}
+  needs:
+    - generate
+    - manifest-{{ .Image.Name }}
+{{- end }}
