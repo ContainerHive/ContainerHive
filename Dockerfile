@@ -1,3 +1,9 @@
+# License stage
+FROM scratch AS license
+COPY LICENSE /LICENSE
+COPY NOTICE /NOTICE
+
+# Binary stage - determine architecture and copy appropriate binary
 FROM busybox AS bin
 COPY ./dist /binaries
 RUN if [[ "$(arch)" == "x86_64" ]]; then \
@@ -9,40 +15,28 @@ RUN if [[ "$(arch)" == "x86_64" ]]; then \
     chmod +x /bin/ch && \
     chown 1000:1000 /bin/ch
 
-FROM scratch AS meta
-COPY LICENSE /
-COPY NOTICE /
+# Final stage - use distroless static base
+FROM gcr.io/distroless/static-debian12:nonroot
 
-FROM chainguard/wolfi-base
-
+# Add metadata labels
 ARG BUILD_TIME
 ARG BUILD_VERSION
 ARG BUILD_COMMIT_REF
-LABEL 
-LABEL org.opencontainers.image.licenses="AGPL-3.0" \
-      org.opencontainers.image.title="ContainerHive" \
-      org.opencontainers.image.description="Swarm it. Build it. Run it. — Managing container base and library images has never been easier." \
-      org.opencontainers.image.ref.name="main" \
-      org.opencontainers.image.licenses='GPLv3' \
-      org.opencontainers.image.vendor="Timo Reymann <mail@timo-reymann.de>" \
-      org.opencontainers.image.authors="Timo Reymann <mail@timo-reymann.de>" \
-      org.opencontainers.image.url="https://github.com/timo-reymann/ContainerHive" \
-      org.opencontainers.image.documentation="https://github.com/timo-reymann/ContainerHive" \
-      org.opencontainers.image.source="https://github.com/timo-reymann/ContainerHive.git" \
-      org.opencontainers.image.created=$BUILD_TIME \
-      org.opencontainers.image.version=$BUILD_VERSION \
-      org.opencontainers.image.revision=$BUILD_COMMIT_REF
+LABEL org.opencontainers.image.title="ContainerHive"
+LABEL org.opencontainers.image.description="ContainerHive - Container Image Build System"
+LABEL org.opencontainers.image.licenses='AGPL-3.0'
+LABEL org.opencontainers.image.vendor="Timo Reymann <mail@timo-reymann.de>"
+LABEL org.opencontainers.image.url="https://github.com/timo-reymann/ContainerHive"
+LABEL org.opencontainers.image.source="https://github.com/timo-reymann/ContainerHive.git"
+LABEL org.opencontainers.image.created=${BUILD_TIME}
+LABEL org.opencontainers.image.version=${BUILD_VERSION}
+LABEL org.opencontainers.image.revision=${BUILD_COMMIT_REF}
 
-RUN apk add --no-cache bash \
-    && adduser -D -u 1000 container-hive
+# Copy license files
+COPY --from=license / /
 
+# Copy the architecture-specific ContainerHive binary
 COPY --from=bin /bin/ch /bin/ch
-WORKDIR /usr/share/doc/containerhive
-COPY --from=meta / ./
 
-RUN chmod +x /bin/ch && \
-    chown 1000:1000 /bin/ch
-
-WORKDIR /workspace
-USER 1000:1000
+# Set entrypoint
 ENTRYPOINT ["/bin/ch"]
