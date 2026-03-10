@@ -10,7 +10,7 @@ require (
 	github.com/docker/cli v29.2.1+incompatible
 	github.com/docker/docker v28.5.2+incompatible
 	github.com/google/go-cmp v0.7.0
-	github.com/google/go-containerregistry v0.21.0
+	github.com/google/go-containerregistry v0.21.2
 	github.com/kcmvp/archunit v0.1.2
 	github.com/moby/buildkit v0.27.1
 	github.com/opencontainers/go-digest v1.0.0
