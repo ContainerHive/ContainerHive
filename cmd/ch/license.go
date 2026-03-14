@@ -2,21 +2,25 @@ package main
 
 import (
 	"context"
-	_ "embed"
+	"embed"
 	"fmt"
 
 	"github.com/urfave/cli/v3"
 )
 
 //go:embed NOTICE
-var noticeContent string
+var noticeFS embed.FS
 
 func licenseCmd() *cli.Command {
 	return &cli.Command{
 		Name:  "license",
 		Usage: "Show third-party license notices",
 		Action: func(ctx context.Context, cmd *cli.Command) error {
-			fmt.Print(noticeContent)
+			content, err := noticeFS.ReadFile("NOTICE")
+			if err != nil {
+				return fmt.Errorf("license notices not available: %w", err)
+			}
+			fmt.Print(string(content))
 			return nil
 		},
 	}
