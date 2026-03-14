@@ -4,7 +4,7 @@ COPY LICENSE /LICENSE
 COPY NOTICE /NOTICE
 
 # Binary stage - determine architecture and copy appropriate binary
-FROM cgr.dev/chainguard/wolfi-base AS bin
+FROM alpine:3 AS bin
 RUN apk add --no-cache zstd
 COPY ./dist /binaries
 RUN if [[ "$(arch)" == "x86_64" ]]; then \
