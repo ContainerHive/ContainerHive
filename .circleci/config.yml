@@ -39,6 +39,7 @@ jobs:
             - run:
                 name: Run tests
                 command: |
+                  make generate
                   go test -coverprofile=coverage.txt -covermode=atomic   -v ./...
                   make save-coverage-report
       - codecov/upload
