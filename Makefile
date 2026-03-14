@@ -7,7 +7,7 @@ COMMIT_REF=$(shell git rev-parse --short HEAD)
 BUILD_ARGS=-ldflags "-X github.com/timo-reymann/ContainerHive/internal/buildinfo.GitSha=$(COMMIT_REF) -X github.com/timo-reymann/ContainerHive/internal/buildinfo.Version=$(VERSION) -X github.com/timo-reymann/ContainerHive/internal/buildinfo.BuildTime=$(NOW)" -tags prod
 BIN_PREFIX="dist/"
 CMD_CH_CLI = "./cmd/ch"
-CONTAINER_REGISTRY?="docker.io"
+CONTAINER_REGISTRY?="docker.io/timoreymann"
 
 clean: ## Cleanup artifacts
 	@rm -rf dist/
@@ -65,13 +65,13 @@ generate-json-schema: ## Generate the json schemas
 	@go run tools/generate-project-schema.go
 
 build-docker: ## Build docker image based on the built linux builds in the dist folder
-	@docker buildx build --tag $(CONTAINER_REGISTRY)/timoreymann/containerhive:latest \
+	@docker buildx build --tag $(CONTAINER_REGISTRY)/containerhive:latest \
 		--platform linux/amd64,linux/arm/v7,linux/arm64 \
 		--build-arg BUILD_TIME="$(NOW)" \
 		--build-arg BUILD_VERSION="$(VERSION)" \
 		--build-arg BUILD_COMMIT_REF="$(COMMIT_REF)" \
 		--push .
-	@docker buildx build --tag $(CONTAINER_REGISTRY)/timoreymann/containerhive:$(VERSION) \
+	@docker buildx build --tag $(CONTAINER_REGISTRY)/containerhive:$(VERSION) \
 		--platform linux/amd64,linux/arm/v7,linux/arm64 \
 		--build-arg BUILD_TIME="$(NOW)" \
 		--build-arg BUILD_VERSION="$(VERSION)" \
