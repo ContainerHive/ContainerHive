@@ -11,6 +11,7 @@ import (
 	"github.com/timo-reymann/ContainerHive/pkg/discovery"
 	"github.com/timo-reymann/ContainerHive/pkg/model"
 	"github.com/timo-reymann/ContainerHive/pkg/registry"
+	"github.com/timo-reymann/ContainerHive/pkg/version"
 	"github.com/urfave/cli/v3"
 )
 
@@ -49,8 +50,9 @@ func setupRegistry(ctx context.Context, distPath string, config *model.RegistryC
 
 func main() {
 	app := &cli.Command{
-		Name:  "ch",
-		Usage: "ContainerHive - declarative container image management",
+		Name:    "ch",
+		Usage:   "ContainerHive - declarative container image management",
+		Version: version.Get(),
 		Flags: []cli.Flag{
 			&cli.StringFlag{
 				Name:    "project",
@@ -72,6 +74,7 @@ func main() {
 			verifyCmd(),
 			templateCmd(),
 			waitCmd(),
+			licenseCmd(),
 		},
 	}
 
