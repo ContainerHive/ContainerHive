@@ -89,7 +89,7 @@ jobs:
       - run:
           name: Build and publish images
           command: |
-            export CONTAINER_REGISTRY="ghcr.io"
+            export CONTAINER_REGISTRY="ghcr.io/timo-reymann"
             export VERSION="$(git rev-parse --short HEAD)"
             echo $GITHUB_TOKEN | docker login ghcr.io -u timo-reymann --password-stdin
             docker buildx create --use
