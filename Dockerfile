@@ -27,7 +27,7 @@ ARG BUILD_TIME
 ARG BUILD_VERSION
 ARG BUILD_COMMIT_REF
 LABEL org.opencontainers.image.title="ContainerHive"
-LABEL org.opencontainers.image.description="ContainerHive - Container Image Build System"
+LABEL org.opencontainers.image.description="ContainerHive - Swarm it. Build it. Run it. Managing container base and library images has never been easier."
 LABEL org.opencontainers.image.licenses='AGPL-3.0'
 LABEL org.opencontainers.image.vendor="Timo Reymann <mail@timo-reymann.de>"
 LABEL org.opencontainers.image.url="https://github.com/timo-reymann/ContainerHive"
