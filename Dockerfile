@@ -4,16 +4,20 @@ COPY LICENSE /LICENSE
 COPY NOTICE /NOTICE
 
 # Binary stage - determine architecture and copy appropriate binary
-FROM busybox AS bin
+FROM cgr.dev/chainguard/wolfi-base AS bin
+RUN apk add --no-cache zstd
 COPY ./dist /binaries
 RUN if [[ "$(arch)" == "x86_64" ]]; then \
         architecture="amd64"; \
     else \
         architecture="arm64"; \
     fi; \
-    cp /binaries/linux-${architecture}/ch /bin/ch && \
-    chmod +x /bin/ch && \
-    chown 1000:1000 /bin/ch
+    ls /binaries \
+    && unzstd /binaries/linux-${architecture}.tar.zst \
+    && tar -xvf /binaries/linux-${architecture}.tar \
+    && cp ch /bin/ch \
+    && chmod +x /bin/ch \
+    && chown 1000:1000 /bin/ch
 
 # Final stage - use distroless static base
 FROM gcr.io/distroless/static-debian12:nonroot
