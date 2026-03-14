@@ -24,6 +24,7 @@ type CIContext struct {
 	Config    CIConfigContext
 	Artifacts bool
 	Command   string
+	Version   string
 }
 
 // CIConfigContext holds project configuration relevant to CI.
@@ -120,10 +121,10 @@ func BuildCIContext(project *model.ContainerHiveProject, artifacts bool) (*CICon
 	sort.Strings(platformList)
 
 	return &CIContext{
-		Images:      ciImages,
-		Platforms:   platformList,
-		Stages:      stages,
-Config: CIConfigContext{
+		Images:    ciImages,
+		Platforms: platformList,
+		Stages:    stages,
+		Config: CIConfigContext{
 			Registry: project.Config.Registry,
 			Cache:    project.Config.Cache,
 		},

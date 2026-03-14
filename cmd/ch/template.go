@@ -8,6 +8,7 @@ import (
 
 	"github.com/timo-reymann/ContainerHive/pkg/ci"
 	"github.com/timo-reymann/ContainerHive/pkg/templating"
+	"github.com/timo-reymann/ContainerHive/pkg/version"
 	"github.com/urfave/cli/v3"
 )
 
@@ -44,6 +45,10 @@ func templateCICmd() *cli.Command {
 				Name:  "artifacts",
 				Usage: "Upload/download build artifacts between jobs",
 			},
+			&cli.StringFlag{
+				Name:  "version",
+				Usage: "CH CLI version to use in CI templates (default: current CLI version)",
+			},
 		},
 		Action: func(ctx context.Context, cmd *cli.Command) error {
 			project, err := discoverProject(ctx, cmd)
@@ -57,6 +62,14 @@ func templateCICmd() *cli.Command {
 			}
 
 			ciCtx.Command = buildCICommand(cmd)
+
+			// Set version: use override if provided, otherwise use current CLI version
+			versionOverride := cmd.String("version")
+			if versionOverride != "" {
+				ciCtx.Version = versionOverride
+			} else {
+				ciCtx.Version = version.Get()
+			}
 
 			result, err := ci.Generate(cmd.String("provider"), ciCtx, cmd.String("template-dir"))
 			if err != nil {

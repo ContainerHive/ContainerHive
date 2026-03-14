@@ -1,7 +1,7 @@
 {{ define "manifest-job.yml.gotpl" }}
   manifest-{{ .Image.Name }}:
     runs-on: ubuntu-latest
-    container: ch:latest
+    container: ch:{{ .Ctx.Version }}
     needs:
 {{- range .Image.Platforms }}
       - build-{{ $.Image.Name }}-{{ . }}

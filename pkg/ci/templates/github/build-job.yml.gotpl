@@ -2,7 +2,7 @@
 {{- range .Image.Platforms }}
   build-{{ $.Image.Name }}-{{ . }}:
     runs-on: ubuntu-latest
-    container: ch:latest
+    container: ch:{{ $.Ctx.Version }}
     services:
       dind:
         image: docker:dind
