@@ -84,6 +84,8 @@ jobs:
       - checkout
       - setup_remote_docker:
           version: default
+      - attach_workspace:
+          at: ./
       - run:
           name: Build and publish images
           command: |
