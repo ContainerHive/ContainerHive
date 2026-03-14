@@ -11,6 +11,7 @@ CONTAINER_REGISTRY?="docker.io/timoreymann"
 
 clean: ## Cleanup artifacts
 	@rm -rf dist/
+	@rm -f cmd/ch/NOTICE
 
 help: ## Display this help page
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[33m%-30s\033[0m %s\n", $$1, $$2}'
@@ -24,6 +25,11 @@ test-coverage-report: coverage ## Run test and display coverage report in browse
 save-coverage-report: coverage ## Save coverage report to coverage.html
 	@go tool cover -html=/tmp/count.out -o coverage.html
 
+cmd/ch/NOTICE: NOTICE ## Copy NOTICE for embedding
+	@cp NOTICE cmd/ch/NOTICE
+
+generate: cmd/ch/NOTICE ## Run go generate for embedded resources
+
 create-dist: ## Create dist folder if not already existent
 	@mkdir -p dist/
 	@mkdir -p dist/linux-amd64
@@ -31,11 +37,11 @@ create-dist: ## Create dist folder if not already existent
 	@mkdir -p dist/darwin-arm64
 	@mkdir -p dist/darwin-amd64
 
-build-linux: create-dist ## Build binaries for linux
+build-linux: create-dist cmd/ch/NOTICE ## Build binaries for linux
 	@CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o $(BIN_PREFIX)/linux-amd64/ch $(BUILD_ARGS) $(CMD_CH_CLI)
 	@CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build -o $(BIN_PREFIX)linux-arm64/ch $(BUILD_ARGS) $(CMD_CH_CLI)
 
-build-darwin: create-dist  ## Build binaries for macOS
+build-darwin: create-dist cmd/ch/NOTICE ## Build binaries for macOS
 	@CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 go build -o $(BIN_PREFIX)darwin-amd64/ch $(BUILD_ARGS) $(CMD_CH_CLI)
 	@CGO_ENABLED=0 GOOS=darwin GOARCH=arm64 go build -o $(BIN_PREFIX)darwin-arm64/ch $(BUILD_ARGS) $(CMD_CH_CLI)
 
