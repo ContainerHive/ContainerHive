@@ -6,7 +6,7 @@ require (
 	github.com/GoogleContainerTools/container-structure-test v1.22.1
 	github.com/Masterminds/sprig/v3 v3.3.0
 	github.com/anchore/syft v1.42.1
-	github.com/containerd/containerd/v2 v2.2.1
+	github.com/containerd/containerd/v2 v2.2.2
 	github.com/docker/cli v29.3.0+incompatible
 	github.com/docker/docker v28.5.2+incompatible
 	github.com/google/go-cmp v0.7.0
