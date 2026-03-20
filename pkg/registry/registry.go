@@ -118,11 +118,41 @@ func loadImageFromTar(ociTarPath string) (v1.Image, func(), error) {
 	return img, func() { os.RemoveAll(tmpDir) }, nil
 }
 
+// pushTag returns the platform-specific tag as used by ch build when pushing.
+// Format: tag.sanitized-platform[.buildID]
+func pushTag(tag, platformStr, buildID string) string {
+	t := tag + "." + platform.Sanitize(platformStr)
+	if buildID != "" {
+		t += "." + buildID
+	}
+	return t
+}
+
 // createManifestForTag creates an OCI image index (manifest list) for a single
-// tag by loading images from local OCI tars. It uses remote.WriteIndex (same
-// approach as crane) which pushes all child manifests and layers before the
-// index, ensuring they are properly stored in the registry.
+// tag. When the registry is remote, it references platform images already in
+// the registry (no download needed). When local, it loads from OCI tars.
 func (r *Registry) createManifestForTag(imageName, tag string, platforms []string, buildID, distPath string) error {
+	manifestTag := tag
+	if buildID != "" {
+		manifestTag += "." + buildID
+	}
+	targetRef := fmt.Sprintf("%s/%s:%s", r.Address(), imageName, manifestTag)
+
+	log.Printf("Creating manifest %s:%s from %d platform(s)", imageName, manifestTag, len(platforms))
+
+	if !r.IsLocal() {
+		// Remote: reference images already in the registry by their push tags
+		var refs []gcr.PlatformRef
+		for _, p := range platforms {
+			refs = append(refs, gcr.PlatformRef{
+				Ref:      fmt.Sprintf("%s/%s:%s", r.Address(), imageName, pushTag(tag, p, buildID)),
+				Platform: p,
+			})
+		}
+		return gcr.CreateManifestListFromRefs(targetRef, refs)
+	}
+
+	// Local: load from OCI tars
 	var images []gcr.PlatformImage
 	var cleanups []func()
 	defer func() {
@@ -144,13 +174,6 @@ func (r *Registry) createManifestForTag(imageName, tag string, platforms []strin
 		})
 	}
 
-	manifestTag := tag
-	if buildID != "" {
-		manifestTag += "." + buildID
-	}
-	targetRef := fmt.Sprintf("%s/%s:%s", r.Address(), imageName, manifestTag)
-
-	log.Printf("Creating manifest %s:%s from %d platform(s)", imageName, manifestTag, len(platforms))
 	return gcr.CreateManifestList(targetRef, images)
 }
 

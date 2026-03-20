@@ -73,3 +73,51 @@ func CreateManifestList(targetRef string, images []PlatformImage) error {
 	idx := mutate.AppendManifests(empty.Index, adds...)
 	return remote.WriteIndex(dst, idx)
 }
+
+// PlatformRef pairs a registry reference with its target platform.
+type PlatformRef struct {
+	Ref      string // e.g. "registry.example.com/app:v1.linux-amd64.42"
+	Platform string // e.g. "linux/amd64"
+}
+
+// CreateManifestListFromRefs builds an OCI image index from images that already
+// exist in the registry. It fetches only the descriptors (no layers) and creates
+// a manifest list pointing to them.
+func CreateManifestListFromRefs(targetRef string, refs []PlatformRef) error {
+	dst, err := name.NewTag(targetRef)
+	if err != nil {
+		return fmt.Errorf("invalid target reference %q: %w", targetRef, err)
+	}
+
+	var adds []mutate.IndexAddendum
+	for _, pr := range refs {
+		plat, err := v1.ParsePlatform(pr.Platform)
+		if err != nil {
+			return fmt.Errorf("invalid platform %q: %w", pr.Platform, err)
+		}
+
+		src, err := name.ParseReference(pr.Ref)
+		if err != nil {
+			return fmt.Errorf("invalid reference %q: %w", pr.Ref, err)
+		}
+
+		img, err := remote.Image(src)
+		if err != nil {
+			return fmt.Errorf("failed to fetch %q: %w", pr.Ref, err)
+		}
+
+		desc, err := partial.Descriptor(img)
+		if err != nil {
+			return fmt.Errorf("failed to get descriptor for %q: %w", pr.Ref, err)
+		}
+		desc.Platform = plat
+
+		adds = append(adds, mutate.IndexAddendum{
+			Add:        img,
+			Descriptor: *desc,
+		})
+	}
+
+	idx := mutate.AppendManifests(empty.Index, adds...)
+	return remote.WriteIndex(dst, idx)
+}
