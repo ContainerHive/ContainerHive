@@ -68,3 +68,92 @@ func TestResolveVariantConfig(t *testing.T) {
 		t.Errorf("expected EXTRA=yes, got %q", config.BuildArgs["EXTRA"])
 	}
 }
+
+func TestResolveTagConfig_WithPlainSecrets(t *testing.T) {
+	image := &model.Image{
+		Name:      "test",
+		Versions:  model.Versions{},
+		BuildArgs: model.BuildArgs{},
+		Secrets: model.Secrets{
+			"token": {SourceType: "plain", Value: "my-secret-value"},
+		},
+	}
+	tag := &model.Tag{Name: "latest"}
+
+	config, err := ResolveTagConfig(image, tag)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if string(config.Secrets["token"]) != "my-secret-value" {
+		t.Errorf("expected secret token=my-secret-value, got %q", string(config.Secrets["token"]))
+	}
+}
+
+func TestResolveTagConfig_WithEnvSecret(t *testing.T) {
+	t.Setenv("TEST_SECRET_VALUE", "env-secret")
+
+	image := &model.Image{
+		Name:      "test",
+		Versions:  model.Versions{},
+		BuildArgs: model.BuildArgs{},
+		Secrets: model.Secrets{
+			"api_key": {SourceType: "env", Value: "${TEST_SECRET_VALUE}"},
+		},
+	}
+	tag := &model.Tag{Name: "latest"}
+
+	config, err := ResolveTagConfig(image, tag)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if string(config.Secrets["api_key"]) != "env-secret" {
+		t.Errorf("expected secret api_key=env-secret, got %q", string(config.Secrets["api_key"]))
+	}
+}
+
+func TestResolveTagConfig_NilVersionsAndBuildArgs(t *testing.T) {
+	image := &model.Image{
+		Name:    "test",
+		Secrets: model.Secrets{},
+	}
+	tag := &model.Tag{Name: "latest"}
+
+	config, err := ResolveTagConfig(image, tag)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if config.BuildArgs == nil {
+		t.Error("expected non-nil BuildArgs")
+	}
+	if config.Secrets == nil {
+		t.Error("expected non-nil Secrets")
+	}
+}
+
+func TestResolveVariantConfig_InheritsImageSecrets(t *testing.T) {
+	image := &model.Image{
+		Name:      "test",
+		Versions:  model.Versions{},
+		BuildArgs: model.BuildArgs{},
+		Secrets: model.Secrets{
+			"token": {SourceType: "plain", Value: "base-secret"},
+		},
+	}
+	tag := &model.Tag{Name: "latest"}
+	variant := &model.ImageVariant{
+		Name:      "slim",
+		TagSuffix: "-slim",
+	}
+
+	config, err := ResolveVariantConfig(image, variant, tag)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if string(config.Secrets["token"]) != "base-secret" {
+		t.Errorf("expected variant to inherit image secrets, got %q", string(config.Secrets["token"]))
+	}
+}
