@@ -20,7 +20,7 @@ RUN if [[ "$(arch)" == "x86_64" ]]; then \
     && chown 1000:1000 /bin/ch
 
 # Final stage - use distroless static base
-FROM busybox:1.37.0-glibc
+FROM ubuntu:24.04
 
 # Add metadata labels
 ARG BUILD_TIME
