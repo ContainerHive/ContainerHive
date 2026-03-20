@@ -13,23 +13,23 @@
       - uses: actions/download-artifact@v4
         with:
           name: generated
-          path: dist/
+          path: {{ .Ctx.Dist }}/
 {{- if $.Ctx.Artifacts }}
 {{- range .Image.Platforms }}
       - uses: actions/download-artifact@v4
         with:
           name: {{ $.Image.Name }}-{{ . }}
-          path: dist/
+          path: {{ $.Ctx.Dist }}/
 {{- end }}
 {{- end }}
-      - run: ch finalize {{ .Image.Name }} --build-id "$SNAPSHOT_ID"
+      - run: {{ .Ctx.ChCmd }} finalize {{ .Image.Name }} --build-id "$SNAPSHOT_ID"
 {{- if $.Ctx.Artifacts }}
       - uses: actions/upload-artifact@v4
         with:
           name: {{ .Image.Name }}-manifest
           path: |
-            dist/{{ .Image.Name }}/*/image.tar
-            dist/{{ .Image.Name }}/*/index.html
+            {{ .Ctx.Dist }}/{{ .Image.Name }}/*/image.tar
+            {{ .Ctx.Dist }}/{{ .Image.Name }}/*/index.html
           retention-days: 7
 {{- end }}
 {{- end }}

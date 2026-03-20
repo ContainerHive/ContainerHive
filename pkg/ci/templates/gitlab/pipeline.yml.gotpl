@@ -23,9 +23,9 @@ variables:
   variables:
     BUILDKIT_HOST: tcp://buildkitd:8372
   script:
-    - ch wait --buildkitd
-    - ch build ${IMAGE_NAME} --platform ${PLATFORM} --build-id "$SNAPSHOT_ID"
-    - ch sbom ${IMAGE_NAME} --platform ${PLATFORM} --build-id "$SNAPSHOT_ID"
+    - {{ .ChCmd }} wait --buildkitd
+    - {{ .ChCmd }} build ${IMAGE_NAME} --platform ${PLATFORM} --build-id "$SNAPSHOT_ID"
+    - {{ .ChCmd }} sbom ${IMAGE_NAME} --platform ${PLATFORM} --build-id "$SNAPSHOT_ID"
 {{ range .Platforms }}
 .build-{{ . }}:
   extends: .build
@@ -35,7 +35,7 @@ variables:
     name: {{ .ImageName }}:{{ .Version }}
     entrypoint: [""]
   script:
-    - ch finalize ${IMAGE_NAME} --build-id "$SNAPSHOT_ID"
+    - {{ .ChCmd }} finalize ${IMAGE_NAME} --build-id "$SNAPSHOT_ID"
 
 .test:
   image:
@@ -49,8 +49,8 @@ variables:
     DOCKER_HOST: tcp://dind:2375
     DOCKER_TLS_CERTDIR: ""
   script:
-    - ch wait --docker-socket
-    - ch test ${IMAGE_NAME} --build-id "$SNAPSHOT_ID"
+    - {{ .ChCmd }} wait --docker-socket
+    - {{ .ChCmd }} test ${IMAGE_NAME} --build-id "$SNAPSHOT_ID"
 
 # === GENERATE ===
 generate:
@@ -59,10 +59,10 @@ generate:
     entrypoint: [""]
   stage: generate
   script:
-    - ch generate --build-id "$SNAPSHOT_ID"
+    - {{ .ChCmd }} generate --build-id "$SNAPSHOT_ID"
   artifacts:
     paths:
-      - dist/
+      - {{ .Dist }}/
     expire_in: 1 week
 {{ range .Images }}
 # === {{ .Name | upper }} ===

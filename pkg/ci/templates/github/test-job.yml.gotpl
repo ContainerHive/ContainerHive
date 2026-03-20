@@ -19,13 +19,13 @@
       - uses: actions/download-artifact@v4
         with:
           name: generated
-          path: dist/
+          path: {{ .Ctx.Dist }}/
 {{- if $.Ctx.Artifacts }}
       - uses: actions/download-artifact@v4
         with:
           name: {{ .Image.Name }}-manifest
-          path: dist/
+          path: {{ .Ctx.Dist }}/
 {{- end }}
-      - run: ch wait --docker-socket
-      - run: ch test {{ .Image.Name }} --build-id "$SNAPSHOT_ID"{{ if not $.Ctx.Artifacts }} --pull{{ end }}
+      - run: {{ .Ctx.ChCmd }} wait --docker-socket
+      - run: {{ .Ctx.ChCmd }} test {{ .Image.Name }} --build-id "$SNAPSHOT_ID"{{ if not $.Ctx.Artifacts }} --pull{{ end }}
 {{- end }}

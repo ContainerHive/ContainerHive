@@ -90,4 +90,4 @@ checkout-test-project: ## Checkout fresh instance of latest test project
 
 render-test-project-ci: ## Render the test project CI configuration
 	@go run ./cmd/ch/ -p test-project/gitlab generate
-	@go run ./cmd/ch/ -p test-project/gitlab template ci --provider gitlab --output test-project/gitlab/pipeline.gitlab-ci.yml --image-name ghcr.io/timo-reymann/containerhive --version e8f3643
+	@cd test-project && go run ../cmd/ch/ -p gitlab template ci --provider gitlab --output gitlab/pipeline.gitlab-ci.yml --image-name ghcr.io/timo-reymann/containerhive --version e8f3643

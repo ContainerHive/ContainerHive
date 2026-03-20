@@ -21,11 +21,11 @@ jobs:
       - uses: actions/checkout@v4
         with:
           lfs: true
-      - run: ch generate --build-id "$SNAPSHOT_ID"
+      - run: {{ .ChCmd }} generate --build-id "$SNAPSHOT_ID"
       - uses: actions/upload-artifact@v4
         with:
           name: generated
-          path: dist/
+          path: {{ .Dist }}/
           retention-days: 7
 {{ range .Images }}
   # === {{ .Name | upper }} ===

@@ -18,14 +18,31 @@ type CIImage struct {
 
 // CIContext holds all data needed to render CI templates.
 type CIContext struct {
-	Images    []CIImage
-	Platforms []string
-	Stages    []string
-	Config    CIConfigContext
-	Artifacts bool
-	Command   string
-	Version   string
-	ImageName string
+	Images      []CIImage
+	Platforms   []string
+	Stages      []string
+	Config      CIConfigContext
+	Artifacts   bool
+	Command     string
+	Version     string
+	ImageName   string
+	ProjectPath string // non-empty when --project is not the default "."
+}
+
+// ChCmd returns the ch command prefix, including -p flag when a project path is set.
+func (c *CIContext) ChCmd() string {
+	if c.ProjectPath != "" {
+		return "ch -p " + c.ProjectPath
+	}
+	return "ch"
+}
+
+// Dist returns the dist directory path, prefixed with the project path when set.
+func (c *CIContext) Dist() string {
+	if c.ProjectPath != "" {
+		return c.ProjectPath + "/dist"
+	}
+	return "dist"
 }
 
 // CIConfigContext holds project configuration relevant to CI.

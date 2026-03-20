@@ -65,6 +65,11 @@ func templateCICmd() *cli.Command {
 				return fmt.Errorf("failed to build CI context: %w", err)
 			}
 
+			projectPath := cmd.String("project")
+			if projectPath != "" && projectPath != "." {
+				ciCtx.ProjectPath = projectPath
+			}
+
 			ciCtx.Command = buildCICommand(cmd)
 
 			// Set version: use override if provided, otherwise use current CLI version
@@ -136,7 +141,11 @@ func templateCustomCmd() *cli.Command {
 }
 
 func buildCICommand(cmd *cli.Command) string {
-	parts := []string{"ch template ci --provider", cmd.String("provider")}
+	parts := []string{"ch"}
+	if project := cmd.String("project"); project != "" && project != "." {
+		parts = append(parts, "--project", project)
+	}
+	parts = append(parts, "template", "ci", "--provider", cmd.String("provider"))
 	if cmd.Bool("artifacts") {
 		parts = append(parts, "--artifacts")
 	}
