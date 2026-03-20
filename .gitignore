@@ -6,3 +6,4 @@ example/dist
 example/reports
 .claude/worktrees
 cmd/ch/NOTICE
+test-project/

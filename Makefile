@@ -83,3 +83,11 @@ build-docker: ## Build docker image based on the built linux builds in the dist 
 		--build-arg BUILD_VERSION="$(VERSION)" \
 		--build-arg BUILD_COMMIT_REF="$(COMMIT_REF)" \
 		--push .
+
+checkout-test-project: ## Checkout fresh instance of latest test project
+	@rm -rf test-project || true
+	@git clone git@github.com:timo-reymann/ContainerHive-test-project.git test-project
+
+render-test-project-ci: ## Render the test project CI configuration
+	@go run ./cmd/ch/ -p test-project/gitlab generate
+	@go run ./cmd/ch/ -p test-project/gitlab template ci --provider gitlab --output test-project/gitlab/pipeline.gitlab-ci.yml --image-name ghcr.io/timo-reymann/containerhive --version 1112fa9
