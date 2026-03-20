@@ -74,6 +74,7 @@ func main() {
 			verifyCmd(),
 			templateCmd(),
 			waitCmd(),
+			loginCmd(),
 			licenseCmd(),
 		},
 	}
