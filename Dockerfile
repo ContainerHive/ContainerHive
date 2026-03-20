@@ -21,8 +21,9 @@ RUN if [[ "$(arch)" == "x86_64" ]]; then \
 
 # Final stage - use distroless static base
 FROM ubuntu:24.04
+ENV DEBIAN_FRONTEND="noninteractive"
 RUN apt update \
-    && apt install --upgrade ca-certificates \
+    && apt-get install -y --upgrade ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 
 # Add metadata labels
