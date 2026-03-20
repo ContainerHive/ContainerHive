@@ -21,6 +21,9 @@ RUN if [[ "$(arch)" == "x86_64" ]]; then \
 
 # Final stage - use distroless static base
 FROM ubuntu:24.04
+RUN apt update \
+    && apt install --upgrade ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
 
 # Add metadata labels
 ARG BUILD_TIME
@@ -41,6 +44,8 @@ COPY --from=license / /
 
 # Copy the architecture-specific ContainerHive binary
 COPY --from=bin /bin/ch /bin/ch
+
+USER 1000
 
 # Set entrypoint
 ENTRYPOINT ["/bin/ch"]
