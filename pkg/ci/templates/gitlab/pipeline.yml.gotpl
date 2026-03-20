@@ -13,7 +13,9 @@ variables:
 # === BASE TEMPLATES ===
 
 .build:
-  image: {{ .ImageName }}:{{ .Version }}
+  image:
+    name: {{ .ImageName }}:{{ .Version }}
+    entrypoint: ["/bin/sh"]
   services:
     - name: moby/buildkit:latest
       alias: buildkitd
@@ -29,12 +31,16 @@ variables:
   extends: .build
 {{ end }}
 .manifest:
-  image: {{ .ImageName }}:{{ .Version }}
+  image:
+    name: {{ .ImageName }}:{{ .Version }}
+    entrypoint: ["/bin/sh"]
   script:
     - ch finalize ${IMAGE_NAME} --build-id "$SNAPSHOT_ID"
 
 .test:
-  image: {{ .ImageName }}:{{ .Version }}
+  image:
+    name: {{ .ImageName }}:{{ .Version }}
+    entrypoint: ["/bin/sh"]
   stage: test
   services:
     - name: docker:dind
@@ -48,7 +54,9 @@ variables:
 
 # === GENERATE ===
 generate:
-  image: {{ .ImageName }}:{{ .Version }}
+  image:
+    name: {{ .ImageName }}:{{ .Version }}
+    entrypoint: ["/bin/sh"]
   stage: generate
   script:
     - ch generate --build-id "$SNAPSHOT_ID"
