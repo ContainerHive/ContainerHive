@@ -106,7 +106,12 @@ func DiscoverProject(ctx context.Context, root string) (*model.ContainerHiveProj
 		return nil, errors.Join(errors.New("failed to parse ContainerHive config"), err)
 	}
 
-	images, err := discoverImages(ctx, filepath.Join(absoluteRoot, "images"))
+	imagesPath, err := filepath.EvalSymlinks(filepath.Join(absoluteRoot, "images"))
+	if err != nil {
+		return nil, errors.Join(errors.New("failed to resolve images path"), err)
+	}
+
+	images, err := discoverImages(ctx, imagesPath)
 	if err != nil {
 		return nil, errors.Join(errors.New("failed to discover images"), err)
 	}
