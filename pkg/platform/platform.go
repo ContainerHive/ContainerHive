@@ -2,6 +2,9 @@ package platform
 
 import "strings"
 
+// DefaultPlatforms is the set of platforms used when none are configured.
+var DefaultPlatforms = []string{"linux/amd64", "linux/arm64"}
+
 // Sanitize converts a platform string like "linux/amd64" to "linux-amd64".
 func Sanitize(p string) string {
 	return strings.ReplaceAll(p, "/", "-")

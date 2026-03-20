@@ -10,6 +10,7 @@ import (
 	"sync"
 
 	"github.com/timo-reymann/ContainerHive/pkg/model"
+	"github.com/timo-reymann/ContainerHive/pkg/platform"
 	"golang.org/x/sync/errgroup"
 )
 
@@ -104,6 +105,10 @@ func DiscoverProject(ctx context.Context, root string) (*model.ContainerHiveProj
 	hiveConfig, err := parseHiveConfigFile(absoluteConfigPath)
 	if err != nil {
 		return nil, errors.Join(errors.New("failed to parse ContainerHive config"), err)
+	}
+
+	if len(hiveConfig.Platforms) == 0 {
+		hiveConfig.Platforms = platform.DefaultPlatforms
 	}
 
 	imagesPath, err := filepath.EvalSymlinks(filepath.Join(absoluteRoot, "images"))
