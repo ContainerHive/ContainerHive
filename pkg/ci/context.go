@@ -25,6 +25,7 @@ type CIContext struct {
 	Artifacts bool
 	Command   string
 	Version   string
+	ImageName string
 }
 
 // CIConfigContext holds project configuration relevant to CI.

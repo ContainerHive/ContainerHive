@@ -1,7 +1,7 @@
 {{ define "test-job.yml.gotpl" }}
   test-{{ .Image.Name }}:
     runs-on: ubuntu-latest
-    container: ch:{{ .Ctx.Version }}
+    container: {{ .Ctx.ImageName }}:{{ .Ctx.Version }}
     services:
       dind:
         image: docker:dind

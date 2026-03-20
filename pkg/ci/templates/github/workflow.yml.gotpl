@@ -16,7 +16,7 @@ jobs:
   # === GENERATE ===
   generate:
     runs-on: ubuntu-latest
-    container: ch:{{ .Version }}
+    container: {{ .ImageName }}:{{ .Version }}
     steps:
       - uses: actions/checkout@v4
         with:

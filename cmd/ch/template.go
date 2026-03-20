@@ -49,6 +49,10 @@ func templateCICmd() *cli.Command {
 				Name:  "version",
 				Usage: "CH CLI version to use in CI templates (default: current CLI version)",
 			},
+			&cli.StringFlag{
+				Name:  "image-name",
+				Usage: "Container image name for the CH CLI (default: timoreymann/ch)",
+			},
 		},
 		Action: func(ctx context.Context, cmd *cli.Command) error {
 			project, err := discoverProject(ctx, cmd)
@@ -69,6 +73,14 @@ func templateCICmd() *cli.Command {
 				ciCtx.Version = versionOverride
 			} else {
 				ciCtx.Version = version.Get()
+			}
+
+			// Set image name: use override if provided, otherwise use default
+			imageName := cmd.String("image-name")
+			if imageName != "" {
+				ciCtx.ImageName = imageName
+			} else {
+				ciCtx.ImageName = "timoreymann/ch"
 			}
 
 			result, err := ci.Generate(cmd.String("provider"), ciCtx, cmd.String("template-dir"))
@@ -133,6 +145,9 @@ func buildCICommand(cmd *cli.Command) string {
 	}
 	if output := cmd.String("output"); output != "" {
 		parts = append(parts, "--output", output)
+	}
+	if imageName := cmd.String("image-name"); imageName != "" {
+		parts = append(parts, "--image-name", imageName)
 	}
 	return strings.Join(parts, " ")
 }
