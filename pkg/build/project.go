@@ -42,15 +42,8 @@ type ProjectBuildOpts struct {
 	OnBuild func(imageTag, tarFile string)
 }
 
-// pushTag returns the tag to use when pushing to the registry, with platform
-// suffix and optional build-id suffix.
-// Format: tagName.sanitized-platform[.buildID]
 func (o *ProjectBuildOpts) pushTag(tagName, platformStr string) string {
-	tag := tagName + "." + platform.Sanitize(platformStr)
-	if o.BuildID != "" {
-		tag += "." + o.BuildID
-	}
-	return tag
+	return PushTag(tagName, platformStr, o.BuildID)
 }
 
 // registryRef returns the full registry reference for a build, or empty if no
