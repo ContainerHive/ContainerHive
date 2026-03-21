@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"sort"
 
+	"github.com/timo-reymann/ContainerHive/internal/dependency"
 	"github.com/timo-reymann/ContainerHive/pkg/model"
 )
 
@@ -58,22 +59,17 @@ func BuildCIContext(project *model.ContainerHiveProject, artifacts bool) (*CICon
 		imageNames[name] = true
 	}
 
-	// Build dependency map (only internal deps)
+	// Build dependency graph from source Dockerfiles and explicit depends_on
+	scannedGraph := dependency.ScanProjectSource(project)
+	mergedGraph, err := dependency.BuildDependencyGraph(scannedGraph, project)
+	if err != nil {
+		return nil, fmt.Errorf("failed to build dependency graph: %w", err)
+	}
+
 	dependencies := make(map[string][]string)
-	for name, images := range project.ImagesByName {
-		depsSet := make(map[string]bool)
-		for _, img := range images {
-			for _, dep := range img.DependsOn {
-				if imageNames[dep] {
-					depsSet[dep] = true
-				}
-			}
-		}
-		if len(depsSet) > 0 {
-			deps := make([]string, 0, len(depsSet))
-			for d := range depsSet {
-				deps = append(deps, d)
-			}
+	for name := range project.ImagesByName {
+		deps := mergedGraph.Dependencies(name)
+		if len(deps) > 0 {
 			sort.Strings(deps)
 			dependencies[name] = deps
 		}

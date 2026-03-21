@@ -6,6 +6,8 @@ import (
 	"path/filepath"
 	"regexp"
 	"strings"
+
+	"github.com/timo-reymann/ContainerHive/pkg/model"
 )
 
 const HivePrefix = "__hive__/"
@@ -37,6 +39,43 @@ func ScanDockerfileForHiveRefs(dockerfilePath string) ([]HiveRef, error) {
 		}
 	}
 	return refs, nil
+}
+
+// ScanProjectSource scans source Dockerfiles from the project model for
+// __hive__/ references and builds a dependency graph. This is used by CI
+// template generation where the rendered dist directory may not exist yet.
+func ScanProjectSource(project *model.ContainerHiveProject) *Graph {
+	graph := NewGraph()
+
+	for name := range project.ImagesByName {
+		graph.AddImage(name)
+	}
+
+	for name, images := range project.ImagesByName {
+		for _, img := range images {
+			scanEntryPoint(graph, name, img.BuildEntryPointPath)
+			for _, variant := range img.Variants {
+				scanEntryPoint(graph, name, variant.BuildEntryPointPath)
+			}
+		}
+	}
+
+	return graph
+}
+
+func scanEntryPoint(graph *Graph, imageName, entryPointPath string) {
+	if entryPointPath == "" {
+		return
+	}
+	refs, err := ScanDockerfileForHiveRefs(entryPointPath)
+	if err != nil {
+		return
+	}
+	for _, ref := range refs {
+		if ref.ImageName != imageName {
+			graph.AddDependency(imageName, ref.ImageName)
+		}
+	}
 }
 
 // ScanRenderedProject scans all Dockerfiles in a rendered dist directory
