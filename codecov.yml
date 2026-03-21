@@ -3,5 +3,9 @@ coverage:
   round: down
   range: "50...75"
 ignore:
+  # Only glue code should be tested by e2e tests using bats
   - cmd/**
+  # Tools should not be reflected in coverage
   - tools/**
+  # Only used by tests
+  - internal/testutil/buildkit.go
