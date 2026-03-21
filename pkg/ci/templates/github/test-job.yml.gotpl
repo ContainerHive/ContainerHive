@@ -26,6 +26,7 @@
           name: {{ .Image.Name }}-manifest
           path: {{ .Ctx.Dist }}/
 {{- end }}
+      - run: echo "${{ "{{" }} secrets.GITHUB_TOKEN {{ "}}" }}" | {{ .Ctx.ChCmd }} login -u "${{ "{{" }} github.actor {{ "}}" }}" --password-stdin ghcr.io
       - run: {{ .Ctx.ChCmd }} wait --docker-socket
       - run: {{ .Ctx.ChCmd }} test {{ .Image.Name }} --build-id "$SNAPSHOT_ID"{{ if not $.Ctx.Artifacts }} --pull{{ end }}
 {{- end }}

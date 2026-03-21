@@ -10,6 +10,9 @@ stages:
 variables:
   SNAPSHOT_ID: ${CI_MERGE_REQUEST_IID}
 
+before_script:
+  - echo "$CI_REGISTRY_PASSWORD" | {{ .ChCmd }} login -u "$CI_REGISTRY_USER" --password-stdin "$CI_REGISTRY"
+
 # === BASE TEMPLATES ===
 
 .build:

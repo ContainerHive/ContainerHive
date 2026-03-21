@@ -24,6 +24,7 @@
         with:
           name: generated
           path: {{ $.Ctx.Dist }}/
+      - run: echo "${{ "{{" }} secrets.GITHUB_TOKEN {{ "}}" }}" | {{ $.Ctx.ChCmd }} login -u "${{ "{{" }} github.actor {{ "}}" }}" --password-stdin ghcr.io
       - run: {{ $.Ctx.ChCmd }} wait --docker-socket
       - run: {{ $.Ctx.ChCmd }} build {{ $.Image.Name }} --platform {{ . }} --build-id "$SNAPSHOT_ID"
       - run: {{ $.Ctx.ChCmd }} sbom {{ $.Image.Name }} --platform {{ . }} --build-id "$SNAPSHOT_ID"
