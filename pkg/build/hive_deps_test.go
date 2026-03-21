@@ -55,7 +55,11 @@ RUN apt-get update
 		require.NoError(t, os.WriteFile(dockerfile, []byte(dockerfileContent), 0644))
 
 		// Call ResolveHiveDeps
-		result, err := ResolveHiveDeps(dockerfile, tempDir, "linux/amd64")
+		result, err := ResolveHiveDeps(HiveDepsOpts{
+			DockerfilePath: dockerfile,
+			DistPath:       tempDir,
+			PlatformStr:    "linux/amd64",
+		})
 
 		// Should return nil (no error) and nil result when no hive deps
 		require.NoError(t, err)
@@ -71,13 +75,63 @@ COPY --from=__hive__/util:1.0 /app /app
 `
 		require.NoError(t, os.WriteFile(dockerfile, []byte(dockerfileContent), 0644))
 
-		// Call ResolveHiveDeps - should fail because dependencies don't exist
-		result, err := ResolveHiveDeps(dockerfile, tempDir, "linux/amd64")
+		// Call ResolveHiveDeps - should fail because dependencies don't exist and no registry
+		result, err := ResolveHiveDeps(HiveDepsOpts{
+			DockerfilePath: dockerfile,
+			DistPath:       tempDir,
+			PlatformStr:    "linux/amd64",
+		})
 
 		// Should return error because dependencies aren't built
 		require.Error(t, err)
 		assert.Nil(t, result)
 		assert.Contains(t, err.Error(), "not built yet")
+	})
+
+	t.Run("hive dependencies fall back to registry", func(t *testing.T) {
+		tempDir := t.TempDir()
+		dockerfile := filepath.Join(tempDir, "Dockerfile")
+		dockerfileContent := `FROM __hive__/base:latest
+RUN echo hello
+`
+		require.NoError(t, os.WriteFile(dockerfile, []byte(dockerfileContent), 0644))
+
+		// No local tars, but registry is configured
+		result, err := ResolveHiveDeps(HiveDepsOpts{
+			DockerfilePath:  dockerfile,
+			DistPath:        tempDir,
+			PlatformStr:     "linux/amd64",
+			RegistryAddress: "ghcr.io/myorg",
+			BuildID:         "42",
+		})
+
+		require.NoError(t, err)
+		require.NotNil(t, result)
+		assert.Contains(t, result.NamedContexts, "context:hive-dep/base:latest")
+		assert.Equal(t, "docker-image://ghcr.io/myorg/base:latest.42", result.NamedContexts["context:hive-dep/base:latest"])
+		assert.Empty(t, result.OCIStores)
+		result.Cleanup()
+	})
+
+	t.Run("hive dependencies fall back to registry without build ID", func(t *testing.T) {
+		tempDir := t.TempDir()
+		dockerfile := filepath.Join(tempDir, "Dockerfile")
+		dockerfileContent := `FROM __hive__/base:v1
+RUN echo hello
+`
+		require.NoError(t, os.WriteFile(dockerfile, []byte(dockerfileContent), 0644))
+
+		result, err := ResolveHiveDeps(HiveDepsOpts{
+			DockerfilePath:  dockerfile,
+			DistPath:        tempDir,
+			PlatformStr:     "linux/amd64",
+			RegistryAddress: "ghcr.io/myorg",
+		})
+
+		require.NoError(t, err)
+		require.NotNil(t, result)
+		assert.Equal(t, "docker-image://ghcr.io/myorg/base:v1", result.NamedContexts["context:hive-dep/base:v1"])
+		result.Cleanup()
 	})
 
 	t.Run("dependency files exist but OCI loading fails", func(t *testing.T) {
@@ -112,7 +166,11 @@ COPY --from=__hive__/util:1.0 /app /app
 		assert.True(t, fileExists(utilTar))
 
 		// Call ResolveHiveDeps - will fail at OCI loading (expected)
-		result, err := ResolveHiveDeps(dockerfile, tempDir, "linux/amd64")
+		result, err := ResolveHiveDeps(HiveDepsOpts{
+			DockerfilePath: dockerfile,
+			DistPath:       tempDir,
+			PlatformStr:    "linux/amd64",
+		})
 
 		// Should fail at OCI loading
 		require.Error(t, err)

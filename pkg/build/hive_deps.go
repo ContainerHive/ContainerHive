@@ -35,12 +35,26 @@ func (d *HiveDeps) Cleanup() {
 	}
 }
 
+// HiveDepsOpts configures how hive dependencies are resolved.
+type HiveDepsOpts struct {
+	DockerfilePath string
+	DistPath       string
+	PlatformStr    string
+	// RegistryAddress is the registry address for CI fallback resolution.
+	// When set and a local tar is not found, dependencies resolve to
+	// docker-image:// references pointing at the registry manifest.
+	RegistryAddress string
+	// BuildID is appended to registry tags when resolving via registry.
+	BuildID string
+}
+
 // ResolveHiveDeps scans a Dockerfile for __hive__/ references and resolves each
-// to an OCI layout content store. It also creates a rewritten Dockerfile that
-// uses a valid Docker reference prefix (hive-dep/) so BuildKit can parse it.
+// to an OCI layout content store (local) or a docker-image:// registry
+// reference (CI). It also creates a rewritten Dockerfile that uses a valid
+// Docker reference prefix (hive-dep/) so BuildKit can parse it.
 // Returns nil (not an error) when the Dockerfile has no hive dependencies.
-func ResolveHiveDeps(dockerfilePath, distPath, platformStr string) (*HiveDeps, error) {
-	refs, err := dependency.ScanDockerfileForHiveRefs(dockerfilePath)
+func ResolveHiveDeps(opts HiveDepsOpts) (*HiveDeps, error) {
+	refs, err := dependency.ScanDockerfileForHiveRefs(opts.DockerfilePath)
 	if err != nil {
 		return nil, fmt.Errorf("scanning Dockerfile for hive refs: %w", err)
 	}
@@ -55,7 +69,7 @@ func ResolveHiveDeps(dockerfilePath, distPath, platformStr string) (*HiveDeps, e
 	}
 
 	// Rewrite __hive__/ to hive-dep/ so BuildKit's reference parser accepts it.
-	rewritten, err := rewriteDockerfile(dockerfilePath)
+	rewritten, err := rewriteDockerfile(opts.DockerfilePath)
 	if err != nil {
 		return nil, fmt.Errorf("rewriting Dockerfile for named contexts: %w", err)
 	}
@@ -63,10 +77,24 @@ func ResolveHiveDeps(dockerfilePath, distPath, platformStr string) (*HiveDeps, e
 	d.cleanups = append(d.cleanups, func() { os.Remove(rewritten) })
 
 	for _, ref := range refs {
-		tarPath := TarFilePath(distPath, ref.ImageName, ref.Tag, platformStr)
+		contextKey := fmt.Sprintf("context:%s%s:%s", namedContextPrefix, ref.ImageName, ref.Tag)
+
+		tarPath := TarFilePath(opts.DistPath, ref.ImageName, ref.Tag, opts.PlatformStr)
 		if _, err := os.Stat(tarPath); err != nil {
-			d.Cleanup()
-			return nil, fmt.Errorf("dependency %s:%s not built yet (expected %s): %w", ref.ImageName, ref.Tag, tarPath, err)
+			// Fall back to registry reference in CI
+			if opts.RegistryAddress == "" {
+				d.Cleanup()
+				return nil, fmt.Errorf("dependency %s:%s not built yet (expected %s) and no registry configured: %w", ref.ImageName, ref.Tag, tarPath, err)
+			}
+
+			registryTag := ref.Tag
+			if opts.BuildID != "" {
+				registryTag += "." + opts.BuildID
+			}
+			contextValue := fmt.Sprintf("docker-image://%s/%s:%s", opts.RegistryAddress, ref.ImageName, registryTag)
+			d.NamedContexts[contextKey] = contextValue
+			log.Printf("Resolved hive dep %s:%s -> %s (registry)", ref.ImageName, ref.Tag, contextValue)
+			continue
 		}
 
 		tmpDir, err := os.MkdirTemp("", fmt.Sprintf("hive-oci-%s-%s-*", ref.ImageName, ref.Tag))
@@ -83,7 +111,6 @@ func ResolveHiveDeps(dockerfilePath, distPath, platformStr string) (*HiveDeps, e
 		}
 
 		storeID := fmt.Sprintf("hive-%s-%s", ref.ImageName, ref.Tag)
-		contextKey := fmt.Sprintf("context:%s%s:%s", namedContextPrefix, ref.ImageName, ref.Tag)
 		contextValue := fmt.Sprintf("oci-layout:%s@%s", storeID, ols.Digest)
 
 		d.OCIStores[storeID] = ols.Store

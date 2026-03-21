@@ -62,6 +62,14 @@ func (o *ProjectBuildOpts) registryRef(imageName, tagName, platformStr string) s
 	return fmt.Sprintf("%s/%s:%s", o.Registry.Address(), imageName, o.pushTag(tagName, platformStr))
 }
 
+// registryAddress returns the registry address, or empty if no registry is configured.
+func (o *ProjectBuildOpts) registryAddress() string {
+	if o.Registry == nil {
+		return ""
+	}
+	return o.Registry.Address()
+}
+
 // registryInsecure returns true if the registry uses HTTP (local registries).
 func (o *ProjectBuildOpts) registryInsecure() bool {
 	return o.Registry != nil && o.Registry.IsLocal()
@@ -217,7 +225,13 @@ func buildTag(ctx context.Context, client *Client, opts *ProjectBuildOpts, image
 		return fmt.Errorf("Dockerfile not found for %s:%s at %s", imageDef.Name, tagName, dockerfilePath)
 	}
 
-	hiveDeps, err := ResolveHiveDeps(dockerfilePath, opts.DistPath, platformStr)
+	hiveDeps, err := ResolveHiveDeps(HiveDepsOpts{
+		DockerfilePath:  dockerfilePath,
+		DistPath:        opts.DistPath,
+		PlatformStr:     platformStr,
+		RegistryAddress: opts.registryAddress(),
+		BuildID:         opts.BuildID,
+	})
 	if err != nil {
 		return fmt.Errorf("failed to resolve hive deps for %s:%s: %w", imageDef.Name, tagName, err)
 	}
@@ -276,7 +290,13 @@ func buildVariant(ctx context.Context, client *Client, opts *ProjectBuildOpts, i
 		return nil
 	}
 
-	hiveDeps, err := ResolveHiveDeps(variantDockerfilePath, opts.DistPath, platformStr)
+	hiveDeps, err := ResolveHiveDeps(HiveDepsOpts{
+		DockerfilePath:  variantDockerfilePath,
+		DistPath:        opts.DistPath,
+		PlatformStr:     platformStr,
+		RegistryAddress: opts.registryAddress(),
+		BuildID:         opts.BuildID,
+	})
 	if err != nil {
 		return fmt.Errorf("failed to resolve hive deps for variant %s:%s:%s: %w", imageDef.Name, tagName, variantName, err)
 	}
