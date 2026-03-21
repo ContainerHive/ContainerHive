@@ -13,7 +13,7 @@ permissions:
   packages: write
 
 env:
-  SNAPSHOT_ID: {{ "{{" }} github.event.pull_request.number {{ "}}" }}
+  SNAPSHOT_ID: "${{ "{{" }} github.event.pull_request.number {{ "}}" }}"
 
 jobs:
   # === GENERATE ===
