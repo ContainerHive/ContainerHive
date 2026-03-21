@@ -3,24 +3,26 @@ package docker
 import (
 	"context"
 	"errors"
-	"os"
 
 	dockerClient "github.com/docker/docker/client"
 	"github.com/google/go-containerregistry/pkg/authn"
 	"github.com/google/go-containerregistry/pkg/name"
 	"github.com/google/go-containerregistry/pkg/v1/daemon"
-	"github.com/google/go-containerregistry/pkg/v1/layout"
 	"github.com/google/go-containerregistry/pkg/v1/remote"
+	"github.com/timo-reymann/ContainerHive/internal/ocistore"
 )
 
+// Client wraps the Docker client library for image operations.
 type Client struct {
 	docker *dockerClient.Client
 }
 
+// Close releases the underlying Docker client connection.
 func (c *Client) Close() error {
 	return c.docker.Close()
 }
 
+// NewClient creates a new Docker client configured from environment variables.
 func NewClient() (*Client, error) {
 	docker, err := dockerClient.NewClientWithOpts(dockerClient.FromEnv, dockerClient.WithAPIVersionNegotiation())
 	if err != nil {
@@ -62,44 +64,17 @@ func (c *Client) PullImage(_ context.Context, imageRef string) (string, error) {
 	return imageRef, nil
 }
 
+// LoadImageFromTar loads an OCI image from a tar archive into the local Docker daemon.
 func (c *Client) LoadImageFromTar(_ context.Context, tarPath string) (string, error) {
-	tmpDir, err := os.MkdirTemp("", "oci-layout-*")
+	ociImage, err := ocistore.ImageFromTar(tarPath)
 	if err != nil {
 		return "", err
 	}
-	defer os.RemoveAll(tmpDir)
+	defer ociImage.Cleanup()
 
-	if err := extractTar(tarPath, tmpDir); err != nil {
-		return "", errors.Join(errors.New("failed to extract OCI tar"), err)
-	}
-
-	layoutPath, err := layout.FromPath(tmpDir)
-	if err != nil {
-		return "", errors.Join(errors.New("failed to read OCI layout"), err)
-	}
-
-	idx, err := layoutPath.ImageIndex()
-	if err != nil {
-		return "", err
-	}
-
-	idxManifest, err := idx.IndexManifest()
-	if err != nil {
-		return "", err
-	}
-
-	if len(idxManifest.Manifests) == 0 {
-		return "", errors.New("no manifests in OCI layout")
-	}
-
-	imageName, ok := idxManifest.Manifests[0].Annotations["io.containerd.image.name"]
-	if !ok || imageName == "" {
+	imageName := ociImage.Annotations["io.containerd.image.name"]
+	if imageName == "" {
 		return "", errors.New("no image name annotation in OCI index")
-	}
-
-	img, err := layoutPath.Image(idxManifest.Manifests[0].Digest)
-	if err != nil {
-		return "", errors.Join(errors.New("failed to read image from layout"), err)
 	}
 
 	tag, err := name.NewTag(imageName)
@@ -107,7 +82,7 @@ func (c *Client) LoadImageFromTar(_ context.Context, tarPath string) (string, er
 		return "", errors.Join(errors.New("invalid image name"), err)
 	}
 
-	if _, err := daemon.Write(tag, img); err != nil {
+	if _, err := daemon.Write(tag, ociImage.Image); err != nil {
 		return "", errors.Join(errors.New("failed to load image into Docker"), err)
 	}
 

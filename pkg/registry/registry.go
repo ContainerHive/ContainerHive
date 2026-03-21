@@ -4,14 +4,10 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"os"
-
-	v1 "github.com/google/go-containerregistry/pkg/v1"
-	"github.com/google/go-containerregistry/pkg/v1/layout"
 
 	"github.com/timo-reymann/ContainerHive/internal/gcr"
+	"github.com/timo-reymann/ContainerHive/internal/ocistore"
 	internalregistry "github.com/timo-reymann/ContainerHive/internal/registry"
-	"github.com/timo-reymann/ContainerHive/internal/utils"
 	"github.com/timo-reymann/ContainerHive/pkg/build"
 	"github.com/timo-reymann/ContainerHive/pkg/model"
 	"github.com/timo-reymann/ContainerHive/pkg/platform"
@@ -81,67 +77,21 @@ func collectAllTags(imageDef *model.Image) []string {
 // loadImageFromTar extracts an OCI tar and returns the first image from the
 // layout. The caller must call the returned cleanup function after the image
 // is no longer needed (v1.Image reads blobs lazily from disk).
-func loadImageFromTar(ociTarPath string) (v1.Image, func(), error) {
-	tmpDir, err := os.MkdirTemp("", "oci-manifest-*")
-	if err != nil {
-		return nil, nil, err
-	}
-
-	if err := utils.ExtractTar(ociTarPath, tmpDir); err != nil {
-		os.RemoveAll(tmpDir)
-		return nil, nil, fmt.Errorf("failed to extract tar: %w", err)
-	}
-
-	layoutPath, err := layout.FromPath(tmpDir)
-	if err != nil {
-		os.RemoveAll(tmpDir)
-		return nil, nil, fmt.Errorf("failed to read OCI layout: %w", err)
-	}
-
-	idx, err := layoutPath.ImageIndex()
-	if err != nil {
-		os.RemoveAll(tmpDir)
-		return nil, nil, err
-	}
-
-	idxManifest, err := idx.IndexManifest()
-	if err != nil {
-		os.RemoveAll(tmpDir)
-		return nil, nil, err
-	}
-
-	if len(idxManifest.Manifests) == 0 {
-		os.RemoveAll(tmpDir)
-		return nil, nil, fmt.Errorf("no manifests in OCI layout")
-	}
-
-	img, err := layoutPath.Image(idxManifest.Manifests[0].Digest)
-	if err != nil {
-		os.RemoveAll(tmpDir)
-		return nil, nil, err
-	}
-
-	return img, func() { os.RemoveAll(tmpDir) }, nil
+func loadImageFromTar(ociTarPath string) (*ocistore.OCIImage, error) {
+	return ocistore.ImageFromTar(ociTarPath)
 }
 
 // pushTag returns the platform-specific tag as used by ch build when pushing.
 // Format: tag.sanitized-platform[.buildID]
 func pushTag(tag, platformStr, buildID string) string {
-	t := tag + "." + platform.Sanitize(platformStr)
-	if buildID != "" {
-		t += "." + buildID
-	}
-	return t
+	return build.PushTag(tag, platformStr, buildID)
 }
 
 // createManifestForTag creates an OCI image index (manifest list) for a single
 // tag. When the registry is remote, it references platform images already in
 // the registry (no download needed). When local, it loads from OCI tars.
 func (r *Registry) createManifestForTag(imageName, tag string, platforms []string, buildID, distPath string) error {
-	manifestTag := tag
-	if buildID != "" {
-		manifestTag += "." + buildID
-	}
+	manifestTag := build.WithBuildID(tag, buildID)
 	targetRef := fmt.Sprintf("%s/%s:%s", r.Address(), imageName, manifestTag)
 
 	log.Printf("Creating manifest %s:%s from %d platform(s)", imageName, manifestTag, len(platforms))
@@ -169,13 +119,13 @@ func (r *Registry) createManifestForTag(imageName, tag string, platforms []strin
 
 	for _, p := range platforms {
 		tarPath := build.TarFilePath(distPath, imageName, tag, p)
-		img, cleanup, err := loadImageFromTar(tarPath)
+		ociImage, err := loadImageFromTar(tarPath)
 		if err != nil {
 			return fmt.Errorf("failed to load image for %s:%s [%s]: %w", imageName, tag, p, err)
 		}
-		cleanups = append(cleanups, cleanup)
+		cleanups = append(cleanups, ociImage.Cleanup)
 		images = append(images, gcr.PlatformImage{
-			Image:    img,
+			Image:    ociImage.Image,
 			Platform: p,
 		})
 	}
@@ -228,12 +178,8 @@ func (r *Registry) retagAliases(imageDef *model.Image, filters []build.Filter, b
 		if !matchesTagFilter(filters, imageDef.Name, tag) {
 			continue
 		}
-		sourceTag := tag
-		targetTag := alias
-		if buildID != "" {
-			sourceTag += "." + buildID
-			targetTag += "." + buildID
-		}
+		sourceTag := build.WithBuildID(tag, buildID)
+		targetTag := build.WithBuildID(alias, buildID)
 		sourceRef := fmt.Sprintf("%s/%s:%s", r.Address(), imageDef.Name, sourceTag)
 		targetRef := fmt.Sprintf("%s/%s:%s", r.Address(), imageDef.Name, targetTag)
 		log.Printf("Tagging alias %s:%s -> %s:%s", imageDef.Name, targetTag, imageDef.Name, sourceTag)
