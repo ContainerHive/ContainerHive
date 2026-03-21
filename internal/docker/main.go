@@ -32,6 +32,12 @@ func NewClient() (*Client, error) {
 	}, nil
 }
 
+// HasImage checks whether the Docker daemon already has the given image.
+func (c *Client) HasImage(ctx context.Context, imageRef string) bool {
+	_, _, err := c.docker.ImageInspectWithRaw(ctx, imageRef)
+	return err == nil
+}
+
 // PullImage pulls an image from a remote registry into the local Docker daemon.
 func (c *Client) PullImage(_ context.Context, imageRef string) (string, error) {
 	ref, err := name.ParseReference(imageRef)
