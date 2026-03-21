@@ -4,6 +4,29 @@ import (
 	"testing"
 )
 
+func TestNormalize(t *testing.T) {
+	tests := []struct {
+		input string
+		want  string
+	}{
+		{"linux/amd64", "linux/amd64"},
+		{"linux/arm64", "linux/arm64"},
+		{"linux/arm/v7", "linux/arm/v7"},
+		{"windows/amd64", "windows/amd64"},
+		{"amd64", "linux/amd64"},
+		{"arm64", "linux/arm64"},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.input, func(t *testing.T) {
+			got := Normalize(tt.input)
+			if got != tt.want {
+				t.Errorf("Normalize(%q) = %q, want %q", tt.input, got, tt.want)
+			}
+		})
+	}
+}
+
 func TestSanitize(t *testing.T) {
 	tests := []struct {
 		input string
@@ -60,10 +83,21 @@ func TestResolve(t *testing.T) {
 		}
 	})
 
-	t.Run("all empty returns nil", func(t *testing.T) {
+	t.Run("all empty returns empty slice", func(t *testing.T) {
 		got := Resolve(nil, nil, nil)
-		if got != nil {
-			t.Errorf("expected nil, got %v", got)
+		if len(got) != 0 {
+			t.Errorf("expected empty slice, got %v", got)
+		}
+	})
+
+	t.Run("normalizes short platform names", func(t *testing.T) {
+		got := Resolve(
+			[]string{"amd64", "arm64"},
+			nil,
+			nil,
+		)
+		if len(got) != 2 || got[0] != "linux/amd64" || got[1] != "linux/arm64" {
+			t.Errorf("expected normalized platforms, got %v", got)
 		}
 	})
 }
