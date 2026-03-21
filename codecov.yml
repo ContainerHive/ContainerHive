@@ -3,5 +3,5 @@ coverage:
   round: down
   range: "50...75"
 ignore:
-  - cmd/*/main.go
+  - cmd/**
   - tools/**
