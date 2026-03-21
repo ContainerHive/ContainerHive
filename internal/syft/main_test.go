@@ -201,6 +201,30 @@ func TestSBOMImageTool_SerializeSBOM(t *testing.T) {
 	}
 }
 
+func TestSBOMImageTool_Generate(t *testing.T) {
+	tool, err := NewSBOMImageTool()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	t.Run("valid tar and format", func(t *testing.T) {
+		data, err := tool.Generate(context.Background(), "testdata/alpine.tar", "spdx-json")
+		if err != nil {
+			t.Fatal(err)
+		}
+		if len(data) == 0 {
+			t.Fatal("expected non-empty SBOM data")
+		}
+	})
+
+	t.Run("invalid tar path", func(t *testing.T) {
+		_, err := tool.Generate(context.Background(), "/nonexistent/image.tar", "spdx-json")
+		if err == nil {
+			t.Fatal("expected error for nonexistent tar")
+		}
+	})
+}
+
 func TestSBOMImageTool_SerializeSBOM_InvalidFormat(t *testing.T) {
 	t.Log("Testing invalid format handling")
 	tool, err := NewSBOMImageTool()

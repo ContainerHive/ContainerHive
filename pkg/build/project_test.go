@@ -1,7 +1,14 @@
 package build
 
 import (
+	"context"
+	"os"
+	"path/filepath"
+	"strings"
 	"testing"
+
+	"github.com/timo-reymann/ContainerHive/pkg/deps"
+	"github.com/timo-reymann/ContainerHive/pkg/model"
 )
 
 func TestMatchesFilters_Empty(t *testing.T) {
@@ -178,4 +185,247 @@ func TestRegistryInsecure(t *testing.T) {
 			t.Error("remote registry should not be insecure")
 		}
 	})
+}
+
+// Helper to create a BuildOrder for an empty project with no dependencies.
+func emptyBuildOrder(t *testing.T) *deps.BuildOrder {
+	t.Helper()
+	distPath := t.TempDir()
+	project := &model.ContainerHiveProject{
+		ImagesByIdentifier: map[string]*model.Image{},
+		ImagesByName:       map[string][]*model.Image{},
+	}
+	bo, err := deps.ResolveOrder(distPath, project)
+	if err != nil {
+		t.Fatalf("failed to create empty build order: %v", err)
+	}
+	return bo
+}
+
+func TestBuildNoDeps_DockerfileNotFound(t *testing.T) {
+	distPath := t.TempDir()
+	client := &Client{inner: nil}
+	opts := &ProjectBuildOpts{
+		Project: &model.ContainerHiveProject{
+			ImagesByIdentifier: map[string]*model.Image{},
+			ImagesByName:       map[string][]*model.Image{},
+		},
+		DistPath: distPath,
+	}
+
+	err := buildNoDeps(context.Background(), client, opts, "myimg", "1.0", "linux/amd64")
+	if err != nil {
+		t.Errorf("expected nil error when Dockerfile not found, got: %v", err)
+	}
+}
+
+func TestBuildTag_DockerfileNotFound(t *testing.T) {
+	distPath := t.TempDir()
+	client := &Client{inner: nil}
+	imageDef := &model.Image{
+		Name: "myimg",
+		Tags: map[string]*model.Tag{
+			"1.0": {Name: "1.0"},
+		},
+	}
+	opts := &ProjectBuildOpts{
+		Project: &model.ContainerHiveProject{
+			ImagesByIdentifier: map[string]*model.Image{"myimg": imageDef},
+			ImagesByName:       map[string][]*model.Image{"myimg": {imageDef}},
+		},
+		DistPath: distPath,
+	}
+
+	err := buildTag(context.Background(), client, opts, imageDef, "1.0", "linux/amd64")
+	if err == nil {
+		t.Fatal("expected error when Dockerfile not found, got nil")
+	}
+	if !strings.Contains(err.Error(), "Dockerfile not found") {
+		t.Errorf("expected error to contain 'Dockerfile not found', got: %v", err)
+	}
+}
+
+func TestBuildVariant_DockerfileNotFound(t *testing.T) {
+	distPath := t.TempDir()
+	client := &Client{inner: nil}
+	variantDef := &model.ImageVariant{
+		Name:      "node",
+		TagSuffix: "-node",
+	}
+	imageDef := &model.Image{
+		Name: "myimg",
+		Tags: map[string]*model.Tag{
+			"1.0": {Name: "1.0"},
+		},
+		Variants: map[string]*model.ImageVariant{
+			"node": variantDef,
+		},
+	}
+	opts := &ProjectBuildOpts{
+		Project: &model.ContainerHiveProject{
+			ImagesByIdentifier: map[string]*model.Image{"myimg": imageDef},
+			ImagesByName:       map[string][]*model.Image{"myimg": {imageDef}},
+		},
+		DistPath: distPath,
+	}
+
+	err := buildVariant(context.Background(), client, opts, imageDef, "1.0", "node", variantDef, "linux/amd64")
+	if err != nil {
+		t.Errorf("expected nil error when variant Dockerfile not found, got: %v", err)
+	}
+}
+
+func TestBuildProject_NilProgressOut(t *testing.T) {
+	bo := emptyBuildOrder(t)
+	opts := &ProjectBuildOpts{
+		Project: &model.ContainerHiveProject{
+			ImagesByIdentifier: map[string]*model.Image{},
+			ImagesByName:       map[string][]*model.Image{},
+		},
+		BuildOrder:  bo,
+		DistPath:    t.TempDir(),
+		ProgressOut: nil, // explicitly nil
+	}
+
+	err := BuildProject(context.Background(), &Client{inner: nil}, opts)
+	if err != nil {
+		t.Errorf("expected no error for empty project, got: %v", err)
+	}
+	if opts.ProgressOut == nil {
+		t.Error("expected ProgressOut to be set to os.Stdout, but it is still nil")
+	}
+	if opts.ProgressOut != os.Stdout {
+		t.Error("expected ProgressOut to be os.Stdout")
+	}
+}
+
+func TestBuildProject_NoImages(t *testing.T) {
+	t.Run("no deps path", func(t *testing.T) {
+		bo := emptyBuildOrder(t)
+		opts := &ProjectBuildOpts{
+			Project: &model.ContainerHiveProject{
+				ImagesByIdentifier: map[string]*model.Image{},
+				ImagesByName:       map[string][]*model.Image{},
+			},
+			BuildOrder:  bo,
+			DistPath:    t.TempDir(),
+			ProgressOut: os.Stdout,
+		}
+
+		err := BuildProject(context.Background(), &Client{inner: nil}, opts)
+		if err != nil {
+			t.Errorf("expected no error for empty project without deps, got: %v", err)
+		}
+	})
+}
+
+func TestRegistryRef_NilRegistry(t *testing.T) {
+	opts := &ProjectBuildOpts{Registry: nil}
+	got := opts.registryRef("myimg", "latest", "linux/amd64")
+	if got != "" {
+		t.Errorf("expected empty string for nil registry, got %q", got)
+	}
+}
+
+func TestRegistryAddress_NilRegistry(t *testing.T) {
+	opts := &ProjectBuildOpts{Registry: nil}
+	got := opts.registryAddress()
+	if got != "" {
+		t.Errorf("expected empty string for nil registry, got %q", got)
+	}
+}
+
+func TestRegistryAddress_WithRegistry(t *testing.T) {
+	opts := &ProjectBuildOpts{
+		Registry: &mockRegistry{address: "registry.example.com"},
+	}
+	got := opts.registryAddress()
+	want := "registry.example.com"
+	if got != want {
+		t.Errorf("registryAddress() = %q, want %q", got, want)
+	}
+}
+
+func TestRegistryInsecure_NilRegistryDedicated(t *testing.T) {
+	opts := &ProjectBuildOpts{Registry: nil}
+	if opts.registryInsecure() {
+		t.Error("nil registry should return false for insecure")
+	}
+}
+
+func TestRegistryInsecure_LocalRegistry(t *testing.T) {
+	opts := &ProjectBuildOpts{
+		Registry: &mockRegistry{address: "localhost:5000", local: true},
+	}
+	if !opts.registryInsecure() {
+		t.Error("local registry should be insecure")
+	}
+}
+
+func TestBuildNoDeps_MkdirAllFails(t *testing.T) {
+	// Create a distPath where the platform subdir can't be created because
+	// a file exists at the path where a directory is needed.
+	distPath := t.TempDir()
+	imgDir := filepath.Join(distPath, "myimg", "1.0")
+	if err := os.MkdirAll(imgDir, 0755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(imgDir, "Dockerfile"), []byte("FROM scratch\n"), 0644); err != nil {
+		t.Fatal(err)
+	}
+	// Create a regular file where MkdirAll needs to create a directory (linux-amd64).
+	if err := os.WriteFile(filepath.Join(imgDir, "linux-amd64"), []byte("blocker"), 0644); err != nil {
+		t.Fatal(err)
+	}
+
+	client := &Client{inner: nil}
+	opts := &ProjectBuildOpts{
+		Project: &model.ContainerHiveProject{
+			ImagesByIdentifier: map[string]*model.Image{},
+			ImagesByName:       map[string][]*model.Image{},
+		},
+		DistPath: distPath,
+	}
+
+	err := buildNoDeps(context.Background(), client, opts, "myimg", "1.0", "linux/amd64")
+	if err == nil {
+		t.Fatal("expected error when MkdirAll fails, got nil")
+	}
+	if !strings.Contains(err.Error(), "failed to create platform dir") {
+		t.Errorf("expected error about creating platform dir, got: %v", err)
+	}
+}
+
+func TestBuildWithoutDeps_EmptyProject(t *testing.T) {
+	opts := &ProjectBuildOpts{
+		Project: &model.ContainerHiveProject{
+			ImagesByIdentifier: map[string]*model.Image{},
+			ImagesByName:       map[string][]*model.Image{},
+		},
+		DistPath:    t.TempDir(),
+		ProgressOut: os.Stdout,
+	}
+
+	err := buildWithoutDeps(context.Background(), &Client{inner: nil}, opts)
+	if err != nil {
+		t.Errorf("expected no error for empty ImagesByName, got: %v", err)
+	}
+}
+
+func TestBuildWithDeps_EmptyOrder(t *testing.T) {
+	bo := emptyBuildOrder(t)
+	opts := &ProjectBuildOpts{
+		Project: &model.ContainerHiveProject{
+			ImagesByIdentifier: map[string]*model.Image{},
+			ImagesByName:       map[string][]*model.Image{},
+		},
+		BuildOrder:  bo,
+		DistPath:    t.TempDir(),
+		ProgressOut: os.Stdout,
+	}
+
+	err := buildWithDeps(context.Background(), &Client{inner: nil}, opts)
+	if err != nil {
+		t.Errorf("expected no error for empty build order, got: %v", err)
+	}
 }

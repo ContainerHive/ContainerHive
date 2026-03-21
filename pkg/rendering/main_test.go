@@ -292,6 +292,257 @@ func TestResolveAliases(t *testing.T) {
 	})
 }
 
+// ---------------------------------------------------------------------------
+// Unit tests for low-coverage functions
+// ---------------------------------------------------------------------------
+
+func TestReplaceHiveParent(t *testing.T) {
+	t.Run("replaces __hive_parent__ with concrete reference", func(t *testing.T) {
+		tmp := t.TempDir()
+		f := filepath.Join(tmp, "Dockerfile")
+		os.WriteFile(f, []byte("FROM __hive_parent__\nRUN apt-get update"), 0644)
+
+		if err := replaceHiveParent(f, "myimg", "1.0"); err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
+		assertFileContent(t, f, "FROM __hive__/myimg:1.0\nRUN apt-get update")
+	})
+
+	t.Run("file without placeholder is unchanged", func(t *testing.T) {
+		tmp := t.TempDir()
+		f := filepath.Join(tmp, "Dockerfile")
+		original := "FROM ubuntu:22.04\nRUN echo hello"
+		os.WriteFile(f, []byte(original), 0644)
+
+		if err := replaceHiveParent(f, "myimg", "1.0"); err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
+		assertFileContent(t, f, original)
+	})
+
+	t.Run("non-existent file returns error", func(t *testing.T) {
+		err := replaceHiveParent(filepath.Join(t.TempDir(), "missing"), "img", "1.0")
+		if err == nil {
+			t.Fatal("expected error for missing file")
+		}
+	})
+
+	t.Run("multiple occurrences are all replaced", func(t *testing.T) {
+		tmp := t.TempDir()
+		f := filepath.Join(tmp, "Dockerfile")
+		os.WriteFile(f, []byte("FROM __hive_parent__\nCOPY --from=__hive_parent__ /bin /bin"), 0644)
+
+		if err := replaceHiveParent(f, "myimg", "1.0"); err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
+		assertFileContent(t, f, "FROM __hive__/myimg:1.0\nCOPY --from=__hive__/myimg:1.0 /bin /bin")
+	})
+}
+
+func TestCopyFile(t *testing.T) {
+	t.Run("copies file content correctly", func(t *testing.T) {
+		tmp := t.TempDir()
+		src := filepath.Join(tmp, "src.txt")
+		dst := filepath.Join(tmp, "dst.txt")
+		os.WriteFile(src, []byte("hello world"), 0644)
+
+		if err := copyFile(src, dst); err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
+		assertFileContent(t, dst, "hello world")
+	})
+
+	t.Run("preserves file permissions", func(t *testing.T) {
+		tmp := t.TempDir()
+		src := filepath.Join(tmp, "exec.sh")
+		dst := filepath.Join(tmp, "exec_copy.sh")
+		os.WriteFile(src, []byte("#!/bin/sh"), 0755)
+
+		if err := copyFile(src, dst); err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
+
+		srcInfo, _ := os.Stat(src)
+		dstInfo, _ := os.Stat(dst)
+		if srcInfo.Mode() != dstInfo.Mode() {
+			t.Errorf("permission mismatch: src=%v dst=%v", srcInfo.Mode(), dstInfo.Mode())
+		}
+	})
+
+	t.Run("source does not exist returns error", func(t *testing.T) {
+		tmp := t.TempDir()
+		err := copyFile(filepath.Join(tmp, "nope"), filepath.Join(tmp, "dst"))
+		if err == nil {
+			t.Fatal("expected error for missing source")
+		}
+	})
+
+	t.Run("destination dir does not exist returns error", func(t *testing.T) {
+		tmp := t.TempDir()
+		src := filepath.Join(tmp, "src.txt")
+		os.WriteFile(src, []byte("data"), 0644)
+
+		err := copyFile(src, filepath.Join(tmp, "no", "such", "dir", "dst.txt"))
+		if err == nil {
+			t.Fatal("expected error for missing destination directory")
+		}
+	})
+}
+
+func TestCopyDir(t *testing.T) {
+	t.Run("copies directory tree recursively", func(t *testing.T) {
+		tmp := t.TempDir()
+		src := filepath.Join(tmp, "src")
+		os.MkdirAll(filepath.Join(src, "sub"), 0755)
+		os.WriteFile(filepath.Join(src, "a.txt"), []byte("aaa"), 0644)
+		os.WriteFile(filepath.Join(src, "sub", "b.txt"), []byte("bbb"), 0644)
+
+		dst := filepath.Join(tmp, "dst")
+		if err := copyDir(src, dst); err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
+
+		assertFileContent(t, filepath.Join(dst, "a.txt"), "aaa")
+		assertFileContent(t, filepath.Join(dst, "sub", "b.txt"), "bbb")
+	})
+
+	t.Run("preserves file content", func(t *testing.T) {
+		tmp := t.TempDir()
+		src := filepath.Join(tmp, "src")
+		os.MkdirAll(src, 0755)
+		content := "line1\nline2\nline3"
+		os.WriteFile(filepath.Join(src, "file.txt"), []byte(content), 0644)
+
+		dst := filepath.Join(tmp, "dst")
+		if err := copyDir(src, dst); err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
+		assertFileContent(t, filepath.Join(dst, "file.txt"), content)
+	})
+
+	t.Run("source does not exist returns error", func(t *testing.T) {
+		tmp := t.TempDir()
+		err := copyDir(filepath.Join(tmp, "missing"), filepath.Join(tmp, "dst"))
+		if err == nil {
+			t.Fatal("expected error for missing source")
+		}
+	})
+
+	t.Run("empty directory creates empty destination", func(t *testing.T) {
+		tmp := t.TempDir()
+		src := filepath.Join(tmp, "empty")
+		os.MkdirAll(src, 0755)
+
+		dst := filepath.Join(tmp, "dst")
+		if err := copyDir(src, dst); err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
+		assertDirExists(t, dst)
+
+		entries, err := os.ReadDir(dst)
+		if err != nil {
+			t.Fatalf("failed to read dst dir: %v", err)
+		}
+		if len(entries) != 0 {
+			t.Errorf("expected empty directory, got %d entries", len(entries))
+		}
+	})
+}
+
+func TestCopyRootFs(t *testing.T) {
+	t.Run("copies source dir into targetRoot/rootfs", func(t *testing.T) {
+		tmp := t.TempDir()
+		src := filepath.Join(tmp, "src")
+		os.MkdirAll(filepath.Join(src, "etc"), 0755)
+		os.WriteFile(filepath.Join(src, "etc", "app.conf"), []byte("key=val"), 0644)
+
+		target := filepath.Join(tmp, "target")
+		if err := copyRootFs(src, target); err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
+
+		assertDirExists(t, filepath.Join(target, "rootfs"))
+		assertFileContent(t, filepath.Join(target, "rootfs", "etc", "app.conf"), "key=val")
+	})
+
+	t.Run("creates target root if needed", func(t *testing.T) {
+		tmp := t.TempDir()
+		src := filepath.Join(tmp, "src")
+		os.MkdirAll(src, 0755)
+		os.WriteFile(filepath.Join(src, "f.txt"), []byte("hi"), 0644)
+
+		target := filepath.Join(tmp, "new", "nested", "target")
+		if err := copyRootFs(src, target); err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
+		assertDirExists(t, filepath.Join(target, "rootfs"))
+		assertFileContent(t, filepath.Join(target, "rootfs", "f.txt"), "hi")
+	})
+
+	t.Run("source does not exist returns error", func(t *testing.T) {
+		tmp := t.TempDir()
+		err := copyRootFs(filepath.Join(tmp, "no-src"), filepath.Join(tmp, "target"))
+		if err == nil {
+			t.Fatal("expected error for missing source")
+		}
+	})
+}
+
+func TestFixUpEntrypoint(t *testing.T) {
+	t.Run("strips template extension", func(t *testing.T) {
+		got := fixUpEntrypoint("/out", "/in/Dockerfile.gotpl")
+		expected := "/out/Dockerfile"
+		if got != expected {
+			t.Errorf("expected %q, got %q", expected, got)
+		}
+	})
+
+	t.Run("plain filename without template extension", func(t *testing.T) {
+		got := fixUpEntrypoint("/out", "/in/Dockerfile")
+		expected := "/out/Dockerfile"
+		if got != expected {
+			t.Errorf("expected %q, got %q", expected, got)
+		}
+	})
+}
+
+func TestCreateTestsFolder(t *testing.T) {
+	t.Run("creates tests subdirectory inside root", func(t *testing.T) {
+		tmp := t.TempDir()
+		got, err := createTestsFolder(tmp)
+		if err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
+
+		expected := filepath.Join(tmp, "tests")
+		if got != expected {
+			t.Errorf("expected %q, got %q", expected, got)
+		}
+		assertDirExists(t, expected)
+	})
+
+	t.Run("returns correct path", func(t *testing.T) {
+		tmp := t.TempDir()
+		got, err := createTestsFolder(tmp)
+		if err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
+		if !strings.HasSuffix(got, "/tests") {
+			t.Errorf("expected path ending in /tests, got %q", got)
+		}
+	})
+
+	t.Run("root does not exist still works because mkdir creates it", func(t *testing.T) {
+		tmp := t.TempDir()
+		root := filepath.Join(tmp, "nonexistent")
+		got, err := createTestsFolder(root)
+		if err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
+		assertDirExists(t, got)
+	})
+}
+
 func TestRenderProject_MultiVariantProject(t *testing.T) {
 	dist := discoverAndRender(t, "../testdata/multi-variant-project")
 
