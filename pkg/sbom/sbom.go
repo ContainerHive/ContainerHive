@@ -24,9 +24,5 @@ func NewGenerator() (*Generator, error) {
 // Generate produces an SBOM from the given OCI tar file and serializes it
 // in the requested format (e.g. "spdx-json").
 func (g *Generator) Generate(ctx context.Context, tarFile, outputFormat string) ([]byte, error) {
-	result, err := g.tool.GenerateSBOM(ctx, tarFile)
-	if err != nil {
-		return nil, err
-	}
-	return g.tool.SerializeSBOM(result, outputFormat)
+	return g.tool.Generate(ctx, tarFile, outputFormat)
 }

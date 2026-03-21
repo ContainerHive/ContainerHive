@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/GoogleContainerTools/container-structure-test/cmd/container-structure-test/app/cmd/test"
 	"github.com/GoogleContainerTools/container-structure-test/pkg/config"
@@ -13,6 +14,7 @@ import (
 	"github.com/timo-reymann/ContainerHive/internal/docker"
 )
 
+// TestRunner executes container structure tests against a Docker image and produces JUnit reports.
 type TestRunner struct {
 	TestDefinitionPaths []string
 	Image               string
@@ -74,6 +76,7 @@ func (t *TestRunner) runTests(channel chan interface{}, imageName string, opts *
 	close(channel)
 }
 
+// Run resolves the test image, executes all configured test definitions, and writes a JUnit report.
 func (t *TestRunner) Run() error {
 	imageName, err := t.resolveImageName(context.Background())
 	if err != nil {
@@ -91,4 +94,52 @@ func (t *TestRunner) Run() error {
 	defer testReportFile.Close()
 
 	return test.ProcessResults(testReportFile, unversioned.Junit, opts.JunitSuiteName, channel)
+}
+
+// CollectTestDefinitions finds test YAML files in a rendered dist directory's
+// tests/ subfolder. Only top-level files are included (subdirectories are skipped).
+func CollectTestDefinitions(distDir string) []string {
+	testsDir := filepath.Join(distDir, "tests")
+	entries, err := os.ReadDir(testsDir)
+	if err != nil {
+		return nil
+	}
+	var paths []string
+	for _, e := range entries {
+		if !e.IsDir() {
+			paths = append(paths, filepath.Join(testsDir, e.Name()))
+		}
+	}
+	return paths
+}
+
+// ReportFileName returns a JUnit report file path for the given image tag,
+// replacing colons with hyphens to produce a valid file name.
+func ReportFileName(reportDir, imageTag string) string {
+	return filepath.Join(reportDir, fmt.Sprintf("%s-cst-report.xml", strings.ReplaceAll(imageTag, ":", "-")))
+}
+
+// NewRunner creates a TestRunner with a Docker client for the given platform.
+func NewRunner(platform string) (*TestRunner, error) {
+	dc, err := docker.NewClient()
+	if err != nil {
+		return nil, err
+	}
+	return &TestRunner{
+		DockerClient: dc,
+		Platform:     platform,
+	}, nil
+}
+
+// Close releases the Docker client resources.
+func (t *TestRunner) Close() error {
+	return t.DockerClient.Close()
+}
+
+// RunTestsForImage executes container structure tests against the given image source.
+func (t *TestRunner) RunTestsForImage(imageSource string, testDefs []string, reportFile string) error {
+	t.TestDefinitionPaths = testDefs
+	t.Image = imageSource
+	t.ReportFile = reportFile
+	return t.Run()
 }

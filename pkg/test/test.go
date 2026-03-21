@@ -7,8 +7,8 @@ import (
 	"os"
 	"path/filepath"
 
+	cst "github.com/timo-reymann/ContainerHive/internal/container_structure_test"
 	"github.com/timo-reymann/ContainerHive/pkg/build"
-	"github.com/timo-reymann/ContainerHive/pkg/cst"
 	"github.com/timo-reymann/ContainerHive/pkg/model"
 	"github.com/timo-reymann/ContainerHive/pkg/platform"
 	"github.com/timo-reymann/ContainerHive/pkg/utils"
@@ -96,7 +96,7 @@ func runTestsForTag(opts *Opts, imageName, tagName string, platforms []string) (
 		reportFile := cst.ReportFileName(platDir, imageName+":"+tagName)
 		log.Printf("Testing %s:%s [%s] (%d test file(s))...", imageName, tagName, platformStr, len(testDefs))
 		tested++
-		if err := cstRunner.RunTests(imageSource, testDefs, reportFile); err != nil {
+		if err := cstRunner.RunTestsForImage(imageSource, testDefs, reportFile); err != nil {
 			log.Printf("FAIL %s:%s [%s]: %v", imageName, tagName, platformStr, err)
 			failed++
 			cstRunner.Close()
