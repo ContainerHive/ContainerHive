@@ -43,7 +43,7 @@ func (t *TestRunner) resolveImageName(ctx context.Context) (string, error) {
 	if t.isTar() {
 		return t.DockerClient.LoadImageFromTar(ctx, t.Image)
 	}
-	return t.Image, nil
+	return t.DockerClient.PullImage(ctx, t.Image)
 }
 
 func (t *TestRunner) runTests(channel chan interface{}, imageName string, opts *config.StructureTestOptions) {

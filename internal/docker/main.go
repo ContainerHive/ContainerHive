@@ -6,9 +6,11 @@ import (
 	"os"
 
 	dockerClient "github.com/docker/docker/client"
+	"github.com/google/go-containerregistry/pkg/authn"
 	"github.com/google/go-containerregistry/pkg/name"
 	"github.com/google/go-containerregistry/pkg/v1/daemon"
 	"github.com/google/go-containerregistry/pkg/v1/layout"
+	"github.com/google/go-containerregistry/pkg/v1/remote"
 )
 
 type Client struct {
@@ -28,6 +30,30 @@ func NewClient() (*Client, error) {
 	return &Client{
 		docker,
 	}, nil
+}
+
+// PullImage pulls an image from a remote registry into the local Docker daemon.
+func (c *Client) PullImage(_ context.Context, imageRef string) (string, error) {
+	ref, err := name.ParseReference(imageRef)
+	if err != nil {
+		return "", errors.Join(errors.New("invalid image reference"), err)
+	}
+
+	img, err := remote.Image(ref, remote.WithAuthFromKeychain(authn.DefaultKeychain))
+	if err != nil {
+		return "", errors.Join(errors.New("failed to pull image from registry"), err)
+	}
+
+	tag, err := name.NewTag(imageRef)
+	if err != nil {
+		return "", errors.Join(errors.New("invalid image tag"), err)
+	}
+
+	if _, err := daemon.Write(tag, img); err != nil {
+		return "", errors.Join(errors.New("failed to load pulled image into Docker"), err)
+	}
+
+	return imageRef, nil
 }
 
 func (c *Client) LoadImageFromTar(_ context.Context, tarPath string) (string, error) {
