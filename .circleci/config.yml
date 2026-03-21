@@ -70,6 +70,7 @@ jobs:
       - go/with-cache:
           key: build
           steps:
+            - go/mod-download-cached
             - run:
                 name: Build binaries
                 command: |
