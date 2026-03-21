@@ -271,8 +271,7 @@ func buildTag(ctx context.Context, client *Client, opts *ProjectBuildOpts, image
 
 	err = client.Build(ctx, buildOpts, opts.ProgressOut)
 	if err != nil {
-		log.Printf("Warning: Build failed for %s [%s]: %v", imageTag, platformStr, err)
-		return nil
+		return fmt.Errorf("build failed for %s [%s]: %w", imageTag, platformStr, err)
 	}
 	log.Printf("Built %s [%s] -> %s", imageTag, platformStr, tf)
 
@@ -336,8 +335,7 @@ func buildVariant(ctx context.Context, client *Client, opts *ProjectBuildOpts, i
 
 	err = client.Build(ctx, buildOpts, opts.ProgressOut)
 	if err != nil {
-		log.Printf("Warning: Build failed for variant %s [%s]: %v", variantTag, platformStr, err)
-		return nil
+		return fmt.Errorf("build failed for variant %s [%s]: %w", variantTag, platformStr, err)
 	}
 	log.Printf("Built variant %s [%s] -> %s", variantTag, platformStr, tf)
 
