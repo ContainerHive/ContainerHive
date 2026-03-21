@@ -15,7 +15,7 @@ func TestPackageDirections(t *testing.T) {
 		},
 		{
 			pkgLayer.ShouldNotReferLayers(cmdLayer),
-			"pkg should not refer to internal",
+			"pkg should not refer to cmd",
 		},
 	}
 
