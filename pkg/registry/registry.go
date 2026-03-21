@@ -60,6 +60,12 @@ func (r *Registry) Push(ctx context.Context, imageName, tag, ociTarPath string) 
 	return r.inner.Push(ctx, imageName, tag, ociTarPath)
 }
 
+// ImageRef returns the full registry reference for a platform-specific image.
+// Format: address/imageName:tag.sanitized-platform[.buildID]
+func (r *Registry) ImageRef(imageName, tag, platformStr, buildID string) string {
+	return fmt.Sprintf("%s/%s:%s", r.Address(), imageName, pushTag(tag, platformStr, buildID))
+}
+
 // collectAllTags returns all tags for an image, including variant tags.
 func collectAllTags(imageDef *model.Image) []string {
 	var allTags []string

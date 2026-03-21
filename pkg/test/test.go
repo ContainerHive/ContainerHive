@@ -14,14 +14,28 @@ import (
 	"github.com/timo-reymann/ContainerHive/pkg/utils"
 )
 
+// Registry provides image references for pulling from a remote registry.
+type Registry interface {
+	ImageRef(imageName, tag, platformStr, buildID string) string
+}
+
+// Opts holds configuration for running project tests.
+type Opts struct {
+	DistPath string
+	Project  *model.ContainerHiveProject
+	Filters  []build.Filter
+	Registry Registry // if set, use registry refs when no local tar exists
+	BuildID  string
+}
+
 // RunProjectTests executes container structure tests for all images in a project
 // that match the given filters. Returns the number of tests run and failed.
-func RunProjectTests(ctx context.Context, distPath string, project *model.ContainerHiveProject, filters []build.Filter) (tested, failed int, err error) {
-	for _, img := range project.ImagesByIdentifier {
+func RunProjectTests(ctx context.Context, opts *Opts) (tested, failed int, err error) {
+	for _, img := range opts.Project.ImagesByIdentifier {
 		for tagName := range img.Tags {
-			if utils.MatchesFilter(filters, img.Name, tagName) {
-				t, f, err := runTestsForTag(distPath, img.Name, tagName,
-					platform.Resolve(project.Config.Platforms, img.Platforms, nil))
+			if utils.MatchesFilter(opts.Filters, img.Name, tagName) {
+				t, f, err := runTestsForTag(opts, img.Name, tagName,
+					platform.Resolve(opts.Project.Config.Platforms, img.Platforms, nil))
 				if err != nil {
 					return tested, failed, err
 				}
@@ -31,11 +45,11 @@ func RunProjectTests(ctx context.Context, distPath string, project *model.Contai
 
 			for _, variantDef := range img.Variants {
 				variantTag := tagName + variantDef.TagSuffix
-				if !utils.MatchesFilter(filters, img.Name, variantTag) {
+				if !utils.MatchesFilter(opts.Filters, img.Name, variantTag) {
 					continue
 				}
-				t, f, err := runTestsForTag(distPath, img.Name, variantTag,
-					platform.Resolve(project.Config.Platforms, img.Platforms, variantDef.Platforms))
+				t, f, err := runTestsForTag(opts, img.Name, variantTag,
+					platform.Resolve(opts.Project.Config.Platforms, img.Platforms, variantDef.Platforms))
 				if err != nil {
 					return tested, failed, err
 				}
@@ -49,8 +63,8 @@ func RunProjectTests(ctx context.Context, distPath string, project *model.Contai
 
 // runTestsForTag runs container structure tests for a single tag directory
 // across all given platforms. Returns the number of images tested and failed.
-func runTestsForTag(distPath, imageName, tagName string, platforms []string) (tested, failed int, _ error) {
-	tagDir := filepath.Join(distPath, imageName, tagName)
+func runTestsForTag(opts *Opts, imageName, tagName string, platforms []string) (tested, failed int, _ error) {
+	tagDir := filepath.Join(opts.DistPath, imageName, tagName)
 	testDefs := cst.CollectTestDefinitions(tagDir)
 	if len(testDefs) == 0 {
 		log.Printf("No test definitions for %s:%s, skipping", imageName, tagName)
@@ -59,10 +73,19 @@ func runTestsForTag(distPath, imageName, tagName string, platforms []string) (te
 
 	for _, platformStr := range platforms {
 		platDir := filepath.Join(tagDir, platform.Sanitize(platformStr))
-		tarFile := filepath.Join(platDir, "image.tar")
-		if _, err := os.Stat(tarFile); err != nil {
-			log.Printf("Skipping %s:%s [%s] — no image.tar found", imageName, tagName, platformStr)
-			continue
+		imageSource := filepath.Join(platDir, "image.tar")
+
+		if _, err := os.Stat(imageSource); err != nil {
+			if opts.Registry == nil {
+				log.Printf("Skipping %s:%s [%s] — no image.tar found", imageName, tagName, platformStr)
+				continue
+			}
+			imageSource = opts.Registry.ImageRef(imageName, tagName, platformStr, opts.BuildID)
+			log.Printf("No local tar for %s:%s [%s], using registry ref: %s", imageName, tagName, platformStr, imageSource)
+		}
+
+		if err := os.MkdirAll(platDir, 0755); err != nil {
+			return tested, failed, fmt.Errorf("failed to create platform dir for %s:%s [%s]: %w", imageName, tagName, platformStr, err)
 		}
 
 		cstRunner, err := cst.NewRunner(platformStr)
@@ -73,7 +96,7 @@ func runTestsForTag(distPath, imageName, tagName string, platforms []string) (te
 		reportFile := cst.ReportFileName(platDir, imageName+":"+tagName)
 		log.Printf("Testing %s:%s [%s] (%d test file(s))...", imageName, tagName, platformStr, len(testDefs))
 		tested++
-		if err := cstRunner.RunTests(tarFile, testDefs, reportFile); err != nil {
+		if err := cstRunner.RunTests(imageSource, testDefs, reportFile); err != nil {
 			log.Printf("FAIL %s:%s [%s]: %v", imageName, tagName, platformStr, err)
 			failed++
 			cstRunner.Close()

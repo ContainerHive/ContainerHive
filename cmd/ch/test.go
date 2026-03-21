@@ -28,7 +28,23 @@ func testCmd() *cli.Command {
 				return err
 			}
 
-			tested, failed, err := test.RunProjectTests(ctx, distPath, project, filters)
+			opts := &test.Opts{
+				DistPath: distPath,
+				Project:  project,
+				Filters:  filters,
+				BuildID:  cmd.String("build-id"),
+			}
+
+			if os.Getenv("CI") != "" {
+				reg, err := setupRegistry(ctx, distPath, project.Config.Registry)
+				if err != nil {
+					return err
+				}
+				defer reg.Stop(ctx)
+				opts.Registry = reg
+			}
+
+			tested, failed, err := test.RunProjectTests(ctx, opts)
 			if err != nil {
 				return err
 			}

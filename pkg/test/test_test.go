@@ -42,7 +42,8 @@ fileExistenceTests:
 	require.NoError(t, os.WriteFile(testFile, []byte(testContent), 0644))
 
 	t.Run("successful test execution", func(t *testing.T) {
-		tested, failed, err := runTestsForTag(tempDir, "ubuntu", "24.04", []string{"linux/amd64"})
+		opts := &Opts{DistPath: tempDir}
+		tested, failed, err := runTestsForTag(opts, "ubuntu", "24.04", []string{"linux/amd64"})
 		// Note: This will likely fail because we don't have a real Docker environment,
 		// but we can at least verify the function structure
 		assert.NoError(t, err)
@@ -83,7 +84,7 @@ func TestRunProjectTests(t *testing.T) {
 		_, err := os.Create(tarFile)
 		require.NoError(t, err)
 
-		tested, failed, err := RunProjectTests(context.Background(), tempDir, project, []build.Filter{})
+		tested, failed, err := RunProjectTests(context.Background(), &Opts{DistPath: tempDir, Project: project, Filters: []build.Filter{}})
 		assert.NoError(t, err)
 		assert.Equal(t, 0, tested) // No test files, so nothing tested
 		assert.Equal(t, 0, failed)
@@ -94,7 +95,7 @@ func TestRunProjectTests(t *testing.T) {
 			{ImageName: "nonexistent", TagName: ""},
 		}
 
-		tested, failed, err := RunProjectTests(context.Background(), t.TempDir(), project, filters)
+		tested, failed, err := RunProjectTests(context.Background(), &Opts{DistPath: t.TempDir(), Project: project, Filters: filters})
 		assert.NoError(t, err)
 		assert.Equal(t, 0, tested) // Filter doesn't match, so nothing tested
 		assert.Equal(t, 0, failed)
@@ -132,7 +133,7 @@ func TestRunTestsForTag_NoTestDefinitions(t *testing.T) {
 	tagDir := filepath.Join(tempDir, "app", "1.0")
 	require.NoError(t, os.MkdirAll(tagDir, 0755))
 
-	tested, failed, err := runTestsForTag(tempDir, "app", "1.0", []string{"linux/amd64"})
+	tested, failed, err := runTestsForTag(&Opts{DistPath: tempDir}, "app", "1.0", []string{"linux/amd64"})
 	assert.NoError(t, err)
 	assert.Equal(t, 0, tested)
 	assert.Equal(t, 0, failed)
@@ -151,7 +152,7 @@ func TestRunTestsForTag_MissingTarFile(t *testing.T) {
 	platDir := filepath.Join(tagDir, "linux-amd64")
 	require.NoError(t, os.MkdirAll(platDir, 0755))
 
-	tested, failed, err := runTestsForTag(tempDir, "app", "1.0", []string{"linux/amd64"})
+	tested, failed, err := runTestsForTag(&Opts{DistPath: tempDir}, "app", "1.0", []string{"linux/amd64"})
 	assert.NoError(t, err)
 	assert.Equal(t, 0, tested, "should skip when image.tar is missing")
 	assert.Equal(t, 0, failed)
@@ -182,7 +183,7 @@ func TestRunProjectTests_WithVariants(t *testing.T) {
 
 	t.Run("filter matches variant tag", func(t *testing.T) {
 		filters := []build.Filter{{ImageName: "dotnet", TagName: "8.0.300-node"}}
-		tested, failed, err := RunProjectTests(context.Background(), t.TempDir(), project, filters)
+		tested, failed, err := RunProjectTests(context.Background(), &Opts{DistPath: t.TempDir(), Project: project, Filters: filters})
 		assert.NoError(t, err)
 		assert.Equal(t, 0, tested, "no test files exist so nothing tested")
 		assert.Equal(t, 0, failed)
@@ -191,7 +192,7 @@ func TestRunProjectTests_WithVariants(t *testing.T) {
 	t.Run("filter excludes base tag when variant specified", func(t *testing.T) {
 		filters := []build.Filter{{ImageName: "dotnet", TagName: "8.0.300-node"}}
 		// Should not test the base "8.0.300" tag
-		tested, failed, err := RunProjectTests(context.Background(), t.TempDir(), project, filters)
+		tested, failed, err := RunProjectTests(context.Background(), &Opts{DistPath: t.TempDir(), Project: project, Filters: filters})
 		assert.NoError(t, err)
 		assert.Equal(t, 0, tested)
 		assert.Equal(t, 0, failed)
@@ -227,7 +228,7 @@ func TestRunProjectTests_MultipleImages(t *testing.T) {
 
 	t.Run("image-only filter matches all tags", func(t *testing.T) {
 		filters := []build.Filter{{ImageName: "app"}}
-		tested, failed, err := RunProjectTests(context.Background(), t.TempDir(), project, filters)
+		tested, failed, err := RunProjectTests(context.Background(), &Opts{DistPath: t.TempDir(), Project: project, Filters: filters})
 		assert.NoError(t, err)
 		assert.Equal(t, 0, tested) // no test files
 		assert.Equal(t, 0, failed)
