@@ -1,4 +1,4 @@
-FROM __hive__/ubuntu:22.04
+FROM __hive_parent__
 
 USER 0
 ARG NODEJS_VERSION

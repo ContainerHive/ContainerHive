@@ -3,8 +3,10 @@ package rendering
 import (
 	"context"
 	"errors"
+	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/timo-reymann/ContainerHive/internal/buildconfig_resolver"
 	"github.com/timo-reymann/ContainerHive/internal/file_resolver"
@@ -60,7 +62,7 @@ func processImagesForName(ctx context.Context, rootPath string, images []*model.
 
 					eg.Go(func() error {
 						variantPath := filepath.Join(rootPath, variantTag)
-						return setupVariantDir(variantPath, imageDef, tagDef, variantDef)
+						return setupVariantDir(variantPath, imageDef, tag, tagDef, variantDef)
 					})
 				}
 				return nil
@@ -122,7 +124,7 @@ func setupImageTagDir(tagPath string, image *model.Image, tag *model.Tag) error 
 	return nil
 }
 
-func setupVariantDir(variantPath string, image *model.Image, tag *model.Tag, variantDef *model.ImageVariant) error {
+func setupVariantDir(variantPath string, image *model.Image, tagName string, tag *model.Tag, variantDef *model.ImageVariant) error {
 	resolved, err := buildconfig_resolver.ForTagVariant(image, variantDef, tag)
 	if err != nil {
 		return errors.Join(errors.New("failed to resolve build configuration for variant"), err)
@@ -135,8 +137,12 @@ func setupVariantDir(variantPath string, image *model.Image, tag *model.Tag, var
 	}
 
 	if variantDef.BuildEntryPointPath != "" {
-		if err := file_resolver.CopyAndRenderFile(tmplCtx, variantDef.BuildEntryPointPath, fixUpEntrypoint(variantPath, variantDef.BuildEntryPointPath)); err != nil {
+		entrypoint := fixUpEntrypoint(variantPath, variantDef.BuildEntryPointPath)
+		if err := file_resolver.CopyAndRenderFile(tmplCtx, variantDef.BuildEntryPointPath, entrypoint); err != nil {
 			return errors.Join(errors.New("failed to copy build entrypoint"), err)
+		}
+		if err := replaceHiveParent(entrypoint, image.Name, tagName); err != nil {
+			return errors.Join(errors.New("failed to resolve __hive_parent__ in variant entrypoint"), err)
 		}
 	}
 
@@ -172,6 +178,26 @@ func setupVariantDir(variantPath string, image *model.Image, tag *model.Tag, var
 	}
 
 	return nil
+}
+
+const hiveParentPlaceholder = "__hive_parent__"
+
+// replaceHiveParent replaces __hive_parent__ in a rendered file with the
+// concrete __hive__/imageName:tagName reference.
+func replaceHiveParent(filePath, imageName, tagName string) error {
+	data, err := os.ReadFile(filePath)
+	if err != nil {
+		return err
+	}
+
+	content := string(data)
+	if !strings.Contains(content, hiveParentPlaceholder) {
+		return nil
+	}
+
+	parentRef := fmt.Sprintf("__hive__/%s:%s", imageName, tagName)
+	replaced := strings.ReplaceAll(content, hiveParentPlaceholder, parentRef)
+	return os.WriteFile(filePath, []byte(replaced), 0644)
 }
 
 func RenderProject(ctx context.Context, project *model.ContainerHiveProject, targetPath string) error {
