@@ -22,12 +22,12 @@ func TestGetFileCandidates(t *testing.T) {
 		"with yaml and yml extension": {
 			baseName:   "test",
 			extensions: []string{"yaml", "yml"},
-			expected:   []string{"test.yaml.gotpl", "test.yml.gotpl"},
+			expected:   []string{"test.yaml", "test.yaml.gotpl", "test.yml", "test.yml.gotpl"},
 		},
 		"with only yaml extension": {
 			baseName:   "config",
 			extensions: []string{"yaml"},
-			expected:   []string{"config.yaml.gotpl"},
+			expected:   []string{"config.yaml", "config.yaml.gotpl"},
 		},
 	}
 

@@ -32,9 +32,11 @@ func GetFileCandidates(baseName string, extensions ...string) []string {
 			possibleNames[idx+1] = fmt.Sprintf("%s.%s", baseName, tmplExt)
 		}
 	} else {
-		possibleNames = make([]string, extLen*len(supportedTemplateExtensions))
+		possibleNames = make([]string, extLen*(len(supportedTemplateExtensions)+1))
 		idx := 0
 		for _, ext := range extensions {
+			possibleNames[idx] = fmt.Sprintf("%s.%s", baseName, ext)
+			idx++
 			for _, tmplExt := range supportedTemplateExtensions {
 				possibleNames[idx] = fmt.Sprintf("%s.%s.%s", baseName, ext, tmplExt)
 				idx++
