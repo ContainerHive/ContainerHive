@@ -4,12 +4,12 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/google/go-containerregistry/pkg/authn"
+	"github.com/google/go-containerregistry/pkg/name"
 	v1 "github.com/google/go-containerregistry/pkg/v1"
 	"github.com/google/go-containerregistry/pkg/v1/empty"
 	"github.com/google/go-containerregistry/pkg/v1/mutate"
 	"github.com/google/go-containerregistry/pkg/v1/partial"
-
-	"github.com/google/go-containerregistry/pkg/name"
 	"github.com/google/go-containerregistry/pkg/v1/remote"
 )
 
@@ -26,12 +26,12 @@ func Retag(sourceRef, targetRef string) error {
 		return errors.Join(fmt.Errorf("invalid target reference %q", targetRef), err)
 	}
 
-	desc, err := remote.Get(src)
+	desc, err := remote.Get(src, remote.WithAuthFromKeychain(authn.DefaultKeychain))
 	if err != nil {
 		return errors.Join(fmt.Errorf("failed to fetch %q", sourceRef), err)
 	}
 
-	return remote.Tag(dst, desc)
+	return remote.Tag(dst, desc, remote.WithAuthFromKeychain(authn.DefaultKeychain))
 }
 
 // PlatformImage pairs a v1.Image (loaded from a local OCI tar) with its
@@ -71,7 +71,7 @@ func CreateManifestList(targetRef string, images []PlatformImage) error {
 	}
 
 	idx := mutate.AppendManifests(empty.Index, adds...)
-	return remote.WriteIndex(dst, idx)
+	return remote.WriteIndex(dst, idx, remote.WithAuthFromKeychain(authn.DefaultKeychain))
 }
 
 // PlatformRef pairs a registry reference with its target platform.
@@ -101,7 +101,7 @@ func CreateManifestListFromRefs(targetRef string, refs []PlatformRef) error {
 			return fmt.Errorf("invalid reference %q: %w", pr.Ref, err)
 		}
 
-		img, err := remote.Image(src)
+		img, err := remote.Image(src, remote.WithAuthFromKeychain(authn.DefaultKeychain))
 		if err != nil {
 			return fmt.Errorf("failed to fetch %q: %w", pr.Ref, err)
 		}
@@ -119,5 +119,5 @@ func CreateManifestListFromRefs(targetRef string, refs []PlatformRef) error {
 	}
 
 	idx := mutate.AppendManifests(empty.Index, adds...)
-	return remote.WriteIndex(dst, idx)
+	return remote.WriteIndex(dst, idx, remote.WithAuthFromKeychain(authn.DefaultKeychain))
 }
