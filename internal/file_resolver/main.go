@@ -9,6 +9,7 @@ import (
 	"github.com/timo-reymann/ContainerHive/internal/file_resolver/templating"
 )
 
+// TemplateExtensionGoTemplate is the file extension used for Go template files.
 const TemplateExtensionGoTemplate = "gotpl"
 
 var supportedTemplateExtensions = []string{
@@ -19,8 +20,10 @@ var processorMapping = map[string]templating.Processor{
 	TemplateExtensionGoTemplate: &templating.GoTemplateTemplatingProcessor{},
 }
 
+// NoFileCandidatesErr is returned when no matching file candidates exist on disk.
 var NoFileCandidatesErr = errors.New("no file candidates found")
 
+// GetFileCandidates returns all possible file names for a base name, including templated variants for each supported template extension.
 func GetFileCandidates(baseName string, extensions ...string) []string {
 	extLen := len(extensions)
 	var possibleNames []string
@@ -47,6 +50,7 @@ func GetFileCandidates(baseName string, extensions ...string) []string {
 	return possibleNames
 }
 
+// ResolveFirstExistingFile returns the path to the first candidate file that exists under root, or NoFileCandidatesErr if none is found.
 func ResolveFirstExistingFile(root string, candidates ...string) (string, error) {
 	for _, candidate := range candidates {
 		candidatePath := filepath.Join(root, candidate)

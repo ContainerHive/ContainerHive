@@ -9,6 +9,7 @@ import (
 	"github.com/timo-reymann/ContainerHive/internal/file_resolver/templating"
 )
 
+// CopyAndRenderFile copies src to target, rendering it through a template processor if the file extension matches a supported templating engine.
 func CopyAndRenderFile(tmplCtx *templating.TemplateContext, src, target string) error {
 	ext, _ := strings.CutPrefix(filepath.Ext(src), ".")
 

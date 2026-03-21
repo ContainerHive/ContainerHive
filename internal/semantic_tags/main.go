@@ -13,6 +13,7 @@ import (
 // Supports formats like: 1.2.3, 1.2.3.4, v1.2.3, 1.2.3-alpine, version1.2.3+build123, etc.
 var versionPattern = regexp.MustCompile(`^([^\d]*)(\d+)(?:\.(\d+))?(?:\.(\d+))?(?:\.(\d+))?(?:-([a-zA-Z0-9][a-zA-Z0-9.\-]*))?(?:\+([^\s]+))?$`)
 
+// SemanticTagVersion represents a parsed semantic version tag with optional prefix, suffix, and build metadata.
 type SemanticTagVersion struct {
 	Prefix string
 	Major  string

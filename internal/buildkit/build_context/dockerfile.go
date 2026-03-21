@@ -12,6 +12,7 @@ import (
 
 var defaultDockerfile = "Dockerfile"
 
+// DockerfileBuildContext implements BuildContext for standard Dockerfile builds.
 type DockerfileBuildContext struct {
 	Root       string
 	Dockerfile string

@@ -17,6 +17,7 @@ type SecretValue struct {
 	Value      string `yaml:"value" json:"value" jsonschema:"Value of the secret (env var name or plain text)"`
 }
 
+// VariantConfig defines a variant in the image definition YAML file.
 type VariantConfig struct {
 	Name      string    `yaml:"name" json:"name" jsonschema:"Name of the variant"`
 	TagSuffix string    `yaml:"tag_suffix" json:"tag_suffix" jsonschema:"Suffix to append to the tag name for this variant"`
@@ -25,6 +26,7 @@ type VariantConfig struct {
 	Platforms []string  `yaml:"platforms,omitempty" json:"platforms,omitempty" jsonschema:"Target platforms for this variant (e.g. linux/amd64)"`
 }
 
+// ImageDefinitionConfig is the parsed content of an image definition YAML file.
 type ImageDefinitionConfig struct {
 	Tags      []*Tag          `yaml:"tags" json:"tags" jsonschema:"Tags to create for this image"`
 	Variants  []VariantConfig `yaml:"variants" json:"variants,omitempty" jsonschema:"Variants to create for this image"`
@@ -35,10 +37,12 @@ type ImageDefinitionConfig struct {
 	Platforms []string        `yaml:"platforms,omitempty" json:"platforms,omitempty" jsonschema:"Target platforms for this image (e.g. linux/amd64)"`
 }
 
+// BuildKitConfig holds the BuildKit daemon connection settings.
 type BuildKitConfig struct {
 	Address string `yaml:"address" json:"address" jsonschema:"BuildKit daemon address (e.g. tcp://127.0.0.1:8502)"`
 }
 
+// CacheConfig configures the build cache backend (S3 or registry).
 type CacheConfig struct {
 	// Type discriminates the cache backend: "s3" or "registry"
 	Type string `yaml:"type" json:"type" jsonschema:"Cache type (s3, registry),required"`
@@ -56,10 +60,12 @@ type CacheConfig struct {
 	Insecure bool   `yaml:"insecure,omitempty" json:"insecure,omitempty" jsonschema:"Allow insecure registry connections"`
 }
 
+// RegistryConfig holds the container registry connection settings.
 type RegistryConfig struct {
 	Address string `yaml:"address" json:"address" jsonschema:"Container registry address"`
 }
 
+// HiveProjectConfig is the top-level project configuration from hive.yml.
 type HiveProjectConfig struct {
 	BuildKit  *BuildKitConfig `yaml:"buildkit,omitempty" json:"buildkit,omitempty" jsonschema:"BuildKit daemon configuration"`
 	Cache     *CacheConfig    `yaml:"cache,omitempty" json:"cache,omitempty" jsonschema:"Build cache configuration"`

@@ -1,5 +1,6 @@
 package cache
 
+// RegistryCache implements BuildkitCache using a container registry as the cache backend.
 type RegistryCache struct {
 	CacheRef string
 	Insecure bool

@@ -200,6 +200,7 @@ func replaceHiveParent(filePath, imageName, tagName string) error {
 	return os.WriteFile(filePath, []byte(replaced), 0644)
 }
 
+// RenderProject renders all image Dockerfiles and test configs into the target directory.
 func RenderProject(ctx context.Context, project *model.ContainerHiveProject, targetPath string) error {
 	_ = os.RemoveAll(targetPath)
 

@@ -10,6 +10,7 @@ import (
 	"github.com/timo-reymann/ContainerHive/pkg/model"
 )
 
+// HivePrefix is the Dockerfile image reference prefix used to denote project-local hive dependencies.
 const HivePrefix = "__hive__/"
 
 var hiveFromPattern = regexp.MustCompile(`(?i)^FROM\s+__hive__/([^:\s]+):([^\s]+)`)

@@ -12,6 +12,7 @@ func addLine(w *tabwriter.Writer, heading string, val string) {
 	_, _ = fmt.Fprintf(w, heading+"\t%s\n", val)
 }
 
+// PrintVersionInfo writes build metadata to stderr in a tabular format.
 func PrintVersionInfo() {
 	println()
 	println("Build information")

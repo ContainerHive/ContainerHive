@@ -9,6 +9,7 @@ import (
 
 const vaultResolver = "vault"
 
+// VaultSecretResolver resolves secrets from HashiCorp Vault using the "vault://<path>#<field>" URI scheme.
 type VaultSecretResolver struct {
 }
 

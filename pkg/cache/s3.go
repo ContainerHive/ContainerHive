@@ -2,6 +2,7 @@ package cache
 
 import "strconv"
 
+// S3BuildKitCache implements BuildkitCache using an S3-compatible object store as the cache backend.
 type S3BuildKitCache struct {
 	EndpointUrl     string
 	Bucket          string

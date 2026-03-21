@@ -11,8 +11,10 @@ var Version = "0.0.0"
 // BuildTime contains the build time or question mark for source builds
 var BuildTime = "2025-04-25_10:00:00"
 
+// BuildTimeParsed holds the parsed time.Time representation of BuildTime.
 var BuildTimeParsed time.Time
 
+// BuildTimeRFC1123 holds the build time formatted as an RFC 1123 string.
 var BuildTimeRFC1123 string
 
 func init() {
