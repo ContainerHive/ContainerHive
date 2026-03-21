@@ -36,6 +36,7 @@ jobs:
       - go/with-cache:
           key: test
           steps:
+            - go/mod-download-cached
             - run:
                 name: Run tests
                 command: |
