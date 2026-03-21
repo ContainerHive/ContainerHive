@@ -1,15 +1,6 @@
 {{ define "test-job.yml.gotpl" }}
   test-{{ .Image.Name }}:
     runs-on: ubuntu-latest
-    container: {{ .Ctx.ImageName }}:{{ .Ctx.Version }}
-    services:
-      dind:
-        image: docker:dind
-        options: --privileged
-        env:
-          DOCKER_TLS_CERTDIR: ""
-    env:
-      DOCKER_HOST: tcp://dind:2375
     needs:
       - manifest-{{ .Image.Name }}
     steps:
@@ -26,7 +17,11 @@
           name: {{ .Image.Name }}-manifest
           path: {{ .Ctx.Dist }}/
 {{- end }}
-      - run: echo "${{ "{{" }} secrets.GITHUB_TOKEN {{ "}}" }}" | {{ .Ctx.ChCmd }} login -u "${{ "{{" }} github.actor {{ "}}" }}" --password-stdin ghcr.io
-      - run: {{ .Ctx.ChCmd }} wait --docker-socket
-      - run: {{ .Ctx.ChCmd }} test {{ .Image.Name }} --build-id "$SNAPSHOT_ID"{{ if not $.Ctx.Artifacts }} --pull{{ end }}
+      - run: mkdir -p "$RUNNER_TEMP/ch"
+      - run: docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+      - run: docker network create ch-net
+      - run: docker run -d --name dind --privileged --network ch-net -e DOCKER_TLS_CERTDIR="" docker:dind
+      - run: echo "${{ "{{" }} secrets.GITHUB_TOKEN {{ "}}" }}" | docker run --rm --entrypoint="" -u "$(id -u):$(id -g)" -e CI=1 -i -e HOME="$RUNNER_TEMP/ch" -v "$RUNNER_TEMP/ch:$RUNNER_TEMP/ch" -v "$GITHUB_WORKSPACE:$GITHUB_WORKSPACE" -w "$GITHUB_WORKSPACE" --network ch-net -e DOCKER_HOST=tcp://dind:2375 $CH_IMAGE {{ .Ctx.ChCmd }} login -u "${{ "{{" }} github.actor {{ "}}" }}" --password-stdin ghcr.io
+      - run: docker run --rm --entrypoint="" -u "$(id -u):$(id -g)" -e CI=1 -e HOME="$RUNNER_TEMP/ch" -v "$RUNNER_TEMP/ch:$RUNNER_TEMP/ch" -v "$GITHUB_WORKSPACE:$GITHUB_WORKSPACE" -w "$GITHUB_WORKSPACE" --network ch-net -e DOCKER_HOST=tcp://dind:2375 $CH_IMAGE {{ .Ctx.ChCmd }} wait --docker-socket
+      - run: docker run --rm --entrypoint="" -u "$(id -u):$(id -g)" -e CI=1 -e HOME="$RUNNER_TEMP/ch" -v "$RUNNER_TEMP/ch:$RUNNER_TEMP/ch" -v "$GITHUB_WORKSPACE:$GITHUB_WORKSPACE" -w "$GITHUB_WORKSPACE" --network ch-net -e DOCKER_HOST=tcp://dind:2375 $CH_IMAGE {{ .Ctx.ChCmd }} test {{ .Image.Name }} --build-id "$SNAPSHOT_ID"
 {{- end }}

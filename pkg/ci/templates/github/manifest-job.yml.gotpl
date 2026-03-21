@@ -1,7 +1,6 @@
 {{ define "manifest-job.yml.gotpl" }}
   manifest-{{ .Image.Name }}:
     runs-on: ubuntu-latest
-    container: {{ .Ctx.ImageName }}:{{ .Ctx.Version }}
     needs:
 {{- range .Image.Platforms }}
       - build-{{ $.Image.Name }}-{{ . }}
@@ -22,8 +21,9 @@
           path: {{ $.Ctx.Dist }}/
 {{- end }}
 {{- end }}
-      - run: echo "${{ "{{" }} secrets.GITHUB_TOKEN {{ "}}" }}" | {{ .Ctx.ChCmd }} login -u "${{ "{{" }} github.actor {{ "}}" }}" --password-stdin ghcr.io
-      - run: {{ .Ctx.ChCmd }} finalize {{ .Image.Name }} --build-id "$SNAPSHOT_ID"
+      - run: mkdir -p "$RUNNER_TEMP/ch"
+      - run: echo "${{ "{{" }} secrets.GITHUB_TOKEN {{ "}}" }}" | docker run --rm --entrypoint="" -u "$(id -u):$(id -g)" -e CI=1 -i -e HOME="$RUNNER_TEMP/ch" -v "$RUNNER_TEMP/ch:$RUNNER_TEMP/ch" -v "$GITHUB_WORKSPACE:$GITHUB_WORKSPACE" -w "$GITHUB_WORKSPACE" $CH_IMAGE {{ .Ctx.ChCmd }} login -u "${{ "{{" }} github.actor {{ "}}" }}" --password-stdin ghcr.io
+      - run: docker run --rm --entrypoint="" -u "$(id -u):$(id -g)" -e CI=1 -e HOME="$RUNNER_TEMP/ch" -v "$RUNNER_TEMP/ch:$RUNNER_TEMP/ch" -v "$GITHUB_WORKSPACE:$GITHUB_WORKSPACE" -w "$GITHUB_WORKSPACE" $CH_IMAGE {{ .Ctx.ChCmd }} finalize {{ .Image.Name }} --build-id "$SNAPSHOT_ID"
 {{- if $.Ctx.Artifacts }}
       - uses: actions/upload-artifact@v4
         with:

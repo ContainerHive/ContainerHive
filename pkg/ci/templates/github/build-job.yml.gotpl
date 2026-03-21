@@ -1,33 +1,27 @@
 {{ define "build-job.yml.gotpl" }}
 {{- range .Image.Platforms }}
   build-{{ $.Image.Name }}-{{ . }}:
-    runs-on: ubuntu-latest
-    container: {{ $.Ctx.ImageName }}:{{ $.Ctx.Version }}
-    services:
-      dind:
-        image: docker:dind
-        options: --privileged
-        env:
-          DOCKER_TLS_CERTDIR: ""
-    env:
-      DOCKER_HOST: tcp://dind:2375
+    runs-on: {{ if eq . "arm64" }}ubuntu-24.04-arm{{ else }}ubuntu-24.04{{ end }}
     needs:
       - generate
 {{- range $.Image.Dependencies }}
       - manifest-{{ . }}
 {{- end }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           lfs: true
       - uses: actions/download-artifact@v4
         with:
           name: generated
           path: {{ $.Ctx.Dist }}/
-      - run: echo "${{ "{{" }} secrets.GITHUB_TOKEN {{ "}}" }}" | {{ $.Ctx.ChCmd }} login -u "${{ "{{" }} github.actor {{ "}}" }}" --password-stdin ghcr.io
-      - run: {{ $.Ctx.ChCmd }} wait --docker-socket
-      - run: {{ $.Ctx.ChCmd }} build {{ $.Image.Name }} --platform {{ . }} --build-id "$SNAPSHOT_ID"
-      - run: {{ $.Ctx.ChCmd }} sbom {{ $.Image.Name }} --platform {{ . }} --build-id "$SNAPSHOT_ID"
+      - run: mkdir -p "$RUNNER_TEMP/ch"
+      - run: docker network create ch-net
+      - run: docker run -d --name buildkitd --privileged --network ch-net moby/buildkit:latest --addr tcp://0.0.0.0:8372
+      - run: echo "${{ "{{" }} secrets.GITHUB_TOKEN {{ "}}" }}" | docker run --rm --entrypoint="" -u "$(id -u):$(id -g)" -e CI=1 -i -e HOME="$RUNNER_TEMP/ch" -v "$RUNNER_TEMP/ch:$RUNNER_TEMP/ch" -v "$GITHUB_WORKSPACE:$GITHUB_WORKSPACE" -w "$GITHUB_WORKSPACE" --network ch-net -e BUILDKIT_HOST=tcp://buildkitd:8372 $CH_IMAGE {{ $.Ctx.ChCmd }} login -u "${{ "{{" }} github.actor {{ "}}" }}" --password-stdin ghcr.io
+      - run: docker run --rm --entrypoint="" -u "$(id -u):$(id -g)" -e CI=1 -e HOME="$RUNNER_TEMP/ch" -v "$RUNNER_TEMP/ch:$RUNNER_TEMP/ch" -v "$GITHUB_WORKSPACE:$GITHUB_WORKSPACE" -w "$GITHUB_WORKSPACE" --network ch-net -e BUILDKIT_HOST=tcp://buildkitd:8372 $CH_IMAGE {{ $.Ctx.ChCmd }} wait --buildkitd
+      - run: docker run --rm --entrypoint="" -u "$(id -u):$(id -g)" -e CI=1 -e HOME="$RUNNER_TEMP/ch" -v "$RUNNER_TEMP/ch:$RUNNER_TEMP/ch" -v "$GITHUB_WORKSPACE:$GITHUB_WORKSPACE" -w "$GITHUB_WORKSPACE" --network ch-net -e BUILDKIT_HOST=tcp://buildkitd:8372 $CH_IMAGE {{ $.Ctx.ChCmd }} build {{ $.Image.Name }} --platform {{ . }} --build-id "$SNAPSHOT_ID"
+      - run: docker run --rm --entrypoint="" -u "$(id -u):$(id -g)" -e CI=1 -e HOME="$RUNNER_TEMP/ch" -v "$RUNNER_TEMP/ch:$RUNNER_TEMP/ch" -v "$GITHUB_WORKSPACE:$GITHUB_WORKSPACE" -w "$GITHUB_WORKSPACE" --network ch-net -e BUILDKIT_HOST=tcp://buildkitd:8372 $CH_IMAGE {{ $.Ctx.ChCmd }} sbom {{ $.Image.Name }} --platform {{ . }} --build-id "$SNAPSHOT_ID"
 {{- if $.Ctx.Artifacts }}
       - uses: actions/upload-artifact@v4
         with:
