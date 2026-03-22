@@ -8,7 +8,7 @@ jobs:
   trigger-circleci:
     if: >-
       (github.event.action == 'labeled' && github.event.label.name == 'update-test-project') ||
-      (github.event.action == 'synchronize' && contains(github.event.pull_request.labels.*.name, 'update-test-project'))
+      (github.event.action == 'push' && contains(github.event.pull_request.labels.*.name, 'update-test-project'))
     runs-on: ubuntu-latest
     steps:
       - name: Trigger CircleCI pipeline
