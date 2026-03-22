@@ -120,16 +120,15 @@ jobs:
           image: timoreymann/container-hive
           docker-username: DOCKER_USERNAME
           docker-password: DOCKER_TOKEN
-  check-update-test-project-label:
-    docker:
-      - image: cimg/base:current
+  update-test-project:
+    executor: go
     steps:
+      - checkout
       - run:
           name: Check for update-test-project label
           command: |
             if [ -z "$CIRCLE_PULL_REQUEST" ]; then
               echo "Not a PR, skipping"
-              circleci-agent step halt
               exit 0
             fi
             PR_NUMBER=$(echo "$CIRCLE_PULL_REQUEST" | grep -oE '[0-9]+$')
@@ -138,27 +137,28 @@ jobs:
               | jq -r '.labels[].name')
             if echo "$LABELS" | grep -q "^update-test-project$"; then
               echo "Label found, proceeding"
+              echo "export UPDATE_TEST_PROJECT=true" >> "$BASH_ENV"
             else
               echo "Label not found, skipping"
-              circleci-agent step halt
             fi
-  update-test-project:
-    executor: go
-    steps:
-      - checkout
       - go/with-cache:
           key: update-test-project
           steps:
             - go/mod-download-cached
             - run:
                 name: Checkout test project
-                command: make checkout-test-project
+                command: |
+                  [ "$UPDATE_TEST_PROJECT" = "true" ] || exit 0
+                  make checkout-test-project
             - run:
                 name: Render test project CI
-                command: make render-test-project-ci
+                command: |
+                  [ "$UPDATE_TEST_PROJECT" = "true" ] || exit 0
+                  make render-test-project-ci
             - run:
                 name: Commit and push changes
                 command: |
+                  [ "$UPDATE_TEST_PROJECT" = "true" ] || exit 0
                   cd test-project
                   git config user.name "CircleCI"
                   git config user.email "no-reply@timo-reymann.de"
@@ -208,10 +208,8 @@ workflows:
     when:
       not: << pipeline.parameters.update-test-project >>
     jobs:
-      - check-update-test-project-label
       - update-test-project:
           requires:
-            - check-update-test-project-label
             - publish-container-image-snapshot
       - test
       - build:
