@@ -53,8 +53,8 @@ cache:
   endpoint: http://localhost:9000
   bucket: buildkit-cache
   region: us-east-1
-  access_key_id: minioadmin
-  secret_access_key: minioadmin
+  access_key_id: <created-via-minio-admin-ui>
+  secret_access_key: <created-via-minio-admin-ui>
   use_path_style: true
 ```
 
