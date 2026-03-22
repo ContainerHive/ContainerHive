@@ -7,8 +7,6 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
 	"github.com/timo-reymann/ContainerHive/pkg/build"
 	"github.com/timo-reymann/ContainerHive/pkg/model"
 	"github.com/timo-reymann/ContainerHive/pkg/utils"
@@ -20,15 +18,20 @@ func TestRunTestsForTag(t *testing.T) {
 
 	// Create a mock image tar file
 	imageDir := filepath.Join(tempDir, "ubuntu", "24.04", "linux_amd64")
-	require.NoError(t, os.MkdirAll(imageDir, 0755))
+	if err := os.MkdirAll(imageDir, 0755); err != nil {
+		t.Fatalf("failed to create image dir: %v", err)
+	}
 
 	tarFile := filepath.Join(imageDir, "image.tar")
-	_, err := os.Create(tarFile)
-	require.NoError(t, err)
+	if _, err := os.Create(tarFile); err != nil {
+		t.Fatalf("failed to create tar file: %v", err)
+	}
 
 	// Create a test definition file in the correct location (tag directory)
 	testsDir := filepath.Join(tempDir, "ubuntu", "24.04", "tests")
-	require.NoError(t, os.MkdirAll(testsDir, 0755))
+	if err := os.MkdirAll(testsDir, 0755); err != nil {
+		t.Fatalf("failed to create tests dir: %v", err)
+	}
 
 	testFile := filepath.Join(testsDir, "test.yaml")
 	testContent := `---
@@ -39,17 +42,25 @@ fileExistenceTests:
   path: "/etc/os-release"
   shouldExist: true
 `
-	require.NoError(t, os.WriteFile(testFile, []byte(testContent), 0644))
+	if err := os.WriteFile(testFile, []byte(testContent), 0644); err != nil {
+		t.Fatalf("failed to write test file: %v", err)
+	}
 
 	t.Run("successful test execution", func(t *testing.T) {
 		opts := &Opts{DistPath: tempDir}
 		tested, failed, err := runTestsForTag(opts, "ubuntu", "24.04", []string{"linux/amd64"})
 		// Note: This will likely fail because we don't have a real Docker environment,
 		// but we can at least verify the function structure
-		assert.NoError(t, err)
+		if err != nil {
+			t.Errorf("unexpected error: %v", err)
+		}
 		// Since we don't have Docker, it should skip the test (no image.tar found in the right location)
-		assert.Equal(t, 0, tested)
-		assert.Equal(t, 0, failed)
+		if tested != 0 {
+			t.Errorf("expected 0 tested, got %d", tested)
+		}
+		if failed != 0 {
+			t.Errorf("expected 0 failed, got %d", failed)
+		}
 	})
 }
 
@@ -77,17 +88,26 @@ func TestRunProjectTests(t *testing.T) {
 		// Create a temporary directory structure
 		tempDir := t.TempDir()
 		imageDir := filepath.Join(tempDir, "ubuntu", "24.04", "linux_amd64")
-		require.NoError(t, os.MkdirAll(imageDir, 0755))
+		if err := os.MkdirAll(imageDir, 0755); err != nil {
+			t.Fatalf("failed to create image dir: %v", err)
+		}
 
 		// Create a mock image tar file
 		tarFile := filepath.Join(imageDir, "image.tar")
-		_, err := os.Create(tarFile)
-		require.NoError(t, err)
+		if _, err := os.Create(tarFile); err != nil {
+			t.Fatalf("failed to create tar file: %v", err)
+		}
 
 		tested, failed, err := RunProjectTests(context.Background(), &Opts{DistPath: tempDir, Project: project, Filters: []build.Filter{}})
-		assert.NoError(t, err)
-		assert.Equal(t, 0, tested) // No test files, so nothing tested
-		assert.Equal(t, 0, failed)
+		if err != nil {
+			t.Errorf("unexpected error: %v", err)
+		}
+		if tested != 0 {
+			t.Errorf("expected 0 tested, got %d", tested)
+		}
+		if failed != 0 {
+			t.Errorf("expected 0 failed, got %d", failed)
+		}
 	})
 
 	t.Run("filters limit tested images", func(t *testing.T) {
@@ -96,9 +116,15 @@ func TestRunProjectTests(t *testing.T) {
 		}
 
 		tested, failed, err := RunProjectTests(context.Background(), &Opts{DistPath: t.TempDir(), Project: project, Filters: filters})
-		assert.NoError(t, err)
-		assert.Equal(t, 0, tested) // Filter doesn't match, so nothing tested
-		assert.Equal(t, 0, failed)
+		if err != nil {
+			t.Errorf("unexpected error: %v", err)
+		}
+		if tested != 0 {
+			t.Errorf("expected 0 tested, got %d", tested)
+		}
+		if failed != 0 {
+			t.Errorf("expected 0 failed, got %d", failed)
+		}
 	})
 }
 
@@ -122,7 +148,9 @@ func TestMatchesFilterIntegration(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(fmt.Sprintf("%s:%s", tt.image, tt.tag), func(t *testing.T) {
 			result := utils.MatchesFilter(filters, tt.image, tt.tag)
-			assert.Equal(t, tt.expected, result)
+			if result != tt.expected {
+				t.Errorf("MatchesFilter(%q, %q) = %v, want %v", tt.image, tt.tag, result, tt.expected)
+			}
 		})
 	}
 }
@@ -131,12 +159,20 @@ func TestRunTestsForTag_NoTestDefinitions(t *testing.T) {
 	// Tag dir exists but has no tests/ subdir
 	tempDir := t.TempDir()
 	tagDir := filepath.Join(tempDir, "app", "1.0")
-	require.NoError(t, os.MkdirAll(tagDir, 0755))
+	if err := os.MkdirAll(tagDir, 0755); err != nil {
+		t.Fatalf("failed to create tag dir: %v", err)
+	}
 
 	tested, failed, err := runTestsForTag(&Opts{DistPath: tempDir}, "app", "1.0", []string{"linux/amd64"})
-	assert.NoError(t, err)
-	assert.Equal(t, 0, tested)
-	assert.Equal(t, 0, failed)
+	if err != nil {
+		t.Errorf("unexpected error: %v", err)
+	}
+	if tested != 0 {
+		t.Errorf("expected 0 tested, got %d", tested)
+	}
+	if failed != 0 {
+		t.Errorf("expected 0 failed, got %d", failed)
+	}
 }
 
 func TestRunTestsForTag_MissingTarFile(t *testing.T) {
@@ -145,17 +181,29 @@ func TestRunTestsForTag_MissingTarFile(t *testing.T) {
 	// Create tag dir with test definitions but no image.tar
 	tagDir := filepath.Join(tempDir, "app", "1.0")
 	testsDir := filepath.Join(tagDir, "tests")
-	require.NoError(t, os.MkdirAll(testsDir, 0755))
-	require.NoError(t, os.WriteFile(filepath.Join(testsDir, "test.yaml"), []byte("test: true"), 0644))
+	if err := os.MkdirAll(testsDir, 0755); err != nil {
+		t.Fatalf("failed to create tests dir: %v", err)
+	}
+	if err := os.WriteFile(filepath.Join(testsDir, "test.yaml"), []byte("test: true"), 0644); err != nil {
+		t.Fatalf("failed to write test file: %v", err)
+	}
 
 	// Platform dir exists but no tar
 	platDir := filepath.Join(tagDir, "linux-amd64")
-	require.NoError(t, os.MkdirAll(platDir, 0755))
+	if err := os.MkdirAll(platDir, 0755); err != nil {
+		t.Fatalf("failed to create platform dir: %v", err)
+	}
 
 	tested, failed, err := runTestsForTag(&Opts{DistPath: tempDir}, "app", "1.0", []string{"linux/amd64"})
-	assert.NoError(t, err)
-	assert.Equal(t, 0, tested, "should skip when image.tar is missing")
-	assert.Equal(t, 0, failed)
+	if err != nil {
+		t.Errorf("unexpected error: %v", err)
+	}
+	if tested != 0 {
+		t.Errorf("expected 0 tested when image.tar is missing, got %d", tested)
+	}
+	if failed != 0 {
+		t.Errorf("expected 0 failed, got %d", failed)
+	}
 }
 
 func TestRunProjectTests_WithVariants(t *testing.T) {
@@ -184,18 +232,30 @@ func TestRunProjectTests_WithVariants(t *testing.T) {
 	t.Run("filter matches variant tag", func(t *testing.T) {
 		filters := []build.Filter{{ImageName: "dotnet", TagName: "8.0.300-node"}}
 		tested, failed, err := RunProjectTests(context.Background(), &Opts{DistPath: t.TempDir(), Project: project, Filters: filters})
-		assert.NoError(t, err)
-		assert.Equal(t, 0, tested, "no test files exist so nothing tested")
-		assert.Equal(t, 0, failed)
+		if err != nil {
+			t.Errorf("unexpected error: %v", err)
+		}
+		if tested != 0 {
+			t.Errorf("expected 0 tested (no test files), got %d", tested)
+		}
+		if failed != 0 {
+			t.Errorf("expected 0 failed, got %d", failed)
+		}
 	})
 
 	t.Run("filter excludes base tag when variant specified", func(t *testing.T) {
 		filters := []build.Filter{{ImageName: "dotnet", TagName: "8.0.300-node"}}
 		// Should not test the base "8.0.300" tag
 		tested, failed, err := RunProjectTests(context.Background(), &Opts{DistPath: t.TempDir(), Project: project, Filters: filters})
-		assert.NoError(t, err)
-		assert.Equal(t, 0, tested)
-		assert.Equal(t, 0, failed)
+		if err != nil {
+			t.Errorf("unexpected error: %v", err)
+		}
+		if tested != 0 {
+			t.Errorf("expected 0 tested, got %d", tested)
+		}
+		if failed != 0 {
+			t.Errorf("expected 0 failed, got %d", failed)
+		}
 	})
 }
 
@@ -229,8 +289,14 @@ func TestRunProjectTests_MultipleImages(t *testing.T) {
 	t.Run("image-only filter matches all tags", func(t *testing.T) {
 		filters := []build.Filter{{ImageName: "app"}}
 		tested, failed, err := RunProjectTests(context.Background(), &Opts{DistPath: t.TempDir(), Project: project, Filters: filters})
-		assert.NoError(t, err)
-		assert.Equal(t, 0, tested) // no test files
-		assert.Equal(t, 0, failed)
+		if err != nil {
+			t.Errorf("unexpected error: %v", err)
+		}
+		if tested != 0 {
+			t.Errorf("expected 0 tested (no test files), got %d", tested)
+		}
+		if failed != 0 {
+			t.Errorf("expected 0 failed, got %d", failed)
+		}
 	})
 }

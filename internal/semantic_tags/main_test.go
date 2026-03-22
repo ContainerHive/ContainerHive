@@ -2,8 +2,6 @@ package semantic_tags
 
 import (
 	"testing"
-
-	"github.com/stretchr/testify/assert"
 )
 
 func TestNewSemanticVersion(t *testing.T) {
@@ -165,12 +163,22 @@ func TestNewSemanticVersion(t *testing.T) {
 			result, err := NewSemanticVersion(tc.input)
 
 			if tc.shouldError {
-				assert.Error(t, err)
-				assert.Nil(t, result)
+				if err == nil {
+					t.Error("expected error, got nil")
+				}
+				if result != nil {
+					t.Errorf("expected nil result, got %+v", result)
+				}
 			} else {
-				assert.NoError(t, err)
-				assert.NotNil(t, result)
-				assert.Equal(t, tc.expected, result)
+				if err != nil {
+					t.Fatalf("unexpected error: %v", err)
+				}
+				if result == nil {
+					t.Fatal("expected non-nil result")
+				}
+				if *result != *tc.expected {
+					t.Errorf("expected %+v, got %+v", tc.expected, result)
+				}
 			}
 		})
 	}
@@ -220,8 +228,12 @@ func TestNewSemanticVersionEdgeCases(t *testing.T) {
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
 			result, err := NewSemanticVersion(tc.input)
-			assert.NoError(t, err)
-			assert.Equal(t, tc.expected, result)
+			if err != nil {
+				t.Fatalf("unexpected error: %v", err)
+			}
+			if *result != *tc.expected {
+				t.Errorf("expected %+v, got %+v", tc.expected, result)
+			}
 		})
 	}
 }
@@ -324,7 +336,14 @@ func TestGetLowerVariants(t *testing.T) {
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
 			result := tc.version.GetLowerVariants()
-			assert.Equal(t, tc.expected, result)
+			if len(result) != len(tc.expected) {
+				t.Fatalf("expected %d variants, got %d: %v", len(tc.expected), len(result), result)
+			}
+			for i := range tc.expected {
+				if result[i] != tc.expected[i] {
+					t.Errorf("variant[%d]: expected %q, got %q", i, tc.expected[i], result[i])
+				}
+			}
 		})
 	}
 }
@@ -401,22 +420,42 @@ func TestSemanticVersionComparison(t *testing.T) {
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
 			result := tc.version1.Compare(tc.version2)
-			assert.Equal(t, tc.expected, result)
+			if result != tc.expected {
+				t.Errorf("Compare() = %d, want %d", result, tc.expected)
+			}
 
 			// Test the convenience methods
 			switch tc.expected {
 			case -1:
-				assert.True(t, tc.version1.Less(tc.version2))
-				assert.False(t, tc.version1.Greater(tc.version2))
-				assert.False(t, tc.version1.Equal(tc.version2))
+				if !tc.version1.Less(tc.version2) {
+					t.Error("expected Less() to be true")
+				}
+				if tc.version1.Greater(tc.version2) {
+					t.Error("expected Greater() to be false")
+				}
+				if tc.version1.Equal(tc.version2) {
+					t.Error("expected Equal() to be false")
+				}
 			case 0:
-				assert.False(t, tc.version1.Less(tc.version2))
-				assert.False(t, tc.version1.Greater(tc.version2))
-				assert.True(t, tc.version1.Equal(tc.version2))
+				if tc.version1.Less(tc.version2) {
+					t.Error("expected Less() to be false")
+				}
+				if tc.version1.Greater(tc.version2) {
+					t.Error("expected Greater() to be false")
+				}
+				if !tc.version1.Equal(tc.version2) {
+					t.Error("expected Equal() to be true")
+				}
 			case 1:
-				assert.False(t, tc.version1.Less(tc.version2))
-				assert.True(t, tc.version1.Greater(tc.version2))
-				assert.False(t, tc.version1.Equal(tc.version2))
+				if tc.version1.Less(tc.version2) {
+					t.Error("expected Less() to be false")
+				}
+				if !tc.version1.Greater(tc.version2) {
+					t.Error("expected Greater() to be true")
+				}
+				if tc.version1.Equal(tc.version2) {
+					t.Error("expected Equal() to be false")
+				}
 			}
 		})
 	}
@@ -473,7 +512,9 @@ func TestSemanticVersionString(t *testing.T) {
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
 			result := tc.version.String()
-			assert.Equal(t, tc.expected, result)
+			if result != tc.expected {
+				t.Errorf("String() = %q, want %q", result, tc.expected)
+			}
 		})
 	}
 }
@@ -510,6 +551,8 @@ func TestSemanticVersionSorting(t *testing.T) {
 
 	// Verify the order
 	for i, version := range versions {
-		assert.Equal(t, expectedOrder[i], version.String())
+		if version.String() != expectedOrder[i] {
+			t.Errorf("position %d: expected %q, got %q", i, expectedOrder[i], version.String())
+		}
 	}
 }

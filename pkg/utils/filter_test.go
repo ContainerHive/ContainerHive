@@ -3,7 +3,6 @@ package utils
 import (
 	"testing"
 
-	"github.com/stretchr/testify/assert"
 	"github.com/timo-reymann/ContainerHive/pkg/build"
 )
 
@@ -53,7 +52,14 @@ func TestParseFilters(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			actual := ParseFilters(tt.input)
-			assert.Equal(t, tt.expected, actual)
+			if len(actual) != len(tt.expected) {
+				t.Fatalf("expected %d filters, got %d", len(tt.expected), len(actual))
+			}
+			for i := range tt.expected {
+				if actual[i] != tt.expected[i] {
+					t.Errorf("filter[%d]: expected %+v, got %+v", i, tt.expected[i], actual[i])
+				}
+			}
 		})
 	}
 }
@@ -144,7 +150,9 @@ func TestMatchesFilter(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			actual := MatchesFilter(tt.filters, tt.image, tt.tag)
-			assert.Equal(t, tt.expected, actual)
+			if actual != tt.expected {
+				t.Errorf("MatchesFilter() = %v, want %v", actual, tt.expected)
+			}
 		})
 	}
 }
