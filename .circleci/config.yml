@@ -1,5 +1,10 @@
 version: '2.1'
 
+parameters:
+  update-test-project:
+    type: boolean
+    default: false
+
 only_tags: &only_tags
   filters:
     branches:
@@ -115,6 +120,30 @@ jobs:
           image: timoreymann/container-hive
           docker-username: DOCKER_USERNAME
           docker-password: DOCKER_TOKEN
+  update-test-project:
+    executor: go
+    steps:
+      - checkout
+      - go/with-cache:
+          key: update-test-project
+          steps:
+            - go/mod-download-cached
+            - run:
+                name: Checkout test project
+                command: make checkout-test-project
+            - run:
+                name: Render test project CI
+                command: make render-test-project-ci
+            - run:
+                name: Commit and push changes
+                command: |
+                  cd test-project
+                  git config user.name "CircleCI"
+                  git config user.email "no-reply@timo-reymann.de"
+                  git remote set-url origin https://x-access-token:${GITHUB_TOKEN}@github.com/timo-reymann/ContainerHive-test-project.git
+                  git add -A
+                  git commit -m "chore: Update CI configuration" || echo "No changes to commit"
+                  git push
   build-gh-pages:
     executor: node
     steps:
@@ -149,7 +178,13 @@ jobs:
 
 workflows:
   version: 2
+  update-test-project:
+    when: << pipeline.parameters.update-test-project >>
+    jobs:
+      - update-test-project
   main:
+    when:
+      not: << pipeline.parameters.update-test-project >>
     jobs:
       - test
       - build:
