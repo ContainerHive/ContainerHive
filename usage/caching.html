@@ -9,10 +9,10 @@
       
       
       
-        <link rel="prev" href="002-sbom-generation.html">
+        <link rel="prev" href="../getting-started.html">
       
       
-        <link rel="next" href="004-embedded-local-registry.html">
+        <link rel="next" href="ci-integration.html">
       
       
         
@@ -23,7 +23,7 @@
     
     
       
-        <title>003 - Accept Docker daemon dependency for full container structure test support - ContainerHive</title>
+        <title>Set up build caching - ContainerHive</title>
       
     
     
@@ -74,7 +74,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#003-accept-docker-daemon-dependency-for-full-container-structure-test-support" class="md-skip">
+        <a href="#set-up-build-caching" class="md-skip">
           Skip to content
         </a>
       
@@ -107,7 +107,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              003 - Accept Docker daemon dependency for full container structure test support
+              Set up build caching
             
           </span>
         </div>
@@ -243,11 +243,13 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="../usage/caching.html" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="caching.html" class="md-tabs__link">
           
   
   
@@ -303,12 +305,10 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
+      <li class="md-tabs__item">
         <a href="../development/local.html" class="md-tabs__link">
           
   
@@ -450,24 +450,29 @@
       
   
   
+    
   
   
+  
     
     
     
     
-      
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
         
           
-          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
             
   
   
@@ -485,7 +490,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_4">
             <span class="md-nav__icon md-icon"></span>
             
@@ -500,10 +505,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../usage/caching.html" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Set up build caching
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="caching.html" class="md-nav__link md-nav__link--active">
         
   
   
@@ -519,6 +551,115 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#s3-cache" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        S3 cache
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="S3 cache">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#when-to-use-s3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        When to use S3
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#setting-up-minio-for-local-development" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Setting up MinIO for local development
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#registry-cache" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Registry cache
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Registry cache">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#when-to-use-registry-cache" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        When to use registry cache
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#how-caching-works" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How caching works
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#no-caching" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        No caching
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -531,7 +672,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../usage/ci-integration.html" class="md-nav__link">
+      <a href="ci-integration.html" class="md-nav__link">
         
   
   
@@ -559,7 +700,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../usage/cli.html" class="md-nav__link">
+      <a href="cli.html" class="md-nav__link">
         
   
   
@@ -587,7 +728,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../usage/dockerfiles.html" class="md-nav__link">
+      <a href="dockerfiles.html" class="md-nav__link">
         
   
   
@@ -615,7 +756,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../usage/filtering.html" class="md-nav__link">
+      <a href="filtering.html" class="md-nav__link">
         
   
   
@@ -643,7 +784,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../usage/multi-platform.html" class="md-nav__link">
+      <a href="multi-platform.html" class="md-nav__link">
         
   
   
@@ -671,7 +812,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../usage/secrets-and-versions.html" class="md-nav__link">
+      <a href="secrets-and-versions.html" class="md-nav__link">
         
   
   
@@ -699,7 +840,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../usage/testing.html" class="md-nav__link">
+      <a href="testing.html" class="md-nav__link">
         
   
   
@@ -985,29 +1126,24 @@
       
   
   
-    
   
   
-  
     
     
     
     
       
-        
-        
-      
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
         
           
-          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="">
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
             
   
   
@@ -1025,7 +1161,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_7">
             <span class="md-nav__icon md-icon"></span>
             
@@ -1068,8 +1204,6 @@
                 
   
   
-    
-  
   
   
     
@@ -1080,11 +1214,11 @@
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7_2" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7_2" >
         
           
           <label class="md-nav__link" for="__nav_7_2" id="__nav_7_2_label" tabindex="0">
@@ -1105,7 +1239,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_2_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_2_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_7_2">
             <span class="md-nav__icon md-icon"></span>
             
@@ -1123,7 +1257,7 @@
   
   
     <li class="md-nav__item">
-      <a href="001-buildkit-integration.html" class="md-nav__link">
+      <a href="../adr/001-buildkit-integration.html" class="md-nav__link">
         
   
   
@@ -1158,7 +1292,7 @@
   
   
     <li class="md-nav__item">
-      <a href="002-sbom-generation.html" class="md-nav__link">
+      <a href="../adr/002-sbom-generation.html" class="md-nav__link">
         
   
   
@@ -1190,19 +1324,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-      <a href="003-container-structure-tests.html" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../adr/003-container-structure-tests.html" class="md-nav__link">
         
   
   
@@ -1225,7 +1350,6 @@
   
 
       </a>
-      
     </li>
   
 
@@ -1238,7 +1362,7 @@
   
   
     <li class="md-nav__item">
-      <a href="004-embedded-local-registry.html" class="md-nav__link">
+      <a href="../adr/004-embedded-local-registry.html" class="md-nav__link">
         
   
   
@@ -1301,6 +1425,103 @@
     
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#s3-cache" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        S3 cache
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="S3 cache">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#when-to-use-s3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        When to use S3
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#setting-up-minio-for-local-development" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Setting up MinIO for local development
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#registry-cache" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Registry cache
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Registry cache">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#when-to-use-registry-cache" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        When to use registry cache
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#how-caching-works" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How caching works
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#no-caching" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        No caching
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -1342,28 +1563,10 @@
     
     
       <li class="md-path__item">
-        <a href="../development/local.html" class="md-path__link">
+        <a href="caching.html" class="md-path__link">
           
   <span class="md-ellipsis">
-    Development
-  </span>
-
-        </a>
-      </li>
-    
-  
-
-      
-        
-  
-  
-    
-    
-      <li class="md-path__item">
-        <a href="001-buildkit-integration.html" class="md-path__link">
-          
-  <span class="md-ellipsis">
-    Architecture Decision Records
+    Usage
   </span>
 
         </a>
@@ -1385,118 +1588,134 @@
   
 
 
-<h1 id="003-accept-docker-daemon-dependency-for-full-container-structure-test-support">003 - Accept Docker daemon dependency for full container structure test support</h1>
+<h1 id="set-up-build-caching">Set up build caching</h1>
+<p>ContainerHive supports build layer caching through BuildKit, using either S3-compatible storage or a container registry as the cache backend. Caching is configured in <code>hive.yml</code> and applies to all image builds.</p>
+<h2 id="s3-cache">S3 cache</h2>
+<p>S3-compatible storage works with AWS S3, MinIO, Garage, and other S3-compatible services.</p>
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># hive.yml</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="nt">cache</span><span class="p">:</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">s3</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">  </span><span class="nt">endpoint</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">http://garage:3900</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">  </span><span class="nt">bucket</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">buildkit-cache</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">  </span><span class="nt">region</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">garage</span>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="w">  </span><span class="nt">access_key_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;your-access-key&gt;</span>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="w">  </span><span class="nt">secret_access_key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;your-secret-key&gt;</span>
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="w">  </span><span class="nt">use_path_style</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+</span></code></pre></div>
 <table>
-<tr><td><strong>Status</strong></td><td><span style='color: white;background:#28a745;padding:.4em;border-radius:8px;font-size:100%;'>accepted</span></td></tr>
-<tr><td><strong>Date</strong></td><td>2025-06-02</td></tr>
+<thead>
+<tr>
+<th style="text-align: left;">Field</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>type</code></td>
+<td style="text-align: left;">Must be <code>s3</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>endpoint</code></td>
+<td style="text-align: left;">S3-compatible endpoint URL</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>bucket</code></td>
+<td style="text-align: left;">Bucket name</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>region</code></td>
+<td style="text-align: left;">S3 region</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>access_key_id</code></td>
+<td style="text-align: left;">Access key</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>secret_access_key</code></td>
+<td style="text-align: left;">Secret key</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>use_path_style</code></td>
+<td style="text-align: left;">Use path-style addressing (required for MinIO, Garage, and most self-hosted S3)</td>
+</tr>
+</tbody>
 </table>
-<h1 id="accept-docker-daemon-dependency-for-full-container-structure-test-support">Accept Docker daemon dependency for full container structure test support</h1>
-<h2 id="context-and-problem-statement">Context and Problem Statement</h2>
-<p>ContainerHive uses Google's container-structure-test to validate built images. However, container images can be
-represented in multiple formats and at their core are just a series of tarball layers. Container-structure-test supports
-two modes of operation with different capabilities:</p>
+<h3 id="when-to-use-s3">When to use S3</h3>
 <ul>
-<li><strong>Docker driver</strong>: Requires a Docker daemon. Supports all test types including command tests, which execute commands
-  inside a running container.</li>
-<li><strong>Tar/filesystem driver</strong>: No daemon needed. Only supports file existence and file content tests by inspecting the
-  image layers directly.</li>
+<li>You run builds across multiple machines or CI runners and need shared caching</li>
+<li>You already have S3-compatible storage available (AWS, MinIO, Garage)</li>
+<li>You want cache persistence independent of your container registry</li>
 </ul>
-<p>BuildKit produces OCI-format tar archives, not Docker-format images. This means that to use the Docker driver,
-ContainerHive must convert the OCI tar to a Docker-compatible format and load it into a daemon. The question is whether
-this conversion and Docker dependency is worth the full test coverage, or whether the limited tar-only mode is
-sufficient.</p>
-<h2 id="decision-drivers">Decision Drivers</h2>
+<h3 id="setting-up-minio-for-local-development">Setting up MinIO for local development</h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>docker<span class="w"> </span>run<span class="w"> </span>-d<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">  </span>--name<span class="w"> </span>minio<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">  </span>-p<span class="w"> </span><span class="m">9000</span>:9000<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">  </span>-e<span class="w"> </span><span class="nv">MINIO_ROOT_USER</span><span class="o">=</span>minioadmin<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">  </span>-e<span class="w"> </span><span class="nv">MINIO_ROOT_PASSWORD</span><span class="o">=</span>minioadmin<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="w">  </span>minio/minio<span class="w"> </span>server<span class="w"> </span>/data
+</span></code></pre></div>
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="nt">cache</span><span class="p">:</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">s3</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">  </span><span class="nt">endpoint</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">http://localhost:9000</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">  </span><span class="nt">bucket</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">buildkit-cache</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">  </span><span class="nt">region</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">us-east-1</span>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="w">  </span><span class="nt">access_key_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">minioadmin</span>
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="w">  </span><span class="nt">secret_access_key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">minioadmin</span>
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="w">  </span><span class="nt">use_path_style</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+</span></code></pre></div>
+<h2 id="registry-cache">Registry cache</h2>
+<p>Uses a container registry to store cache layers alongside your images.</p>
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># hive.yml</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="nt">cache</span><span class="p">:</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">registry</span>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">  </span><span class="nt">ref</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">registry:5000/cache</span>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="w">  </span><span class="nt">insecure</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+</span></code></pre></div>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Field</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>type</code></td>
+<td style="text-align: left;">Must be <code>registry</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>ref</code></td>
+<td style="text-align: left;">Registry reference for cache storage (e.g. <code>registry:5000/cache</code>)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>insecure</code></td>
+<td style="text-align: left;">Allow HTTP connections to the registry</td>
+</tr>
+</tbody>
+</table>
+<h3 id="when-to-use-registry-cache">When to use registry cache</h3>
 <ul>
-<li>Command tests (running commands inside the container) are essential for verifying runtime behavior, not just file
-  presence</li>
-<li>BuildKit outputs OCI tar format, which is not directly compatible with Docker's image store</li>
-<li>Users should be able to test images locally without pushing to a registry first</li>
-<li>The Docker daemon is already commonly available in development environments and most CI can be configured with a DinD service</li>
-<li>Consistency with ADR-001: ContainerHive follows a "bring your own" philosophy for infrastructure</li>
-<li>Test behavior should be consistent regardless of environment to avoid "works on my machine" issues</li>
+<li>You want a simpler setup without additional infrastructure</li>
+<li>Your container registry supports OCI image manifests</li>
+<li>You want cache stored in the same place as your images</li>
 </ul>
-<h2 id="considered-options">Considered Options</h2>
-<ul>
-<li>Option 1: Use Docker driver with OCI-to-Docker conversion for full test support</li>
-<li>Option 2: Use tar/filesystem driver only, accept no command test support</li>
-<li>Option 3: Dynamically choose driver based on test configuration content</li>
-</ul>
-<h2 id="decision-outcome">Decision Outcome</h2>
-<p>Chosen option: "Option 1 - Use Docker driver with OCI-to-Docker conversion", because command tests are a critical
-validation capability that verifies runtime behavior beyond static file checks. The conversion from OCI tar to Docker is
-handled transparently using <code>go-containerregistry</code>, and requiring a Docker daemon is consistent with the "bring your own
-infrastructure" philosophy established in ADR-001.</p>
-<p>The implementation:</p>
+<h2 id="how-caching-works">How caching works</h2>
+<p>BuildKit uses the cache configuration for both importing (reading) and exporting (writing) cache layers:</p>
 <ol>
-<li>Detects whether the image reference is a tar file or a Docker image name</li>
-<li>For tar files: extracts the OCI tar, reads the OCI layout, resolves the image name from manifest annotations, and
-   loads into Docker via <code>daemon.Write</code></li>
-<li>Runs container-structure-test with the <code>docker</code> driver against the loaded image</li>
-<li>Produces JUnit XML reports for CI integration</li>
+<li>Before building, BuildKit checks the cache backend for existing layers that match the build context.</li>
+<li>Matching layers are reused, skipping the corresponding build steps.</li>
+<li>After building, all new layers are pushed to the cache backend.</li>
 </ol>
-<h2 id="pros-and-cons-of-the-options">Pros and Cons of the Options</h2>
-<h3 id="option-1-use-docker-driver-with-oci-to-docker-conversion">Option 1: Use Docker driver with OCI-to-Docker conversion</h3>
-<p>Convert OCI tar archives to Docker-compatible images using <code>go-containerregistry</code> (OCI layout parsing + <code>daemon.Write</code>),
-then run container-structure-test with the Docker driver.</p>
-<ul>
-<li>Good, because all test types are supported: command tests, file existence, file content, metadata, and license tests</li>
-<li>Good, because command tests verify actual runtime behavior (installed packages work, entrypoints execute correctly,
-  etc.)</li>
-<li>Good, because the OCI-to-Docker conversion is handled transparently - users pass a tar file and it just works</li>
-<li>Good, because <code>go-containerregistry</code> provides a clean, library-based conversion path without shelling out</li>
-<li>Good, because images are tested locally from the OCI tar without requiring a registry push</li>
-<li>Good, because it aligns with the existing "bring your own" pattern - the user provides a Docker daemon just like they
-  provide a BuildKit daemon</li>
-<li>Good, because test behavior is identical across all environments</li>
-<li>Bad, because it requires a Docker daemon available at test time</li>
-<li>Bad, because the OCI-to-Docker load adds time and temporary disk usage</li>
-<li>Bad, because it introduces a dependency on <code>go-containerregistry</code> for the format conversion</li>
-<li>Bad, because in Kubernetes-based CI, a Docker daemon may require a DinD sidecar</li>
-</ul>
-<h3 id="option-2-use-tarfilesystem-driver-only">Option 2: Use tar/filesystem driver only</h3>
-<p>Run container-structure-test in tar mode, inspecting image layers directly without a container runtime.</p>
-<ul>
-<li>Good, because no Docker daemon required - works anywhere</li>
-<li>Good, because simpler implementation with no format conversion needed</li>
-<li>Good, because faster execution since no image loading or container creation</li>
-<li>Bad, because no command test support - cannot verify that installed software actually works</li>
-<li>Bad, because cannot test entrypoints, environment variable resolution, or runtime behavior</li>
-<li>Bad, because file existence and content tests alone provide limited confidence in image correctness</li>
-<li>Bad, because users would need a separate workflow to run command-based validation</li>
-</ul>
-<h3 id="option-3-dynamically-choose-driver-based-on-test-configuration">Option 3: Dynamically choose driver based on test configuration</h3>
-<p>Inspect the test definition file and select the Docker driver when command tests are present, fall back to the tar
-driver when only file tests are defined.</p>
-<ul>
-<li>Good, because no Docker daemon needed for simple file-only test suites</li>
-<li>Good, because command tests still work when Docker is available</li>
-<li>Bad, because the same test suite runs through different code paths depending on its content, leading to inconsistent
-  behavior across environments</li>
-<li>Bad, because subtle differences between drivers (e.g. file resolution, layer merging) may cause tests to pass with one
-  driver but fail with the other</li>
-<li>Bad, because it creates a "works on my machine" problem - adding a command test to a config silently changes the
-  driver and may break in environments without Docker</li>
-<li>Bad, because increased complexity in driver selection logic for marginal benefit</li>
-</ul>
-<h2 id="links">Links</h2>
-<ul>
-<li><a href="https://github.com/GoogleContainerTools/container-structure-test">container-structure-test GitHub repository</a></li>
-<li><a href="https://github.com/GoogleContainerTools/container-structure-test#drivers">container-structure-test driver documentation</a></li>
-<li><a href="https://github.com/google/go-containerregistry">go-containerregistry</a> - used for OCI layout parsing and Docker daemon
-  loading</li>
-<li>Relates to <a href="001-buildkit-integration.html">ADR-001: BuildKit Integration</a> - follows the same "bring your own"
-  infrastructure pattern</li>
-</ul>
-<!-- markdownlint-disable-file MD013 -->
+<p>Caching operates in <code>max</code> mode, meaning all intermediate layers are cached — not just the final image layers. This maximizes cache hits for multi-stage builds.</p>
+<p>Cache errors are non-fatal. If the cache backend is unavailable, builds proceed without caching.</p>
+<h2 id="no-caching">No caching</h2>
+<p>If no <code>cache</code> section is defined in <code>hive.yml</code>, builds run without caching. This is fine for local development but not recommended for CI.</p>
 
 
 
 
 
 
-
-  
-  
 
 
 

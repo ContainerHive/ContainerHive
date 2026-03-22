@@ -9,10 +9,10 @@
       
       
       
-        <link rel="prev" href="002-sbom-generation.html">
+        <link rel="prev" href="filtering.html">
       
       
-        <link rel="next" href="004-embedded-local-registry.html">
+        <link rel="next" href="secrets-and-versions.html">
       
       
         
@@ -23,7 +23,7 @@
     
     
       
-        <title>003 - Accept Docker daemon dependency for full container structure test support - ContainerHive</title>
+        <title>Build multi-platform images - ContainerHive</title>
       
     
     
@@ -74,7 +74,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#003-accept-docker-daemon-dependency-for-full-container-structure-test-support" class="md-skip">
+        <a href="#build-multi-platform-images" class="md-skip">
           Skip to content
         </a>
       
@@ -107,7 +107,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              003 - Accept Docker daemon dependency for full container structure test support
+              Build multi-platform images
             
           </span>
         </div>
@@ -243,11 +243,13 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="../usage/caching.html" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="caching.html" class="md-tabs__link">
           
   
   
@@ -303,12 +305,10 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
+      <li class="md-tabs__item">
         <a href="../development/local.html" class="md-tabs__link">
           
   
@@ -450,24 +450,29 @@
       
   
   
+    
   
   
+  
     
     
     
     
-      
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
         
           
-          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
             
   
   
@@ -485,7 +490,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_4">
             <span class="md-nav__icon md-icon"></span>
             
@@ -503,7 +508,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../usage/caching.html" class="md-nav__link">
+      <a href="caching.html" class="md-nav__link">
         
   
   
@@ -531,7 +536,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../usage/ci-integration.html" class="md-nav__link">
+      <a href="ci-integration.html" class="md-nav__link">
         
   
   
@@ -559,7 +564,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../usage/cli.html" class="md-nav__link">
+      <a href="cli.html" class="md-nav__link">
         
   
   
@@ -587,7 +592,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../usage/dockerfiles.html" class="md-nav__link">
+      <a href="dockerfiles.html" class="md-nav__link">
         
   
   
@@ -615,7 +620,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../usage/filtering.html" class="md-nav__link">
+      <a href="filtering.html" class="md-nav__link">
         
   
   
@@ -640,10 +645,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../usage/multi-platform.html" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Build multi-platform images
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="multi-platform.html" class="md-nav__link md-nav__link--active">
         
   
   
@@ -659,6 +691,159 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#configuring-platforms" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Configuring platforms
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Configuring platforms">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#project-level-default-for-all-images" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Project-level (default for all images)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#image-level-override-for-a-specific-image" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Image-level (override for a specific image)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#variant-level-override-for-a-specific-variant" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Variant-level (override for a specific variant)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#how-multi-platform-builds-work" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How multi-platform builds work
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#creating-multi-arch-manifests-with-finalize" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Creating multi-arch manifests with finalize
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Creating multi-arch manifests with finalize">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#semantic-version-aliases" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Semantic version aliases
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#supported-version-formats" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Supported version formats
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#filtering" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Filtering
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#typical-workflow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Typical workflow
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ci-pipeline-integration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CI pipeline integration
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -671,7 +856,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../usage/secrets-and-versions.html" class="md-nav__link">
+      <a href="secrets-and-versions.html" class="md-nav__link">
         
   
   
@@ -699,7 +884,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../usage/testing.html" class="md-nav__link">
+      <a href="testing.html" class="md-nav__link">
         
   
   
@@ -985,29 +1170,24 @@
       
   
   
-    
   
   
-  
     
     
     
     
       
-        
-        
-      
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
         
           
-          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="">
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
             
   
   
@@ -1025,7 +1205,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_7">
             <span class="md-nav__icon md-icon"></span>
             
@@ -1068,8 +1248,6 @@
                 
   
   
-    
-  
   
   
     
@@ -1080,11 +1258,11 @@
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7_2" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7_2" >
         
           
           <label class="md-nav__link" for="__nav_7_2" id="__nav_7_2_label" tabindex="0">
@@ -1105,7 +1283,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_2_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_2_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_7_2">
             <span class="md-nav__icon md-icon"></span>
             
@@ -1123,7 +1301,7 @@
   
   
     <li class="md-nav__item">
-      <a href="001-buildkit-integration.html" class="md-nav__link">
+      <a href="../adr/001-buildkit-integration.html" class="md-nav__link">
         
   
   
@@ -1158,7 +1336,7 @@
   
   
     <li class="md-nav__item">
-      <a href="002-sbom-generation.html" class="md-nav__link">
+      <a href="../adr/002-sbom-generation.html" class="md-nav__link">
         
   
   
@@ -1190,19 +1368,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-      <a href="003-container-structure-tests.html" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../adr/003-container-structure-tests.html" class="md-nav__link">
         
   
   
@@ -1225,7 +1394,6 @@
   
 
       </a>
-      
     </li>
   
 
@@ -1238,7 +1406,7 @@
   
   
     <li class="md-nav__item">
-      <a href="004-embedded-local-registry.html" class="md-nav__link">
+      <a href="../adr/004-embedded-local-registry.html" class="md-nav__link">
         
   
   
@@ -1301,6 +1469,147 @@
     
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#configuring-platforms" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Configuring platforms
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Configuring platforms">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#project-level-default-for-all-images" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Project-level (default for all images)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#image-level-override-for-a-specific-image" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Image-level (override for a specific image)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#variant-level-override-for-a-specific-variant" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Variant-level (override for a specific variant)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#how-multi-platform-builds-work" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How multi-platform builds work
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#creating-multi-arch-manifests-with-finalize" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Creating multi-arch manifests with finalize
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Creating multi-arch manifests with finalize">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#semantic-version-aliases" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Semantic version aliases
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#supported-version-formats" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Supported version formats
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#filtering" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Filtering
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#typical-workflow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Typical workflow
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ci-pipeline-integration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CI pipeline integration
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -1342,28 +1651,10 @@
     
     
       <li class="md-path__item">
-        <a href="../development/local.html" class="md-path__link">
+        <a href="caching.html" class="md-path__link">
           
   <span class="md-ellipsis">
-    Development
-  </span>
-
-        </a>
-      </li>
-    
-  
-
-      
-        
-  
-  
-    
-    
-      <li class="md-path__item">
-        <a href="001-buildkit-integration.html" class="md-path__link">
-          
-  <span class="md-ellipsis">
-    Architecture Decision Records
+    Usage
   </span>
 
         </a>
@@ -1385,118 +1676,103 @@
   
 
 
-<h1 id="003-accept-docker-daemon-dependency-for-full-container-structure-test-support">003 - Accept Docker daemon dependency for full container structure test support</h1>
-<table>
-<tr><td><strong>Status</strong></td><td><span style='color: white;background:#28a745;padding:.4em;border-radius:8px;font-size:100%;'>accepted</span></td></tr>
-<tr><td><strong>Date</strong></td><td>2025-06-02</td></tr>
-</table>
-<h1 id="accept-docker-daemon-dependency-for-full-container-structure-test-support">Accept Docker daemon dependency for full container structure test support</h1>
-<h2 id="context-and-problem-statement">Context and Problem Statement</h2>
-<p>ContainerHive uses Google's container-structure-test to validate built images. However, container images can be
-represented in multiple formats and at their core are just a series of tarball layers. Container-structure-test supports
-two modes of operation with different capabilities:</p>
-<ul>
-<li><strong>Docker driver</strong>: Requires a Docker daemon. Supports all test types including command tests, which execute commands
-  inside a running container.</li>
-<li><strong>Tar/filesystem driver</strong>: No daemon needed. Only supports file existence and file content tests by inspecting the
-  image layers directly.</li>
-</ul>
-<p>BuildKit produces OCI-format tar archives, not Docker-format images. This means that to use the Docker driver,
-ContainerHive must convert the OCI tar to a Docker-compatible format and load it into a daemon. The question is whether
-this conversion and Docker dependency is worth the full test coverage, or whether the limited tar-only mode is
-sufficient.</p>
-<h2 id="decision-drivers">Decision Drivers</h2>
-<ul>
-<li>Command tests (running commands inside the container) are essential for verifying runtime behavior, not just file
-  presence</li>
-<li>BuildKit outputs OCI tar format, which is not directly compatible with Docker's image store</li>
-<li>Users should be able to test images locally without pushing to a registry first</li>
-<li>The Docker daemon is already commonly available in development environments and most CI can be configured with a DinD service</li>
-<li>Consistency with ADR-001: ContainerHive follows a "bring your own" philosophy for infrastructure</li>
-<li>Test behavior should be consistent regardless of environment to avoid "works on my machine" issues</li>
-</ul>
-<h2 id="considered-options">Considered Options</h2>
-<ul>
-<li>Option 1: Use Docker driver with OCI-to-Docker conversion for full test support</li>
-<li>Option 2: Use tar/filesystem driver only, accept no command test support</li>
-<li>Option 3: Dynamically choose driver based on test configuration content</li>
-</ul>
-<h2 id="decision-outcome">Decision Outcome</h2>
-<p>Chosen option: "Option 1 - Use Docker driver with OCI-to-Docker conversion", because command tests are a critical
-validation capability that verifies runtime behavior beyond static file checks. The conversion from OCI tar to Docker is
-handled transparently using <code>go-containerregistry</code>, and requiring a Docker daemon is consistent with the "bring your own
-infrastructure" philosophy established in ADR-001.</p>
-<p>The implementation:</p>
+<h1 id="build-multi-platform-images">Build multi-platform images</h1>
+<p>ContainerHive builds images for multiple architectures in a single workflow and creates multi-arch manifests so consumers pull the right image automatically.</p>
+<h2 id="configuring-platforms">Configuring platforms</h2>
+<p>Platforms are configured at three levels, with the most specific taking precedence:</p>
+<h3 id="project-level-default-for-all-images">Project-level (default for all images)</h3>
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># hive.yml</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="nt">platforms</span><span class="p">:</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">linux/amd64</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">linux/arm64</span>
+</span></code></pre></div>
+<h3 id="image-level-override-for-a-specific-image">Image-level (override for a specific image)</h3>
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1"># image.yml</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="nt">platforms</span><span class="p">:</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">linux/amd64</span>
+</span></code></pre></div>
+<h3 id="variant-level-override-for-a-specific-variant">Variant-level (override for a specific variant)</h3>
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># image.yml</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="nt">variants</span><span class="p">:</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">slim</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">    </span><span class="nt">tag_suffix</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">-slim</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">    </span><span class="nt">platforms</span><span class="p">:</span>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">linux/amd64</span>
+</span></code></pre></div>
+<p>The resolution order is: <strong>variant &gt; image &gt; project</strong>. If a variant defines platforms, those are used. Otherwise the image-level platforms are used, falling back to the project-level default.</p>
+<h2 id="how-multi-platform-builds-work">How multi-platform builds work</h2>
+<p>When you run <code>ch build</code>, ContainerHive builds each image once per platform. The output is a platform-specific OCI tar file:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>dist/my-image/1.0.0/
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>├── linux-amd64/
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>│   └── image.tar
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>└── linux-arm64/
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>    └── image.tar
+</span></code></pre></div>
+<p>Each platform build runs independently through BuildKit, allowing parallel execution in CI.</p>
+<h2 id="creating-multi-arch-manifests-with-finalize">Creating multi-arch manifests with <code>finalize</code></h2>
+<p>After building all platform-specific images, <code>ch finalize</code> creates OCI image indexes (multi-arch manifests) that reference all platform variants under a single tag:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>ch<span class="w"> </span>finalize
+</span></code></pre></div>
+<p>This does two things:</p>
 <ol>
-<li>Detects whether the image reference is a tar file or a Docker image name</li>
-<li>For tar files: extracts the OCI tar, reads the OCI layout, resolves the image name from manifest annotations, and
-   loads into Docker via <code>daemon.Write</code></li>
-<li>Runs container-structure-test with the <code>docker</code> driver against the loaded image</li>
-<li>Produces JUnit XML reports for CI integration</li>
+<li><strong>Creates manifests</strong> — For each image and tag, creates an OCI image index referencing all platform-specific images.</li>
+<li><strong>Creates semantic version aliases</strong> — Generates shorter version tags that point to the full version manifest.</li>
 </ol>
-<h2 id="pros-and-cons-of-the-options">Pros and Cons of the Options</h2>
-<h3 id="option-1-use-docker-driver-with-oci-to-docker-conversion">Option 1: Use Docker driver with OCI-to-Docker conversion</h3>
-<p>Convert OCI tar archives to Docker-compatible images using <code>go-containerregistry</code> (OCI layout parsing + <code>daemon.Write</code>),
-then run container-structure-test with the Docker driver.</p>
+<h3 id="semantic-version-aliases">Semantic version aliases</h3>
+<p>If your tags follow semantic versioning, <code>finalize</code> automatically creates alias tags pointing to the highest matching version:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Tag</th>
+<th style="text-align: left;">Generated aliases</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>1.2.3</code></td>
+<td style="text-align: left;"><code>1.2</code>, <code>1</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>v2.0.1</code></td>
+<td style="text-align: left;"><code>v2.0</code>, <code>v2</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>1.2.3-alpine</code></td>
+<td style="text-align: left;"><code>1.2-alpine</code>, <code>1-alpine</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>8.0.200</code></td>
+<td style="text-align: left;"><code>8.0</code>, <code>8</code></td>
+</tr>
+</tbody>
+</table>
+<p>When multiple tags compete for the same alias, the highest version wins. For example, if you build tags <code>1.2.3</code> and <code>1.3.0</code>, the alias <code>1</code> points to <code>1.3.0</code>.</p>
+<h3 id="supported-version-formats">Supported version formats</h3>
 <ul>
-<li>Good, because all test types are supported: command tests, file existence, file content, metadata, and license tests</li>
-<li>Good, because command tests verify actual runtime behavior (installed packages work, entrypoints execute correctly,
-  etc.)</li>
-<li>Good, because the OCI-to-Docker conversion is handled transparently - users pass a tar file and it just works</li>
-<li>Good, because <code>go-containerregistry</code> provides a clean, library-based conversion path without shelling out</li>
-<li>Good, because images are tested locally from the OCI tar without requiring a registry push</li>
-<li>Good, because it aligns with the existing "bring your own" pattern - the user provides a Docker daemon just like they
-  provide a BuildKit daemon</li>
-<li>Good, because test behavior is identical across all environments</li>
-<li>Bad, because it requires a Docker daemon available at test time</li>
-<li>Bad, because the OCI-to-Docker load adds time and temporary disk usage</li>
-<li>Bad, because it introduces a dependency on <code>go-containerregistry</code> for the format conversion</li>
-<li>Bad, because in Kubernetes-based CI, a Docker daemon may require a DinD sidecar</li>
+<li><code>1.2.3</code> — standard semver</li>
+<li><code>v1.2.3</code> — with prefix (preserved in aliases)</li>
+<li><code>1.2.3.4</code> — four-component versions</li>
+<li><code>1.2.3-alpine</code> — with suffix (preserved in aliases)</li>
 </ul>
-<h3 id="option-2-use-tarfilesystem-driver-only">Option 2: Use tar/filesystem driver only</h3>
-<p>Run container-structure-test in tar mode, inspecting image layers directly without a container runtime.</p>
-<ul>
-<li>Good, because no Docker daemon required - works anywhere</li>
-<li>Good, because simpler implementation with no format conversion needed</li>
-<li>Good, because faster execution since no image loading or container creation</li>
-<li>Bad, because no command test support - cannot verify that installed software actually works</li>
-<li>Bad, because cannot test entrypoints, environment variable resolution, or runtime behavior</li>
-<li>Bad, because file existence and content tests alone provide limited confidence in image correctness</li>
-<li>Bad, because users would need a separate workflow to run command-based validation</li>
-</ul>
-<h3 id="option-3-dynamically-choose-driver-based-on-test-configuration">Option 3: Dynamically choose driver based on test configuration</h3>
-<p>Inspect the test definition file and select the Docker driver when command tests are present, fall back to the tar
-driver when only file tests are defined.</p>
-<ul>
-<li>Good, because no Docker daemon needed for simple file-only test suites</li>
-<li>Good, because command tests still work when Docker is available</li>
-<li>Bad, because the same test suite runs through different code paths depending on its content, leading to inconsistent
-  behavior across environments</li>
-<li>Bad, because subtle differences between drivers (e.g. file resolution, layer merging) may cause tests to pass with one
-  driver but fail with the other</li>
-<li>Bad, because it creates a "works on my machine" problem - adding a command test to a config silently changes the
-  driver and may break in environments without Docker</li>
-<li>Bad, because increased complexity in driver selection logic for marginal benefit</li>
-</ul>
-<h2 id="links">Links</h2>
-<ul>
-<li><a href="https://github.com/GoogleContainerTools/container-structure-test">container-structure-test GitHub repository</a></li>
-<li><a href="https://github.com/GoogleContainerTools/container-structure-test#drivers">container-structure-test driver documentation</a></li>
-<li><a href="https://github.com/google/go-containerregistry">go-containerregistry</a> - used for OCI layout parsing and Docker daemon
-  loading</li>
-<li>Relates to <a href="001-buildkit-integration.html">ADR-001: BuildKit Integration</a> - follows the same "bring your own"
-  infrastructure pattern</li>
-</ul>
-<!-- markdownlint-disable-file MD013 -->
+<h3 id="filtering">Filtering</h3>
+<p>You can finalize specific images or tags:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>ch<span class="w"> </span>finalize<span class="w"> </span>my-image:1.0.0
+</span></code></pre></div>
+<h2 id="typical-workflow">Typical workflow</h2>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>ch<span class="w"> </span>generate<span class="w">          </span><span class="c1"># Render project configurations</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>ch<span class="w"> </span>build<span class="w">             </span><span class="c1"># Build all platform-specific images</span>
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>ch<span class="w"> </span>finalize<span class="w">          </span><span class="c1"># Create multi-arch manifests and version aliases</span>
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>ch<span class="w"> </span><span class="nb">test</span><span class="w">              </span><span class="c1"># Run container structure tests</span>
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>ch<span class="w"> </span>sbom<span class="w">              </span><span class="c1"># Generate SBOMs</span>
+</span></code></pre></div>
+<h2 id="ci-pipeline-integration">CI pipeline integration</h2>
+<p>Generated CI pipelines (via <code>ch template ci</code>) automatically handle multi-platform builds by creating separate build jobs per platform and a manifest job that runs <code>finalize</code> after all builds complete. See <a href="ci-integration.html">Generate CI pipelines</a>.</p>
 
 
 
 
 
 
-
-  
-  
 
 
 

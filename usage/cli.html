@@ -9,10 +9,10 @@
       
       
       
-        <link rel="prev" href="002-sbom-generation.html">
+        <link rel="prev" href="ci-integration.html">
       
       
-        <link rel="next" href="004-embedded-local-registry.html">
+        <link rel="next" href="dockerfiles.html">
       
       
         
@@ -23,7 +23,7 @@
     
     
       
-        <title>003 - Accept Docker daemon dependency for full container structure test support - ContainerHive</title>
+        <title>Use the CLI - ContainerHive</title>
       
     
     
@@ -74,7 +74,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#003-accept-docker-daemon-dependency-for-full-container-structure-test-support" class="md-skip">
+        <a href="#use-the-cli" class="md-skip">
           Skip to content
         </a>
       
@@ -107,7 +107,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              003 - Accept Docker daemon dependency for full container structure test support
+              Use the CLI
             
           </span>
         </div>
@@ -243,11 +243,13 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="../usage/caching.html" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="caching.html" class="md-tabs__link">
           
   
   
@@ -303,12 +305,10 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
+      <li class="md-tabs__item">
         <a href="../development/local.html" class="md-tabs__link">
           
   
@@ -450,24 +450,29 @@
       
   
   
+    
   
   
+  
     
     
     
     
-      
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
         
           
-          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
             
   
   
@@ -485,7 +490,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_4">
             <span class="md-nav__icon md-icon"></span>
             
@@ -503,7 +508,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../usage/caching.html" class="md-nav__link">
+      <a href="caching.html" class="md-nav__link">
         
   
   
@@ -531,7 +536,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../usage/ci-integration.html" class="md-nav__link">
+      <a href="ci-integration.html" class="md-nav__link">
         
   
   
@@ -556,10 +561,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../usage/cli.html" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Use the CLI
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="cli.html" class="md-nav__link md-nav__link--active">
         
   
   
@@ -575,6 +607,175 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#global-flags" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Global Flags
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Commands
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Commands">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#generate" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        generate
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#build" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        build
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#test" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        test
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sbom" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        sbom
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#finalize" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        finalize
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#verify" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        verify
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#template-ci" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        template ci
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#template-custom" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        template custom
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#wait" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        wait
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#login" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        login
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#license" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        license
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -587,7 +788,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../usage/dockerfiles.html" class="md-nav__link">
+      <a href="dockerfiles.html" class="md-nav__link">
         
   
   
@@ -615,7 +816,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../usage/filtering.html" class="md-nav__link">
+      <a href="filtering.html" class="md-nav__link">
         
   
   
@@ -643,7 +844,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../usage/multi-platform.html" class="md-nav__link">
+      <a href="multi-platform.html" class="md-nav__link">
         
   
   
@@ -671,7 +872,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../usage/secrets-and-versions.html" class="md-nav__link">
+      <a href="secrets-and-versions.html" class="md-nav__link">
         
   
   
@@ -699,7 +900,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../usage/testing.html" class="md-nav__link">
+      <a href="testing.html" class="md-nav__link">
         
   
   
@@ -985,29 +1186,24 @@
       
   
   
-    
   
   
-  
     
     
     
     
       
-        
-        
-      
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
         
           
-          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="">
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
             
   
   
@@ -1025,7 +1221,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_7">
             <span class="md-nav__icon md-icon"></span>
             
@@ -1068,8 +1264,6 @@
                 
   
   
-    
-  
   
   
     
@@ -1080,11 +1274,11 @@
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7_2" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7_2" >
         
           
           <label class="md-nav__link" for="__nav_7_2" id="__nav_7_2_label" tabindex="0">
@@ -1105,7 +1299,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_2_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_2_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_7_2">
             <span class="md-nav__icon md-icon"></span>
             
@@ -1123,7 +1317,7 @@
   
   
     <li class="md-nav__item">
-      <a href="001-buildkit-integration.html" class="md-nav__link">
+      <a href="../adr/001-buildkit-integration.html" class="md-nav__link">
         
   
   
@@ -1158,7 +1352,7 @@
   
   
     <li class="md-nav__item">
-      <a href="002-sbom-generation.html" class="md-nav__link">
+      <a href="../adr/002-sbom-generation.html" class="md-nav__link">
         
   
   
@@ -1190,19 +1384,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-      <a href="003-container-structure-tests.html" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../adr/003-container-structure-tests.html" class="md-nav__link">
         
   
   
@@ -1225,7 +1410,6 @@
   
 
       </a>
-      
     </li>
   
 
@@ -1238,7 +1422,7 @@
   
   
     <li class="md-nav__item">
-      <a href="004-embedded-local-registry.html" class="md-nav__link">
+      <a href="../adr/004-embedded-local-registry.html" class="md-nav__link">
         
   
   
@@ -1301,6 +1485,163 @@
     
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#global-flags" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Global Flags
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Commands
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Commands">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#generate" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        generate
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#build" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        build
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#test" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        test
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sbom" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        sbom
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#finalize" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        finalize
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#verify" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        verify
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#template-ci" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        template ci
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#template-custom" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        template custom
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#wait" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        wait
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#login" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        login
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#license" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        license
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -1342,28 +1683,10 @@
     
     
       <li class="md-path__item">
-        <a href="../development/local.html" class="md-path__link">
+        <a href="caching.html" class="md-path__link">
           
   <span class="md-ellipsis">
-    Development
-  </span>
-
-        </a>
-      </li>
-    
-  
-
-      
-        
-  
-  
-    
-    
-      <li class="md-path__item">
-        <a href="001-buildkit-integration.html" class="md-path__link">
-          
-  <span class="md-ellipsis">
-    Architecture Decision Records
+    Usage
   </span>
 
         </a>
@@ -1385,118 +1708,197 @@
   
 
 
-<h1 id="003-accept-docker-daemon-dependency-for-full-container-structure-test-support">003 - Accept Docker daemon dependency for full container structure test support</h1>
+<h1 id="use-the-cli">Use the CLI</h1>
+<p>ContainerHive's behavior can be controlled with various commands and flags.</p>
+<p>You can get a full list by running</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>ch<span class="w"> </span>--help
+</span></code></pre></div>
+<h2 id="global-flags">Global Flags</h2>
 <table>
-<tr><td><strong>Status</strong></td><td><span style='color: white;background:#28a745;padding:.4em;border-radius:8px;font-size:100%;'>accepted</span></td></tr>
-<tr><td><strong>Date</strong></td><td>2025-06-02</td></tr>
+<thead>
+<tr>
+<th style="text-align: left;">Flag</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>--project</code>, <code>-p</code></td>
+<td style="text-align: left;">Project root directory</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>--build-id</code></td>
+<td style="text-align: left;">Build ID appended to tags as <code>+&lt;id&gt;</code></td>
+</tr>
+</tbody>
 </table>
-<h1 id="accept-docker-daemon-dependency-for-full-container-structure-test-support">Accept Docker daemon dependency for full container structure test support</h1>
-<h2 id="context-and-problem-statement">Context and Problem Statement</h2>
-<p>ContainerHive uses Google's container-structure-test to validate built images. However, container images can be
-represented in multiple formats and at their core are just a series of tarball layers. Container-structure-test supports
-two modes of operation with different capabilities:</p>
-<ul>
-<li><strong>Docker driver</strong>: Requires a Docker daemon. Supports all test types including command tests, which execute commands
-  inside a running container.</li>
-<li><strong>Tar/filesystem driver</strong>: No daemon needed. Only supports file existence and file content tests by inspecting the
-  image layers directly.</li>
-</ul>
-<p>BuildKit produces OCI-format tar archives, not Docker-format images. This means that to use the Docker driver,
-ContainerHive must convert the OCI tar to a Docker-compatible format and load it into a daemon. The question is whether
-this conversion and Docker dependency is worth the full test coverage, or whether the limited tar-only mode is
-sufficient.</p>
-<h2 id="decision-drivers">Decision Drivers</h2>
-<ul>
-<li>Command tests (running commands inside the container) are essential for verifying runtime behavior, not just file
-  presence</li>
-<li>BuildKit outputs OCI tar format, which is not directly compatible with Docker's image store</li>
-<li>Users should be able to test images locally without pushing to a registry first</li>
-<li>The Docker daemon is already commonly available in development environments and most CI can be configured with a DinD service</li>
-<li>Consistency with ADR-001: ContainerHive follows a "bring your own" philosophy for infrastructure</li>
-<li>Test behavior should be consistent regardless of environment to avoid "works on my machine" issues</li>
-</ul>
-<h2 id="considered-options">Considered Options</h2>
-<ul>
-<li>Option 1: Use Docker driver with OCI-to-Docker conversion for full test support</li>
-<li>Option 2: Use tar/filesystem driver only, accept no command test support</li>
-<li>Option 3: Dynamically choose driver based on test configuration content</li>
-</ul>
-<h2 id="decision-outcome">Decision Outcome</h2>
-<p>Chosen option: "Option 1 - Use Docker driver with OCI-to-Docker conversion", because command tests are a critical
-validation capability that verifies runtime behavior beyond static file checks. The conversion from OCI tar to Docker is
-handled transparently using <code>go-containerregistry</code>, and requiring a Docker daemon is consistent with the "bring your own
-infrastructure" philosophy established in ADR-001.</p>
-<p>The implementation:</p>
-<ol>
-<li>Detects whether the image reference is a tar file or a Docker image name</li>
-<li>For tar files: extracts the OCI tar, reads the OCI layout, resolves the image name from manifest annotations, and
-   loads into Docker via <code>daemon.Write</code></li>
-<li>Runs container-structure-test with the <code>docker</code> driver against the loaded image</li>
-<li>Produces JUnit XML reports for CI integration</li>
-</ol>
-<h2 id="pros-and-cons-of-the-options">Pros and Cons of the Options</h2>
-<h3 id="option-1-use-docker-driver-with-oci-to-docker-conversion">Option 1: Use Docker driver with OCI-to-Docker conversion</h3>
-<p>Convert OCI tar archives to Docker-compatible images using <code>go-containerregistry</code> (OCI layout parsing + <code>daemon.Write</code>),
-then run container-structure-test with the Docker driver.</p>
-<ul>
-<li>Good, because all test types are supported: command tests, file existence, file content, metadata, and license tests</li>
-<li>Good, because command tests verify actual runtime behavior (installed packages work, entrypoints execute correctly,
-  etc.)</li>
-<li>Good, because the OCI-to-Docker conversion is handled transparently - users pass a tar file and it just works</li>
-<li>Good, because <code>go-containerregistry</code> provides a clean, library-based conversion path without shelling out</li>
-<li>Good, because images are tested locally from the OCI tar without requiring a registry push</li>
-<li>Good, because it aligns with the existing "bring your own" pattern - the user provides a Docker daemon just like they
-  provide a BuildKit daemon</li>
-<li>Good, because test behavior is identical across all environments</li>
-<li>Bad, because it requires a Docker daemon available at test time</li>
-<li>Bad, because the OCI-to-Docker load adds time and temporary disk usage</li>
-<li>Bad, because it introduces a dependency on <code>go-containerregistry</code> for the format conversion</li>
-<li>Bad, because in Kubernetes-based CI, a Docker daemon may require a DinD sidecar</li>
-</ul>
-<h3 id="option-2-use-tarfilesystem-driver-only">Option 2: Use tar/filesystem driver only</h3>
-<p>Run container-structure-test in tar mode, inspecting image layers directly without a container runtime.</p>
-<ul>
-<li>Good, because no Docker daemon required - works anywhere</li>
-<li>Good, because simpler implementation with no format conversion needed</li>
-<li>Good, because faster execution since no image loading or container creation</li>
-<li>Bad, because no command test support - cannot verify that installed software actually works</li>
-<li>Bad, because cannot test entrypoints, environment variable resolution, or runtime behavior</li>
-<li>Bad, because file existence and content tests alone provide limited confidence in image correctness</li>
-<li>Bad, because users would need a separate workflow to run command-based validation</li>
-</ul>
-<h3 id="option-3-dynamically-choose-driver-based-on-test-configuration">Option 3: Dynamically choose driver based on test configuration</h3>
-<p>Inspect the test definition file and select the Docker driver when command tests are present, fall back to the tar
-driver when only file tests are defined.</p>
-<ul>
-<li>Good, because no Docker daemon needed for simple file-only test suites</li>
-<li>Good, because command tests still work when Docker is available</li>
-<li>Bad, because the same test suite runs through different code paths depending on its content, leading to inconsistent
-  behavior across environments</li>
-<li>Bad, because subtle differences between drivers (e.g. file resolution, layer merging) may cause tests to pass with one
-  driver but fail with the other</li>
-<li>Bad, because it creates a "works on my machine" problem - adding a command test to a config silently changes the
-  driver and may break in environments without Docker</li>
-<li>Bad, because increased complexity in driver selection logic for marginal benefit</li>
-</ul>
-<h2 id="links">Links</h2>
-<ul>
-<li><a href="https://github.com/GoogleContainerTools/container-structure-test">container-structure-test GitHub repository</a></li>
-<li><a href="https://github.com/GoogleContainerTools/container-structure-test#drivers">container-structure-test driver documentation</a></li>
-<li><a href="https://github.com/google/go-containerregistry">go-containerregistry</a> - used for OCI layout parsing and Docker daemon
-  loading</li>
-<li>Relates to <a href="001-buildkit-integration.html">ADR-001: BuildKit Integration</a> - follows the same "bring your own"
-  infrastructure pattern</li>
-</ul>
-<!-- markdownlint-disable-file MD013 -->
+<h2 id="commands">Commands</h2>
+<h3 id="generate"><code>generate</code></h3>
+<p>Discover project and render configurations to <code>dist/</code>.</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>ch<span class="w"> </span>generate
+</span></code></pre></div>
+<p>This must run before <code>build</code>. It parses <code>hive.yml</code> and all image definitions.</p>
+<h3 id="build"><code>build</code></h3>
+<p>Build container images with BuildKit.</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>ch<span class="w"> </span>build<span class="w"> </span><span class="o">[</span>image:tag<span class="w"> </span>patterns...<span class="o">]</span>
+</span></code></pre></div>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Flag</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>--registry</code></td>
+<td style="text-align: left;">Enable local registry</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>--platform</code></td>
+<td style="text-align: left;">Override platforms</td>
+</tr>
+</tbody>
+</table>
+<p>You can filter which images to build by passing image:tag patterns as arguments. In CI environments, the registry is auto-enabled.</p>
+<h3 id="test"><code>test</code></h3>
+<p>Run container structure tests on built images.</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>ch<span class="w"> </span><span class="nb">test</span><span class="w"> </span><span class="o">[</span>image:tag<span class="w"> </span>patterns...<span class="o">]</span>
+</span></code></pre></div>
+<p>Uses <a href="https://github.com/GoogleContainerTools/container-structure-test">container-structure-test</a> to validate built images against test definitions.</p>
+<h3 id="sbom"><code>sbom</code></h3>
+<p>Generate Software Bill of Materials for built images.</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>ch<span class="w"> </span>sbom<span class="w"> </span><span class="o">[</span>image:tag<span class="w"> </span>patterns...<span class="o">]</span>
+</span></code></pre></div>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Flag</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>--platform</code></td>
+<td style="text-align: left;">Override platforms</td>
+</tr>
+</tbody>
+</table>
+<p>Generates CycloneDX JSON format SBOMs using <a href="https://github.com/anchore/syft">Syft</a> as a Go library. No external tooling required.</p>
+<h3 id="finalize"><code>finalize</code></h3>
+<p>Create multi-arch manifests and semantic version alias tags.</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>ch<span class="w"> </span>finalize<span class="w"> </span><span class="o">[</span>image:tag<span class="w"> </span>patterns...<span class="o">]</span>
+</span></code></pre></div>
+<p>Creates manifests from platform-specific images and applies semantic version alias tagging. Requires a running registry.</p>
+<h3 id="verify"><code>verify</code></h3>
+<p>Verify project structure.</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>ch<span class="w"> </span>verify
+</span></code></pre></div>
+<p>Validates <code>hive.yml</code> and image definitions. Useful as a quick check before building.</p>
+<h3 id="template-ci"><code>template ci</code></h3>
+<p>Generate CI pipeline configuration.</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>ch<span class="w"> </span>template<span class="w"> </span>ci<span class="w"> </span>--provider<span class="w"> </span>&lt;provider&gt;<span class="w"> </span>--output<span class="w"> </span>&lt;path&gt;
+</span></code></pre></div>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Flag</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>--provider</code></td>
+<td style="text-align: left;">CI provider (<code>gitlab</code> or <code>github</code>)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>--output</code></td>
+<td style="text-align: left;">Output file path</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>--template-dir</code></td>
+<td style="text-align: left;">Custom template directory</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>--artifacts</code></td>
+<td style="text-align: left;">Enable artifact passing</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>--version</code></td>
+<td style="text-align: left;">ContainerHive version override</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>--image-name</code></td>
+<td style="text-align: left;">ContainerHive image name</td>
+</tr>
+</tbody>
+</table>
+<h3 id="template-custom"><code>template custom</code></h3>
+<p>Render custom Go templates with project context.</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>ch<span class="w"> </span>template<span class="w"> </span>custom<span class="w"> </span>--template<span class="w"> </span>&lt;path.gotpl&gt;<span class="w"> </span>--output<span class="w"> </span>&lt;path&gt;
+</span></code></pre></div>
+<h3 id="wait"><code>wait</code></h3>
+<p>Wait for infrastructure dependencies to become available.</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>ch<span class="w"> </span><span class="nb">wait</span>
+</span></code></pre></div>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Flag</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>--buildkitd</code></td>
+<td style="text-align: left;">Wait for BuildKit daemon</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>--docker-socket</code></td>
+<td style="text-align: left;">Wait for Docker socket</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>--timeout</code></td>
+<td style="text-align: left;">Timeout duration</td>
+</tr>
+</tbody>
+</table>
+<h3 id="login"><code>login</code></h3>
+<p>Log in to a container registry.</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>ch<span class="w"> </span>login<span class="w"> </span>&lt;registry&gt;<span class="w"> </span>-u<span class="w"> </span>&lt;username&gt;<span class="w"> </span>-p<span class="w"> </span>&lt;password&gt;
+</span></code></pre></div>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Flag</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>--username</code>, <code>-u</code></td>
+<td style="text-align: left;">Registry username</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>--password</code>, <code>-p</code></td>
+<td style="text-align: left;">Registry password</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>--password-stdin</code></td>
+<td style="text-align: left;">Read password from stdin</td>
+</tr>
+</tbody>
+</table>
+<h3 id="license"><code>license</code></h3>
+<p>Show third-party license notices.</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>ch<span class="w"> </span>license
+</span></code></pre></div>
 
 
 
 
 
 
-
-  
-  
 
 
 

@@ -9,10 +9,10 @@
       
       
       
-        <link rel="prev" href="002-sbom-generation.html">
+        <link rel="prev" href="caching.html">
       
       
-        <link rel="next" href="004-embedded-local-registry.html">
+        <link rel="next" href="cli.html">
       
       
         
@@ -23,7 +23,7 @@
     
     
       
-        <title>003 - Accept Docker daemon dependency for full container structure test support - ContainerHive</title>
+        <title>Generate CI pipelines - ContainerHive</title>
       
     
     
@@ -74,7 +74,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#003-accept-docker-daemon-dependency-for-full-container-structure-test-support" class="md-skip">
+        <a href="#generate-ci-pipelines" class="md-skip">
           Skip to content
         </a>
       
@@ -107,7 +107,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              003 - Accept Docker daemon dependency for full container structure test support
+              Generate CI pipelines
             
           </span>
         </div>
@@ -243,11 +243,13 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="../usage/caching.html" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="caching.html" class="md-tabs__link">
           
   
   
@@ -303,12 +305,10 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
+      <li class="md-tabs__item">
         <a href="../development/local.html" class="md-tabs__link">
           
   
@@ -450,24 +450,29 @@
       
   
   
+    
   
   
+  
     
     
     
     
-      
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
         
           
-          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
             
   
   
@@ -485,7 +490,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_4">
             <span class="md-nav__icon md-icon"></span>
             
@@ -503,7 +508,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../usage/caching.html" class="md-nav__link">
+      <a href="caching.html" class="md-nav__link">
         
   
   
@@ -528,10 +533,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../usage/ci-integration.html" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Generate CI pipelines
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="ci-integration.html" class="md-nav__link md-nav__link--active">
         
   
   
@@ -547,6 +579,176 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#generating-ci-pipelines" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Generating CI pipelines
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Generating CI pipelines">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#supported-providers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Supported providers
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-it-works" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How it works
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#options" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Options
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-with-custom-image" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example with custom image
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#custom-templates" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Custom templates
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Custom templates">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#template-context" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Template context
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#template-functions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Template functions
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-custom-template" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example custom template
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#overriding-built-in-ci-templates" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Overriding built-in CI templates
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Overriding built-in CI templates">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#built-in-template-structure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Built-in template structure
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-generate-command" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The generate command
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -559,7 +761,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../usage/cli.html" class="md-nav__link">
+      <a href="cli.html" class="md-nav__link">
         
   
   
@@ -587,7 +789,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../usage/dockerfiles.html" class="md-nav__link">
+      <a href="dockerfiles.html" class="md-nav__link">
         
   
   
@@ -615,7 +817,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../usage/filtering.html" class="md-nav__link">
+      <a href="filtering.html" class="md-nav__link">
         
   
   
@@ -643,7 +845,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../usage/multi-platform.html" class="md-nav__link">
+      <a href="multi-platform.html" class="md-nav__link">
         
   
   
@@ -671,7 +873,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../usage/secrets-and-versions.html" class="md-nav__link">
+      <a href="secrets-and-versions.html" class="md-nav__link">
         
   
   
@@ -699,7 +901,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../usage/testing.html" class="md-nav__link">
+      <a href="testing.html" class="md-nav__link">
         
   
   
@@ -985,29 +1187,24 @@
       
   
   
-    
   
   
-  
     
     
     
     
       
-        
-        
-      
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
         
           
-          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="">
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
             
   
   
@@ -1025,7 +1222,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_7">
             <span class="md-nav__icon md-icon"></span>
             
@@ -1068,8 +1265,6 @@
                 
   
   
-    
-  
   
   
     
@@ -1080,11 +1275,11 @@
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7_2" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7_2" >
         
           
           <label class="md-nav__link" for="__nav_7_2" id="__nav_7_2_label" tabindex="0">
@@ -1105,7 +1300,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_2_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_2_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_7_2">
             <span class="md-nav__icon md-icon"></span>
             
@@ -1123,7 +1318,7 @@
   
   
     <li class="md-nav__item">
-      <a href="001-buildkit-integration.html" class="md-nav__link">
+      <a href="../adr/001-buildkit-integration.html" class="md-nav__link">
         
   
   
@@ -1158,7 +1353,7 @@
   
   
     <li class="md-nav__item">
-      <a href="002-sbom-generation.html" class="md-nav__link">
+      <a href="../adr/002-sbom-generation.html" class="md-nav__link">
         
   
   
@@ -1190,19 +1385,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-      <a href="003-container-structure-tests.html" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../adr/003-container-structure-tests.html" class="md-nav__link">
         
   
   
@@ -1225,7 +1411,6 @@
   
 
       </a>
-      
     </li>
   
 
@@ -1238,7 +1423,7 @@
   
   
     <li class="md-nav__item">
-      <a href="004-embedded-local-registry.html" class="md-nav__link">
+      <a href="../adr/004-embedded-local-registry.html" class="md-nav__link">
         
   
   
@@ -1301,6 +1486,164 @@
     
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#generating-ci-pipelines" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Generating CI pipelines
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Generating CI pipelines">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#supported-providers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Supported providers
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-it-works" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How it works
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#options" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Options
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-with-custom-image" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example with custom image
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#custom-templates" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Custom templates
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Custom templates">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#template-context" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Template context
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#template-functions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Template functions
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-custom-template" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example custom template
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#overriding-built-in-ci-templates" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Overriding built-in CI templates
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Overriding built-in CI templates">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#built-in-template-structure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Built-in template structure
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-generate-command" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The generate command
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -1342,28 +1685,10 @@
     
     
       <li class="md-path__item">
-        <a href="../development/local.html" class="md-path__link">
+        <a href="caching.html" class="md-path__link">
           
   <span class="md-ellipsis">
-    Development
-  </span>
-
-        </a>
-      </li>
-    
-  
-
-      
-        
-  
-  
-    
-    
-      <li class="md-path__item">
-        <a href="001-buildkit-integration.html" class="md-path__link">
-          
-  <span class="md-ellipsis">
-    Architecture Decision Records
+    Usage
   </span>
 
         </a>
@@ -1385,118 +1710,207 @@
   
 
 
-<h1 id="003-accept-docker-daemon-dependency-for-full-container-structure-test-support">003 - Accept Docker daemon dependency for full container structure test support</h1>
+<h1 id="generate-ci-pipelines">Generate CI pipelines</h1>
+<p>ContainerHive generates CI pipeline configurations from your project definition, so you don't have to maintain pipeline YAML by hand.</p>
+<h2 id="generating-ci-pipelines">Generating CI pipelines</h2>
+<p>Use <code>template ci</code> to generate a pipeline for your CI provider:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>ch<span class="w"> </span>template<span class="w"> </span>ci<span class="w"> </span>--provider<span class="w"> </span>gitlab<span class="w"> </span>--output<span class="w"> </span>.gitlab-ci.yml
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>ch<span class="w"> </span>template<span class="w"> </span>ci<span class="w"> </span>--provider<span class="w"> </span>github<span class="w"> </span>--output<span class="w"> </span>.github/workflows/build.yml
+</span></code></pre></div>
+<h3 id="supported-providers">Supported providers</h3>
 <table>
-<tr><td><strong>Status</strong></td><td><span style='color: white;background:#28a745;padding:.4em;border-radius:8px;font-size:100%;'>accepted</span></td></tr>
-<tr><td><strong>Date</strong></td><td>2025-06-02</td></tr>
+<thead>
+<tr>
+<th style="text-align: left;">Provider</th>
+<th style="text-align: left;">Flag value</th>
+<th style="text-align: left;">Output</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">GitLab CI</td>
+<td style="text-align: left;"><code>gitlab</code></td>
+<td style="text-align: left;">GitLab CI pipeline YAML</td>
+</tr>
+<tr>
+<td style="text-align: left;">GitHub Actions</td>
+<td style="text-align: left;"><code>github</code></td>
+<td style="text-align: left;">GitHub Actions workflow YAML</td>
+</tr>
+</tbody>
 </table>
-<h1 id="accept-docker-daemon-dependency-for-full-container-structure-test-support">Accept Docker daemon dependency for full container structure test support</h1>
-<h2 id="context-and-problem-statement">Context and Problem Statement</h2>
-<p>ContainerHive uses Google's container-structure-test to validate built images. However, container images can be
-represented in multiple formats and at their core are just a series of tarball layers. Container-structure-test supports
-two modes of operation with different capabilities:</p>
-<ul>
-<li><strong>Docker driver</strong>: Requires a Docker daemon. Supports all test types including command tests, which execute commands
-  inside a running container.</li>
-<li><strong>Tar/filesystem driver</strong>: No daemon needed. Only supports file existence and file content tests by inspecting the
-  image layers directly.</li>
-</ul>
-<p>BuildKit produces OCI-format tar archives, not Docker-format images. This means that to use the Docker driver,
-ContainerHive must convert the OCI tar to a Docker-compatible format and load it into a daemon. The question is whether
-this conversion and Docker dependency is worth the full test coverage, or whether the limited tar-only mode is
-sufficient.</p>
-<h2 id="decision-drivers">Decision Drivers</h2>
-<ul>
-<li>Command tests (running commands inside the container) are essential for verifying runtime behavior, not just file
-  presence</li>
-<li>BuildKit outputs OCI tar format, which is not directly compatible with Docker's image store</li>
-<li>Users should be able to test images locally without pushing to a registry first</li>
-<li>The Docker daemon is already commonly available in development environments and most CI can be configured with a DinD service</li>
-<li>Consistency with ADR-001: ContainerHive follows a "bring your own" philosophy for infrastructure</li>
-<li>Test behavior should be consistent regardless of environment to avoid "works on my machine" issues</li>
-</ul>
-<h2 id="considered-options">Considered Options</h2>
-<ul>
-<li>Option 1: Use Docker driver with OCI-to-Docker conversion for full test support</li>
-<li>Option 2: Use tar/filesystem driver only, accept no command test support</li>
-<li>Option 3: Dynamically choose driver based on test configuration content</li>
-</ul>
-<h2 id="decision-outcome">Decision Outcome</h2>
-<p>Chosen option: "Option 1 - Use Docker driver with OCI-to-Docker conversion", because command tests are a critical
-validation capability that verifies runtime behavior beyond static file checks. The conversion from OCI tar to Docker is
-handled transparently using <code>go-containerregistry</code>, and requiring a Docker daemon is consistent with the "bring your own
-infrastructure" philosophy established in ADR-001.</p>
-<p>The implementation:</p>
+<h3 id="how-it-works">How it works</h3>
 <ol>
-<li>Detects whether the image reference is a tar file or a Docker image name</li>
-<li>For tar files: extracts the OCI tar, reads the OCI layout, resolves the image name from manifest annotations, and
-   loads into Docker via <code>daemon.Write</code></li>
-<li>Runs container-structure-test with the <code>docker</code> driver against the loaded image</li>
-<li>Produces JUnit XML reports for CI integration</li>
+<li>ContainerHive discovers your project and resolves image dependencies.</li>
+<li>Images are grouped into stages based on their dependency depth — images at the same depth can build in parallel.</li>
+<li>For each image, the pipeline includes jobs for building (per-platform), creating multi-arch manifests, and running tests.</li>
+<li>The generated pipeline references the ContainerHive container image to run all commands.</li>
 </ol>
-<h2 id="pros-and-cons-of-the-options">Pros and Cons of the Options</h2>
-<h3 id="option-1-use-docker-driver-with-oci-to-docker-conversion">Option 1: Use Docker driver with OCI-to-Docker conversion</h3>
-<p>Convert OCI tar archives to Docker-compatible images using <code>go-containerregistry</code> (OCI layout parsing + <code>daemon.Write</code>),
-then run container-structure-test with the Docker driver.</p>
-<ul>
-<li>Good, because all test types are supported: command tests, file existence, file content, metadata, and license tests</li>
-<li>Good, because command tests verify actual runtime behavior (installed packages work, entrypoints execute correctly,
-  etc.)</li>
-<li>Good, because the OCI-to-Docker conversion is handled transparently - users pass a tar file and it just works</li>
-<li>Good, because <code>go-containerregistry</code> provides a clean, library-based conversion path without shelling out</li>
-<li>Good, because images are tested locally from the OCI tar without requiring a registry push</li>
-<li>Good, because it aligns with the existing "bring your own" pattern - the user provides a Docker daemon just like they
-  provide a BuildKit daemon</li>
-<li>Good, because test behavior is identical across all environments</li>
-<li>Bad, because it requires a Docker daemon available at test time</li>
-<li>Bad, because the OCI-to-Docker load adds time and temporary disk usage</li>
-<li>Bad, because it introduces a dependency on <code>go-containerregistry</code> for the format conversion</li>
-<li>Bad, because in Kubernetes-based CI, a Docker daemon may require a DinD sidecar</li>
-</ul>
-<h3 id="option-2-use-tarfilesystem-driver-only">Option 2: Use tar/filesystem driver only</h3>
-<p>Run container-structure-test in tar mode, inspecting image layers directly without a container runtime.</p>
-<ul>
-<li>Good, because no Docker daemon required - works anywhere</li>
-<li>Good, because simpler implementation with no format conversion needed</li>
-<li>Good, because faster execution since no image loading or container creation</li>
-<li>Bad, because no command test support - cannot verify that installed software actually works</li>
-<li>Bad, because cannot test entrypoints, environment variable resolution, or runtime behavior</li>
-<li>Bad, because file existence and content tests alone provide limited confidence in image correctness</li>
-<li>Bad, because users would need a separate workflow to run command-based validation</li>
-</ul>
-<h3 id="option-3-dynamically-choose-driver-based-on-test-configuration">Option 3: Dynamically choose driver based on test configuration</h3>
-<p>Inspect the test definition file and select the Docker driver when command tests are present, fall back to the tar
-driver when only file tests are defined.</p>
-<ul>
-<li>Good, because no Docker daemon needed for simple file-only test suites</li>
-<li>Good, because command tests still work when Docker is available</li>
-<li>Bad, because the same test suite runs through different code paths depending on its content, leading to inconsistent
-  behavior across environments</li>
-<li>Bad, because subtle differences between drivers (e.g. file resolution, layer merging) may cause tests to pass with one
-  driver but fail with the other</li>
-<li>Bad, because it creates a "works on my machine" problem - adding a command test to a config silently changes the
-  driver and may break in environments without Docker</li>
-<li>Bad, because increased complexity in driver selection logic for marginal benefit</li>
-</ul>
-<h2 id="links">Links</h2>
-<ul>
-<li><a href="https://github.com/GoogleContainerTools/container-structure-test">container-structure-test GitHub repository</a></li>
-<li><a href="https://github.com/GoogleContainerTools/container-structure-test#drivers">container-structure-test driver documentation</a></li>
-<li><a href="https://github.com/google/go-containerregistry">go-containerregistry</a> - used for OCI layout parsing and Docker daemon
-  loading</li>
-<li>Relates to <a href="001-buildkit-integration.html">ADR-001: BuildKit Integration</a> - follows the same "bring your own"
-  infrastructure pattern</li>
-</ul>
-<!-- markdownlint-disable-file MD013 -->
+<h3 id="options">Options</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Flag</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>--provider</code></td>
+<td style="text-align: left;">CI provider (<code>gitlab</code> or <code>github</code>) — required</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>--output</code></td>
+<td style="text-align: left;">Output file path (default: stdout)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>--template-dir</code></td>
+<td style="text-align: left;">Custom template directory to override built-in templates</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>--artifacts</code></td>
+<td style="text-align: left;">Upload/download build artifacts between jobs</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>--version</code></td>
+<td style="text-align: left;">ContainerHive CLI version to use (default: current version)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>--image-name</code></td>
+<td style="text-align: left;">Container image name for the CLI (default: <code>timoreymann/ch</code>)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="example-with-custom-image">Example with custom image</h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>ch<span class="w"> </span>template<span class="w"> </span>ci<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">  </span>--provider<span class="w"> </span>github<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">  </span>--output<span class="w"> </span>.github/workflows/build.yml<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">  </span>--image-name<span class="w"> </span>ghcr.io/timo-reymann/containerhive<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">  </span>--version<span class="w"> </span>v1.0.0<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="w">  </span>--artifacts
+</span></code></pre></div>
+<h2 id="custom-templates">Custom templates</h2>
+<p>For use cases beyond CI pipelines, the <code>template custom</code> command renders any Go template with full access to the project context.</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>ch<span class="w"> </span>template<span class="w"> </span>custom<span class="w"> </span>--template<span class="w"> </span>my-template.gotpl<span class="w"> </span>--output<span class="w"> </span>output.yml
+</span></code></pre></div>
+<h3 id="template-context">Template context</h3>
+<p>Custom templates receive a <code>CIContext</code> with the following fields:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Field</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>Images</code></td>
+<td style="text-align: left;">list</td>
+<td style="text-align: left;">All images with name, tags, dependencies, depth, platforms</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>Platforms</code></td>
+<td style="text-align: left;">list</td>
+<td style="text-align: left;">All unique platforms across all images</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>Stages</code></td>
+<td style="text-align: left;">list</td>
+<td style="text-align: left;">Ordered build stages</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>Config</code></td>
+<td style="text-align: left;">object</td>
+<td style="text-align: left;">Registry and cache configuration</td>
+</tr>
+</tbody>
+</table>
+<p>Each image in <code>Images</code> provides:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Field</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>Name</code></td>
+<td style="text-align: left;">string</td>
+<td style="text-align: left;">Image name</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>Tags</code></td>
+<td style="text-align: left;">list</td>
+<td style="text-align: left;">Tag names</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>Dependencies</code></td>
+<td style="text-align: left;">list</td>
+<td style="text-align: left;">Names of images this image depends on</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>Depth</code></td>
+<td style="text-align: left;">int</td>
+<td style="text-align: left;">Dependency depth (0 = no dependencies)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>Platforms</code></td>
+<td style="text-align: left;">list</td>
+<td style="text-align: left;">Target platforms</td>
+</tr>
+</tbody>
+</table>
+<h3 id="template-functions">Template functions</h3>
+<p>Templates have access to <a href="http://masterminds.github.io/sprig/">Sprig</a> functions plus:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Function</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>resolve_base(name, tag)</code></td>
+<td style="text-align: left;">Produces an internal image reference (<code>__hive__/name:tag</code>) for inter-image dependencies</td>
+</tr>
+</tbody>
+</table>
+<h3 id="example-custom-template">Example custom template</h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>{{- range .Images }}
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>Image: {{ .Name }}
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>  Tags: {{ range .Tags }}{{ . }}, {{ end }}
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>  Platforms: {{ range .Platforms }}{{ . }}, {{ end }}
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>  Dependencies: {{ range .Dependencies }}{{ . }}, {{ end }}
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>{{ end }}
+</span></code></pre></div>
+<h2 id="overriding-built-in-ci-templates">Overriding built-in CI templates</h2>
+<p>You can override the built-in CI templates by providing a custom template directory:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>ch<span class="w"> </span>template<span class="w"> </span>ci<span class="w"> </span>--provider<span class="w"> </span>gitlab<span class="w"> </span>--template-dir<span class="w"> </span>./my-templates<span class="w"> </span>--output<span class="w"> </span>.gitlab-ci.yml
+</span></code></pre></div>
+<p>The directory should contain <code>.gotpl</code> files following the same structure as the built-in templates. Files in the custom directory take precedence over the built-in ones.</p>
+<h3 id="built-in-template-structure">Built-in template structure</h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>templates/&lt;provider&gt;/
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>├── pipeline.yml.gotpl   (or workflow.yml.gotpl for GitHub)
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>├── build-job.yml.gotpl
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>├── manifest-job.yml.gotpl
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>└── test-job.yml.gotpl
+</span></code></pre></div>
+<p>The entrypoint template includes the job templates as partials using <code>{{ template "build-job.yml.gotpl" . }}</code>.</p>
+<h2 id="the-generate-command">The <code>generate</code> command</h2>
+<p>Before building or generating CI configs, run <code>generate</code> to discover the project and render all configurations to <code>dist/</code>:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>ch<span class="w"> </span>generate
+</span></code></pre></div>
+<p>This processes <code>hive.yml</code> and all <code>image.yml</code> definitions, renders Dockerfiles and test templates, and prepares the <code>dist/</code> directory for subsequent <code>build</code>, <code>test</code>, and <code>sbom</code> commands.</p>
 
 
 
 
 
 
-
-  
-  
 
 
 

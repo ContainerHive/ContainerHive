@@ -9,10 +9,10 @@
       
       
       
-        <link rel="prev" href="002-sbom-generation.html">
+        <link rel="prev" href="secrets-and-versions.html">
       
       
-        <link rel="next" href="004-embedded-local-registry.html">
+        <link rel="next" href="../configuration/hive.html">
       
       
         
@@ -23,7 +23,7 @@
     
     
       
-        <title>003 - Accept Docker daemon dependency for full container structure test support - ContainerHive</title>
+        <title>Test your containers - ContainerHive</title>
       
     
     
@@ -74,7 +74,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#003-accept-docker-daemon-dependency-for-full-container-structure-test-support" class="md-skip">
+        <a href="#test-your-containers" class="md-skip">
           Skip to content
         </a>
       
@@ -107,7 +107,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              003 - Accept Docker daemon dependency for full container structure test support
+              Test your containers
             
           </span>
         </div>
@@ -243,11 +243,13 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="../usage/caching.html" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="caching.html" class="md-tabs__link">
           
   
   
@@ -303,12 +305,10 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
+      <li class="md-tabs__item">
         <a href="../development/local.html" class="md-tabs__link">
           
   
@@ -450,24 +450,29 @@
       
   
   
+    
   
   
+  
     
     
     
     
-      
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
         
           
-          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
             
   
   
@@ -485,7 +490,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_4">
             <span class="md-nav__icon md-icon"></span>
             
@@ -503,7 +508,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../usage/caching.html" class="md-nav__link">
+      <a href="caching.html" class="md-nav__link">
         
   
   
@@ -531,7 +536,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../usage/ci-integration.html" class="md-nav__link">
+      <a href="ci-integration.html" class="md-nav__link">
         
   
   
@@ -559,7 +564,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../usage/cli.html" class="md-nav__link">
+      <a href="cli.html" class="md-nav__link">
         
   
   
@@ -587,7 +592,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../usage/dockerfiles.html" class="md-nav__link">
+      <a href="dockerfiles.html" class="md-nav__link">
         
   
   
@@ -615,7 +620,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../usage/filtering.html" class="md-nav__link">
+      <a href="filtering.html" class="md-nav__link">
         
   
   
@@ -643,7 +648,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../usage/multi-platform.html" class="md-nav__link">
+      <a href="multi-platform.html" class="md-nav__link">
         
   
   
@@ -671,7 +676,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../usage/secrets-and-versions.html" class="md-nav__link">
+      <a href="secrets-and-versions.html" class="md-nav__link">
         
   
   
@@ -696,10 +701,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../usage/testing.html" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Test your containers
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="testing.html" class="md-nav__link md-nav__link--active">
         
   
   
@@ -715,6 +747,115 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#writing-test-definitions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Writing test definitions
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Writing test definitions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#example" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#variant-tests" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Variant tests
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#running-tests" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Running tests
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Running tests">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#filtering" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Filtering
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ci-behavior" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CI behavior
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#test-reports" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Test reports
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -985,29 +1126,24 @@
       
   
   
-    
   
   
-  
     
     
     
     
       
-        
-        
-      
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
         
           
-          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="">
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
             
   
   
@@ -1025,7 +1161,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_7">
             <span class="md-nav__icon md-icon"></span>
             
@@ -1068,8 +1204,6 @@
                 
   
   
-    
-  
   
   
     
@@ -1080,11 +1214,11 @@
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7_2" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7_2" >
         
           
           <label class="md-nav__link" for="__nav_7_2" id="__nav_7_2_label" tabindex="0">
@@ -1105,7 +1239,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_2_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_2_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_7_2">
             <span class="md-nav__icon md-icon"></span>
             
@@ -1123,7 +1257,7 @@
   
   
     <li class="md-nav__item">
-      <a href="001-buildkit-integration.html" class="md-nav__link">
+      <a href="../adr/001-buildkit-integration.html" class="md-nav__link">
         
   
   
@@ -1158,7 +1292,7 @@
   
   
     <li class="md-nav__item">
-      <a href="002-sbom-generation.html" class="md-nav__link">
+      <a href="../adr/002-sbom-generation.html" class="md-nav__link">
         
   
   
@@ -1190,19 +1324,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-      <a href="003-container-structure-tests.html" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../adr/003-container-structure-tests.html" class="md-nav__link">
         
   
   
@@ -1225,7 +1350,6 @@
   
 
       </a>
-      
     </li>
   
 
@@ -1238,7 +1362,7 @@
   
   
     <li class="md-nav__item">
-      <a href="004-embedded-local-registry.html" class="md-nav__link">
+      <a href="../adr/004-embedded-local-registry.html" class="md-nav__link">
         
   
   
@@ -1301,6 +1425,103 @@
     
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#writing-test-definitions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Writing test definitions
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Writing test definitions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#example" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#variant-tests" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Variant tests
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#running-tests" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Running tests
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Running tests">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#filtering" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Filtering
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ci-behavior" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CI behavior
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#test-reports" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Test reports
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -1342,28 +1563,10 @@
     
     
       <li class="md-path__item">
-        <a href="../development/local.html" class="md-path__link">
+        <a href="caching.html" class="md-path__link">
           
   <span class="md-ellipsis">
-    Development
-  </span>
-
-        </a>
-      </li>
-    
-  
-
-      
-        
-  
-  
-    
-    
-      <li class="md-path__item">
-        <a href="001-buildkit-integration.html" class="md-path__link">
-          
-  <span class="md-ellipsis">
-    Architecture Decision Records
+    Usage
   </span>
 
         </a>
@@ -1385,118 +1588,81 @@
   
 
 
-<h1 id="003-accept-docker-daemon-dependency-for-full-container-structure-test-support">003 - Accept Docker daemon dependency for full container structure test support</h1>
-<table>
-<tr><td><strong>Status</strong></td><td><span style='color: white;background:#28a745;padding:.4em;border-radius:8px;font-size:100%;'>accepted</span></td></tr>
-<tr><td><strong>Date</strong></td><td>2025-06-02</td></tr>
-</table>
-<h1 id="accept-docker-daemon-dependency-for-full-container-structure-test-support">Accept Docker daemon dependency for full container structure test support</h1>
-<h2 id="context-and-problem-statement">Context and Problem Statement</h2>
-<p>ContainerHive uses Google's container-structure-test to validate built images. However, container images can be
-represented in multiple formats and at their core are just a series of tarball layers. Container-structure-test supports
-two modes of operation with different capabilities:</p>
-<ul>
-<li><strong>Docker driver</strong>: Requires a Docker daemon. Supports all test types including command tests, which execute commands
-  inside a running container.</li>
-<li><strong>Tar/filesystem driver</strong>: No daemon needed. Only supports file existence and file content tests by inspecting the
-  image layers directly.</li>
-</ul>
-<p>BuildKit produces OCI-format tar archives, not Docker-format images. This means that to use the Docker driver,
-ContainerHive must convert the OCI tar to a Docker-compatible format and load it into a daemon. The question is whether
-this conversion and Docker dependency is worth the full test coverage, or whether the limited tar-only mode is
-sufficient.</p>
-<h2 id="decision-drivers">Decision Drivers</h2>
-<ul>
-<li>Command tests (running commands inside the container) are essential for verifying runtime behavior, not just file
-  presence</li>
-<li>BuildKit outputs OCI tar format, which is not directly compatible with Docker's image store</li>
-<li>Users should be able to test images locally without pushing to a registry first</li>
-<li>The Docker daemon is already commonly available in development environments and most CI can be configured with a DinD service</li>
-<li>Consistency with ADR-001: ContainerHive follows a "bring your own" philosophy for infrastructure</li>
-<li>Test behavior should be consistent regardless of environment to avoid "works on my machine" issues</li>
-</ul>
-<h2 id="considered-options">Considered Options</h2>
-<ul>
-<li>Option 1: Use Docker driver with OCI-to-Docker conversion for full test support</li>
-<li>Option 2: Use tar/filesystem driver only, accept no command test support</li>
-<li>Option 3: Dynamically choose driver based on test configuration content</li>
-</ul>
-<h2 id="decision-outcome">Decision Outcome</h2>
-<p>Chosen option: "Option 1 - Use Docker driver with OCI-to-Docker conversion", because command tests are a critical
-validation capability that verifies runtime behavior beyond static file checks. The conversion from OCI tar to Docker is
-handled transparently using <code>go-containerregistry</code>, and requiring a Docker daemon is consistent with the "bring your own
-infrastructure" philosophy established in ADR-001.</p>
-<p>The implementation:</p>
+<h1 id="test-your-containers">Test your containers</h1>
+<p>ContainerHive integrates <a href="https://github.com/GoogleContainerTools/container-structure-test">container-structure-test</a> by Google to validate built images as part of the build process.</p>
+<h2 id="writing-test-definitions">Writing test definitions</h2>
+<p>Test definitions are written as Go templates (<code>test.yml.gotpl</code>) placed alongside the Dockerfile in the image directory.</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>images/my-image/
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>├── image.yml
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>├── Dockerfile
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>└── test.yml.gotpl
+</span></code></pre></div>
+<p>The template is rendered with the image context (versions, build args, etc.) during <code>ch generate</code>, producing the final test YAML in <code>dist/</code>.</p>
+<h3 id="example">Example</h3>
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nt">schemaVersion</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;2.0.0&quot;</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="nt">fileExistenceTests</span><span class="p">:</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Check</span><span class="nv"> </span><span class="s">binary</span><span class="nv"> </span><span class="s">exists&quot;</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">    </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;/usr/local/bin/my-app&quot;</span>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="w">    </span><span class="nt">shouldExist</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="w">    </span><span class="nt">permissions</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;-rwxr-xr-x&quot;</span>
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>
+</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="nt">commandTests</span><span class="p">:</span>
+</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Check</span><span class="nv"> </span><span class="s">version</span><span class="nv"> </span><span class="s">output&quot;</span>
+</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a><span class="w">    </span><span class="nt">command</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;my-app&quot;</span>
+</span><span id="__span-1-12"><a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a><span class="w">    </span><span class="nt">args</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;--version&quot;</span><span class="p p-Indicator">]</span>
+</span><span id="__span-1-13"><a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a><span class="w">    </span><span class="nt">expectedOutput</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;{{</span><span class="nv"> </span><span class="s">.Versions.app</span><span class="nv"> </span><span class="s">}}&quot;</span><span class="p p-Indicator">]</span>
+</span><span id="__span-1-14"><a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a>
+</span><span id="__span-1-15"><a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a><span class="nt">fileContentTests</span><span class="p">:</span>
+</span><span id="__span-1-16"><a id="__codelineno-1-16" name="__codelineno-1-16" href="#__codelineno-1-16"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Check</span><span class="nv"> </span><span class="s">config</span><span class="nv"> </span><span class="s">file&quot;</span>
+</span><span id="__span-1-17"><a id="__codelineno-1-17" name="__codelineno-1-17" href="#__codelineno-1-17"></a><span class="w">    </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;/etc/my-app/config.yml&quot;</span>
+</span><span id="__span-1-18"><a id="__codelineno-1-18" name="__codelineno-1-18" href="#__codelineno-1-18"></a><span class="w">    </span><span class="nt">expectedContents</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;production&quot;</span><span class="p p-Indicator">]</span>
+</span></code></pre></div>
+<p>Since the test file is a Go template, you can reference versions and build args from your <code>image.yml</code>:</p>
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="nt">commandTests</span><span class="p">:</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Python</span><span class="nv"> </span><span class="s">version&quot;</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">    </span><span class="nt">command</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;python3&quot;</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">    </span><span class="nt">args</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;--version&quot;</span><span class="p p-Indicator">]</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">    </span><span class="nt">expectedOutput</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;Python</span><span class="nv"> </span><span class="s">{{</span><span class="nv"> </span><span class="s">.Versions.python</span><span class="nv"> </span><span class="s">}}&quot;</span><span class="p p-Indicator">]</span>
+</span></code></pre></div>
+<h3 id="variant-tests">Variant tests</h3>
+<p>Variants can have their own test definitions by placing a <code>test.yml.gotpl</code> in the variant subdirectory:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>images/my-image/
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>├── image.yml
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>├── Dockerfile
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>├── test.yml.gotpl
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>└── slim/
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>    ├── Dockerfile
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>    └── test.yml.gotpl
+</span></code></pre></div>
+<h2 id="running-tests">Running tests</h2>
+<p>After building images, run tests with:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>ch<span class="w"> </span><span class="nb">test</span>
+</span></code></pre></div>
+<p>This will:</p>
 <ol>
-<li>Detects whether the image reference is a tar file or a Docker image name</li>
-<li>For tar files: extracts the OCI tar, reads the OCI layout, resolves the image name from manifest annotations, and
-   loads into Docker via <code>daemon.Write</code></li>
-<li>Runs container-structure-test with the <code>docker</code> driver against the loaded image</li>
-<li>Produces JUnit XML reports for CI integration</li>
+<li>Collect rendered test definitions from <code>dist/&lt;image&gt;/&lt;tag&gt;/tests/</code>.</li>
+<li>Load or pull the built image for each platform.</li>
+<li>Execute the tests and produce JUnit XML reports.</li>
 </ol>
-<h2 id="pros-and-cons-of-the-options">Pros and Cons of the Options</h2>
-<h3 id="option-1-use-docker-driver-with-oci-to-docker-conversion">Option 1: Use Docker driver with OCI-to-Docker conversion</h3>
-<p>Convert OCI tar archives to Docker-compatible images using <code>go-containerregistry</code> (OCI layout parsing + <code>daemon.Write</code>),
-then run container-structure-test with the Docker driver.</p>
-<ul>
-<li>Good, because all test types are supported: command tests, file existence, file content, metadata, and license tests</li>
-<li>Good, because command tests verify actual runtime behavior (installed packages work, entrypoints execute correctly,
-  etc.)</li>
-<li>Good, because the OCI-to-Docker conversion is handled transparently - users pass a tar file and it just works</li>
-<li>Good, because <code>go-containerregistry</code> provides a clean, library-based conversion path without shelling out</li>
-<li>Good, because images are tested locally from the OCI tar without requiring a registry push</li>
-<li>Good, because it aligns with the existing "bring your own" pattern - the user provides a Docker daemon just like they
-  provide a BuildKit daemon</li>
-<li>Good, because test behavior is identical across all environments</li>
-<li>Bad, because it requires a Docker daemon available at test time</li>
-<li>Bad, because the OCI-to-Docker load adds time and temporary disk usage</li>
-<li>Bad, because it introduces a dependency on <code>go-containerregistry</code> for the format conversion</li>
-<li>Bad, because in Kubernetes-based CI, a Docker daemon may require a DinD sidecar</li>
-</ul>
-<h3 id="option-2-use-tarfilesystem-driver-only">Option 2: Use tar/filesystem driver only</h3>
-<p>Run container-structure-test in tar mode, inspecting image layers directly without a container runtime.</p>
-<ul>
-<li>Good, because no Docker daemon required - works anywhere</li>
-<li>Good, because simpler implementation with no format conversion needed</li>
-<li>Good, because faster execution since no image loading or container creation</li>
-<li>Bad, because no command test support - cannot verify that installed software actually works</li>
-<li>Bad, because cannot test entrypoints, environment variable resolution, or runtime behavior</li>
-<li>Bad, because file existence and content tests alone provide limited confidence in image correctness</li>
-<li>Bad, because users would need a separate workflow to run command-based validation</li>
-</ul>
-<h3 id="option-3-dynamically-choose-driver-based-on-test-configuration">Option 3: Dynamically choose driver based on test configuration</h3>
-<p>Inspect the test definition file and select the Docker driver when command tests are present, fall back to the tar
-driver when only file tests are defined.</p>
-<ul>
-<li>Good, because no Docker daemon needed for simple file-only test suites</li>
-<li>Good, because command tests still work when Docker is available</li>
-<li>Bad, because the same test suite runs through different code paths depending on its content, leading to inconsistent
-  behavior across environments</li>
-<li>Bad, because subtle differences between drivers (e.g. file resolution, layer merging) may cause tests to pass with one
-  driver but fail with the other</li>
-<li>Bad, because it creates a "works on my machine" problem - adding a command test to a config silently changes the
-  driver and may break in environments without Docker</li>
-<li>Bad, because increased complexity in driver selection logic for marginal benefit</li>
-</ul>
-<h2 id="links">Links</h2>
-<ul>
-<li><a href="https://github.com/GoogleContainerTools/container-structure-test">container-structure-test GitHub repository</a></li>
-<li><a href="https://github.com/GoogleContainerTools/container-structure-test#drivers">container-structure-test driver documentation</a></li>
-<li><a href="https://github.com/google/go-containerregistry">go-containerregistry</a> - used for OCI layout parsing and Docker daemon
-  loading</li>
-<li>Relates to <a href="001-buildkit-integration.html">ADR-001: BuildKit Integration</a> - follows the same "bring your own"
-  infrastructure pattern</li>
-</ul>
-<!-- markdownlint-disable-file MD013 -->
+<h3 id="filtering">Filtering</h3>
+<p>You can run tests for specific images or tags:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>ch<span class="w"> </span><span class="nb">test</span><span class="w"> </span>my-image:latest
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>ch<span class="w"> </span><span class="nb">test</span><span class="w"> </span>my-image:*
+</span></code></pre></div>
+<h3 id="ci-behavior">CI behavior</h3>
+<p>In CI environments (<code>CI</code> env var is set), ContainerHive automatically starts a local registry and falls back to pulling images from it when no local tar file is found.</p>
+<h2 id="test-reports">Test reports</h2>
+<p>JUnit XML reports are written to the platform directory under <code>dist/</code>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>dist/my-image/latest/linux-amd64/my-image-latest-cst-report.xml
+</span></code></pre></div>
+<p>These reports can be consumed by CI systems for test result visualization.</p>
 
 
 
 
 
 
-
-  
-  
 
 
 

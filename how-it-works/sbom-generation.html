@@ -9,24 +9,28 @@
       
       
       
+        <link rel="prev" href="dependency-resolution.html">
+      
+      
+        <link rel="next" href="../development/local.html">
       
       
         
       
       
-      <link rel="icon" href="/images/logo.png">
+      <link rel="icon" href="../images/logo.png">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.5">
     
     
       
-        <title>ContainerHive</title>
+        <title>How SBOM generation works - ContainerHive</title>
       
     
     
-      <link rel="stylesheet" href="/assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
       
         
-        <link rel="stylesheet" href="/assets/stylesheets/palette.ab4e12ef.min.css">
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
       
       
 
@@ -45,7 +49,7 @@
       
     
     
-    <script>__md_scope=new URL("/",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -69,6 +73,11 @@
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
       
+        
+        <a href="#how-sbom-generation-works" class="md-skip">
+          Skip to content
+        </a>
+      
     </div>
     <div data-md-component="announce">
       
@@ -79,9 +88,9 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="/index.html" title="ContainerHive" class="md-header__button md-logo" aria-label="ContainerHive" data-md-component="logo">
+    <a href="../index.html" title="ContainerHive" class="md-header__button md-logo" aria-label="ContainerHive" data-md-component="logo">
       
-  <img src="/images/logo.png" alt="logo">
+  <img src="../images/logo.png" alt="logo">
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -98,7 +107,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              
+              How SBOM generation works
             
           </span>
         </div>
@@ -179,7 +188,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="/index.html" class="md-tabs__link">
+      <a href="../index.html" class="md-tabs__link">
         
   
   
@@ -198,7 +207,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="/installation.html" class="md-tabs__link">
+      <a href="../installation.html" class="md-tabs__link">
         
   
   
@@ -217,7 +226,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="/getting-started.html" class="md-tabs__link">
+      <a href="../getting-started.html" class="md-tabs__link">
         
   
   
@@ -238,7 +247,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="/usage/caching.html" class="md-tabs__link">
+        <a href="../usage/caching.html" class="md-tabs__link">
           
   
   
@@ -258,7 +267,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="/configuration/hive.html" class="md-tabs__link">
+        <a href="../configuration/hive.html" class="md-tabs__link">
           
   
   
@@ -274,11 +283,13 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="/how-it-works/dependency-resolution.html" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="dependency-resolution.html" class="md-tabs__link">
           
   
   
@@ -298,7 +309,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="/development/local.html" class="md-tabs__link">
+        <a href="../development/local.html" class="md-tabs__link">
           
   
   
@@ -332,9 +343,9 @@
 
 <nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="/index.html" title="ContainerHive" class="md-nav__button md-logo" aria-label="ContainerHive" data-md-component="logo">
+    <a href="../index.html" title="ContainerHive" class="md-nav__button md-logo" aria-label="ContainerHive" data-md-component="logo">
       
-  <img src="/images/logo.png" alt="logo">
+  <img src="../images/logo.png" alt="logo">
 
     </a>
     ContainerHive
@@ -361,7 +372,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/index.html" class="md-nav__link">
+      <a href="../index.html" class="md-nav__link">
         
   
   
@@ -388,7 +399,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/installation.html" class="md-nav__link">
+      <a href="../installation.html" class="md-nav__link">
         
   
   
@@ -415,7 +426,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/getting-started.html" class="md-nav__link">
+      <a href="../getting-started.html" class="md-nav__link">
         
   
   
@@ -492,7 +503,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/usage/caching.html" class="md-nav__link">
+      <a href="../usage/caching.html" class="md-nav__link">
         
   
   
@@ -520,7 +531,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/usage/ci-integration.html" class="md-nav__link">
+      <a href="../usage/ci-integration.html" class="md-nav__link">
         
   
   
@@ -548,7 +559,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/usage/cli.html" class="md-nav__link">
+      <a href="../usage/cli.html" class="md-nav__link">
         
   
   
@@ -576,7 +587,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/usage/dockerfiles.html" class="md-nav__link">
+      <a href="../usage/dockerfiles.html" class="md-nav__link">
         
   
   
@@ -604,7 +615,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/usage/filtering.html" class="md-nav__link">
+      <a href="../usage/filtering.html" class="md-nav__link">
         
   
   
@@ -632,7 +643,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/usage/multi-platform.html" class="md-nav__link">
+      <a href="../usage/multi-platform.html" class="md-nav__link">
         
   
   
@@ -660,7 +671,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/usage/secrets-and-versions.html" class="md-nav__link">
+      <a href="../usage/secrets-and-versions.html" class="md-nav__link">
         
   
   
@@ -688,7 +699,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/usage/testing.html" class="md-nav__link">
+      <a href="../usage/testing.html" class="md-nav__link">
         
   
   
@@ -773,7 +784,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/configuration/hive.html" class="md-nav__link">
+      <a href="../configuration/hive.html" class="md-nav__link">
         
   
   
@@ -801,7 +812,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/configuration/image.html" class="md-nav__link">
+      <a href="../configuration/image.html" class="md-nav__link">
         
   
   
@@ -829,7 +840,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/configuration/test.html" class="md-nav__link">
+      <a href="../configuration/test.html" class="md-nav__link">
         
   
   
@@ -861,24 +872,29 @@
       
   
   
+    
   
   
+  
     
     
     
     
-      
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" checked>
         
           
-          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="">
             
   
   
@@ -896,7 +912,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_6">
             <span class="md-nav__icon md-icon"></span>
             
@@ -914,7 +930,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/how-it-works/dependency-resolution.html" class="md-nav__link">
+      <a href="dependency-resolution.html" class="md-nav__link">
         
   
   
@@ -939,10 +955,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="/how-it-works/sbom-generation.html" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How SBOM generation works
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="sbom-generation.html" class="md-nav__link md-nav__link--active">
         
   
   
@@ -958,6 +1001,59 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#approach" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Approach
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#output-format" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Output format
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#usage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Usage
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -1027,7 +1123,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/development/local.html" class="md-nav__link">
+      <a href="../development/local.html" class="md-nav__link">
         
   
   
@@ -1105,7 +1201,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/adr/001-buildkit-integration.html" class="md-nav__link">
+      <a href="../adr/001-buildkit-integration.html" class="md-nav__link">
         
   
   
@@ -1140,7 +1236,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/adr/002-sbom-generation.html" class="md-nav__link">
+      <a href="../adr/002-sbom-generation.html" class="md-nav__link">
         
   
   
@@ -1175,7 +1271,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/adr/003-container-structure-tests.html" class="md-nav__link">
+      <a href="../adr/003-container-structure-tests.html" class="md-nav__link">
         
   
   
@@ -1210,7 +1306,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/adr/004-embedded-local-registry.html" class="md-nav__link">
+      <a href="../adr/004-embedded-local-registry.html" class="md-nav__link">
         
   
   
@@ -1270,6 +1366,49 @@
   
   
   
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#approach" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Approach
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#output-format" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Output format
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#usage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Usage
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
   
 </nav>
                   </div>
@@ -1287,11 +1426,84 @@
   
 
 
+  <nav class="md-path" aria-label="Navigation" >
+    <ol class="md-path__list">
+      
+        
+  
+  
+    <li class="md-path__item">
+      <a href="../index.html" class="md-path__link">
+        
+  <span class="md-ellipsis">
+    Home
+  </span>
+
+      </a>
+    </li>
+  
+
+      
+      
+        
+  
+  
+    
+    
+      <li class="md-path__item">
+        <a href="dependency-resolution.html" class="md-path__link">
+          
+  <span class="md-ellipsis">
+    How it works
+  </span>
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ol>
+  </nav>
+
               
               <article class="md-content__inner md-typeset">
                 
-  <h1>404 - Not found</h1>
+                  
 
+
+  
+  
+
+
+<h1 id="how-sbom-generation-works">How SBOM generation works</h1>
+<p>ContainerHive generates Software Bills of Materials (SBOMs) for built images using <a href="https://github.com/anchore/syft">Syft</a>.</p>
+<h2 id="approach">Approach</h2>
+<p>Syft is integrated as a Go library rather than invoked as an external tool. This means:</p>
+<ul>
+<li>No additional runtime dependencies or Docker-in-Docker setup needed.</li>
+<li>Works in air-gapped and network-restricted environments.</li>
+<li>Operates directly on local OCI tar files produced during the build.</li>
+</ul>
+<h2 id="output-format">Output format</h2>
+<p>SBOMs are generated in <a href="https://cyclonedx.org/">CycloneDX</a> JSON format. Each image produces a <code>cyclonedx.json</code> file in its output directory.</p>
+<h2 id="usage">Usage</h2>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>ch<span class="w"> </span>sbom
+</span></code></pre></div>
+<p>The <code>sbom</code> command must run after <code>build</code>, as it operates on the built image artifacts.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
               </article>
             </div>
           
@@ -1328,10 +1540,10 @@
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": "/", "features": ["navigation.instant", "navigation.instant.prefetch", "navigation.tracking", "navigation.tabs", "navigation.path", "navigation.collapse"], "search": "/assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.instant", "navigation.instant.prefetch", "navigation.tracking", "navigation.tabs", "navigation.path", "navigation.collapse"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="/assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
       
     
   </body>
