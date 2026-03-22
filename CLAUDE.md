@@ -21,6 +21,15 @@ Go CLI tool for managing container image builds with dependency resolution.
 - `test-project/` — E2E test fixture for CI provider integration testing
 - Strict layering: `cmd` -> `pkg` -> `internal`. No backwards reference. Enforced by architecture tests.
 
+## Documentation
+
+- Documentation site built with mkdocs-material (`docs/`)
+- Preview locally: `pip install -r requirements-docs.txt && mkdocs serve`
+- Navigation managed via `docs/.nav.yml` (awesome-nav plugin)
+- ADRs managed via mkdocs-decision-records plugin
+- Hosted at [container-hive.timo-reymann.de](https://container-hive.timo-reymann.de/)
+- JSON schemas in `schemas/`, published to the docs site
+
 ## Workflow
 
 - GitHub PRs for all changes

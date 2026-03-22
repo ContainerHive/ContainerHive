@@ -1,6 +1,11 @@
 nav:
   - index.md
+  - installation.md
+  - usage
+  - configuration
+  - how-it-works
   - Development:
+      - development/*.md
       - Architecture Decision Records:
           - adr/*.md
 
