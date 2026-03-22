@@ -1,7 +1,7 @@
 ContainerHive
 ===
 
-> This project is under active development. It is not yet in any usable state. Use at your own risk.
+> This project is under active development. It is not yet in a stable state. Use at your own risk.
 
 [![LICENSE](https://img.shields.io/github/license/timo-reymann/ContainerHive)](https://github.com/timo-reymann/ContainerHive/blob/main/LICENSE)
 [![CircleCI](https://circleci.com/gh/timo-reymann/ContainerHive.svg?style=shield)](https://app.circleci.com/pipelines/github/timo-reymann/ContainerHive)
