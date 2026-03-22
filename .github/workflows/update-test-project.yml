@@ -17,7 +17,7 @@ jobs:
             -H "Circle-Token: ${CIRCLECI_TOKEN}" \
             -H "Content-Type: application/json" \
             -d '{
-              "branch": "'"${GITHUB_HEAD_REF}"'",
+              "branch": "${{ github.ref_name }}",
               "parameters": {
                 "update-test-project": true
               }
