@@ -9,10 +9,10 @@
       
       
       
-        <link rel="prev" href="../usage/testing.html">
+        <link rel="prev" href="../getting-started.html">
       
       
-        <link rel="next" href="image.html">
+        <link rel="next" href="caching.html">
       
       
         
@@ -23,7 +23,7 @@
     
     
       
-        <title>Configure your project - ContainerHive</title>
+        <title>Use build IDs for merge requests - ContainerHive</title>
       
     
     
@@ -74,7 +74,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#configure-your-project" class="md-skip">
+        <a href="#use-build-ids-for-merge-requests" class="md-skip">
           Skip to content
         </a>
       
@@ -107,7 +107,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Configure your project
+              Use build IDs for merge requests
             
           </span>
         </div>
@@ -243,11 +243,13 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="../usage/build-ids.html" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="build-ids.html" class="md-tabs__link">
           
   
   
@@ -263,13 +265,11 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
-        <a href="hive.html" class="md-tabs__link">
+      <li class="md-tabs__item">
+        <a href="../configuration/hive.html" class="md-tabs__link">
           
   
   
@@ -450,24 +450,29 @@
       
   
   
+    
   
   
+  
     
     
     
     
-      
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
         
           
-          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
             
   
   
@@ -485,7 +490,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_4">
             <span class="md-nav__icon md-icon"></span>
             
@@ -500,10 +505,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../usage/build-ids.html" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Use build IDs for merge requests
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="build-ids.html" class="md-nav__link md-nav__link--active">
         
   
   
@@ -519,6 +551,120 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#how-it-works" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How it works
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#recommended-mrpr-workflow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Recommended MR/PR workflow
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Recommended MR/PR workflow">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-build-with-a-build-id" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Build with a build ID
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-finalize-with-the-same-build-id" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Finalize with the same build ID
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-test-with-the-same-build-id" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Test with the same build ID
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-merge-and-build-without-build-id" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Merge and build without build ID
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#why-use-build-ids" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why use build IDs
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#flag-placement" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Flag placement
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -531,7 +677,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../usage/caching.html" class="md-nav__link">
+      <a href="caching.html" class="md-nav__link">
         
   
   
@@ -559,7 +705,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../usage/ci-integration.html" class="md-nav__link">
+      <a href="ci-integration.html" class="md-nav__link">
         
   
   
@@ -587,7 +733,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../usage/cli.html" class="md-nav__link">
+      <a href="cli.html" class="md-nav__link">
         
   
   
@@ -615,7 +761,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../usage/dockerfiles.html" class="md-nav__link">
+      <a href="dockerfiles.html" class="md-nav__link">
         
   
   
@@ -643,7 +789,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../usage/filtering.html" class="md-nav__link">
+      <a href="filtering.html" class="md-nav__link">
         
   
   
@@ -671,7 +817,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../usage/multi-platform.html" class="md-nav__link">
+      <a href="multi-platform.html" class="md-nav__link">
         
   
   
@@ -699,7 +845,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../usage/secrets-and-versions.html" class="md-nav__link">
+      <a href="secrets-and-versions.html" class="md-nav__link">
         
   
   
@@ -727,7 +873,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../usage/testing.html" class="md-nav__link">
+      <a href="testing.html" class="md-nav__link">
         
   
   
@@ -759,29 +905,24 @@
       
   
   
-    
   
   
-  
     
     
     
     
       
-        
-        
-      
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
         
           
-          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="">
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
             
   
   
@@ -799,7 +940,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_5">
             <span class="md-nav__icon md-icon"></span>
             
@@ -814,37 +955,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Configure your project
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="hive.html" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../configuration/hive.html" class="md-nav__link">
         
   
   
@@ -860,126 +974,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#example" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Example
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#fields" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Fields
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Fields">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#buildkit" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        buildkit
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#platforms" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        platforms
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cache" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        cache
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="cache">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#s3-cache" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        S3 cache
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#registry-cache" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Registry cache
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#registry" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        registry
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -992,7 +986,7 @@
   
   
     <li class="md-nav__item">
-      <a href="image.html" class="md-nav__link">
+      <a href="../configuration/image.html" class="md-nav__link">
         
   
   
@@ -1020,7 +1014,7 @@
   
   
     <li class="md-nav__item">
-      <a href="test.html" class="md-nav__link">
+      <a href="../configuration/test.html" class="md-nav__link">
         
   
   
@@ -1471,10 +1465,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#example" class="md-nav__link">
+  <a href="#how-it-works" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Example
+        How it works
       
     </span>
   </a>
@@ -1482,22 +1476,22 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#fields" class="md-nav__link">
+  <a href="#recommended-mrpr-workflow" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Fields
+        Recommended MR/PR workflow
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Fields">
+    <nav class="md-nav" aria-label="Recommended MR/PR workflow">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#buildkit" class="md-nav__link">
+  <a href="#1-build-with-a-build-id" class="md-nav__link">
     <span class="md-ellipsis">
       
-        buildkit
+        1. Build with a build ID
       
     </span>
   </a>
@@ -1505,10 +1499,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#platforms" class="md-nav__link">
+  <a href="#2-finalize-with-the-same-build-id" class="md-nav__link">
     <span class="md-ellipsis">
       
-        platforms
+        2. Finalize with the same build ID
       
     </span>
   </a>
@@ -1516,22 +1510,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#cache" class="md-nav__link">
+  <a href="#3-test-with-the-same-build-id" class="md-nav__link">
     <span class="md-ellipsis">
       
-        cache
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="cache">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#s3-cache" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        S3 cache
+        3. Test with the same build ID
       
     </span>
   </a>
@@ -1539,10 +1521,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#registry-cache" class="md-nav__link">
+  <a href="#4-merge-and-build-without-build-id" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Registry cache
+        4. Merge and build without build ID
       
     </span>
   </a>
@@ -1553,20 +1535,26 @@
     </nav>
   
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#registry" class="md-nav__link">
+      
+        <li class="md-nav__item">
+  <a href="#why-use-build-ids" class="md-nav__link">
     <span class="md-ellipsis">
       
-        registry
+        Why use build IDs
       
     </span>
   </a>
   
 </li>
-        
-      </ul>
-    </nav>
+      
+        <li class="md-nav__item">
+  <a href="#flag-placement" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Flag placement
+      
+    </span>
+  </a>
   
 </li>
       
@@ -1613,10 +1601,10 @@
     
     
       <li class="md-path__item">
-        <a href="hive.html" class="md-path__link">
+        <a href="build-ids.html" class="md-path__link">
           
   <span class="md-ellipsis">
-    Configuration
+    Usage
   </span>
 
         </a>
@@ -1638,148 +1626,74 @@
   
 
 
-<h1 id="configure-your-project">Configure your project</h1>
-<p>The <code>hive.yml</code> file is the project-level configuration file. It must be placed at the root of your ContainerHive project.</p>
-<p>A JSON schema is available at <a href="https://container-hive.timo-reymann.de/schemas/project.schema.json">container-hive.timo-reymann.de/schemas/project.schema.json</a>.</p>
-<h2 id="example">Example</h2>
-<div class="language-yaml highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nt">buildkit</span><span class="p">:</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">  </span><span class="nt">address</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">tcp://127.0.0.1:8502</span>
+<h1 id="use-build-ids-for-merge-requests">Use build IDs for merge requests</h1>
+<p>The <code>--build-id</code> flag appends a unique identifier to all image tags, allowing multiple builds to coexist in the same registry without overwriting each other. This is essential for merge request (MR) / pull request (PR) workflows where you want to build, test, and preview images before merging.</p>
+<h2 id="how-it-works">How it works</h2>
+<p>When you pass <code>--build-id</code>, all tags get a <code>.buildID</code> suffix:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Tag</th>
+<th style="text-align: left;">Build ID</th>
+<th style="text-align: left;">Result</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>1.0.0</code></td>
+<td style="text-align: left;"><code>mr-42</code></td>
+<td style="text-align: left;"><code>1.0.0.mr-42</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>1.0.0</code></td>
+<td style="text-align: left;"><code>build-1234</code></td>
+<td style="text-align: left;"><code>1.0.0.build-1234</code></td>
+</tr>
+</tbody>
+</table>
+<p>This applies to:</p>
+<ul>
+<li>Platform-specific push tags (e.g. <code>1.0.0.linux-amd64.mr-42</code>)</li>
+<li>Multi-arch manifest tags created by <code>finalize</code> (e.g. <code>1.0.0.mr-42</code>)</li>
+<li>Semantic version aliases created by <code>finalize</code> (e.g. <code>1.mr-42</code>, <code>1.0.mr-42</code>)</li>
+</ul>
+<h2 id="recommended-mrpr-workflow">Recommended MR/PR workflow</h2>
+<h3 id="1-build-with-a-build-id">1. Build with a build ID</h3>
+<p>Use the MR/PR number or CI job ID as the build ID:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># GitLab CI</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>ch<span class="w"> </span>--build-id<span class="w"> </span><span class="s2">&quot;mr-</span><span class="si">${</span><span class="nv">CI_MERGE_REQUEST_IID</span><span class="si">}</span><span class="s2">&quot;</span><span class="w"> </span>build
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="nt">platforms</span><span class="p">:</span>
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">linux/amd64</span>
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">linux/arm64</span>
-</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>
-</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="nt">cache</span><span class="p">:</span>
-</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">s3</span>
-</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="w">  </span><span class="nt">endpoint</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">http://garage:3900</span>
-</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="w">  </span><span class="nt">bucket</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">buildkit-cache</span>
-</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="w">  </span><span class="nt">region</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">garage</span>
-</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="w">  </span><span class="nt">access_key_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;your-access-key&gt;</span>
-</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a><span class="w">  </span><span class="nt">secret_access_key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;your-secret-key&gt;</span>
-</span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a><span class="w">  </span><span class="nt">use_path_style</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
-</span><span id="__span-0-16"><a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a>
-</span><span id="__span-0-17"><a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a><span class="nt">registry</span><span class="p">:</span>
-</span><span id="__span-0-18"><a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a><span class="w">  </span><span class="nt">address</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">localhost:8500</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="c1"># GitHub Actions</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>ch<span class="w"> </span>--build-id<span class="w"> </span><span class="s2">&quot;pr-</span><span class="si">${</span><span class="nv">GITHUB_EVENT_NUMBER</span><span class="si">}</span><span class="s2">&quot;</span><span class="w"> </span>build
 </span></code></pre></div>
-<h2 id="fields">Fields</h2>
-<h3 id="buildkit"><code>buildkit</code></h3>
-<p>Configuration for the BuildKit daemon.</p>
-<table>
-<thead>
-<tr>
-<th style="text-align: left;">Field</th>
-<th style="text-align: left;">Type</th>
-<th style="text-align: left;">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: left;"><code>address</code></td>
-<td style="text-align: left;">string</td>
-<td style="text-align: left;">BuildKit daemon address (e.g. <code>tcp://127.0.0.1:8502</code>)</td>
-</tr>
-</tbody>
-</table>
-<h3 id="platforms"><code>platforms</code></h3>
-<p>List of target platforms for multi-architecture builds.</p>
-<div class="language-yaml highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nt">platforms</span><span class="p">:</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">linux/amd64</span>
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">linux/arm64</span>
+<h3 id="2-finalize-with-the-same-build-id">2. Finalize with the same build ID</h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>ch<span class="w"> </span>--build-id<span class="w"> </span><span class="s2">&quot;mr-</span><span class="si">${</span><span class="nv">CI_MERGE_REQUEST_IID</span><span class="si">}</span><span class="s2">&quot;</span><span class="w"> </span>finalize
 </span></code></pre></div>
-<h3 id="cache"><code>cache</code></h3>
-<p>Build cache configuration. Supports S3-compatible storage or registry-based caching.</p>
-<h4 id="s3-cache">S3 cache</h4>
-<table>
-<thead>
-<tr>
-<th style="text-align: left;">Field</th>
-<th style="text-align: left;">Type</th>
-<th style="text-align: left;">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: left;"><code>type</code></td>
-<td style="text-align: left;">string</td>
-<td style="text-align: left;">Must be <code>s3</code></td>
-</tr>
-<tr>
-<td style="text-align: left;"><code>endpoint</code></td>
-<td style="text-align: left;">string</td>
-<td style="text-align: left;">S3 endpoint URL</td>
-</tr>
-<tr>
-<td style="text-align: left;"><code>bucket</code></td>
-<td style="text-align: left;">string</td>
-<td style="text-align: left;">Bucket name</td>
-</tr>
-<tr>
-<td style="text-align: left;"><code>region</code></td>
-<td style="text-align: left;">string</td>
-<td style="text-align: left;">S3 region</td>
-</tr>
-<tr>
-<td style="text-align: left;"><code>access_key_id</code></td>
-<td style="text-align: left;">string</td>
-<td style="text-align: left;">Access key</td>
-</tr>
-<tr>
-<td style="text-align: left;"><code>secret_access_key</code></td>
-<td style="text-align: left;">string</td>
-<td style="text-align: left;">Secret key</td>
-</tr>
-<tr>
-<td style="text-align: left;"><code>use_path_style</code></td>
-<td style="text-align: left;">boolean</td>
-<td style="text-align: left;">Use path-style addressing</td>
-</tr>
-</tbody>
-</table>
-<h4 id="registry-cache">Registry cache</h4>
-<table>
-<thead>
-<tr>
-<th style="text-align: left;">Field</th>
-<th style="text-align: left;">Type</th>
-<th style="text-align: left;">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: left;"><code>type</code></td>
-<td style="text-align: left;">string</td>
-<td style="text-align: left;">Must be <code>registry</code></td>
-</tr>
-<tr>
-<td style="text-align: left;"><code>ref</code></td>
-<td style="text-align: left;">string</td>
-<td style="text-align: left;">Registry reference (e.g. <code>registry:5000/cache</code>)</td>
-</tr>
-<tr>
-<td style="text-align: left;"><code>insecure</code></td>
-<td style="text-align: left;">boolean</td>
-<td style="text-align: left;">Allow insecure connections</td>
-</tr>
-</tbody>
-</table>
-<h3 id="registry"><code>registry</code></h3>
-<p>Local OCI registry used for inter-image dependencies and multi-arch manifest creation.</p>
-<table>
-<thead>
-<tr>
-<th style="text-align: left;">Field</th>
-<th style="text-align: left;">Type</th>
-<th style="text-align: left;">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: left;"><code>address</code></td>
-<td style="text-align: left;">string</td>
-<td style="text-align: left;">Registry address (e.g. <code>localhost:8500</code>)</td>
-</tr>
-</tbody>
-</table>
+<p>This creates manifests like <code>my-image:1.0.0.mr-42</code> and aliases like <code>my-image:1.mr-42</code>.</p>
+<h3 id="3-test-with-the-same-build-id">3. Test with the same build ID</h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>ch<span class="w"> </span>--build-id<span class="w"> </span><span class="s2">&quot;mr-</span><span class="si">${</span><span class="nv">CI_MERGE_REQUEST_IID</span><span class="si">}</span><span class="s2">&quot;</span><span class="w"> </span><span class="nb">test</span>
+</span></code></pre></div>
+<h3 id="4-merge-and-build-without-build-id">4. Merge and build without build ID</h3>
+<p>On the main branch, build without <code>--build-id</code> to produce the final tags:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>ch<span class="w"> </span>build
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>ch<span class="w"> </span>finalize
+</span></code></pre></div>
+<p>This creates the clean <code>my-image:1.0.0</code> tag and aliases <code>my-image:1.0</code>, <code>my-image:1</code>.</p>
+<h2 id="why-use-build-ids">Why use build IDs</h2>
+<p>Without build IDs, concurrent MR builds would overwrite each other's tags in the registry. Build IDs solve this by namespacing tags per MR:</p>
+<ul>
+<li><strong>MR 42</strong> pushes <code>1.0.0.mr-42</code> — safe to test and preview</li>
+<li><strong>MR 43</strong> pushes <code>1.0.0.mr-43</code> — doesn't conflict with MR 42</li>
+<li><strong>Main branch</strong> pushes <code>1.0.0</code> — the final, clean tag after merge</li>
+</ul>
+<h2 id="flag-placement">Flag placement</h2>
+<p><code>--build-id</code> is a global flag, placed before the subcommand:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>ch<span class="w"> </span>--build-id<span class="w"> </span><span class="s2">&quot;mr-42&quot;</span><span class="w"> </span>build
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>ch<span class="w"> </span>--build-id<span class="w"> </span><span class="s2">&quot;mr-42&quot;</span><span class="w"> </span>finalize
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>ch<span class="w"> </span>--build-id<span class="w"> </span><span class="s2">&quot;mr-42&quot;</span><span class="w"> </span><span class="nb">test</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>ch<span class="w"> </span>--build-id<span class="w"> </span><span class="s2">&quot;mr-42&quot;</span><span class="w"> </span>sbom
+</span></code></pre></div>
+<p>Use the same build ID across all commands in a single pipeline run to keep tags consistent.</p>
 
 
 
