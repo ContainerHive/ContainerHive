@@ -2,7 +2,8 @@ name: Trigger Update Test Project
 
 on:
   pull_request:
-    types: [labeled, synchronize]
+    types: [labeled]
+  push: {}
 
 jobs:
   trigger-circleci:
