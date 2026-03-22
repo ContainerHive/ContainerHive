@@ -13,7 +13,7 @@ jobs:
     steps:
       - name: Trigger CircleCI pipeline
         run: |
-          curl -s -X POST "https://circleci.com/api/v2/project/gh/timo-reymann/ContainerHive/pipeline" \
+          curl -s -X POST "https://circleci.com/api/v2/project/gh/timo-reymann/ContainerHive/pipeline/run" \
             -H "Circle-Token: ${CIRCLECI_TOKEN}" \
             -H "Content-Type: application/json" \
             -d '{
