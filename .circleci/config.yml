@@ -212,6 +212,7 @@ workflows:
       - update-test-project:
           requires:
             - check-update-test-project-label
+            - publish-container-image-snapshot
       - test
       - build:
           requires:
