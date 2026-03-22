@@ -11,5 +11,8 @@ build-{{ $.Image.Name }}-{{ . }}:
 {{- range $.Image.Dependencies }}
     - manifest-{{ . }}
 {{- end }}
+  artifacts:
+    reports:
+      cyclonedx: {{ $.Ctx.Dist }}/{{ $.Image.Name }}/*/*/cyclonedx.json
 {{ end }}
 {{- end }}

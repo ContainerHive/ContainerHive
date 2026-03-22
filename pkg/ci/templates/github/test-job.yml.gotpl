@@ -7,12 +7,12 @@
       - uses: actions/checkout@v6
         with:
           lfs: true
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v7
         with:
           name: generated
           path: {{ .Ctx.Dist }}/
 {{- if $.Ctx.Artifacts }}
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v7
         with:
           name: {{ .Image.Name }}-manifest
           path: {{ .Ctx.Dist }}/
@@ -24,4 +24,16 @@
       - run: echo "${{ "{{" }} secrets.GITHUB_TOKEN {{ "}}" }}" | docker run --rm --entrypoint="" -u "$(id -u):$(id -g)" -e CI=1 -i -e HOME="$RUNNER_TEMP/ch" -v "$RUNNER_TEMP/ch:$RUNNER_TEMP/ch" -v "$GITHUB_WORKSPACE:$GITHUB_WORKSPACE" -w "$GITHUB_WORKSPACE" --network ch-net -e DOCKER_HOST=tcp://dind:2375 $CH_IMAGE {{ .Ctx.ChCmd }} login -u "${{ "{{" }} github.actor {{ "}}" }}" --password-stdin ghcr.io
       - run: docker run --rm --entrypoint="" -u "$(id -u):$(id -g)" -e CI=1 -e HOME="$RUNNER_TEMP/ch" -v "$RUNNER_TEMP/ch:$RUNNER_TEMP/ch" -v "$GITHUB_WORKSPACE:$GITHUB_WORKSPACE" -w "$GITHUB_WORKSPACE" --network ch-net -e DOCKER_HOST=tcp://dind:2375 $CH_IMAGE {{ .Ctx.ChCmd }} wait --docker-socket
       - run: docker run --rm --entrypoint="" -u "$(id -u):$(id -g)" -e CI=1 -e HOME="$RUNNER_TEMP/ch" -v "$RUNNER_TEMP/ch:$RUNNER_TEMP/ch" -v "$GITHUB_WORKSPACE:$GITHUB_WORKSPACE" -w "$GITHUB_WORKSPACE" --network ch-net -e DOCKER_HOST=tcp://dind:2375 $CH_IMAGE {{ .Ctx.ChCmd }} test {{ .Image.Name }} --build-id "$SNAPSHOT_ID"
+      - name: Publish Test Report
+        id: test-report
+        uses: mikepenz/action-junit-report@v6
+        if: success() || failure()
+        with:
+          check_name: "Container Structure Tests - {{ .Image.Name }}"
+          report_paths: '{{ .Ctx.Dist }}/**/*-cst-report.xml'
+          require_tests: 'false'
+          detailed_summary: 'true'
+          comment: 'true'
+          updateComment: 'true'
+          include_passed: 'true'
 {{- end }}

@@ -6,4 +6,10 @@ test-{{ .Image.Name }}:
   needs:
     - generate
     - manifest-{{ .Image.Name }}
+  artifacts:
+    when: always
+    paths:
+      - {{ .Ctx.Dist }}/**/*-cst-report.xml
+    reports:
+      junit: {{ .Ctx.Dist }}/**/*-cst-report.xml
 {{- end }}
