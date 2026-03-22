@@ -129,6 +129,7 @@ jobs:
           command: |
             if [ -z "$CIRCLE_PULL_REQUEST" ]; then
               echo "Not a PR, skipping"
+              circleci-agent step halt
               exit 0
             fi
             PR_NUMBER=$(echo "$CIRCLE_PULL_REQUEST" | grep -oE '[0-9]+$')
@@ -137,9 +138,9 @@ jobs:
               | jq -r '.labels[].name')
             if echo "$LABELS" | grep -q "^update-test-project$"; then
               echo "Label found, proceeding"
-              echo "export UPDATE_TEST_PROJECT=true" >> "$BASH_ENV"
             else
               echo "Label not found, skipping"
+              circleci-agent step halt
             fi
       - go/with-cache:
           key: update-test-project
@@ -147,18 +148,13 @@ jobs:
             - go/mod-download-cached
             - run:
                 name: Checkout test project
-                command: |
-                  [ "$UPDATE_TEST_PROJECT" = "true" ] || exit 0
-                  make checkout-test-project
+                command: make checkout-test-project
             - run:
                 name: Render test project CI
-                command: |
-                  [ "$UPDATE_TEST_PROJECT" = "true" ] || exit 0
-                  make render-test-project-ci
+                command: make render-test-project-ci
             - run:
                 name: Commit and push changes
                 command: |
-                  [ "$UPDATE_TEST_PROJECT" = "true" ] || exit 0
                   cd test-project
                   git config user.name "CircleCI"
                   git config user.email "no-reply@timo-reymann.de"
