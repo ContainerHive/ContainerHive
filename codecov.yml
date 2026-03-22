@@ -9,3 +9,7 @@ ignore:
   - tools/**
   # Only used by tests
   - internal/testutil/buildkit.go
+  # Build info is not relevant for coverage
+  - internal/buildinfo/*.go
+  # Simple getter
+  - pkg/version/version.go
