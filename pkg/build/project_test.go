@@ -429,3 +429,368 @@ func TestBuildWithDeps_EmptyOrder(t *testing.T) {
 		t.Errorf("expected no error for empty build order, got: %v", err)
 	}
 }
+
+// buildOrderWithDeps creates a BuildOrder that has dependencies.
+// It sets up the dist directory with two images where "app" depends on "base".
+func buildOrderWithDeps(t *testing.T, distPath string, project *model.ContainerHiveProject) *deps.BuildOrder {
+	t.Helper()
+	bo, err := deps.ResolveOrder(distPath, project)
+	if err != nil {
+		t.Fatalf("failed to create build order with deps: %v", err)
+	}
+	if !bo.HasDependencies() {
+		t.Fatal("expected build order to have dependencies")
+	}
+	return bo
+}
+
+func TestBuildWithDeps_ImageNotInProject(t *testing.T) {
+	distPath := t.TempDir()
+
+	// Create dist dirs so ScanRenderedProject picks them up.
+	if err := os.MkdirAll(filepath.Join(distPath, "found"), 0755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.MkdirAll(filepath.Join(distPath, "notfound"), 0755); err != nil {
+		t.Fatal(err)
+	}
+
+	foundImg := &model.Image{
+		Name:      "found",
+		Tags:      map[string]*model.Tag{}, // no tags → nothing to build
+		DependsOn: []string{"notfound"},
+	}
+	notfoundImg := &model.Image{
+		Name: "notfound",
+		Tags: map[string]*model.Tag{},
+	}
+
+	project := &model.ContainerHiveProject{
+		ImagesByIdentifier: map[string]*model.Image{
+			// "notfound" deliberately omitted from identifier lookup
+			"found": foundImg,
+		},
+		ImagesByName: map[string][]*model.Image{
+			"found":    {foundImg},
+			"notfound": {notfoundImg},
+		},
+	}
+
+	bo := buildOrderWithDeps(t, distPath, project)
+	opts := &ProjectBuildOpts{
+		Project:     project,
+		BuildOrder:  bo,
+		DistPath:    distPath,
+		ProgressOut: os.Stdout,
+	}
+
+	// "notfound" is in order but not in ImagesByIdentifier → warning, continue.
+	// "found" is in ImagesByIdentifier but has no tags → nothing to build.
+	err := buildWithDeps(context.Background(), &Client{inner: nil}, opts)
+	if err != nil {
+		t.Errorf("expected no error when image not in project, got: %v", err)
+	}
+}
+
+func TestBuildWithDeps_FiltersSkipAllTags(t *testing.T) {
+	distPath := t.TempDir()
+
+	baseDir := filepath.Join(distPath, "base", "1.0")
+	appDir := filepath.Join(distPath, "app", "1.0")
+	if err := os.MkdirAll(baseDir, 0755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.MkdirAll(appDir, 0755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(baseDir, "Dockerfile"), []byte("FROM scratch\n"), 0644); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(appDir, "Dockerfile"), []byte("FROM scratch\n"), 0644); err != nil {
+		t.Fatal(err)
+	}
+
+	baseImg := &model.Image{
+		Name: "base",
+		Tags: map[string]*model.Tag{"1.0": {Name: "1.0"}},
+	}
+	appImg := &model.Image{
+		Name:      "app",
+		Tags:      map[string]*model.Tag{"1.0": {Name: "1.0"}},
+		DependsOn: []string{"base"},
+	}
+
+	project := &model.ContainerHiveProject{
+		Config:             model.HiveProjectConfig{Platforms: []string{"linux/amd64"}},
+		ImagesByIdentifier: map[string]*model.Image{"base": baseImg, "app": appImg},
+		ImagesByName:       map[string][]*model.Image{"base": {baseImg}, "app": {appImg}},
+	}
+
+	bo := buildOrderWithDeps(t, distPath, project)
+	opts := &ProjectBuildOpts{
+		Project:     project,
+		BuildOrder:  bo,
+		DistPath:    distPath,
+		ProgressOut: os.Stdout,
+		Filters:     []Filter{{ImageName: "nonexistent"}}, // matches nothing
+	}
+
+	err := buildWithDeps(context.Background(), &Client{inner: nil}, opts)
+	if err != nil {
+		t.Errorf("expected no error when all tags filtered out, got: %v", err)
+	}
+}
+
+func TestBuildWithDeps_BuildTagMkdirFails(t *testing.T) {
+	distPath := t.TempDir()
+
+	baseDir := filepath.Join(distPath, "base", "1.0")
+	appDir := filepath.Join(distPath, "app", "1.0")
+	if err := os.MkdirAll(baseDir, 0755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.MkdirAll(appDir, 0755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(baseDir, "Dockerfile"), []byte("FROM scratch\n"), 0644); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(appDir, "Dockerfile"), []byte("FROM scratch\n"), 0644); err != nil {
+		t.Fatal(err)
+	}
+
+	// Block MkdirAll: TarFilePath creates distPath/base/1.0/linux-amd64/image.tar
+	// Place a regular file at linux-amd64 so MkdirAll cannot create the dir.
+	if err := os.WriteFile(filepath.Join(baseDir, "linux-amd64"), []byte("blocker"), 0644); err != nil {
+		t.Fatal(err)
+	}
+
+	baseImg := &model.Image{
+		Name: "base",
+		Tags: map[string]*model.Tag{"1.0": {Name: "1.0"}},
+	}
+	appImg := &model.Image{
+		Name:      "app",
+		Tags:      map[string]*model.Tag{"1.0": {Name: "1.0"}},
+		DependsOn: []string{"base"},
+	}
+
+	project := &model.ContainerHiveProject{
+		Config:             model.HiveProjectConfig{Platforms: []string{"linux/amd64"}},
+		ImagesByIdentifier: map[string]*model.Image{"base": baseImg, "app": appImg},
+		ImagesByName:       map[string][]*model.Image{"base": {baseImg}, "app": {appImg}},
+	}
+
+	bo := buildOrderWithDeps(t, distPath, project)
+	opts := &ProjectBuildOpts{
+		Project:     project,
+		BuildOrder:  bo,
+		DistPath:    distPath,
+		ProgressOut: os.Stdout,
+	}
+
+	err := buildWithDeps(context.Background(), &Client{inner: nil}, opts)
+	if err == nil {
+		t.Fatal("expected error from buildTag MkdirAll failure, got nil")
+	}
+	if !strings.Contains(err.Error(), "failed to create platform dir") {
+		t.Errorf("expected 'failed to create platform dir' error, got: %v", err)
+	}
+}
+
+func TestBuildWithDeps_VariantDockerfileNotFound(t *testing.T) {
+	distPath := t.TempDir()
+
+	baseDir := filepath.Join(distPath, "base", "1.0")
+	appDir := filepath.Join(distPath, "app", "1.0")
+	if err := os.MkdirAll(baseDir, 0755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.MkdirAll(appDir, 0755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(baseDir, "Dockerfile"), []byte("FROM scratch\n"), 0644); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(appDir, "Dockerfile"), []byte("FROM scratch\n"), 0644); err != nil {
+		t.Fatal(err)
+	}
+
+	variantDef := &model.ImageVariant{
+		Name:      "node",
+		TagSuffix: "-node",
+	}
+	baseImg := &model.Image{
+		Name: "base",
+		Tags: map[string]*model.Tag{"1.0": {Name: "1.0"}},
+		Variants: map[string]*model.ImageVariant{
+			"node": variantDef,
+		},
+	}
+	appImg := &model.Image{
+		Name:      "app",
+		Tags:      map[string]*model.Tag{"1.0": {Name: "1.0"}},
+		DependsOn: []string{"base"},
+	}
+
+	project := &model.ContainerHiveProject{
+		Config:             model.HiveProjectConfig{Platforms: []string{"linux/amd64"}},
+		ImagesByIdentifier: map[string]*model.Image{"base": baseImg, "app": appImg},
+		ImagesByName:       map[string][]*model.Image{"base": {baseImg}, "app": {appImg}},
+	}
+
+	bo := buildOrderWithDeps(t, distPath, project)
+	// Filter to only the variant tag (skip base), so buildTag is not called.
+	opts := &ProjectBuildOpts{
+		Project:     project,
+		BuildOrder:  bo,
+		DistPath:    distPath,
+		ProgressOut: os.Stdout,
+		Filters:     []Filter{{ImageName: "base", TagName: "1.0-node"}},
+	}
+
+	// Variant Dockerfile (base/1.0-node/Dockerfile) does not exist → warning, no error.
+	err := buildWithDeps(context.Background(), &Client{inner: nil}, opts)
+	if err != nil {
+		t.Errorf("expected no error for missing variant Dockerfile, got: %v", err)
+	}
+}
+
+func TestBuildWithDeps_BuildVariantMkdirFails(t *testing.T) {
+	distPath := t.TempDir()
+
+	baseDir := filepath.Join(distPath, "base", "1.0")
+	appDir := filepath.Join(distPath, "app", "1.0")
+	variantDir := filepath.Join(distPath, "base", "1.0-node")
+	if err := os.MkdirAll(baseDir, 0755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.MkdirAll(appDir, 0755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.MkdirAll(variantDir, 0755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(baseDir, "Dockerfile"), []byte("FROM scratch\n"), 0644); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(appDir, "Dockerfile"), []byte("FROM scratch\n"), 0644); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(variantDir, "Dockerfile"), []byte("FROM scratch\n"), 0644); err != nil {
+		t.Fatal(err)
+	}
+
+	// Block MkdirAll for the variant platform dir.
+	if err := os.WriteFile(filepath.Join(variantDir, "linux-amd64"), []byte("blocker"), 0644); err != nil {
+		t.Fatal(err)
+	}
+
+	variantDef := &model.ImageVariant{
+		Name:      "node",
+		TagSuffix: "-node",
+	}
+	baseImg := &model.Image{
+		Name: "base",
+		Tags: map[string]*model.Tag{"1.0": {Name: "1.0"}},
+		Variants: map[string]*model.ImageVariant{
+			"node": variantDef,
+		},
+	}
+	appImg := &model.Image{
+		Name:      "app",
+		Tags:      map[string]*model.Tag{"1.0": {Name: "1.0"}},
+		DependsOn: []string{"base"},
+	}
+
+	project := &model.ContainerHiveProject{
+		Config:             model.HiveProjectConfig{Platforms: []string{"linux/amd64"}},
+		ImagesByIdentifier: map[string]*model.Image{"base": baseImg, "app": appImg},
+		ImagesByName:       map[string][]*model.Image{"base": {baseImg}, "app": {appImg}},
+	}
+
+	bo := buildOrderWithDeps(t, distPath, project)
+	// Filter to only the variant tag so base tag is skipped.
+	opts := &ProjectBuildOpts{
+		Project:     project,
+		BuildOrder:  bo,
+		DistPath:    distPath,
+		ProgressOut: os.Stdout,
+		Filters:     []Filter{{ImageName: "base", TagName: "1.0-node"}},
+	}
+
+	err := buildWithDeps(context.Background(), &Client{inner: nil}, opts)
+	if err == nil {
+		t.Fatal("expected error from buildVariant MkdirAll failure, got nil")
+	}
+	if !strings.Contains(err.Error(), "failed to create platform dir") {
+		t.Errorf("expected 'failed to create platform dir' error, got: %v", err)
+	}
+}
+
+func TestBuildWithDeps_FilterMatchesBaseNotVariant(t *testing.T) {
+	distPath := t.TempDir()
+
+	baseDir := filepath.Join(distPath, "base", "1.0")
+	appDir := filepath.Join(distPath, "app", "1.0")
+	if err := os.MkdirAll(baseDir, 0755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.MkdirAll(appDir, 0755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(baseDir, "Dockerfile"), []byte("FROM scratch\n"), 0644); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(appDir, "Dockerfile"), []byte("FROM scratch\n"), 0644); err != nil {
+		t.Fatal(err)
+	}
+
+	// Block MkdirAll for the base tag to prove it's attempted.
+	if err := os.WriteFile(filepath.Join(baseDir, "linux-amd64"), []byte("blocker"), 0644); err != nil {
+		t.Fatal(err)
+	}
+
+	variantDef := &model.ImageVariant{
+		Name:      "node",
+		TagSuffix: "-node",
+	}
+	baseImg := &model.Image{
+		Name: "base",
+		Tags: map[string]*model.Tag{"1.0": {Name: "1.0"}},
+		Variants: map[string]*model.ImageVariant{
+			"node": variantDef,
+		},
+	}
+	appImg := &model.Image{
+		Name:      "app",
+		Tags:      map[string]*model.Tag{"1.0": {Name: "1.0"}},
+		DependsOn: []string{"base"},
+	}
+
+	project := &model.ContainerHiveProject{
+		Config:             model.HiveProjectConfig{Platforms: []string{"linux/amd64"}},
+		ImagesByIdentifier: map[string]*model.Image{"base": baseImg, "app": appImg},
+		ImagesByName:       map[string][]*model.Image{"base": {baseImg}, "app": {appImg}},
+	}
+
+	bo := buildOrderWithDeps(t, distPath, project)
+	// Filter matches "base:1.0" (base tag) but NOT "base:1.0-node" (variant).
+	opts := &ProjectBuildOpts{
+		Project:     project,
+		BuildOrder:  bo,
+		DistPath:    distPath,
+		ProgressOut: os.Stdout,
+		Filters:     []Filter{{ImageName: "base", TagName: "1.0"}},
+	}
+
+	// buildTag is called for base:1.0 and fails on MkdirAll, proving the base
+	// was attempted. Variant is skipped by filter.
+	err := buildWithDeps(context.Background(), &Client{inner: nil}, opts)
+	if err == nil {
+		t.Fatal("expected error from base tag build, got nil")
+	}
+	if !strings.Contains(err.Error(), "failed to create platform dir") {
+		t.Errorf("expected MkdirAll error, got: %v", err)
+	}
+}
