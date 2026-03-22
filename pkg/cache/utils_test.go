@@ -3,8 +3,6 @@ package cache
 import (
 	"testing"
 
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
 	"github.com/timo-reymann/ContainerHive/pkg/model"
 )
 
@@ -65,31 +63,61 @@ func TestBuildCacheFromConfig(t *testing.T) {
 			cache, err := BuildCacheFromConfig(tt.config, tt.cacheKey)
 
 			if tt.wantErr {
-				require.Error(t, err)
-				assert.Nil(t, cache)
+				if err == nil {
+					t.Fatal("expected error, got nil")
+				}
+				if cache != nil {
+					t.Errorf("expected nil cache, got %v", cache)
+				}
 				return
 			}
 
-			require.NoError(t, err)
+			if err != nil {
+				t.Fatalf("unexpected error: %v", err)
+			}
 
 			switch tt.expectType {
 			case "nil":
-				assert.Nil(t, cache)
+				if cache != nil {
+					t.Errorf("expected nil cache, got %v", cache)
+				}
 			case "s3":
 				s3Cache, ok := cache.(*S3BuildKitCache)
-				require.True(t, ok)
-				assert.Equal(t, "https://s3.example.com", s3Cache.EndpointUrl)
-				assert.Equal(t, "my-bucket", s3Cache.Bucket)
-				assert.Equal(t, "us-west-2", s3Cache.Region)
-				assert.Equal(t, "test-access-key", s3Cache.AccessKeyId)
-				assert.Equal(t, "test-secret-key", s3Cache.SecretAccessKey)
-				assert.True(t, s3Cache.UsePathStyle)
-				assert.Equal(t, "test-key", s3Cache.CacheKey)
+				if !ok {
+					t.Fatalf("expected *S3BuildKitCache, got %T", cache)
+				}
+				if s3Cache.EndpointUrl != "https://s3.example.com" {
+					t.Errorf("EndpointUrl = %q, want %q", s3Cache.EndpointUrl, "https://s3.example.com")
+				}
+				if s3Cache.Bucket != "my-bucket" {
+					t.Errorf("Bucket = %q, want %q", s3Cache.Bucket, "my-bucket")
+				}
+				if s3Cache.Region != "us-west-2" {
+					t.Errorf("Region = %q, want %q", s3Cache.Region, "us-west-2")
+				}
+				if s3Cache.AccessKeyId != "test-access-key" {
+					t.Errorf("AccessKeyId = %q, want %q", s3Cache.AccessKeyId, "test-access-key")
+				}
+				if s3Cache.SecretAccessKey != "test-secret-key" {
+					t.Errorf("SecretAccessKey = %q, want %q", s3Cache.SecretAccessKey, "test-secret-key")
+				}
+				if !s3Cache.UsePathStyle {
+					t.Error("expected UsePathStyle to be true")
+				}
+				if s3Cache.CacheKey != "test-key" {
+					t.Errorf("CacheKey = %q, want %q", s3Cache.CacheKey, "test-key")
+				}
 			case "registry":
 				regCache, ok := cache.(*RegistryCache)
-				require.True(t, ok)
-				assert.Equal(t, "my-registry.example.com/my-repo:cache", regCache.CacheRef)
-				assert.True(t, regCache.Insecure)
+				if !ok {
+					t.Fatalf("expected *RegistryCache, got %T", cache)
+				}
+				if regCache.CacheRef != "my-registry.example.com/my-repo:cache" {
+					t.Errorf("CacheRef = %q, want %q", regCache.CacheRef, "my-registry.example.com/my-repo:cache")
+				}
+				if !regCache.Insecure {
+					t.Error("expected Insecure to be true")
+				}
 			}
 		})
 	}

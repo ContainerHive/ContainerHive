@@ -5,9 +5,6 @@ import (
 	"path/filepath"
 	"strings"
 	"testing"
-
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
 )
 
 // fileExists is a helper function to check if a file exists
@@ -23,7 +20,9 @@ func TestHiveDepsCleanup(t *testing.T) {
 
 		// Create a temporary file to track cleanup
 		tempFile, err := os.CreateTemp("", "test-cleanup-*")
-		require.NoError(t, err)
+		if err != nil {
+			t.Fatalf("failed to create temp file: %v", err)
+		}
 		tempFile.Close()
 
 		// Add cleanup function
@@ -33,14 +32,18 @@ func TestHiveDepsCleanup(t *testing.T) {
 
 		// Verify file exists before cleanup
 		_, err = os.Stat(tempFile.Name())
-		require.NoError(t, err)
+		if err != nil {
+			t.Fatalf("temp file should exist before cleanup: %v", err)
+		}
 
 		// Run cleanup
 		d.Cleanup()
 
 		// Verify file is removed
 		_, err = os.Stat(tempFile.Name())
-		assert.True(t, os.IsNotExist(err))
+		if !os.IsNotExist(err) {
+			t.Errorf("expected file to be removed after cleanup, got err: %v", err)
+		}
 	})
 }
 
@@ -52,7 +55,9 @@ func TestResolveHiveDeps(t *testing.T) {
 		dockerfileContent := `FROM ubuntu:24.04
 RUN apt-get update
 `
-		require.NoError(t, os.WriteFile(dockerfile, []byte(dockerfileContent), 0644))
+		if err := os.WriteFile(dockerfile, []byte(dockerfileContent), 0644); err != nil {
+			t.Fatalf("failed to write Dockerfile: %v", err)
+		}
 
 		// Call ResolveHiveDeps
 		result, err := ResolveHiveDeps(HiveDepsOpts{
@@ -62,8 +67,12 @@ RUN apt-get update
 		})
 
 		// Should return nil (no error) and nil result when no hive deps
-		require.NoError(t, err)
-		assert.Nil(t, result)
+		if err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
+		if result != nil {
+			t.Errorf("expected nil result, got %v", result)
+		}
 	})
 
 	t.Run("hive dependencies not built yet", func(t *testing.T) {
@@ -73,7 +82,9 @@ RUN apt-get update
 		dockerfileContent := `FROM __hive__/base:latest
 COPY --from=__hive__/util:1.0 /app /app
 `
-		require.NoError(t, os.WriteFile(dockerfile, []byte(dockerfileContent), 0644))
+		if err := os.WriteFile(dockerfile, []byte(dockerfileContent), 0644); err != nil {
+			t.Fatalf("failed to write Dockerfile: %v", err)
+		}
 
 		// Call ResolveHiveDeps - should fail because dependencies don't exist and no registry
 		result, err := ResolveHiveDeps(HiveDepsOpts{
@@ -83,9 +94,15 @@ COPY --from=__hive__/util:1.0 /app /app
 		})
 
 		// Should return error because dependencies aren't built
-		require.Error(t, err)
-		assert.Nil(t, result)
-		assert.Contains(t, err.Error(), "not built yet")
+		if err == nil {
+			t.Fatal("expected error, got nil")
+		}
+		if result != nil {
+			t.Errorf("expected nil result, got %v", result)
+		}
+		if !strings.Contains(err.Error(), "not built yet") {
+			t.Errorf("expected error to contain 'not built yet', got: %v", err)
+		}
 	})
 
 	t.Run("hive dependencies fall back to registry", func(t *testing.T) {
@@ -94,7 +111,9 @@ COPY --from=__hive__/util:1.0 /app /app
 		dockerfileContent := `FROM __hive__/base:latest
 RUN echo hello
 `
-		require.NoError(t, os.WriteFile(dockerfile, []byte(dockerfileContent), 0644))
+		if err := os.WriteFile(dockerfile, []byte(dockerfileContent), 0644); err != nil {
+			t.Fatalf("failed to write Dockerfile: %v", err)
+		}
 
 		// No local tars, but registry is configured
 		result, err := ResolveHiveDeps(HiveDepsOpts{
@@ -105,11 +124,22 @@ RUN echo hello
 			BuildID:         "42",
 		})
 
-		require.NoError(t, err)
-		require.NotNil(t, result)
-		assert.Contains(t, result.NamedContexts, "context:hive-dep/base:latest")
-		assert.Equal(t, "docker-image://ghcr.io/myorg/base:latest.42", result.NamedContexts["context:hive-dep/base:latest"])
-		assert.Empty(t, result.OCIStores)
+		if err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
+		if result == nil {
+			t.Fatal("expected non-nil result")
+		}
+		contextVal, ok := result.NamedContexts["context:hive-dep/base:latest"]
+		if !ok {
+			t.Error("expected NamedContexts to contain key 'context:hive-dep/base:latest'")
+		}
+		if contextVal != "docker-image://ghcr.io/myorg/base:latest.42" {
+			t.Errorf("expected context value 'docker-image://ghcr.io/myorg/base:latest.42', got %q", contextVal)
+		}
+		if len(result.OCIStores) != 0 {
+			t.Errorf("expected empty OCIStores, got %d entries", len(result.OCIStores))
+		}
 		result.Cleanup()
 	})
 
@@ -119,7 +149,9 @@ RUN echo hello
 		dockerfileContent := `FROM __hive__/base:v1
 RUN echo hello
 `
-		require.NoError(t, os.WriteFile(dockerfile, []byte(dockerfileContent), 0644))
+		if err := os.WriteFile(dockerfile, []byte(dockerfileContent), 0644); err != nil {
+			t.Fatalf("failed to write Dockerfile: %v", err)
+		}
 
 		result, err := ResolveHiveDeps(HiveDepsOpts{
 			DockerfilePath:  dockerfile,
@@ -128,9 +160,15 @@ RUN echo hello
 			RegistryAddress: "ghcr.io/myorg",
 		})
 
-		require.NoError(t, err)
-		require.NotNil(t, result)
-		assert.Equal(t, "docker-image://ghcr.io/myorg/base:v1", result.NamedContexts["context:hive-dep/base:v1"])
+		if err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
+		if result == nil {
+			t.Fatal("expected non-nil result")
+		}
+		if result.NamedContexts["context:hive-dep/base:v1"] != "docker-image://ghcr.io/myorg/base:v1" {
+			t.Errorf("unexpected context value: %q", result.NamedContexts["context:hive-dep/base:v1"])
+		}
 		result.Cleanup()
 	})
 
@@ -143,27 +181,39 @@ RUN echo hello
 		dockerfileContent := `FROM __hive__/base:latest
 COPY --from=__hive__/util:1.0 /app /app
 `
-		require.NoError(t, os.WriteFile(dockerfile, []byte(dockerfileContent), 0644))
+		if err := os.WriteFile(dockerfile, []byte(dockerfileContent), 0644); err != nil {
+			t.Fatalf("failed to write Dockerfile: %v", err)
+		}
 
 		// Create mock dependency tar files in the correct structure
 		// platform.Sanitize("linux/amd64") returns "linux-amd64"
 		baseDir := filepath.Join(tempDir, "base", "latest", "linux-amd64")
 		utilDir := filepath.Join(tempDir, "util", "1.0", "linux-amd64")
-		require.NoError(t, os.MkdirAll(baseDir, 0755))
-		require.NoError(t, os.MkdirAll(utilDir, 0755))
+		if err := os.MkdirAll(baseDir, 0755); err != nil {
+			t.Fatalf("failed to create base dir: %v", err)
+		}
+		if err := os.MkdirAll(utilDir, 0755); err != nil {
+			t.Fatalf("failed to create util dir: %v", err)
+		}
 
 		baseTar := filepath.Join(baseDir, "image.tar")
 		utilTar := filepath.Join(utilDir, "image.tar")
 
 		// Create empty tar files
-		_, err := os.Create(baseTar)
-		require.NoError(t, err)
-		_, err = os.Create(utilTar)
-		require.NoError(t, err)
+		if _, err := os.Create(baseTar); err != nil {
+			t.Fatalf("failed to create base tar: %v", err)
+		}
+		if _, err := os.Create(utilTar); err != nil {
+			t.Fatalf("failed to create util tar: %v", err)
+		}
 
 		// Verify files exist
-		assert.True(t, fileExists(baseTar))
-		assert.True(t, fileExists(utilTar))
+		if !fileExists(baseTar) {
+			t.Error("expected base tar to exist")
+		}
+		if !fileExists(utilTar) {
+			t.Error("expected util tar to exist")
+		}
 
 		// Call ResolveHiveDeps - will fail at OCI loading (expected)
 		result, err := ResolveHiveDeps(HiveDepsOpts{
@@ -173,9 +223,15 @@ COPY --from=__hive__/util:1.0 /app /app
 		})
 
 		// Should fail at OCI loading
-		require.Error(t, err)
-		assert.Contains(t, err.Error(), "loading OCI layout")
-		assert.Nil(t, result)
+		if err == nil {
+			t.Fatal("expected error, got nil")
+		}
+		if !strings.Contains(err.Error(), "loading OCI layout") {
+			t.Errorf("expected error to contain 'loading OCI layout', got: %v", err)
+		}
+		if result != nil {
+			t.Errorf("expected nil result, got %v", result)
+		}
 	})
 }
 
@@ -188,23 +244,37 @@ func TestRewriteDockerfile(t *testing.T) {
 COPY --from=__hive__/util:1.0 /app /app
 RUN echo "__hive__should-not-be-replaced"
 `
-		require.NoError(t, os.WriteFile(dockerfile, []byte(originalContent), 0644))
+		if err := os.WriteFile(dockerfile, []byte(originalContent), 0644); err != nil {
+			t.Fatalf("failed to write Dockerfile: %v", err)
+		}
 
 		// Call rewriteDockerfile
 		rewritten, err := rewriteDockerfile(dockerfile)
-		require.NoError(t, err)
+		if err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
 
 		// Verify rewritten file was created
-		assert.True(t, strings.HasSuffix(rewritten, ".hive"))
+		if !strings.HasSuffix(rewritten, ".hive") {
+			t.Errorf("expected rewritten path to end with .hive, got %q", rewritten)
+		}
 
 		// Verify content
 		content, err := os.ReadFile(rewritten)
-		require.NoError(t, err)
+		if err != nil {
+			t.Fatalf("failed to read rewritten file: %v", err)
+		}
 
 		// Should replace __hive__/ in FROM and COPY but not __hive__ without slash
-		assert.Contains(t, string(content), "hive-dep/base:latest")
-		assert.Contains(t, string(content), "hive-dep/util:1.0")
-		assert.Contains(t, string(content), "__hive__should-not-be-replaced")
+		if !strings.Contains(string(content), "hive-dep/base:latest") {
+			t.Error("expected rewritten content to contain 'hive-dep/base:latest'")
+		}
+		if !strings.Contains(string(content), "hive-dep/util:1.0") {
+			t.Error("expected rewritten content to contain 'hive-dep/util:1.0'")
+		}
+		if !strings.Contains(string(content), "__hive__should-not-be-replaced") {
+			t.Error("expected rewritten content to preserve '__hive__should-not-be-replaced'")
+		}
 
 		// Cleanup
 		os.Remove(rewritten)
