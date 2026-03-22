@@ -120,6 +120,28 @@ jobs:
           image: timoreymann/container-hive
           docker-username: DOCKER_USERNAME
           docker-password: DOCKER_TOKEN
+  check-update-test-project-label:
+    docker:
+      - image: cimg/base:current
+    steps:
+      - run:
+          name: Check for update-test-project label
+          command: |
+            if [ -z "$CIRCLE_PULL_REQUEST" ]; then
+              echo "Not a PR, skipping"
+              circleci-agent step halt
+              exit 0
+            fi
+            PR_NUMBER=$(echo "$CIRCLE_PULL_REQUEST" | grep -oE '[0-9]+$')
+            LABELS=$(curl -s -H "Authorization: token ${GITHUB_TOKEN}" \
+              "https://api.github.com/repos/timo-reymann/ContainerHive/pulls/${PR_NUMBER}" \
+              | jq -r '.labels[].name')
+            if echo "$LABELS" | grep -q "^update-test-project$"; then
+              echo "Label found, proceeding"
+            else
+              echo "Label not found, skipping"
+              circleci-agent step halt
+            fi
   update-test-project:
     executor: go
     steps:
@@ -186,6 +208,10 @@ workflows:
     when:
       not: << pipeline.parameters.update-test-project >>
     jobs:
+      - check-update-test-project-label
+      - update-test-project:
+          requires:
+            - check-update-test-project-label
       - test
       - build:
           requires:
