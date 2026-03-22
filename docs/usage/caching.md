@@ -36,13 +36,15 @@ cache:
 
 ### Setting up MinIO for local development
 
+Using the [pgsty/minio](https://github.com/pgsty/minio) image for a lightweight local setup:
+
 ```bash
 docker run -d \
   --name minio \
   -p 9000:9000 \
   -e MINIO_ROOT_USER=minioadmin \
   -e MINIO_ROOT_PASSWORD=minioadmin \
-  minio/minio server /data
+  pgsty/minio server /data
 ```
 
 ```yaml
