@@ -63,12 +63,12 @@ func sbomCmd() *cli.Command {
 						}
 
 						log.Printf("Generating SBOM for %s:%s [%s] ...", img.Name, tagName, platformStr)
-						sbomData, err := sbomGen.Generate(ctx, tarFile, "spdx-json")
+						sbomData, err := sbomGen.Generate(ctx, tarFile, "cyclonedx-json")
 						if err != nil {
 							return fmt.Errorf("SBOM generation failed for %s:%s [%s]: %w", img.Name, tagName, platformStr, err)
 						}
 
-						sbomPath := filepath.Join(platDir, "sbom.spdx.json")
+						sbomPath := filepath.Join(platDir, "cyclonedx.json")
 						if err := os.WriteFile(sbomPath, sbomData, 0644); err != nil {
 							return fmt.Errorf("failed to write SBOM for %s:%s [%s]: %w", img.Name, tagName, platformStr, err)
 						}
