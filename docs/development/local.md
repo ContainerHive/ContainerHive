@@ -1,4 +1,4 @@
-# Local setup for ContainerHive development
+# Set up local development
 
 If you want to work on ContainerHive you can do so, easily.
 

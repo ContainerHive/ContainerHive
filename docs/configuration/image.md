@@ -1,4 +1,4 @@
-# Image Configuration (image.yml)
+# Define your images
 
 Each image is defined by an `image.yml` file located at `images/<image-name>/image.yml`.
 
@@ -101,12 +101,14 @@ Each image directory can contain:
 
 ```
 images/<image-name>/
-├── image.yml           # Image definition (required)
-├── Dockerfile          # Build instructions (required)
-├── test.yml.gotpl      # Container structure tests (optional)
-├── rootfs/             # Files to copy into the image (optional)
-└── <variant-name>/     # Variant subdirectory (optional)
-    ├── Dockerfile
-    ├── test.yml.gotpl
+├── image.yml                  # Image definition (required)
+├── Dockerfile[.gotpl]         # Build instructions (required)
+├── test.yml[.gotpl]           # Container structure tests (optional)
+├── rootfs/                    # Files to copy into the image (optional)
+└── <variant-name>/            # Variant subdirectory (optional)
+    ├── Dockerfile[.gotpl]
+    ├── test.yml[.gotpl]
     └── rootfs/
 ```
+
+The `.gotpl` extension is optional for Dockerfiles and test files. Plain files are copied as-is. Use `.gotpl` when you need Go template features (e.g. `resolve_base`, conditionals). See [Write your Dockerfiles](../usage/dockerfiles.md) for details.

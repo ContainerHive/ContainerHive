@@ -1,4 +1,4 @@
-# Installation
+# Install ContainerHive
 
 ContainerHive supports a variety of platforms.
 

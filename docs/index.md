@@ -37,7 +37,7 @@ The following platforms have prebuilt binaries:
 
 !!! info
 
-    For installation instructions refer to [Installation](./installation.md).
+    New to ContainerHive? Start with the [Get started](./getting-started.md) guide.
 
 ## Requirements
 

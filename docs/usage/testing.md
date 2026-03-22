@@ -1,4 +1,4 @@
-# Container Structure Tests
+# Test your containers
 
 ContainerHive integrates [container-structure-test](https://github.com/GoogleContainerTools/container-structure-test) by Google to validate built images as part of the build process.
 

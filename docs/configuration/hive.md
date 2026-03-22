@@ -1,4 +1,4 @@
-# Project Configuration (hive.yml)
+# Configure your project
 
 The `hive.yml` file is the project-level configuration file. It must be placed at the root of your ContainerHive project.
 

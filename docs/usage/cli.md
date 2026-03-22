@@ -1,4 +1,4 @@
-# CLI Reference
+# Use the CLI
 
 ContainerHive's behavior can be controlled with various commands and flags.
 

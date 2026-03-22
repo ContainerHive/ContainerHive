@@ -1,10 +1,10 @@
-# Test Configuration (test.yml.gotpl)
+# Define your tests
 
-Test definitions validate built images using [container-structure-test](https://github.com/GoogleContainerTools/container-structure-test). They are written as Go templates and rendered during `ch generate` with access to the image context.
+Test definitions validate built images using [container-structure-test](https://github.com/GoogleContainerTools/container-structure-test). They are rendered during `ch generate` and executed by `ch test`.
 
 ## File location
 
-Place a `test.yml.gotpl` file alongside the Dockerfile in the image directory:
+Place a `test.yml` or `test.yml.gotpl` file alongside the Dockerfile in the image directory. The `.gotpl` extension is optional — use it when you need Go template variables (versions, build args). Plain `test.yml` files are copied as-is.
 
 ```
 images/my-image/

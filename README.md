@@ -1,5 +1,6 @@
 ContainerHive
 ===
+
 > This project is under active development. It is not yet in any usable state. Use at your own risk.
 
 [![LICENSE](https://img.shields.io/github/license/timo-reymann/ContainerHive)](https://github.com/timo-reymann/ContainerHive/blob/main/LICENSE)
@@ -17,56 +18,49 @@ ContainerHive
 
 ## Features
 
-<!-- List features as bullet points -->
-
 - **Next-gen builds**: Powered by BuildKit, the modern container image builder behind Docker.
 - **Multi-platform ready**: Build and push images for any architecture in a single workflow.
 - **YAML-driven management**: Define and maintain image sets and variants declaratively.
-- **Reproducible layers**: Guarantee consistent, bit-for-bit identical builds every time (given the same inputs)
+- **Reproducible layers**: Guarantee consistent, bit-for-bit identical builds every time (given the same inputs).
 - **Testing built in**: Validate images as part of the build process, no extra tooling needed.
-- **Smart caching**: Optimized caching that works out of the box, no manual tuning required.
-- **Enterprise-ready**: Built for scale, compliance, and integration with enterprise workflows (SBOMs, multi-platform,
-  structured governance).
+- **Smart caching**: Optimized caching via S3 or registry backends, no manual tuning required.
+- **SBOM generation**: Generate CycloneDX SBOMs for all built images using Syft.
+- **CI pipeline generation**: Generate GitLab CI and GitHub Actions pipelines from your project definition.
+- **Enterprise-ready**: Built for scale, compliance, and integration with enterprise workflows.
+
+## Supported platforms
+
+The following platforms have prebuilt binaries:
+
+- Linux
+    - 64-bit
+    - ARM 64-bit
+- Darwin
+    - 64-bit (Intel)
+    - ARM 64-bit (Apple Silicon)
+- Docker (x86 & ARM)
 
 ## Requirements
 
-- buildkitd
+- [BuildKit](https://github.com/moby/buildkit) daemon
 - S3-compatible storage for caching (optional)
 
 ## Installation
 
-<!-- Add installation instructions -->
+### Containerized
 
-> TBD
+```sh
+docker run --rm -it -v $PWD:/workspace timoreymann/containerhive
+```
 
-## Usage
+### Binaries
 
-<!-- Add how to use e.g. code samples etc. -->
+Binaries for all platforms can be found on
+the [latest release page](https://github.com/timo-reymann/ContainerHive/releases/latest).
 
-> TBD
-
-## Motivation
-
-<!-- Add bit of context why the project has been created -->
-
-I built this project because existing container image management solutions are a mess. Most tools are either wild shell
-script collections, ad-hoc manual processes, or overly complex frameworks that don’t integrate well with CI/CD
-pipelines. Every time you need to build, test, or manage container images, you end up reinventing the wheel, writing
-custom scripts, debugging inconsistent environments, or manually pinning versions. It’s repetitive, error-prone, and
-wastes time.
-
-The goal was to create a single, deterministic tool that handles everything from image generation to SBOM creation, with
-reproducible builds and minimal host dependencies. No more guessing if your local build matches CI. No more manual
-Dockerfile
-tweaks for every platform. No more chasing down why a container behaves differently in production. Just a clean,
-declarative workflow that works the same everywhere.
-
-This project replaces the chaos with structure: YAML configs for images, automated testing, and
-CI pipeline generation. It’s built for engineers who want to focus on shipping features, not fighting toolchains.
+For the Docker image, check [Docker Hub](https://hub.docker.com/r/timoreymann/containerhive).
 
 ## Documentation
-
-<!-- Link for additional documentations -->
 
 Documentation is available at [container-hive.timo-reymann.de](https://container-hive.timo-reymann.de/), hosted on
 GitHub Pages.
@@ -87,13 +81,10 @@ To get started please read the [Contribution Guidelines](./CONTRIBUTING.md).
 
 ### Requirements
 
-<!-- Delete the ones not required -->
-
 - [GNU make](https://www.gnu.org/software/make/)
 - [Docker](https://docs.docker.com/get-docker/)
 - [pre-commit](https://pre-commit.com/)
 - [Go](https://go.dev/doc/install)
-- [deterministic-zip](https://github.com/timo-reymann/deterministic-zip)
 
 ### Test
 
@@ -109,19 +100,8 @@ make build
 
 ### Credits
 
-<!-- Add work of others etc. -->
 Without these libraries this project would not be possible:
 
 - [syft](https://github.com/anchore/syft) by Anchore
 - [buildkit](https://github.com/moby/buildkit) by the Moby Project
-- [container-struture-test](https://github.com/GoogleContainerTools/container-structure-test) by Google
-
-### Alternatives
-
-<!-- Are there alternatives to use? - List them here -->
-
-- Shell scripts: Hack together docker build, sed, and curl in a file no one dares to refactor.
-- Makefiles: Create a 300-line monster with targets like build-% that only work if you set 12 env vars first.
-- CI hardcoding: Dump docker commands directly into GitHub Actions/GitLab CI, ensuring local devs can never reproduce
-  builds.
-- Manual Dockerfiles: Edit tags by hand, ignore SBOMs, and pretend ubuntu:latest is a valid base image.
+- [container-structure-test](https://github.com/GoogleContainerTools/container-structure-test) by Google

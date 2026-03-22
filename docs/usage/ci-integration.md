@@ -1,4 +1,4 @@
-# CI Integration
+# Generate CI pipelines
 
 ContainerHive generates CI pipeline configurations from your project definition, so you don't have to maintain pipeline YAML by hand.
 
