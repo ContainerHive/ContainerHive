@@ -117,7 +117,7 @@ jobs:
             docker buildx create --use
             make build-docker
       - docker/update-description:
-          image: timoreymann/container-hive
+          image: timoreymann/containerhive
           docker-username: DOCKER_USERNAME
           docker-password: DOCKER_TOKEN
   update-test-project:
