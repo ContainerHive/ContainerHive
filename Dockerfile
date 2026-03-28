@@ -27,18 +27,18 @@ RUN apt update \
     && rm -rf /var/lib/apt/lists/*
 
 # Add metadata labels
-ARG BUILD_TIME
-ARG BUILD_VERSION
-ARG BUILD_COMMIT_REF
-LABEL org.opencontainers.image.title="ContainerHive"
-LABEL org.opencontainers.image.description="ContainerHive - Swarm it. Build it. Run it. Managing container base and library images has never been easier."
-LABEL org.opencontainers.image.licenses='AGPL-3.0'
-LABEL org.opencontainers.image.vendor="Timo Reymann <mail@timo-reymann.de>"
-LABEL org.opencontainers.image.url="https://github.com/timo-reymann/ContainerHive"
-LABEL org.opencontainers.image.source="https://github.com/timo-reymann/ContainerHive.git"
-LABEL org.opencontainers.image.created=${BUILD_TIME}
-LABEL org.opencontainers.image.version=${BUILD_VERSION}
-LABEL org.opencontainers.image.revision=${BUILD_COMMIT_REF}
+ARG BUILD_TIME \ 
+    BUILD_VERSION \
+    BUILD_COMMIT_REF
+LABEL org.opencontainers.image.title="ContainerHive" \
+      org.opencontainers.image.description="ContainerHive - Swarm it. Build it. Run it. Managing container base and library images has never been easier." \
+      org.opencontainers.image.licenses='AGPL-3.0' \
+      org.opencontainers.image.vendor="Timo Reymann <mail@timo-reymann.de>" \
+      org.opencontainers.image.url="https://github.com/timo-reymann/ContainerHive" \
+      org.opencontainers.image.source="https://github.com/timo-reymann/ContainerHive.git" \
+      org.opencontainers.image.created=${BUILD_TIME} \
+      org.opencontainers.image.version=${BUILD_VERSION} \
+      org.opencontainers.image.revision=${BUILD_COMMIT_REF}
 
 # Copy license files
 COPY --from=license / /
