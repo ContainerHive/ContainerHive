@@ -62,7 +62,7 @@ jobs:
       - run:
           name: Attach binaries to release
           command: |
-            gh release upload ${CIRCLE_TAG} dist/*.zip dist/*.zip.sha256
+            gh release upload ${CIRCLE_TAG} dist/*.zst dist/*.zst.sha256
   build:
     executor: go
     steps:
@@ -143,7 +143,7 @@ jobs:
               circleci-agent step halt
             fi
       - go/with-cache:
-          key: update-test-project
+          key: update-test-project+-
           steps:
             - go/mod-download-cached
             - run:
