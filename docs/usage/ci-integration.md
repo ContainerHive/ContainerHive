@@ -83,6 +83,7 @@ Templates have access to [Sprig](http://masterminds.github.io/sprig/) functions 
 | Function | Description |
 |:---------|:------------|
 | `resolve_base(name, tag)` | Produces an internal image reference (`__hive__/name:tag`) for inter-image dependencies |
+| `option(key)` | Returns the value of a template option from `hive.yml`, or empty string if not set |
 
 ### Example custom template
 
