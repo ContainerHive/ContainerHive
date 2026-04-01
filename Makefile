@@ -29,6 +29,7 @@ cmd/ch/NOTICE: NOTICE ## Copy NOTICE for embedding
 	@cp NOTICE cmd/ch/NOTICE
 
 generate: cmd/ch/NOTICE ## Run go generate for embedded resources
+	@go run tools/generate-buildkit-version.go
 
 create-dist: ## Create dist folder if not already existent
 	@mkdir -p dist/
