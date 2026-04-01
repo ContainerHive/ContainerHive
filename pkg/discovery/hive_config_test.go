@@ -54,6 +54,18 @@ func TestParseHiveConfigFile(t *testing.T) {
 			t.Errorf("expected address localhost:5000, got %q", config.Registry.Address)
 		}
 	})
+
+	t.Run("template_options config", func(t *testing.T) {
+		if len(config.TemplateOptions) != 2 {
+			t.Fatalf("expected 2 template options, got %d", len(config.TemplateOptions))
+		}
+		if config.TemplateOptions["ci_buildkit_image"] != "registry.io/buildkit" {
+			t.Errorf("expected ci_buildkit_image 'registry.io/buildkit', got %q", config.TemplateOptions["ci_buildkit_image"])
+		}
+		if config.TemplateOptions["foo_bar"] != "stum" {
+			t.Errorf("expected foo_bar 'stum', got %q", config.TemplateOptions["foo_bar"])
+		}
+	})
 }
 
 func TestParseHiveConfigFile_Empty(t *testing.T) {

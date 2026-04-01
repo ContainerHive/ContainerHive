@@ -93,6 +93,13 @@
         "type": "string"
       },
       "description": "Default target platforms for all images (e.g. linux/amd64)"
+    },
+    "template_options": {
+      "type": "object",
+      "description": "Custom template variables available via the option function in CI and custom templates",
+      "additionalProperties": {
+        "type": "string"
+      }
     }
   },
   "$id": "https://container-hive.timo-reymann.de/schemas/project.schema.json",

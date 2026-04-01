@@ -7,3 +7,4 @@ example/reports
 .claude/worktrees
 cmd/ch/NOTICE
 test-project/
+internal/buildkit/version_generated.go

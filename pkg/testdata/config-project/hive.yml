@@ -15,3 +15,7 @@ registry:
 
 platforms:
   - linux/amd64
+
+template_options:
+  ci_buildkit_image: registry.io/buildkit
+  foo_bar: stum

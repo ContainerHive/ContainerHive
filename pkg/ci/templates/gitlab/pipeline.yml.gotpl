@@ -20,7 +20,7 @@ before_script:
     name: {{ .ImageName }}:{{ .Version }}
     entrypoint: [""]
   services:
-    - name: moby/buildkit:latest
+    - name: {{ option "ci_buildkit_image" }}:{{ option "ci_buildkit_version" }}
       alias: buildkitd
       command: ["--addr", "tcp://0.0.0.0:8372"]
   variables:

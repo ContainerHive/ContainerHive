@@ -78,3 +78,23 @@ Local OCI registry used for inter-image dependencies and multi-arch manifest cre
 | Field | Type | Description |
 |:------|:-----|:------------|
 | `address` | string | Registry address (e.g. `localhost:8500`) |
+
+### `template_options`
+
+Custom key-value variables available in CI and custom templates via the `option` function.
+
+```yaml
+template_options:
+  ci_buildkit_image: registry.io/buildkit
+  ci_buildkit_version: v1.4.0
+  my_custom_var: some-value
+```
+
+All values must be strings. Keys prefixed with `ci_` have built-in defaults:
+
+| Key | Default | Description |
+|:----|:--------|:------------|
+| `ci_buildkit_image` | `moby/buildkit` | BuildKit container image |
+| `ci_buildkit_version` | *(matches go.mod dependency)* | BuildKit image tag |
+
+User-provided values override built-in defaults.

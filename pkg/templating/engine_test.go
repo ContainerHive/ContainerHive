@@ -45,6 +45,79 @@ func TestRenderString(t *testing.T) {
 	})
 }
 
+func TestRenderStringWithOptions(t *testing.T) {
+	t.Run("option function returns value", func(t *testing.T) {
+		opts := map[string]string{"foo": "bar"}
+		result, err := RenderStringWithOptions("test", `{{ option "foo" }}`, nil, opts)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if got := string(result); got != "bar" {
+			t.Errorf("got %q, want %q", got, "bar")
+		}
+	})
+
+	t.Run("option function returns empty for unknown key", func(t *testing.T) {
+		opts := map[string]string{"foo": "bar"}
+		result, err := RenderStringWithOptions("test", `{{ option "missing" }}`, nil, opts)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if got := string(result); got != "" {
+			t.Errorf("got %q, want %q", got, "")
+		}
+	})
+
+	t.Run("option function works with if", func(t *testing.T) {
+		opts := map[string]string{"present": "yes"}
+		result, err := RenderStringWithOptions("test", `{{ if option "present" }}found{{ end }}`, nil, opts)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if got := string(result); got != "found" {
+			t.Errorf("got %q, want %q", got, "found")
+		}
+	})
+
+	t.Run("nil options map", func(t *testing.T) {
+		result, err := RenderStringWithOptions("test", `{{ option "any" }}`, nil, nil)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if got := string(result); got != "" {
+			t.Errorf("got %q, want %q", got, "")
+		}
+	})
+
+	t.Run("sprig and option coexist", func(t *testing.T) {
+		opts := map[string]string{"name": "world"}
+		result, err := RenderStringWithOptions("test", `{{ option "name" | upper }}`, nil, opts)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if got := string(result); got != "WORLD" {
+			t.Errorf("got %q, want %q", got, "WORLD")
+		}
+	})
+}
+
+func TestRenderWithOptions(t *testing.T) {
+	t.Run("option function in partials", func(t *testing.T) {
+		fsys := fstest.MapFS{
+			"main.gotpl":    {Data: []byte(`{{ template "partial.gotpl" . }}`)},
+			"partial.gotpl": {Data: []byte(`image: {{ option "ci_buildkit_image" }}`)},
+		}
+		opts := map[string]string{"ci_buildkit_image": "moby/buildkit"}
+		result, err := RenderWithOptions(fsys, "main.gotpl", nil, opts)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if got := string(result); got != "image: moby/buildkit" {
+			t.Errorf("got %q, want %q", got, "image: moby/buildkit")
+		}
+	})
+}
+
 func TestRender(t *testing.T) {
 	t.Run("with partials", func(t *testing.T) {
 		fsys := fstest.MapFS{

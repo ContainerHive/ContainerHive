@@ -70,5 +70,6 @@ type HiveProjectConfig struct {
 	BuildKit  *BuildKitConfig `yaml:"buildkit,omitempty" json:"buildkit,omitempty" jsonschema:"BuildKit daemon configuration"`
 	Cache     *CacheConfig    `yaml:"cache,omitempty" json:"cache,omitempty" jsonschema:"Build cache configuration"`
 	Registry  *RegistryConfig `yaml:"registry,omitempty" json:"registry,omitempty" jsonschema:"Container registry configuration"`
-	Platforms []string        `yaml:"platforms,omitempty" json:"platforms,omitempty" jsonschema:"Default target platforms for all images (e.g. linux/amd64)"`
+	Platforms       []string          `yaml:"platforms,omitempty" json:"platforms,omitempty" jsonschema:"Default target platforms for all images (e.g. linux/amd64)"`
+	TemplateOptions map[string]string `yaml:"template_options,omitempty" json:"template_options,omitempty" jsonschema:"Custom template variables available via the option function in CI and custom templates"`
 }

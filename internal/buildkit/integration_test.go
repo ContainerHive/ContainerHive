@@ -15,7 +15,6 @@ import (
 	"github.com/testcontainers/testcontainers-go/network"
 	"github.com/testcontainers/testcontainers-go/wait"
 	"github.com/timo-reymann/ContainerHive/internal/buildkit/build_context"
-	"github.com/timo-reymann/ContainerHive/internal/testutil"
 )
 
 func drainStatus(ch chan *client.SolveStatus) error {
@@ -30,7 +29,7 @@ func startBuildKit(t *testing.T, networks ...string) *Client {
 
 	buildkitC, err := testcontainers.GenericContainer(ctx, testcontainers.GenericContainerRequest{
 		ContainerRequest: testcontainers.ContainerRequest{
-			Image:        testutil.BuildKitImage(),
+			Image:        "moby/buildkit:" + Version,
 			ExposedPorts: []string{"1234/tcp"},
 			Cmd:          []string{"--addr", "tcp://0.0.0.0:1234"},
 			HostConfigModifier: func(hc *container.HostConfig) {
