@@ -1017,6 +1017,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#template_options" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        template_options
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1611,6 +1622,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#template_options" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        template_options
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1826,6 +1848,36 @@
 </tr>
 </tbody>
 </table>
+<h3 id="template_options"><code>template_options</code></h3>
+<p>Custom key-value variables available in CI and custom templates via the <code>option</code> function.</p>
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="nt">template_options</span><span class="p">:</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">  </span><span class="nt">ci_buildkit_image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">registry.io/buildkit</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">  </span><span class="nt">ci_buildkit_version</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1.4.0</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">  </span><span class="nt">my_custom_var</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">some-value</span>
+</span></code></pre></div>
+<p>All values must be strings. Keys prefixed with <code>ci_</code> have built-in defaults:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Key</th>
+<th style="text-align: left;">Default</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>ci_buildkit_image</code></td>
+<td style="text-align: left;"><code>moby/buildkit</code></td>
+<td style="text-align: left;">BuildKit container image</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>ci_buildkit_version</code></td>
+<td style="text-align: left;"><em>(matches go.mod dependency)</em></td>
+<td style="text-align: left;">BuildKit image tag</td>
+</tr>
+</tbody>
+</table>
+<p>User-provided values override built-in defaults.</p>
 
 
 
