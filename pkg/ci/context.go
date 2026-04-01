@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"sort"
 
+	"github.com/timo-reymann/ContainerHive/internal/buildkit"
 	"github.com/timo-reymann/ContainerHive/internal/dependency"
 	"github.com/timo-reymann/ContainerHive/pkg/model"
 )
@@ -19,15 +20,16 @@ type CIImage struct {
 
 // CIContext holds all data needed to render CI templates.
 type CIContext struct {
-	Images      []CIImage
-	Platforms   []string
-	Stages      []string
-	Config      CIConfigContext
-	Artifacts   bool
-	Command     string
-	Version     string
-	ImageName   string
-	ProjectPath string // non-empty when --project is not the default "."
+	Images          []CIImage
+	Platforms       []string
+	Stages          []string
+	Config          CIConfigContext
+	Artifacts       bool
+	Command         string
+	Version         string
+	ImageName       string
+	ProjectPath     string // non-empty when --project is not the default "."
+	TemplateOptions map[string]string
 }
 
 // ChCmd returns the ch command prefix, including -p flag when a project path is set.
@@ -50,6 +52,14 @@ func (c *CIContext) Dist() string {
 type CIConfigContext struct {
 	Registry *model.RegistryConfig
 	Cache    *model.CacheConfig
+}
+
+// defaultTemplateOptions returns the built-in template option defaults.
+func defaultTemplateOptions() map[string]string {
+	return map[string]string{
+		"ci_buildkit_image":   "moby/buildkit",
+		"ci_buildkit_version": buildkit.Version,
+	}
 }
 
 // BuildCIContext creates a CIContext from a ContainerHive project.
@@ -134,6 +144,12 @@ func BuildCIContext(project *model.ContainerHiveProject, artifacts bool) (*CICon
 	}
 	sort.Strings(platformList)
 
+	// Merge template options: defaults first, then user overrides
+	opts := defaultTemplateOptions()
+	for k, v := range project.Config.TemplateOptions {
+		opts[k] = v
+	}
+
 	return &CIContext{
 		Images:    ciImages,
 		Platforms: platformList,
@@ -142,7 +158,8 @@ func BuildCIContext(project *model.ContainerHiveProject, artifacts bool) (*CICon
 			Registry: project.Config.Registry,
 			Cache:    project.Config.Cache,
 		},
-		Artifacts: artifacts,
+		Artifacts:       artifacts,
+		TemplateOptions: opts,
 	}, nil
 }
 

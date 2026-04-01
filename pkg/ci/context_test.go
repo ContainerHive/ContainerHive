@@ -163,3 +163,56 @@ func TestCalculateDepths_Circular(t *testing.T) {
 		t.Errorf("circular deps should have same depth, got a=%d b=%d", depths["a"], depths["b"])
 	}
 }
+
+func TestBuildCIContext_DefaultTemplateOptions(t *testing.T) {
+	project := &model.ContainerHiveProject{
+		Config: model.HiveProjectConfig{
+			Platforms: []string{"linux/amd64"},
+		},
+		ImagesByName: map[string][]*model.Image{
+			"app": {{Name: "app", Tags: map[string]*model.Tag{"latest": {Name: "latest"}}}},
+		},
+	}
+
+	ctx, err := BuildCIContext(project, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if ctx.TemplateOptions["ci_buildkit_image"] != "moby/buildkit" {
+		t.Errorf("expected default ci_buildkit_image 'moby/buildkit', got %q", ctx.TemplateOptions["ci_buildkit_image"])
+	}
+	if ctx.TemplateOptions["ci_buildkit_version"] == "" {
+		t.Error("expected ci_buildkit_version to have a default value")
+	}
+}
+
+func TestBuildCIContext_UserOverridesTemplateOptions(t *testing.T) {
+	project := &model.ContainerHiveProject{
+		Config: model.HiveProjectConfig{
+			Platforms: []string{"linux/amd64"},
+			TemplateOptions: map[string]string{
+				"ci_buildkit_image": "registry.io/buildkit",
+				"custom_var":        "custom_value",
+			},
+		},
+		ImagesByName: map[string][]*model.Image{
+			"app": {{Name: "app", Tags: map[string]*model.Tag{"latest": {Name: "latest"}}}},
+		},
+	}
+
+	ctx, err := BuildCIContext(project, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if ctx.TemplateOptions["ci_buildkit_image"] != "registry.io/buildkit" {
+		t.Errorf("expected user override 'registry.io/buildkit', got %q", ctx.TemplateOptions["ci_buildkit_image"])
+	}
+	if ctx.TemplateOptions["ci_buildkit_version"] == "" {
+		t.Error("expected ci_buildkit_version default to still be present")
+	}
+	if ctx.TemplateOptions["custom_var"] != "custom_value" {
+		t.Errorf("expected custom_var 'custom_value', got %q", ctx.TemplateOptions["custom_var"])
+	}
+}
