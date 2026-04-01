@@ -17,7 +17,7 @@
           path: {{ $.Ctx.Dist }}/
       - run: mkdir -p "$RUNNER_TEMP/ch"
       - run: docker network create ch-net
-      - run: docker run -d --name buildkitd --privileged --network ch-net moby/buildkit:latest --addr tcp://0.0.0.0:8372
+      - run: docker run -d --name buildkitd --privileged --network ch-net {{ option "ci_buildkit_image" }}:{{ option "ci_buildkit_version" }} --addr tcp://0.0.0.0:8372
       - run: echo "${{ "{{" }} secrets.GITHUB_TOKEN {{ "}}" }}" | docker run --rm --entrypoint="" -u "$(id -u):$(id -g)" -e CI=1 -i -e HOME="$RUNNER_TEMP/ch" -v "$RUNNER_TEMP/ch:$RUNNER_TEMP/ch" -v "$GITHUB_WORKSPACE:$GITHUB_WORKSPACE" -w "$GITHUB_WORKSPACE" --network ch-net -e BUILDKIT_HOST=tcp://buildkitd:8372 $CH_IMAGE {{ $.Ctx.ChCmd }} login -u "${{ "{{" }} github.actor {{ "}}" }}" --password-stdin ghcr.io
       - run: docker run --rm --entrypoint="" -u "$(id -u):$(id -g)" -e CI=1 -e HOME="$RUNNER_TEMP/ch" -v "$RUNNER_TEMP/ch:$RUNNER_TEMP/ch" -v "$GITHUB_WORKSPACE:$GITHUB_WORKSPACE" -w "$GITHUB_WORKSPACE" --network ch-net -e BUILDKIT_HOST=tcp://buildkitd:8372 $CH_IMAGE {{ $.Ctx.ChCmd }} wait --buildkitd
       - run: docker run --rm --entrypoint="" -u "$(id -u):$(id -g)" -e CI=1 -e HOME="$RUNNER_TEMP/ch" -v "$RUNNER_TEMP/ch:$RUNNER_TEMP/ch" -v "$GITHUB_WORKSPACE:$GITHUB_WORKSPACE" -w "$GITHUB_WORKSPACE" --network ch-net -e BUILDKIT_HOST=tcp://buildkitd:8372 $CH_IMAGE {{ $.Ctx.ChCmd }} build {{ $.Image.Name }} --platform {{ . }} --build-id "$SNAPSHOT_ID"
