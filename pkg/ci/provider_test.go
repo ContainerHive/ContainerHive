@@ -6,6 +6,31 @@ import (
 	"testing/fstest"
 )
 
+func TestGenerate_WithTemplateOptions(t *testing.T) {
+	tplFS := fstest.MapFS{
+		"main.gotpl": {Data: []byte(`image: {{ option "my_image" }}`)},
+	}
+
+	RegisterProvider(&Provider{
+		Name:       "test-opts",
+		TemplateFS: tplFS,
+		Entrypoint: "main.gotpl",
+	})
+
+	ctx := &CIContext{
+		TemplateOptions: map[string]string{"my_image": "custom/image"},
+	}
+
+	result, err := Generate("test-opts", ctx, "")
+	if err != nil {
+		t.Fatal(err)
+	}
+	got := string(result)
+	if got != "image: custom/image" {
+		t.Errorf("got %q, want %q", got, "image: custom/image")
+	}
+}
+
 func TestProviderRegistry(t *testing.T) {
 	t.Run("register and get", func(t *testing.T) {
 		RegisterProvider(&Provider{

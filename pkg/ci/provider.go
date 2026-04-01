@@ -54,5 +54,5 @@ func Generate(providerName string, ctx *CIContext, customTemplateDir string) ([]
 		templateFS = os.DirFS(customTemplateDir)
 	}
 
-	return templating.Render(templateFS, provider.Entrypoint, ctx)
+	return templating.RenderWithOptions(templateFS, provider.Entrypoint, ctx, ctx.TemplateOptions)
 }

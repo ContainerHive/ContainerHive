@@ -130,7 +130,7 @@ func templateCustomCmd() *cli.Command {
 				return fmt.Errorf("failed to build CI context: %w", err)
 			}
 
-			result, err := templating.RenderString(templatePath, string(content), ciCtx)
+			result, err := templating.RenderStringWithOptions(templatePath, string(content), ciCtx, ciCtx.TemplateOptions)
 			if err != nil {
 				return fmt.Errorf("failed to render template: %w", err)
 			}
