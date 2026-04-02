@@ -52,3 +52,7 @@ The following platforms have prebuilt binaries:
 
 - [BuildKit](https://github.com/moby/buildkit) daemon
 - S3-compatible storage for caching (optional)
+
+## AI Usage
+
+This project uses AI tooling (Claude Code and Mistral AI models) to assist with development. All AI-generated or AI-assisted changes are **human-reviewed** and applied responsibly — this is not AI slop. Contributors are expected to uphold the same standard: AI tools are welcome, but every change must be understood, reviewed, and owned by the person submitting it.
