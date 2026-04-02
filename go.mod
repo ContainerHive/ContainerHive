@@ -17,7 +17,7 @@ require (
 	github.com/opencontainers/image-spec v1.1.1
 	github.com/testcontainers/testcontainers-go v0.41.0
 	github.com/tonistiigi/fsutil v0.0.0-20251211185533-a2aa163d723f
-	github.com/urfave/cli/v3 v3.7.0
+	github.com/urfave/cli/v3 v3.8.0
 	golang.org/x/sync v0.20.0
 	gopkg.in/yaml.v3 v3.0.1
 	modernc.org/sqlite v1.47.0
