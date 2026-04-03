@@ -1818,6 +1818,7 @@
 <li>ContainerHive discovers your project and resolves image dependencies.</li>
 <li>Images are grouped into stages based on their dependency depth — images at the same depth can build in parallel.</li>
 <li>For each image, the pipeline includes jobs for building (per-platform), creating multi-arch manifests, and running tests.</li>
+<li>If an image has a <code>latest_alias</code> configured, the highest semantic version tag is automatically retagged as the specified alias (e.g., <code>latest</code>, <code>stable</code>).</li>
 <li>The generated pipeline references the ContainerHive container image to run all commands.</li>
 </ol>
 <h3 id="options">Options</h3>
