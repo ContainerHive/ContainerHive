@@ -166,6 +166,15 @@ func (r *Registry) CreateAllManifests(project *model.ContainerHiveProject, filte
 	return nil
 }
 
+// collectBaseTags returns the base tag names for an image, excluding variant suffixes.
+func collectBaseTags(imageDef *model.Image) []string {
+	tags := make([]string, 0, len(imageDef.Tags))
+	for tagName := range imageDef.Tags {
+		tags = append(tags, tagName)
+	}
+	return tags
+}
+
 // retagAliases creates semantic version tag aliases in the registry for a
 // single image. Aliases are retagged from the multi-arch manifest (without
 // platform suffix). If buildID is set, it is appended to match pushed tags.
@@ -173,6 +182,22 @@ func (r *Registry) CreateAllManifests(project *model.ContainerHiveProject, filte
 func (r *Registry) retagAliases(imageDef *model.Image, filters []build.Filter, buildID string) error {
 	allTags := collectAllTags(imageDef)
 	aliases := rendering.ResolveAliases(allTags)
+
+	if imageDef.LatestAlias != nil {
+		latestTarget, err := rendering.ResolveLatestAlias(collectBaseTags(imageDef), imageDef.LatestAlias.Tag)
+		if err != nil {
+			switch imageDef.LatestAlias.OnMissing {
+			case "silent":
+				// do nothing
+			case "warning":
+				log.Printf("Warning: %v", err)
+			default: // "error" or unset
+				return err
+			}
+		} else {
+			aliases[imageDef.LatestAlias.Tag] = latestTarget
+		}
+	}
 
 	for alias, tag := range aliases {
 		if !matchesTagFilter(filters, imageDef.Name, tag) {

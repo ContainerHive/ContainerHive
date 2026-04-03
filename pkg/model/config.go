@@ -26,6 +26,12 @@ type VariantConfig struct {
 	Platforms []string  `yaml:"platforms,omitempty" json:"platforms,omitempty" jsonschema:"Target platforms for this variant (e.g. linux/amd64)"`
 }
 
+// LatestAliasConfig configures automatic latest-alias assignment for an image.
+type LatestAliasConfig struct {
+	Tag       string `yaml:"tag" json:"tag" jsonschema:"Alias tag name to assign to the highest semantic version (e.g. latest, stable),required"`
+	OnMissing string `yaml:"on_missing,omitempty" json:"on_missing,omitempty" jsonschema:"Behaviour when no semantic tags are found: error (default), warning, silent"`
+}
+
 // ImageDefinitionConfig is the parsed content of an image definition YAML file.
 type ImageDefinitionConfig struct {
 	Tags      []*Tag          `yaml:"tags" json:"tags" jsonschema:"Tags to create for this image"`
@@ -34,7 +40,8 @@ type ImageDefinitionConfig struct {
 	BuildArgs BuildArgs       `yaml:"build_args" json:"build_args,omitempty" jsonschema:"Build args to add for this image"`
 	Secrets   Secrets         `yaml:"secrets" json:"secrets,omitempty" jsonschema:"Secrets to resolve for this image"`
 	DependsOn []string        `yaml:"depends_on" json:"depends_on,omitempty" jsonschema:"Names of other images in this project that must be built before this image"`
-	Platforms []string        `yaml:"platforms,omitempty" json:"platforms,omitempty" jsonschema:"Target platforms for this image (e.g. linux/amd64)"`
+	Platforms   []string           `yaml:"platforms,omitempty" json:"platforms,omitempty" jsonschema:"Target platforms for this image (e.g. linux/amd64)"`
+	LatestAlias *LatestAliasConfig `yaml:"latest_alias,omitempty" json:"latest_alias,omitempty" jsonschema:"Configure an alias pointing to the highest semantic version tag"`
 }
 
 // BuildKitConfig holds the BuildKit daemon connection settings.

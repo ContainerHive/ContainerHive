@@ -23,7 +23,8 @@ ch template ci --provider github --output .github/workflows/build.yml
 1. ContainerHive discovers your project and resolves image dependencies.
 2. Images are grouped into stages based on their dependency depth — images at the same depth can build in parallel.
 3. For each image, the pipeline includes jobs for building (per-platform), creating multi-arch manifests, and running tests.
-4. The generated pipeline references the ContainerHive container image to run all commands.
+4. If an image has a `latest_alias` configured, the highest semantic version tag is automatically retagged as the specified alias (e.g., `latest`, `stable`).
+5. The generated pipeline references the ContainerHive container image to run all commands.
 
 ### Options
 

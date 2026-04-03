@@ -15,6 +15,32 @@ import (
 	"golang.org/x/sync/errgroup"
 )
 
+// ResolveLatestAlias returns the tag that latestAlias should point to — the
+// highest semantic version found in tags. Returns ("", nil) if latestAlias is
+// empty. Returns ("", error) if latestAlias is set but no tags parse as semantic
+// versions.
+func ResolveLatestAlias(tags []string, latestAlias string) (string, error) {
+	if latestAlias == "" {
+		return "", nil
+	}
+	var highest *semantic_tags.SemanticTagVersion
+	var highestTag string
+	for _, tag := range tags {
+		ver, err := semantic_tags.NewSemanticVersion(tag)
+		if err != nil {
+			continue
+		}
+		if highest == nil || ver.Greater(highest) {
+			highest = ver
+			highestTag = tag
+		}
+	}
+	if highestTag == "" {
+		return "", fmt.Errorf("latest_alias %q configured but no semantic version tags found", latestAlias)
+	}
+	return highestTag, nil
+}
+
 // ResolveAliases computes the alias map for a set of tags, ensuring each alias
 // points to the highest version that claims it.
 func ResolveAliases(tags []string) map[string]string {

@@ -219,6 +219,32 @@ func TestImageRef_FormatWithBuildID(t *testing.T) {
 }
 
 // ---------------------------------------------------------------------------
+// collectBaseTags
+// ---------------------------------------------------------------------------
+
+func TestCollectBaseTags(t *testing.T) {
+	img := &model.Image{
+		Name: "app",
+		Tags: map[string]*model.Tag{
+			"1.0": {},
+			"2.0": {},
+		},
+		Variants: map[string]*model.ImageVariant{
+			"slim": {TagSuffix: "-slim"},
+		},
+	}
+
+	tags := collectBaseTags(img)
+	sort.Strings(tags)
+	if len(tags) != 2 {
+		t.Fatalf("expected 2 base tags, got %d: %v", len(tags), tags)
+	}
+	if tags[0] != "1.0" || tags[1] != "2.0" {
+		t.Errorf("unexpected base tags: %v", tags)
+	}
+}
+
+// ---------------------------------------------------------------------------
 // collectAllTags – edge case: image with no tags
 // ---------------------------------------------------------------------------
 

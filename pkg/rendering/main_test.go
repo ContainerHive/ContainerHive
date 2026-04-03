@@ -292,6 +292,55 @@ func TestResolveAliases(t *testing.T) {
 	})
 }
 
+func TestResolveLatestAlias(t *testing.T) {
+	t.Run("empty alias returns empty string and no error", func(t *testing.T) {
+		target, err := ResolveLatestAlias([]string{"1.0.0"}, "")
+		if err != nil {
+			t.Errorf("expected no error, got %v", err)
+		}
+		if target != "" {
+			t.Errorf("expected empty target, got %q", target)
+		}
+	})
+
+	t.Run("no semantic tags returns error", func(t *testing.T) {
+		_, err := ResolveLatestAlias([]string{"foo", "bar"}, "latest")
+		if err == nil {
+			t.Error("expected error for non-semantic tags, got nil")
+		}
+	})
+
+	t.Run("single semantic tag points alias to it", func(t *testing.T) {
+		target, err := ResolveLatestAlias([]string{"1.0.0"}, "latest")
+		if err != nil {
+			t.Errorf("unexpected error: %v", err)
+		}
+		if target != "1.0.0" {
+			t.Errorf("expected 1.0.0, got %q", target)
+		}
+	})
+
+	t.Run("multiple semantic tags points alias to highest", func(t *testing.T) {
+		target, err := ResolveLatestAlias([]string{"8.1.0", "8.2.0", "8.0.100"}, "latest")
+		if err != nil {
+			t.Errorf("unexpected error: %v", err)
+		}
+		if target != "8.2.0" {
+			t.Errorf("expected 8.2.0, got %q", target)
+		}
+	})
+
+	t.Run("mixed semantic and non-semantic tags uses only semantic ones", func(t *testing.T) {
+		target, err := ResolveLatestAlias([]string{"foo", "1.0.0", "bar", "2.0.0"}, "stable")
+		if err != nil {
+			t.Errorf("unexpected error: %v", err)
+		}
+		if target != "2.0.0" {
+			t.Errorf("expected 2.0.0, got %q", target)
+		}
+	})
+}
+
 // ---------------------------------------------------------------------------
 // Unit tests for low-coverage functions
 // ---------------------------------------------------------------------------
