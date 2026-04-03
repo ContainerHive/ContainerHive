@@ -167,13 +167,13 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: mkdocs-dependencies-{{ checksum "requirements-docs.txt" }}
+          key: properdocs-dependencies-{{ checksum "requirements-docs.txt" }}
       - run:
-          name: Build mkdocs documentation
+          name: Build properdocs documentation
           command: |
             mkdir gh-pages
             pip install -r requirements-docs.txt
-            mkdocs build
+            properdocs build
             mv site/* gh-pages/
             touch gh-pages/.nojekyll
       - run:
@@ -182,7 +182,7 @@ jobs:
             mkdir -p gh-pages/schemas
             cp -r schemas/* gh-pages/schemas/
       - save_cache:
-          key: mkdocs-dependencies-{{ checksum "requirements-docs.txt" }}
+          key: properdocs-dependencies-{{ checksum "requirements-docs.txt" }}
           paths:
             - "/tmp/pip-cache"
       - run:

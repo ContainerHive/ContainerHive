@@ -23,8 +23,8 @@ Go CLI tool for managing container image builds with dependency resolution.
 
 ## Documentation
 
-- Documentation site built with mkdocs-material (`docs/`)
-- Preview locally: `pip install -r requirements-docs.txt && mkdocs serve`
+- Documentation site built with properdocs + mkdocs-material (`docs/`)
+- Preview locally: `pip install -r requirements-docs.txt && properdocs serve`
 - Navigation managed via `docs/.nav.yml` (awesome-nav plugin)
 - ADRs managed via mkdocs-decision-records plugin
 - Hosted at [container-hive.timo-reymann.de](https://container-hive.timo-reymann.de/)

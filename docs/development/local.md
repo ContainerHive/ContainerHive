@@ -58,9 +58,9 @@ make generate
 
 ## Preview documentation
 
-Preview the mkdocs documentation locally with hot-reload for changes.
+Preview the properdocs documentation locally with hot-reload for changes.
 
 ```sh
 pip install -r requirements-docs.txt
-mkdocs serve
+properdocs serve
 ```
