@@ -21,8 +21,9 @@ type ContainerStatus struct {
 
 // ContainerRun pulls the image if absent, creates a privileged container
 // binding hostPort on the host to containerPort inside the container, then starts it.
+// cmd overrides the container's default command (nil uses the image default).
 // Returns an error if the container already exists and is running.
-func (c *Client) ContainerRun(ctx context.Context, name, imageRef string, hostPort, containerPort int) error {
+func (c *Client) ContainerRun(ctx context.Context, name, imageRef string, hostPort, containerPort int, cmd []string) error {
 	// Pull image if not present locally.
 	if _, _, err := c.docker.ImageInspectWithRaw(ctx, imageRef); err != nil {
 		if !errdefs.IsNotFound(err) {
@@ -53,6 +54,7 @@ func (c *Client) ContainerRun(ctx context.Context, name, imageRef string, hostPo
 	internalPort := nat.Port(fmt.Sprintf("%d/tcp", containerPort))
 	cfg := &container.Config{
 		Image: imageRef,
+		Cmd:   cmd,
 		ExposedPorts: nat.PortSet{
 			internalPort: struct{}{},
 		},

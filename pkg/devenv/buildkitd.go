@@ -2,6 +2,7 @@ package devenv
 
 import (
 	"context"
+	"fmt"
 	"io"
 
 	"github.com/timo-reymann/ContainerHive/internal/buildkit"
@@ -45,7 +46,8 @@ func (b *Buildkitd) Close() error {
 // Start pulls the image if absent, creates and starts the buildkitd container.
 // Returns an error if the container is already running.
 func (b *Buildkitd) Start(ctx context.Context, imageRef string, hostPort int) error {
-	return b.docker.ContainerRun(ctx, BuildkitdContainerName, imageRef, hostPort, buildkitdContainerPort)
+	cmd := []string{"--addr", fmt.Sprintf("tcp://0.0.0.0:%d", buildkitdContainerPort)}
+	return b.docker.ContainerRun(ctx, BuildkitdContainerName, imageRef, hostPort, buildkitdContainerPort, cmd)
 }
 
 // Stop stops the buildkitd container. It is a no-op if the container is not running or does not exist.

@@ -5,8 +5,11 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"time"
 
+	"github.com/timo-reymann/ContainerHive/pkg/build"
 	"github.com/timo-reymann/ContainerHive/pkg/devenv"
+	"github.com/timo-reymann/ContainerHive/pkg/wait"
 	"github.com/urfave/cli/v3"
 )
 
@@ -47,6 +50,11 @@ func buildkitdStartCmd() *cli.Command {
 				Value: devenv.BuildkitdDefaultPort,
 				Usage: "Host port to bind",
 			},
+			&cli.DurationFlag{
+				Name:  "timeout",
+				Value: 1 * time.Minute,
+				Usage: "Maximum time to wait for buildkitd to become ready",
+			},
 		},
 		Action: func(ctx context.Context, cmd *cli.Command) error {
 			imageRef := cmd.String("image")
@@ -69,7 +77,29 @@ func buildkitdStartCmd() *cli.Command {
 				return err
 			}
 
-			fmt.Printf("export BUILDKIT_HOST=tcp://localhost:%d\n", hostPort)
+			endpoint := fmt.Sprintf("tcp://127.0.0.1:%d", hostPort)
+			log.Printf("Waiting for buildkitd to be ready at %s ...", endpoint)
+
+			waitCtx, cancel := context.WithTimeout(ctx, cmd.Duration("timeout"))
+			defer cancel()
+
+			target := wait.Target{
+				Name: "buildkitd",
+				CheckFn: func(ctx context.Context) error {
+					c, err := build.NewClient(ctx, endpoint)
+					if err != nil {
+						return err
+					}
+					defer c.Close()
+					_, err = c.Version(ctx)
+					return err
+				},
+			}
+			if results := wait.WaitAll(waitCtx, []wait.Target{target}); results[0].Err != nil {
+				return fmt.Errorf("buildkitd did not become ready: %w", results[0].Err)
+			}
+
+			fmt.Printf("export BUILDKIT_HOST=%s\n", endpoint)
 			return nil
 		},
 	}
@@ -118,7 +148,7 @@ func buildkitdStatusCmd() *cli.Command {
 			}
 			if status.HostPort > 0 {
 				log.Printf("port:          %d", status.HostPort)
-				log.Printf("BUILDKIT_HOST: tcp://localhost:%d", status.HostPort)
+				log.Printf("BUILDKIT_HOST: tcp://127.0.0.1:%d", status.HostPort)
 			}
 			return nil
 		},
