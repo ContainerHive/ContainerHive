@@ -46,8 +46,10 @@ func (c *Client) ContainerRun(ctx context.Context, name, imageRef string, hostPo
 		if resp.State.Running {
 			return fmt.Errorf("container %s is already running", name)
 		}
-		// Container exists but stopped — start it directly.
-		return c.docker.ContainerStart(ctx, resp.ID, container.StartOptions{})
+		// Container exists but stopped — remove it so it can be recreated with the correct config.
+		if err := c.docker.ContainerRemove(ctx, resp.ID, container.RemoveOptions{}); err != nil {
+			return fmt.Errorf("remove stopped container %s: %w", name, err)
+		}
 	}
 
 	// Create the container.
