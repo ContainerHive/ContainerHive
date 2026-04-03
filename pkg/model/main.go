@@ -29,6 +29,7 @@ type Image struct {
 	Variants            map[string]*ImageVariant
 	DependsOn           []string
 	Platforms           []string
+	LatestAlias         *LatestAliasConfig
 }
 
 // ImageVariant represents an alternative build of an image with different configuration.

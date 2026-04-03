@@ -141,6 +141,27 @@
         "type": "string"
       },
       "description": "Target platforms for this image (e.g. linux/amd64)"
+    },
+    "latest_alias": {
+      "type": [
+        "null",
+        "object"
+      ],
+      "properties": {
+        "tag": {
+          "type": "string",
+          "description": "Alias tag name to assign to the highest semantic version (e.g. latest, stable),required"
+        },
+        "on_missing": {
+          "type": "string",
+          "description": "Behaviour when no semantic tags are found: error (default), warning, silent"
+        }
+      },
+      "description": "Configure an alias pointing to the highest semantic version tag",
+      "required": [
+        "tag"
+      ],
+      "additionalProperties": false
     }
   },
   "$id": "https://container-hive.timo-reymann.de/schemas/image.schema.json",
