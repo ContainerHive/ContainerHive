@@ -95,6 +95,25 @@ List of image names this image depends on. ContainerHive resolves dependencies a
 
 Override the project-level platform list for this specific image.
 
+### `latest_alias`
+
+Configure an alias pointing to the highest semantic version tag. This allows you to automatically retag the highest semantic version as a configurable alias (e.g., `latest`, `stable`).
+
+| Field | Type | Description |
+|:------|:-----|:------------|
+| `tag` | string | Required. The alias tag name (e.g., `latest`, `stable`) |
+| `on_missing` | string | Optional. Behavior when no semantic tags are found: `error` (default), `warning`, or `silent` |
+
+**Example:**
+
+```yaml
+latest_alias:
+  tag: latest
+  on_missing: warning
+```
+
+In this example, the highest semantic version tag will be retagged as `latest`. If no semantic tags are found, a warning will be logged instead of failing.
+
 ## Directory structure
 
 Each image directory can contain:
