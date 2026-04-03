@@ -139,6 +139,17 @@ ch login <registry> -u <username> -p <password>
 | `--password`, `-p` | Registry password |
 | `--password-stdin` | Read password from stdin |
 
+### `dev buildkitd`
+
+Manage a local BuildKit daemon container for development. See [Local development](local-development.md) for full details.
+
+```bash
+ch dev buildkitd start
+ch dev buildkitd stop
+ch dev buildkitd status
+ch dev buildkitd logs
+```
+
 ### `license`
 
 Show third-party license notices.
