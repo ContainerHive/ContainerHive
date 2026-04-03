@@ -16,6 +16,25 @@ Both sources are combined to build a directed acyclic graph (DAG) that determine
 
 Images are grouped into layers based on their dependency depth:
 
+```plantuml {display-align=center}
+@startuml build-layers
+left to right direction
+
+rectangle "Depth 0\nBase images\n(no dependencies)" as depth0
+rectangle "Depth 1\nLibraries\n(depend on base)" as depth1
+rectangle "Depth 2\nSpecific images for e.g. Python CI\n(depend on libraries)" as depth2
+
+depth0 --> depth1 : depends on
+depth1 --> depth2 : depends on
+
+legend right
+  Dependency Layers
+  Sequential between layers
+  Parallel within layers
+endlegend
+@enduml
+```
+
 1. Images with no dependencies are built first (depth 0).
 2. Images depending only on depth-0 images are built next (depth 1).
 3. This continues until all images are built.
