@@ -9,10 +9,10 @@
       
       
       
-        <link rel="prev" href="001-buildkit-integration.html">
+        <link rel="prev" href="ci-integration.html">
       
       
-        <link rel="next" href="003-container-structure-tests.html">
+        <link rel="next" href="../configuration/hive.html">
       
       
         
@@ -23,7 +23,7 @@
     
     
       
-        <title>002 - SBOM generation - ContainerHive</title>
+        <title>Local development - ContainerHive</title>
       
     
     
@@ -74,7 +74,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#002-sbom-generation" class="md-skip">
+        <a href="#local-development" class="md-skip">
           Skip to content
         </a>
       
@@ -107,7 +107,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              002 - SBOM generation
+              Local development
             
           </span>
         </div>
@@ -302,11 +302,13 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="../usage/cli.html" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="cli.html" class="md-tabs__link">
           
   
   
@@ -362,12 +364,10 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
+      <li class="md-tabs__item">
         <a href="../development/local.html" class="md-tabs__link">
           
   
@@ -536,24 +536,29 @@
       
   
   
+    
   
   
+  
     
     
     
     
-      
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
         
           
-          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="">
             
   
   
@@ -571,7 +576,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_5">
             <span class="md-nav__icon md-icon"></span>
             
@@ -589,7 +594,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../usage/cli.html" class="md-nav__link">
+      <a href="cli.html" class="md-nav__link">
         
   
   
@@ -617,7 +622,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../usage/build-ids.html" class="md-nav__link">
+      <a href="build-ids.html" class="md-nav__link">
         
   
   
@@ -645,7 +650,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../usage/caching.html" class="md-nav__link">
+      <a href="caching.html" class="md-nav__link">
         
   
   
@@ -673,7 +678,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../usage/dockerfiles.html" class="md-nav__link">
+      <a href="dockerfiles.html" class="md-nav__link">
         
   
   
@@ -701,7 +706,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../usage/multi-platform.html" class="md-nav__link">
+      <a href="multi-platform.html" class="md-nav__link">
         
   
   
@@ -729,7 +734,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../usage/secrets-and-versions.html" class="md-nav__link">
+      <a href="secrets-and-versions.html" class="md-nav__link">
         
   
   
@@ -757,7 +762,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../usage/filtering.html" class="md-nav__link">
+      <a href="filtering.html" class="md-nav__link">
         
   
   
@@ -785,7 +790,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../usage/testing.html" class="md-nav__link">
+      <a href="testing.html" class="md-nav__link">
         
   
   
@@ -813,7 +818,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../usage/ci-integration.html" class="md-nav__link">
+      <a href="ci-integration.html" class="md-nav__link">
         
   
   
@@ -838,10 +843,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../usage/local-development.html" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Local development
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="local-development.html" class="md-nav__link md-nav__link--active">
         
   
   
@@ -857,6 +889,109 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#prerequisites" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Prerequisites
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#buildkit-daemon" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        BuildKit daemon
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="BuildKit daemon">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#start" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Start
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#image-version" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Image version
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#status" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Status
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#logs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Logs
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stop" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Stop
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -1155,29 +1290,24 @@
       
   
   
-    
   
   
-  
     
     
     
     
       
-        
-        
-      
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
         
           
-          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="">
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
             
   
   
@@ -1195,7 +1325,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_8">
             <span class="md-nav__icon md-icon"></span>
             
@@ -1238,8 +1368,6 @@
                 
   
   
-    
-  
   
   
     
@@ -1250,11 +1378,11 @@
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8_2" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8_2" >
         
           
           <label class="md-nav__link" for="__nav_8_2" id="__nav_8_2_label" tabindex="0">
@@ -1275,7 +1403,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_8_2_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_8_2_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_8_2">
             <span class="md-nav__icon md-icon"></span>
             
@@ -1293,7 +1421,7 @@
   
   
     <li class="md-nav__item">
-      <a href="001-buildkit-integration.html" class="md-nav__link">
+      <a href="../adr/001-buildkit-integration.html" class="md-nav__link">
         
   
   
@@ -1325,19 +1453,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-      <a href="002-sbom-generation.html" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../adr/002-sbom-generation.html" class="md-nav__link">
         
   
   
@@ -1360,7 +1479,6 @@
   
 
       </a>
-      
     </li>
   
 
@@ -1373,7 +1491,7 @@
   
   
     <li class="md-nav__item">
-      <a href="003-container-structure-tests.html" class="md-nav__link">
+      <a href="../adr/003-container-structure-tests.html" class="md-nav__link">
         
   
   
@@ -1408,7 +1526,7 @@
   
   
     <li class="md-nav__item">
-      <a href="004-embedded-local-registry.html" class="md-nav__link">
+      <a href="../adr/004-embedded-local-registry.html" class="md-nav__link">
         
   
   
@@ -1471,6 +1589,97 @@
     
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#prerequisites" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Prerequisites
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#buildkit-daemon" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        BuildKit daemon
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="BuildKit daemon">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#start" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Start
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#image-version" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Image version
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#status" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Status
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#logs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Logs
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stop" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Stop
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -1512,28 +1721,10 @@
     
     
       <li class="md-path__item">
-        <a href="../development/local.html" class="md-path__link">
+        <a href="cli.html" class="md-path__link">
           
   <span class="md-ellipsis">
-    Development
-  </span>
-
-        </a>
-      </li>
-    
-  
-
-      
-        
-  
-  
-    
-    
-      <li class="md-path__item">
-        <a href="001-buildkit-integration.html" class="md-path__link">
-          
-  <span class="md-ellipsis">
-    Architecture Decision Records
+    Usage
   </span>
 
         </a>
@@ -1555,94 +1746,113 @@
   
 
 
-<h1 id="002-sbom-generation">002 - SBOM generation</h1>
+<h1 id="local-development">Local development</h1>
+<p>The <code>ch dev</code> command group provides convenience helpers for running a local development environment. This removes the need to set up infrastructure manually when iterating on images.</p>
+<h2 id="prerequisites">Prerequisites</h2>
+<p>A Docker-compatible daemon must be reachable. By default the Docker socket at <code>/var/run/docker.sock</code> is used. Set <code>$DOCKER_HOST</code> to point at a different daemon, including Podman:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nb">export</span><span class="w"> </span><span class="nv">DOCKER_HOST</span><span class="o">=</span>unix:///run/user/1000/podman/podman.sock
+</span></code></pre></div>
+<h2 id="buildkit-daemon">BuildKit daemon</h2>
+<p><code>ch dev buildkitd</code> manages a local <a href="https://github.com/moby/buildkit">BuildKit</a> daemon container named <code>containerhive-buildkitd</code>.</p>
+<h3 id="start">Start</h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>ch<span class="w"> </span>dev<span class="w"> </span>buildkitd<span class="w"> </span>start
+</span></code></pre></div>
+<p>This will:</p>
+<ol>
+<li>Pull the buildkitd image if not present locally.</li>
+<li>Create and start a privileged container listening on TCP.</li>
+<li>Wait until the daemon is ready to accept connections.</li>
+<li>Print the <code>BUILDKIT_HOST</code> export line.</li>
+</ol>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>export BUILDKIT_HOST=tcp://127.0.0.1:8372
+</span></code></pre></div>
+<p>Evaluate this in your shell to make subsequent <code>ch build</code> invocations use the local daemon:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="nb">eval</span><span class="w"> </span><span class="k">$(</span>ch<span class="w"> </span>dev<span class="w"> </span>buildkitd<span class="w"> </span>start<span class="k">)</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>ch<span class="w"> </span>build
+</span></code></pre></div>
 <table>
-<tr><td><strong>Status</strong></td><td><span style='color: white;background:#28a745;padding:.4em;border-radius:8px;font-size:100%;'>accepted</span></td></tr>
-<tr><td><strong>Date</strong></td><td>2025-06-02</td></tr>
+<thead>
+<tr>
+<th style="text-align: left;">Flag</th>
+<th style="text-align: left;">Default</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>--image</code></td>
+<td style="text-align: left;"><em>(see below)</em></td>
+<td style="text-align: left;">Full <code>image:tag</code> to use for the buildkitd container</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>--port</code></td>
+<td style="text-align: left;"><code>8372</code></td>
+<td style="text-align: left;">Host port to bind</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>--timeout</code></td>
+<td style="text-align: left;"><code>1m</code></td>
+<td style="text-align: left;">How long to wait for the daemon to become ready</td>
+</tr>
+</tbody>
 </table>
-<h1 id="sbom-generation">SBOM generation</h1>
-<h2 id="context-and-problem-statement">Context and Problem Statement</h2>
-<p>ContainerHive needs to generate Software Bills of Materials (SBOMs) for built container images. BuildKit has built-in
-SBOM attestation support, but it relies on running a Docker container (by default pulled from Docker Hub) to perform the
-scan. In enterprise environments with restricted network access - a primary target audience for ContainerHive - this
-creates friction. How should ContainerHive integrate SBOM generation in a way that works seamlessly across environments
-without external runtime dependencies?</p>
-<h2 id="decision-drivers">Decision Drivers</h2>
-<ul>
-<li>Must work in network-restricted enterprise environments potentially without access to Docker Hub</li>
-<li>Should not require Docker-in-Docker or access to a container runtime for SBOM generation</li>
-<li>Seamless, built-in experience - SBOM generation should feel like a native part of the tool</li>
-<li>Support for local image tar files to enable offline workflows without loading into a registry first</li>
-<li>Well-documented and maintainable integration</li>
-</ul>
-<h2 id="considered-options">Considered Options</h2>
-<ul>
-<li>Option 1: Use BuildKit's built-in SBOM attestation</li>
-<li>Option 2: Use Syft as a Go library</li>
-<li>Option 3: Use Syft as a Docker container</li>
-</ul>
-<h2 id="decision-outcome">Decision Outcome</h2>
-<p>Chosen option: "Option 2 - Use Syft as a Go library", because it provides a well-documented Go API that integrates
-directly into ContainerHive without any external runtime dependencies. It operates on local OCI tar files produced by
-BuildKit, avoiding the need for a container runtime or registry access during SBOM generation. This keeps the tool
-self-contained and works reliably in restricted environments.</p>
-<h2 id="pros-and-cons-of-the-options">Pros and Cons of the Options</h2>
-<h3 id="option-1-use-buildkits-built-in-sbom-attestation">Option 1: Use BuildKit's built-in SBOM attestation</h3>
-<p>BuildKit supports SBOM generation via the <code>attest:sbom</code> frontend option. It runs a scanner image (default:
-<code>docker/buildkit-syft-scanner</code> from Docker Hub) as a container during the build process.</p>
-<ul>
-<li>Good, because it is built into BuildKit with no additional integration effort</li>
-<li>Good, because the SBOM is attached as a build attestation, following emerging OCI standards</li>
-<li>Good, because the scanner image could be customized to point to an internal registry</li>
-<li>Bad, because it pulls a Docker Hub image by default, which fails in network-restricted enterprise environments</li>
-<li>Bad, because even with a custom scanner image, it effectively requires a Docker-in-Docker setup</li>
-<li>Bad, because Docker-in-Docker is difficult to configure in Kubernetes-based CI environments (security policies,
-  privileged containers)</li>
-<li>Bad, because the complexity is hidden - failures in the attestation step are harder to diagnose than explicit SBOM
-  generation</li>
-<li>Bad, because ties SBOM format and tooling choices to what BuildKit's attestation pipeline supports</li>
-</ul>
-<h3 id="option-2-use-syft-as-a-go-library">Option 2: Use Syft as a Go library</h3>
-<p>Import <code>github.com/anchore/syft</code> as a Go dependency and call its API directly to scan OCI tar files and produce SBOMs in
-multiple formats.</p>
-<ul>
-<li>Good, because Syft has a well-documented Go API</li>
-<li>Good, because it integrates as a library - no subprocess management, no container runtime needed</li>
-<li>Good, because it operates on local <code>image.tar</code> files, enabling fully offline SBOM generation</li>
-<li>Good, because it supports multiple output formats (syft-json, CycloneDX, SPDX, etc.) with a simple encoder API</li>
-<li>Good, because no network access required at SBOM generation time - works in air-gapped environments</li>
-<li>Good, because ContainerHive controls when and how the SBOM is generated, independent of the build step</li>
-<li>Bad, because it adds a significant dependency tree (Syft pulls in SQLite for rpmdb, multiple archive libraries, etc.)</li>
-<li>Bad, because SBOM results may differ slightly from BuildKit's attestation scanner since they are separate tools</li>
-</ul>
-<h3 id="option-3-use-syft-as-a-docker-container">Option 3: Use Syft as a Docker container</h3>
-<p>Run the official Syft Docker container image to scan images, with the user providing the container.</p>
-<ul>
-<li>Good, because uses the official Syft distribution without embedding anything</li>
-<li>Good, because version management is delegated to the user</li>
-<li>Bad, because it requires a container runtime available during SBOM generation</li>
-<li>Bad, because it reintroduces the same network-restriction problems as Option 1 (pulling images)</li>
-<li>Bad, because it contradicts the goal of a seamless, all-in-one solution</li>
-<li>Bad, because subprocess/container orchestration adds complexity for little benefit over the library approach</li>
-</ul>
-<h2 id="links">Links</h2>
-<ul>
-<li><a href="https://github.com/anchore/syft">Syft GitHub repository</a></li>
-<li><a href="https://pkg.go.dev/github.com/anchore/syft/syft">Syft Go library documentation</a></li>
-<li><a href="https://github.com/moby/buildkit/blob/master/docs/attestations/sbom.md">BuildKit SBOM attestation</a></li>
-<li>Relates to <a href="001-buildkit-integration.html">ADR-001: BuildKit Integration</a> - SBOM generation is explicitly separated from
-  the BuildKit build step</li>
-</ul>
-<!-- markdownlint-disable-file MD013 -->
+<h3 id="image-version">Image version</h3>
+<p>By default the image is resolved from your project's <code>template_options</code> in <code>hive.yml</code>, using the same <code>ci_buildkit_image</code> and <code>ci_buildkit_version</code> keys that control the version used in generated CI pipelines. This keeps your local daemon in sync with CI.</p>
+<p>If no overrides are configured, the version is taken from the <code>github.com/moby/buildkit</code> dependency in <code>go.mod</code>.</p>
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># hive.yml — pin the same version locally and in CI</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="nt">template_options</span><span class="p">:</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">  </span><span class="nt">ci_buildkit_version</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v0.19.0</span>
+</span></code></pre></div>
+<p>Use <code>--image</code> to override the full reference for a one-off run:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>ch<span class="w"> </span>dev<span class="w"> </span>buildkitd<span class="w"> </span>start<span class="w"> </span>--image<span class="w"> </span>moby/buildkit:v0.19.0
+</span></code></pre></div>
+<h3 id="status">Status</h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>ch<span class="w"> </span>dev<span class="w"> </span>buildkitd<span class="w"> </span>status
+</span></code></pre></div>
+<p>Shows the container state, image, bound port, and the <code>BUILDKIT_HOST</code> value to use.</p>
+<h3 id="logs">Logs</h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>ch<span class="w"> </span>dev<span class="w"> </span>buildkitd<span class="w"> </span>logs
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>ch<span class="w"> </span>dev<span class="w"> </span>buildkitd<span class="w"> </span>logs<span class="w"> </span>--follow
+</span></code></pre></div>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Flag</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>--follow</code>, <code>-f</code></td>
+<td style="text-align: left;">Stream log output until interrupted</td>
+</tr>
+</tbody>
+</table>
+<h3 id="stop">Stop</h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>ch<span class="w"> </span>dev<span class="w"> </span>buildkitd<span class="w"> </span>stop
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>ch<span class="w"> </span>dev<span class="w"> </span>buildkitd<span class="w"> </span>stop<span class="w"> </span>--remove
+</span></code></pre></div>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Flag</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>--remove</code></td>
+<td style="text-align: left;">Also remove the container after stopping</td>
+</tr>
+</tbody>
+</table>
+<p>Without <code>--remove</code> the container is only stopped and can be started again with <code>ch dev buildkitd start</code>.</p>
 
 
 
 
 
 
-
-  
-  
 
 
 

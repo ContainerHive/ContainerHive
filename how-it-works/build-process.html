@@ -9,10 +9,10 @@
       
       
       
-        <link rel="prev" href="001-buildkit-integration.html">
+        <link rel="prev" href="../configuration/test.html">
       
       
-        <link rel="next" href="003-container-structure-tests.html">
+        <link rel="next" href="dependency-resolution.html">
       
       
         
@@ -23,7 +23,7 @@
     
     
       
-        <title>002 - SBOM generation - ContainerHive</title>
+        <title>Build Process Overview - ContainerHive</title>
       
     
     
@@ -74,7 +74,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#002-sbom-generation" class="md-skip">
+        <a href="#build-process-overview" class="md-skip">
           Skip to content
         </a>
       
@@ -107,7 +107,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              002 - SBOM generation
+              Build Process Overview
             
           </span>
         </div>
@@ -342,11 +342,13 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="../how-it-works/build-process.html" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="build-process.html" class="md-tabs__link">
           
   
   
@@ -362,12 +364,10 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
+      <li class="md-tabs__item">
         <a href="../development/local.html" class="md-tabs__link">
           
   
@@ -1014,24 +1014,29 @@
       
   
   
+    
   
   
+  
     
     
     
     
-      
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" checked>
         
           
-          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="">
             
   
   
@@ -1049,7 +1054,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_7">
             <span class="md-nav__icon md-icon"></span>
             
@@ -1064,10 +1069,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../how-it-works/build-process.html" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Build Process Overview
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="build-process.html" class="md-nav__link md-nav__link--active">
         
   
   
@@ -1083,6 +1115,48 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#pipeline-steps" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pipeline Steps
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#key-features" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Key Features
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -1095,7 +1169,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../how-it-works/dependency-resolution.html" class="md-nav__link">
+      <a href="dependency-resolution.html" class="md-nav__link">
         
   
   
@@ -1123,7 +1197,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../how-it-works/sbom-generation.html" class="md-nav__link">
+      <a href="sbom-generation.html" class="md-nav__link">
         
   
   
@@ -1155,29 +1229,24 @@
       
   
   
-    
   
   
-  
     
     
     
     
       
-        
-        
-      
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
         
           
-          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="">
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
             
   
   
@@ -1195,7 +1264,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_8">
             <span class="md-nav__icon md-icon"></span>
             
@@ -1238,8 +1307,6 @@
                 
   
   
-    
-  
   
   
     
@@ -1250,11 +1317,11 @@
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8_2" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8_2" >
         
           
           <label class="md-nav__link" for="__nav_8_2" id="__nav_8_2_label" tabindex="0">
@@ -1275,7 +1342,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_8_2_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_8_2_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_8_2">
             <span class="md-nav__icon md-icon"></span>
             
@@ -1293,7 +1360,7 @@
   
   
     <li class="md-nav__item">
-      <a href="001-buildkit-integration.html" class="md-nav__link">
+      <a href="../adr/001-buildkit-integration.html" class="md-nav__link">
         
   
   
@@ -1325,19 +1392,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-      <a href="002-sbom-generation.html" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../adr/002-sbom-generation.html" class="md-nav__link">
         
   
   
@@ -1360,7 +1418,6 @@
   
 
       </a>
-      
     </li>
   
 
@@ -1373,7 +1430,7 @@
   
   
     <li class="md-nav__item">
-      <a href="003-container-structure-tests.html" class="md-nav__link">
+      <a href="../adr/003-container-structure-tests.html" class="md-nav__link">
         
   
   
@@ -1408,7 +1465,7 @@
   
   
     <li class="md-nav__item">
-      <a href="004-embedded-local-registry.html" class="md-nav__link">
+      <a href="../adr/004-embedded-local-registry.html" class="md-nav__link">
         
   
   
@@ -1471,6 +1528,36 @@
     
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#pipeline-steps" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pipeline Steps
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#key-features" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Key Features
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -1512,28 +1599,10 @@
     
     
       <li class="md-path__item">
-        <a href="../development/local.html" class="md-path__link">
+        <a href="build-process.html" class="md-path__link">
           
   <span class="md-ellipsis">
-    Development
-  </span>
-
-        </a>
-      </li>
-    
-  
-
-      
-        
-  
-  
-    
-    
-      <li class="md-path__item">
-        <a href="001-buildkit-integration.html" class="md-path__link">
-          
-  <span class="md-ellipsis">
-    Architecture Decision Records
+    How it works
   </span>
 
         </a>
@@ -1555,94 +1624,33 @@
   
 
 
-<h1 id="002-sbom-generation">002 - SBOM generation</h1>
-<table>
-<tr><td><strong>Status</strong></td><td><span style='color: white;background:#28a745;padding:.4em;border-radius:8px;font-size:100%;'>accepted</span></td></tr>
-<tr><td><strong>Date</strong></td><td>2025-06-02</td></tr>
-</table>
-<h1 id="sbom-generation">SBOM generation</h1>
-<h2 id="context-and-problem-statement">Context and Problem Statement</h2>
-<p>ContainerHive needs to generate Software Bills of Materials (SBOMs) for built container images. BuildKit has built-in
-SBOM attestation support, but it relies on running a Docker container (by default pulled from Docker Hub) to perform the
-scan. In enterprise environments with restricted network access - a primary target audience for ContainerHive - this
-creates friction. How should ContainerHive integrate SBOM generation in a way that works seamlessly across environments
-without external runtime dependencies?</p>
-<h2 id="decision-drivers">Decision Drivers</h2>
+<h1 id="build-process-overview">Build Process Overview</h1>
+<p>ContainerHive builds container images through a sequential pipeline:</p>
+<p><span style="display: block; text-align: center"><img alt="Kroki" src="kroki-generated-7bbbdf78-47b1-3529-8bae-7cbde3910d47.svg#only-light" /><img alt="Kroki" src="kroki-generated-0a87dd26-6a35-3d59-8b8d-91efab26f4cd.svg#only-dark" /></span></p>
+<h2 id="pipeline-steps">Pipeline Steps</h2>
+<ol>
+<li><strong>Discovery</strong> - Find and validate configuration files</li>
+<li><strong>Dependency Resolution</strong> - Build dependency graph combining implicit (Dockerfile FROM) and explicit (<code>depends_on</code>) dependencies</li>
+<li><strong>Preparation</strong> - Apply templates and prepare build contexts</li>
+<li><strong>Execution</strong> - Build images sequentially using BuildKit</li>
+<li><strong>Post-Processing</strong> - Generate SBOMs, run tests, push to registry</li>
+<li><strong>Cleanup</strong> - Remove temporary artifacts and report results</li>
+</ol>
+<h2 id="key-features">Key Features</h2>
 <ul>
-<li>Must work in network-restricted enterprise environments potentially without access to Docker Hub</li>
-<li>Should not require Docker-in-Docker or access to a container runtime for SBOM generation</li>
-<li>Seamless, built-in experience - SBOM generation should feel like a native part of the tool</li>
-<li>Support for local image tar files to enable offline workflows without loading into a registry first</li>
-<li>Well-documented and maintainable integration</li>
+<li><strong>Sequential execution</strong> for reliability and predictability</li>
+<li><strong>Dependency-aware ordering</strong> using topological sorting</li>
+<li><strong>Template processing</strong> with Go templates</li>
+<li><strong>Secure secret handling</strong> via BuildKit secret mounting</li>
+<li><strong>RootFS copying</strong> for derived image scenarios</li>
+<li><strong>Comprehensive error handling</strong> with detailed reporting</li>
 </ul>
-<h2 id="considered-options">Considered Options</h2>
-<ul>
-<li>Option 1: Use BuildKit's built-in SBOM attestation</li>
-<li>Option 2: Use Syft as a Go library</li>
-<li>Option 3: Use Syft as a Docker container</li>
-</ul>
-<h2 id="decision-outcome">Decision Outcome</h2>
-<p>Chosen option: "Option 2 - Use Syft as a Go library", because it provides a well-documented Go API that integrates
-directly into ContainerHive without any external runtime dependencies. It operates on local OCI tar files produced by
-BuildKit, avoiding the need for a container runtime or registry access during SBOM generation. This keeps the tool
-self-contained and works reliably in restricted environments.</p>
-<h2 id="pros-and-cons-of-the-options">Pros and Cons of the Options</h2>
-<h3 id="option-1-use-buildkits-built-in-sbom-attestation">Option 1: Use BuildKit's built-in SBOM attestation</h3>
-<p>BuildKit supports SBOM generation via the <code>attest:sbom</code> frontend option. It runs a scanner image (default:
-<code>docker/buildkit-syft-scanner</code> from Docker Hub) as a container during the build process.</p>
-<ul>
-<li>Good, because it is built into BuildKit with no additional integration effort</li>
-<li>Good, because the SBOM is attached as a build attestation, following emerging OCI standards</li>
-<li>Good, because the scanner image could be customized to point to an internal registry</li>
-<li>Bad, because it pulls a Docker Hub image by default, which fails in network-restricted enterprise environments</li>
-<li>Bad, because even with a custom scanner image, it effectively requires a Docker-in-Docker setup</li>
-<li>Bad, because Docker-in-Docker is difficult to configure in Kubernetes-based CI environments (security policies,
-  privileged containers)</li>
-<li>Bad, because the complexity is hidden - failures in the attestation step are harder to diagnose than explicit SBOM
-  generation</li>
-<li>Bad, because ties SBOM format and tooling choices to what BuildKit's attestation pipeline supports</li>
-</ul>
-<h3 id="option-2-use-syft-as-a-go-library">Option 2: Use Syft as a Go library</h3>
-<p>Import <code>github.com/anchore/syft</code> as a Go dependency and call its API directly to scan OCI tar files and produce SBOMs in
-multiple formats.</p>
-<ul>
-<li>Good, because Syft has a well-documented Go API</li>
-<li>Good, because it integrates as a library - no subprocess management, no container runtime needed</li>
-<li>Good, because it operates on local <code>image.tar</code> files, enabling fully offline SBOM generation</li>
-<li>Good, because it supports multiple output formats (syft-json, CycloneDX, SPDX, etc.) with a simple encoder API</li>
-<li>Good, because no network access required at SBOM generation time - works in air-gapped environments</li>
-<li>Good, because ContainerHive controls when and how the SBOM is generated, independent of the build step</li>
-<li>Bad, because it adds a significant dependency tree (Syft pulls in SQLite for rpmdb, multiple archive libraries, etc.)</li>
-<li>Bad, because SBOM results may differ slightly from BuildKit's attestation scanner since they are separate tools</li>
-</ul>
-<h3 id="option-3-use-syft-as-a-docker-container">Option 3: Use Syft as a Docker container</h3>
-<p>Run the official Syft Docker container image to scan images, with the user providing the container.</p>
-<ul>
-<li>Good, because uses the official Syft distribution without embedding anything</li>
-<li>Good, because version management is delegated to the user</li>
-<li>Bad, because it requires a container runtime available during SBOM generation</li>
-<li>Bad, because it reintroduces the same network-restriction problems as Option 1 (pulling images)</li>
-<li>Bad, because it contradicts the goal of a seamless, all-in-one solution</li>
-<li>Bad, because subprocess/container orchestration adds complexity for little benefit over the library approach</li>
-</ul>
-<h2 id="links">Links</h2>
-<ul>
-<li><a href="https://github.com/anchore/syft">Syft GitHub repository</a></li>
-<li><a href="https://pkg.go.dev/github.com/anchore/syft/syft">Syft Go library documentation</a></li>
-<li><a href="https://github.com/moby/buildkit/blob/master/docs/attestations/sbom.md">BuildKit SBOM attestation</a></li>
-<li>Relates to <a href="001-buildkit-integration.html">ADR-001: BuildKit Integration</a> - SBOM generation is explicitly separated from
-  the BuildKit build step</li>
-</ul>
-<!-- markdownlint-disable-file MD013 -->
 
 
 
 
 
 
-
-  
-  
 
 
 
