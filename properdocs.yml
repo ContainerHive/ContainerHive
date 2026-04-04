@@ -50,3 +50,24 @@ plugins:
   - decision-records:
       required_deciders_count: 0
   - awesome-nav
+  - search
+  - kroki:
+      file_types:
+        - svg
+      server_url: https://kroki.io
+      fence_prefix: ""
+      http_method: "POST"
+      diagram_background_color_light: "#797272"
+      diagram_background_color_dark: transparent
+      styles:
+        box:
+          fill: "#1a237e"
+          stroke: "#303f9f"
+        text:
+          fill: "#ffffff"
+          font-family: "Arial"
+          font-size: "14"
+        line:
+          stroke: "#7986cb"
+        background:
+          fill: "transparent"

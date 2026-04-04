@@ -3,9 +3,28 @@ nav:
   - why-containerhive.md
   - installation.md
   - getting-started.md
-  - usage
-  - configuration
-  - how-it-works
+  - Usage:
+      - usage/cli.md
+      - usage/build-ids.md
+      - usage/caching.md
+      - usage/dockerfiles.md
+      - usage/multi-platform.md
+      - usage/secrets-and-versions.md
+      - usage/filtering.md
+      - usage/testing.md
+      - usage/ci-integration.md
+      - usage/local-development.md
+      - usage/*.md
+  - Configuration:
+      - configuration/hive.md
+      - configuration/image.md
+      - configuration/test.md
+      - configuration/*.md
+  - How it works:
+      - how-it-works/build-process.md
+      - how-it-works/dependency-resolution.md
+      - how-it-works/sbom-generation.md
+      - how-it-works/*.md
   - Development:
       - development/*.md
       - Architecture Decision Records:

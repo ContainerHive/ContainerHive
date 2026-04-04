@@ -57,7 +57,7 @@ type CIConfigContext struct {
 // defaultTemplateOptions returns the built-in template option defaults.
 func defaultTemplateOptions() map[string]string {
 	return map[string]string{
-		"ci_buildkit_image":   "moby/buildkit",
+		"ci_buildkit_image":   buildkit.DefaultImage,
 		"ci_buildkit_version": buildkit.Version,
 	}
 }

@@ -76,6 +76,7 @@ func main() {
 			waitCmd(),
 			loginCmd(),
 			licenseCmd(),
+			devCmd(),
 		},
 	}
 
