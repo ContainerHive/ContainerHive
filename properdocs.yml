@@ -65,14 +65,16 @@ plugins:
       http_method: "POST"
       styles_light:
         box:
-          fill: "#1a237e"
+          fill: "#B3D9FF"
           stroke: "#303f9f"
         text:
-          fill: "#ffffff"
+          fill: "#333333"
           font-family: "Arial"
           font-size: "14"
         line:
-          stroke: "#7986cb"
+          stroke: "#1a237e"
+          font-color: "#000"
+          label-background: "#333"
         background:
           fill: "transparent"
         note:
