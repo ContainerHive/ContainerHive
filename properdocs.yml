@@ -1,3 +1,9 @@
+# ContainerHive Documentation Configuration v1.5.0
+# New note styling features:
+# - Light theme optimization for kroki diagrams
+# - Distinct color schemes for light/dark modes
+# - Improved readability and contrast
+
 site_name: ContainerHive
 repo_url: https://github.com/timo-reymann/ContainerHive
 use_directory_urls: false
@@ -57,9 +63,7 @@ plugins:
       server_url: https://kroki.io
       fence_prefix: ""
       http_method: "POST"
-      diagram_background_color_light: "#797272"
-      diagram_background_color_dark: transparent
-      styles:
+      styles_light:
         box:
           fill: "#1a237e"
           stroke: "#303f9f"
@@ -71,3 +75,23 @@ plugins:
           stroke: "#7986cb"
         background:
           fill: "transparent"
+        note:
+          fill: "#fff9c4"
+          stroke: "#f57f17"
+          color: "#000000"
+      styles_dark:
+        box:
+          fill: "#1a237e"
+          stroke: "#303f9f"
+        text:
+          fill: "#ffffff"
+          font-family: "Arial"
+          font-size: "14"
+        line:
+          stroke: "#7986cb"
+        background:
+          fill: "transparent"
+        note:
+          fill: "#4e342e"
+          stroke: "#ff8f00"
+          color: "#ffeb3b"

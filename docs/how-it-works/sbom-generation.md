@@ -13,16 +13,22 @@ left to right direction
 
 rectangle "Built Image" as image
 rectangle "Syft Library" as syft
-rectangle "CycloneDX JSON" as sbom
 
-image --> syft : Scans locally
-syft --> sbom : Generates SBOM
-
-legend right
-  Integrated SBOM Generation
+note bottom
+  **Integrated SBOM Generation**
   No external dependencies
   Works offline
-endlegend
+end note
+
+rectangle "CycloneDX JSON" as sbom
+
+
+
+image --> syft : Scans locally
+
+syft --> sbom : Generates SBOM
+
+
 @enduml
 ```
 
