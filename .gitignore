@@ -1,10 +1,20 @@
+# Build artifacts
 dist/
-.idea/
-/ch
-/main
 example/dist
 example/reports
+site/
+
+# IDE and editor files
+.idea/
 .claude/worktrees
-cmd/ch/NOTICE
-test-project/
+
+# Generated files
 internal/buildkit/version_generated.go
+
+# Binary and executable files
+/ch
+/main
+
+# Test and temporary files
+test-project/
+cmd/ch/NOTICE
