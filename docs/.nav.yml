@@ -14,6 +14,7 @@ nav:
       - usage/testing.md
       - usage/ci-integration.md
       - usage/local-development.md
+      - usage/renovate.md
       - usage/*.md
   - Configuration:
       - configuration/hive.md

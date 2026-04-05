@@ -1,0 +1,16 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "description": "Update versions in ContainerHive image.yml files via inline renovate comments",
+  "regexManagers": [
+    {
+      "description": "Detect versions annotated with # renovate: datasource=X depName=Y in image.yml",
+      "fileMatch": ["(^|/)image\\.yml$"],
+      "matchStrings": [
+        // Matches: key: "value" # renovate: datasource=X depName=Y [versioning=Z] [registryUrl=U]
+        // Both quoted and unquoted values are supported.
+        "\"?'?(?<currentValue>[^\\s\"'#\\n]+)\"?'?\\s+#\\s+renovate:\\s+datasource=(?<datasource>\\S+)\\s+depName=(?<depName>\\S+)(?:\\s+versioning=(?<versioning>\\S+))?(?:\\s+registryUrl=(?<registryUrl>\\S+))?"
+      ],
+      "versioningTemplate": "{{#if versioning}}{{{versioning}}}{{else}}semver{{/if}}"
+    }
+  ]
+}
