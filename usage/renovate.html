@@ -9,10 +9,10 @@
       
       
       
-        <link rel="prev" href="cli.html">
+        <link rel="prev" href="local-development.html">
       
       
-        <link rel="next" href="caching.html">
+        <link rel="next" href="../configuration/hive.html">
       
       
         
@@ -23,7 +23,7 @@
     
     
       
-        <title>Use build IDs for merge requests - ContainerHive</title>
+        <title>Renovate integration - ContainerHive</title>
       
     
     
@@ -74,7 +74,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#use-build-ids-for-merge-requests" class="md-skip">
+        <a href="#renovate-integration" class="md-skip">
           Skip to content
         </a>
       
@@ -107,7 +107,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Use build IDs for merge requests
+              Renovate integration
             
           </span>
         </div>
@@ -619,37 +619,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Use build IDs for merge requests
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="build-ids.html" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="build-ids.html" class="md-nav__link">
         
   
   
@@ -665,120 +638,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#how-it-works" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        How it works
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#recommended-mrpr-workflow" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Recommended MR/PR workflow
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Recommended MR/PR workflow">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#1-build-with-a-build-id" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        1. Build with a build ID
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#2-finalize-with-the-same-build-id" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        2. Finalize with the same build ID
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#3-test-with-the-same-build-id" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        3. Test with the same build ID
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#4-merge-and-build-without-build-id" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        4. Merge and build without build ID
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#why-use-build-ids" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Why use build IDs
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#flag-placement" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Flag placement
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -1012,10 +871,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="renovate.html" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Renovate integration
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="renovate.html" class="md-nav__link md-nav__link--active">
         
   
   
@@ -1031,6 +917,70 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#setup" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Setup
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#annotating-versions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Annotating versions
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#comment-fields" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Comment fields
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#examples-by-datasource" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Examples by datasource
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -1635,10 +1585,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#how-it-works" class="md-nav__link">
+  <a href="#setup" class="md-nav__link">
     <span class="md-ellipsis">
       
-        How it works
+        Setup
       
     </span>
   </a>
@@ -1646,71 +1596,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#recommended-mrpr-workflow" class="md-nav__link">
+  <a href="#annotating-versions" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Recommended MR/PR workflow
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Recommended MR/PR workflow">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#1-build-with-a-build-id" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        1. Build with a build ID
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#2-finalize-with-the-same-build-id" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        2. Finalize with the same build ID
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#3-test-with-the-same-build-id" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        3. Test with the same build ID
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#4-merge-and-build-without-build-id" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        4. Merge and build without build ID
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#why-use-build-ids" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Why use build IDs
+        Annotating versions
       
     </span>
   </a>
@@ -1718,10 +1607,21 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#flag-placement" class="md-nav__link">
+  <a href="#comment-fields" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Flag placement
+        Comment fields
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#examples-by-datasource" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Examples by datasource
       
     </span>
   </a>
@@ -1796,74 +1696,109 @@
   
 
 
-<h1 id="use-build-ids-for-merge-requests">Use build IDs for merge requests</h1>
-<p>The <code>--build-id</code> flag appends a unique identifier to all image tags, allowing multiple builds to coexist in the same registry without overwriting each other. This is essential for merge request (MR) / pull request (PR) workflows where you want to build, test, and preview images before merging.</p>
-<h2 id="how-it-works">How it works</h2>
-<p>When you pass <code>--build-id</code>, all tags get a <code>.buildID</code> suffix:</p>
+<h1 id="renovate-integration">Renovate integration</h1>
+<p>ContainerHive ships a <a href="https://docs.renovatebot.com/">Renovate</a> preset that enables automated version bump PRs for the <code>versions:</code> entries in your <code>image.yml</code> files. It uses the <a href="https://docs.renovatebot.com/modules/manager/regex/">regex manager</a> together with inline comments to identify which values to track and how.</p>
+<h2 id="setup">Setup</h2>
+<p>Add the preset to your <code>renovate.json5</code>:</p>
+<div class="language-json5 highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="p">{</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">  </span><span class="nv">&quot;$schema&quot;</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;https://docs.renovatebot.com/renovate-schema.json&quot;</span><span class="p">,</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">  </span><span class="nv">&quot;extends&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">    </span><span class="c1">// your other presets ...</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">    </span><span class="s">&quot;github&gt;timo-reymann/ContainerHive//renovate/image-versions.json5&quot;</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">  </span><span class="p">]</span>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="p">}</span>
+</span></code></pre></div>
+<h2 id="annotating-versions">Annotating versions</h2>
+<p>Add a <code># renovate:</code> comment to any version entry you want Renovate to track:</p>
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nt">versions</span><span class="p">:</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">  </span><span class="nt">python</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;3.13.7&quot;</span><span class="w">    </span><span class="c1"># renovate: datasource=pypi depName=python versioning=pep440</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">  </span><span class="nt">zig</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;0.14.1&quot;</span><span class="w">       </span><span class="c1"># renovate: datasource=github-releases depName=ziglang/zig</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">  </span><span class="nt">nodejs</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;24&quot;</span><span class="w">        </span><span class="c1"># renovate: datasource=node depName=node versioning=node</span>
+</span></code></pre></div>
+<p>Annotations work at all three version levels — image, tag, and variant:</p>
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="nt">versions</span><span class="p">:</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">  </span><span class="nt">uv</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;0.8.22&quot;</span><span class="w"> </span><span class="c1"># renovate: datasource=pypi depName=uv versioning=pep440</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="nt">tags</span><span class="p">:</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;3.13.7&quot;</span>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="w">    </span><span class="nt">versions</span><span class="p">:</span>
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="w">      </span><span class="nt">python</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;3.13.7&quot;</span><span class="w"> </span><span class="c1"># renovate: datasource=pypi depName=python versioning=pep440</span>
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="nt">variants</span><span class="p">:</span>
+</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">slim</span>
+</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a><span class="w">    </span><span class="nt">tag_suffix</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">-slim</span>
+</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a><span class="w">    </span><span class="nt">versions</span><span class="p">:</span>
+</span><span id="__span-2-13"><a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a><span class="w">      </span><span class="nt">python</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;3.13.7-slim&quot;</span><span class="w"> </span><span class="c1"># renovate: datasource=docker depName=python versioning=docker</span>
+</span></code></pre></div>
+<h2 id="comment-fields">Comment fields</h2>
 <table>
 <thead>
 <tr>
-<th style="text-align: left;">Tag</th>
-<th style="text-align: left;">Build ID</th>
-<th style="text-align: left;">Result</th>
+<th style="text-align: left;">Field</th>
+<th style="text-align: left;">Required</th>
+<th style="text-align: left;">Description</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align: left;"><code>1.0.0</code></td>
-<td style="text-align: left;"><code>mr-42</code></td>
-<td style="text-align: left;"><code>1.0.0.mr-42</code></td>
+<td style="text-align: left;"><code>datasource=</code></td>
+<td style="text-align: left;">yes</td>
+<td style="text-align: left;">Renovate datasource — e.g. <code>pypi</code>, <code>docker</code>, <code>github-releases</code>, <code>go</code>, <code>node</code></td>
 </tr>
 <tr>
-<td style="text-align: left;"><code>1.0.0</code></td>
-<td style="text-align: left;"><code>build-1234</code></td>
-<td style="text-align: left;"><code>1.0.0.build-1234</code></td>
+<td style="text-align: left;"><code>depName=</code></td>
+<td style="text-align: left;">yes</td>
+<td style="text-align: left;">Package or image name as the datasource knows it</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>versioning=</code></td>
+<td style="text-align: left;">no</td>
+<td style="text-align: left;">Versioning scheme (default: <code>semver</code>) — e.g. <code>pep440</code>, <code>docker</code>, <code>node</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>registryUrl=</code></td>
+<td style="text-align: left;">no</td>
+<td style="text-align: left;">Custom registry URL for private registries</td>
 </tr>
 </tbody>
 </table>
-<p>This applies to:</p>
-<ul>
-<li>Platform-specific push tags (e.g. <code>1.0.0.linux-amd64.mr-42</code>)</li>
-<li>Multi-arch manifest tags created by <code>finalize</code> (e.g. <code>1.0.0.mr-42</code>)</li>
-<li>Semantic version aliases created by <code>finalize</code> (e.g. <code>1.mr-42</code>, <code>1.0.mr-42</code>)</li>
-</ul>
-<h2 id="recommended-mrpr-workflow">Recommended MR/PR workflow</h2>
-<h3 id="1-build-with-a-build-id">1. Build with a build ID</h3>
-<p>Use the MR/PR number or CI job ID as the build ID:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># GitLab CI</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>ch<span class="w"> </span>--build-id<span class="w"> </span><span class="s2">&quot;mr-</span><span class="si">${</span><span class="nv">CI_MERGE_REQUEST_IID</span><span class="si">}</span><span class="s2">&quot;</span><span class="w"> </span>build
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="c1"># GitHub Actions</span>
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>ch<span class="w"> </span>--build-id<span class="w"> </span><span class="s2">&quot;pr-</span><span class="si">${</span><span class="nv">GITHUB_EVENT_NUMBER</span><span class="si">}</span><span class="s2">&quot;</span><span class="w"> </span>build
+<h2 id="examples-by-datasource">Examples by datasource</h2>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:6"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><input id="__tabbed_1_3" name="__tabbed_1" type="radio" /><input id="__tabbed_1_4" name="__tabbed_1" type="radio" /><input id="__tabbed_1_5" name="__tabbed_1" type="radio" /><input id="__tabbed_1_6" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">PyPI</label><label for="__tabbed_1_2">Docker Hub</label><label for="__tabbed_1_3">GitHub Releases</label><label for="__tabbed_1_4">Go</label><label for="__tabbed_1_5">Node.js</label><label for="__tabbed_1_6">Private registry</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="nt">versions</span><span class="p">:</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">  </span><span class="nt">python</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;3.13.7&quot;</span><span class="w">  </span><span class="c1"># renovate: datasource=pypi depName=python versioning=pep440</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">  </span><span class="nt">uv</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;0.8.22&quot;</span><span class="w">      </span><span class="c1"># renovate: datasource=pypi depName=uv versioning=pep440</span>
 </span></code></pre></div>
-<h3 id="2-finalize-with-the-same-build-id">2. Finalize with the same build ID</h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>ch<span class="w"> </span>--build-id<span class="w"> </span><span class="s2">&quot;mr-</span><span class="si">${</span><span class="nv">CI_MERGE_REQUEST_IID</span><span class="si">}</span><span class="s2">&quot;</span><span class="w"> </span>finalize
+</div>
+<div class="tabbed-block">
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="nt">versions</span><span class="p">:</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="w">  </span><span class="nt">ubuntu</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;24.04&quot;</span><span class="w"> </span><span class="c1"># renovate: datasource=docker depName=ubuntu versioning=docker</span>
 </span></code></pre></div>
-<p>This creates manifests like <code>my-image:1.0.0.mr-42</code> and aliases like <code>my-image:1.mr-42</code>.</p>
-<h3 id="3-test-with-the-same-build-id">3. Test with the same build ID</h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>ch<span class="w"> </span>--build-id<span class="w"> </span><span class="s2">&quot;mr-</span><span class="si">${</span><span class="nv">CI_MERGE_REQUEST_IID</span><span class="si">}</span><span class="s2">&quot;</span><span class="w"> </span><span class="nb">test</span>
+</div>
+<div class="tabbed-block">
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="nt">versions</span><span class="p">:</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="w">  </span><span class="nt">zig</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;0.14.1&quot;</span><span class="w">   </span><span class="c1"># renovate: datasource=github-releases depName=ziglang/zig</span>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="w">  </span><span class="nt">kubectl</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;1.32.0&quot;</span><span class="w"> </span><span class="c1"># renovate: datasource=github-releases depName=kubernetes/kubernetes versioning=semver</span>
 </span></code></pre></div>
-<h3 id="4-merge-and-build-without-build-id">4. Merge and build without build ID</h3>
-<p>On the main branch, build without <code>--build-id</code> to produce the final tags:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>ch<span class="w"> </span>build
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>ch<span class="w"> </span>finalize
+</div>
+<div class="tabbed-block">
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="nt">versions</span><span class="p">:</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="w">  </span><span class="nt">golang</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;1.23.0&quot;</span><span class="w"> </span><span class="c1"># renovate: datasource=go depName=go versioning=semver</span>
 </span></code></pre></div>
-<p>This creates the clean <code>my-image:1.0.0</code> tag and aliases <code>my-image:1.0</code>, <code>my-image:1</code>.</p>
-<h2 id="why-use-build-ids">Why use build IDs</h2>
-<p>Without build IDs, concurrent MR builds would overwrite each other's tags in the registry. Build IDs solve this by namespacing tags per MR:</p>
-<ul>
-<li><strong>MR 42</strong> pushes <code>1.0.0.mr-42</code> — safe to test and preview</li>
-<li><strong>MR 43</strong> pushes <code>1.0.0.mr-43</code> — doesn't conflict with MR 42</li>
-<li><strong>Main branch</strong> pushes <code>1.0.0</code> — the final, clean tag after merge</li>
-</ul>
-<h2 id="flag-placement">Flag placement</h2>
-<p><code>--build-id</code> is a global flag, placed before the subcommand:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>ch<span class="w"> </span>--build-id<span class="w"> </span><span class="s2">&quot;mr-42&quot;</span><span class="w"> </span>build
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>ch<span class="w"> </span>--build-id<span class="w"> </span><span class="s2">&quot;mr-42&quot;</span><span class="w"> </span>finalize
-</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>ch<span class="w"> </span>--build-id<span class="w"> </span><span class="s2">&quot;mr-42&quot;</span><span class="w"> </span><span class="nb">test</span>
-</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>ch<span class="w"> </span>--build-id<span class="w"> </span><span class="s2">&quot;mr-42&quot;</span><span class="w"> </span>sbom
+</div>
+<div class="tabbed-block">
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="nt">versions</span><span class="p">:</span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="w">  </span><span class="nt">nodejs</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;22&quot;</span><span class="w"> </span><span class="c1"># renovate: datasource=node depName=node versioning=node</span>
 </span></code></pre></div>
-<p>Use the same build ID across all commands in a single pipeline run to keep tags consistent.</p>
+</div>
+<div class="tabbed-block">
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="nt">versions</span><span class="p">:</span>
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="w">  </span><span class="nt">myapp</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;1.2.3&quot;</span><span class="w"> </span><span class="c1"># renovate: datasource=docker depName=myapp registryUrl=https://registry.example.com</span>
+</span></code></pre></div>
+</div>
+</div>
+</div>
 
 
 
