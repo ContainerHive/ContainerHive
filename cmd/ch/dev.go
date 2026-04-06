@@ -171,7 +171,9 @@ func buildkitdLogsCmd() *cli.Command {
 				return err
 			}
 			defer b.Close()
-			return b.Logs(ctx, os.Stdout, cmd.Bool("follow"))
+
+			w := devenv.NewLogWriter(os.Stdout, devenv.DefaultLogColors())
+			return b.Logs(ctx, w, cmd.Bool("follow"))
 		},
 	}
 }
