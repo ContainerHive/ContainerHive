@@ -15,11 +15,4 @@ jobs:
     uses: timo-reymann/.github/.github/workflows/ort.yml@main
     with:
       report-formats: PlainTextTemplate,StaticHtml,WebApp
-      pre-analyze-command: |
-        go version
-        make generate
-        echo "=== go list stderr ==="
-        go list -deps -json=Module -buildvcs=false ./... > /dev/null 2>/tmp/golist-stderr || true
-        echo "exit was: $?"
-        cat /tmp/golist-stderr || true
-        echo "=== end stderr ==="
+      pre-analyze-command: make generate
