@@ -3,12 +3,13 @@ package main
 import (
 	"context"
 	"fmt"
-	"log"
+	"log/slog"
 	"os"
 
 	"github.com/timo-reymann/ContainerHive/pkg/build"
 	"github.com/timo-reymann/ContainerHive/pkg/cache"
 	"github.com/timo-reymann/ContainerHive/pkg/deps"
+	"github.com/timo-reymann/ContainerHive/pkg/progress"
 	"github.com/timo-reymann/ContainerHive/pkg/utils"
 	"github.com/urfave/cli/v3"
 )
@@ -58,7 +59,7 @@ func buildCmd() *cli.Command {
 			if err != nil {
 				return fmt.Errorf("dependency resolution failed: %w", err)
 			}
-			log.Printf("Build order: %v", buildOrder.Order())
+			slog.Info("Build order resolved", "order", buildOrder.Order())
 
 			// Connect to BuildKit (BUILDKIT_HOST env > hive.yml > default)
 			buildkitAddr := ""
@@ -77,6 +78,13 @@ func buildCmd() *cli.Command {
 				return fmt.Errorf("cache configuration failed: %w", err)
 			}
 
+			// Select progress display mode: linear for CI, auto-detect otherwise.
+			// Colors are enabled by default; suppressed only when NO_COLOR is set.
+			progressMode := progress.AutoMode
+			if os.Getenv("CI") != "" {
+				progressMode = progress.LinearMode
+			}
+
 			// Build
 			buildOpts := &build.ProjectBuildOpts{
 				Project:     project,
@@ -84,12 +92,18 @@ func buildCmd() *cli.Command {
 				DistPath:    distPath,
 				Cache:       buildCache,
 				ProgressOut: os.Stdout,
-				Filters:     filters,
-				BuildID:     buildID,
+				ProgressConfig: progress.Config{
+					Mode:    progressMode,
+					Writer:  os.Stdout,
+					Colors:  progress.DefaultColors(),
+					NoColor: os.Getenv("NO_COLOR") != "",
+				},
+				Filters: filters,
+				BuildID: buildID,
 			}
 
 			if buildOrder.HasDependencies() {
-				log.Println("Inter-image dependencies detected, using OCI layout named contexts")
+				slog.Info("Inter-image dependencies detected, using OCI layout named contexts")
 			}
 
 			if useRegistry {

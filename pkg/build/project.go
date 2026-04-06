@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 	"io"
-	"log"
+	"log/slog"
 	"os"
 	"path/filepath"
 
@@ -12,6 +12,7 @@ import (
 	"github.com/timo-reymann/ContainerHive/pkg/deps"
 	"github.com/timo-reymann/ContainerHive/pkg/model"
 	"github.com/timo-reymann/ContainerHive/pkg/platform"
+	"github.com/timo-reymann/ContainerHive/pkg/progress"
 )
 
 // Registry provides registry metadata for direct BuildKit pushes.
@@ -35,8 +36,11 @@ type ProjectBuildOpts struct {
 	Cache       cache.BuildkitCache
 	Registry    Registry // nil when no inter-image dependencies exist
 	ProgressOut io.Writer
-	Filters     []Filter // empty = build everything
-	BuildID     string   // if set, registry push/retag uses tags suffixed with .<BuildID>
+	// ProgressConfig controls build progress display (mode, colors, no-color).
+	// When zero-valued, AutoMode with DefaultColors is used.
+	ProgressConfig progress.Config
+	Filters        []Filter // empty = build everything
+	BuildID        string   // if set, registry push/retag uses tags suffixed with .<BuildID>
 
 	// OnBuild is called after each successful build with the image tag and tar path.
 	OnBuild func(imageTag, tarFile string)
@@ -112,7 +116,7 @@ func buildWithDeps(ctx context.Context, client *Client, opts *ProjectBuildOpts) 
 			}
 		}
 		if imageDef == nil {
-			log.Printf("Warning: Image %s not found in project", imgName)
+			slog.Warn("Image not found in project", "image", imgName)
 			continue
 		}
 
@@ -181,7 +185,7 @@ func buildWithoutDeps(ctx context.Context, client *Client, opts *ProjectBuildOpt
 func buildNoDeps(ctx context.Context, client *Client, opts *ProjectBuildOpts, imageName, tagName, platformStr string) error {
 	dockerfilePath := filepath.Join(opts.DistPath, imageName, tagName, "Dockerfile")
 	if _, err := os.Stat(dockerfilePath); os.IsNotExist(err) {
-		log.Printf("Warning: Dockerfile not found for %s:%s at %s", imageName, tagName, dockerfilePath)
+		slog.Warn("Dockerfile not found", "image", imageName, "tag", tagName, "path", dockerfilePath)
 		return nil
 	}
 
@@ -200,11 +204,12 @@ func buildNoDeps(ctx context.Context, client *Client, opts *ProjectBuildOpts, im
 		ContextDir:       filepath.Dir(dockerfilePath),
 		RegistryRef:      opts.registryRef(imageName, tagName, platformStr),
 		RegistryInsecure: opts.registryInsecure(),
+		ProgressConfig:   opts.ProgressConfig,
 	}, opts.ProgressOut)
 	if err != nil {
 		return fmt.Errorf("build failed for %s (%s): %w", imageTag, platformStr, err)
 	}
-	log.Printf("Built %s [%s] -> %s", imageTag, platformStr, tf)
+	slog.Info("Built image", "image", imageTag, "platform", platformStr, "tar", tf)
 
 	if opts.OnBuild != nil {
 		opts.OnBuild(imageTag, tf)
@@ -255,6 +260,7 @@ func buildTag(ctx context.Context, client *Client, opts *ProjectBuildOpts, image
 		Secrets:          config.Secrets,
 		RegistryRef:      opts.registryRef(imageDef.Name, tagName, platformStr),
 		RegistryInsecure: opts.registryInsecure(),
+		ProgressConfig:   opts.ProgressConfig,
 	}
 	if hiveDeps != nil {
 		buildOpts.OCIStores = hiveDeps.OCIStores
@@ -266,7 +272,7 @@ func buildTag(ctx context.Context, client *Client, opts *ProjectBuildOpts, image
 	if err != nil {
 		return fmt.Errorf("build failed for %s [%s]: %w", imageTag, platformStr, err)
 	}
-	log.Printf("Built %s [%s] -> %s", imageTag, platformStr, tf)
+	slog.Info("Built image", "image", imageTag, "platform", platformStr, "tar", tf)
 
 	if opts.OnBuild != nil {
 		opts.OnBuild(imageTag, tf)
@@ -278,7 +284,7 @@ func buildVariant(ctx context.Context, client *Client, opts *ProjectBuildOpts, i
 	variantTagName := tagName + variantDef.TagSuffix
 	variantDockerfilePath := filepath.Join(opts.DistPath, imageDef.Name, variantTagName, "Dockerfile")
 	if _, err := os.Stat(variantDockerfilePath); os.IsNotExist(err) {
-		log.Printf("Warning: Dockerfile not found for variant %s:%s:%s at %s", imageDef.Name, tagName, variantName, variantDockerfilePath)
+		slog.Warn("Dockerfile not found for variant", "image", imageDef.Name, "tag", tagName, "variant", variantName, "path", variantDockerfilePath)
 		return nil
 	}
 
@@ -319,6 +325,7 @@ func buildVariant(ctx context.Context, client *Client, opts *ProjectBuildOpts, i
 		Secrets:          config.Secrets,
 		RegistryRef:      opts.registryRef(imageDef.Name, variantTagName, platformStr),
 		RegistryInsecure: opts.registryInsecure(),
+		ProgressConfig:   opts.ProgressConfig,
 	}
 	if hiveDeps != nil {
 		buildOpts.OCIStores = hiveDeps.OCIStores
@@ -330,7 +337,7 @@ func buildVariant(ctx context.Context, client *Client, opts *ProjectBuildOpts, i
 	if err != nil {
 		return fmt.Errorf("build failed for variant %s [%s]: %w", variantTag, platformStr, err)
 	}
-	log.Printf("Built variant %s [%s] -> %s", variantTag, platformStr, tf)
+	slog.Info("Built variant", "variant", variantTag, "platform", platformStr, "tar", tf)
 
 	if opts.OnBuild != nil {
 		opts.OnBuild(variantTag, tf)

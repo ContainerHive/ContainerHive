@@ -3,7 +3,7 @@ package test
 import (
 	"context"
 	"fmt"
-	"log"
+	"log/slog"
 	"os"
 	"path/filepath"
 
@@ -67,7 +67,7 @@ func runTestsForTag(opts *Opts, imageName, tagName string, platforms []string) (
 	tagDir := filepath.Join(opts.DistPath, imageName, tagName)
 	testDefs := cst.CollectTestDefinitions(tagDir)
 	if len(testDefs) == 0 {
-		log.Printf("No test definitions for %s:%s, skipping", imageName, tagName)
+		slog.Info("No test definitions, skipping", "image", imageName, "tag", tagName)
 		return 0, 0, nil
 	}
 
@@ -77,11 +77,11 @@ func runTestsForTag(opts *Opts, imageName, tagName string, platforms []string) (
 
 		if _, err := os.Stat(imageSource); err != nil {
 			if opts.Registry == nil {
-				log.Printf("Skipping %s:%s [%s] — no image.tar found", imageName, tagName, platformStr)
+				slog.Info("Skipping, no image.tar found", "image", imageName, "tag", tagName, "platform", platformStr)
 				continue
 			}
 			imageSource = opts.Registry.ImageRef(imageName, tagName, platformStr, opts.BuildID)
-			log.Printf("No local tar for %s:%s [%s], using registry ref: %s", imageName, tagName, platformStr, imageSource)
+			slog.Info("No local tar, using registry ref", "image", imageName, "tag", tagName, "platform", platformStr, "ref", imageSource)
 		}
 
 		if err := os.MkdirAll(platDir, 0755); err != nil {
@@ -94,15 +94,15 @@ func runTestsForTag(opts *Opts, imageName, tagName string, platforms []string) (
 		}
 
 		reportFile := cst.ReportFileName(platDir, imageName+":"+tagName)
-		log.Printf("Testing %s:%s [%s] (%d test file(s))...", imageName, tagName, platformStr, len(testDefs))
+		slog.Info("Testing image", "image", imageName, "tag", tagName, "platform", platformStr, "tests", len(testDefs))
 		tested++
 		if err := cstRunner.RunTestsForImage(imageSource, testDefs, reportFile); err != nil {
-			log.Printf("FAIL %s:%s [%s]: %v", imageName, tagName, platformStr, err)
+			slog.Error("FAIL", "image", imageName, "tag", tagName, "platform", platformStr, "error", err)
 			failed++
 			cstRunner.Close()
 			continue
 		}
-		log.Printf("PASS %s:%s [%s] -> %s", imageName, tagName, platformStr, reportFile)
+		slog.Info("PASS", "image", imageName, "tag", tagName, "platform", platformStr, "report", reportFile)
 		cstRunner.Close()
 	}
 	return tested, failed, nil

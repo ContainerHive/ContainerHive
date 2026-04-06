@@ -3,7 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
-	"log"
+	"log/slog"
 	"time"
 
 	"github.com/timo-reymann/ContainerHive/pkg/wait"
@@ -47,7 +47,7 @@ func waitCmd() *cli.Command {
 			ctx, cancel := context.WithTimeout(ctx, timeout)
 			defer cancel()
 
-			log.Printf("Waiting for %d target(s) with timeout %s ...", len(targets), timeout)
+			slog.Info("Waiting for targets", "count", len(targets), "timeout", timeout)
 
 			results := wait.WaitAll(ctx, targets)
 
@@ -56,13 +56,13 @@ func waitCmd() *cli.Command {
 				if r.Err != nil {
 					errs = append(errs, r.Err)
 				} else {
-					log.Printf("%s is ready", r.Name)
+					slog.Info("Target is ready", "name", r.Name)
 				}
 			}
 
 			if len(errs) > 0 {
 				for _, e := range errs {
-					log.Printf("error: %v", e)
+					slog.Error("Target failed", "error", e)
 				}
 				return fmt.Errorf("%d target(s) failed to become ready", len(errs))
 			}
