@@ -7,11 +7,10 @@ import (
 	"os"
 
 	"github.com/containerd/containerd/v2/core/content"
-	"github.com/moby/buildkit/client"
-	"github.com/moby/buildkit/util/progress/progressui"
 	"github.com/timo-reymann/ContainerHive/internal/buildkit"
 	"github.com/timo-reymann/ContainerHive/internal/buildkit/build_context"
 	"github.com/timo-reymann/ContainerHive/pkg/cache"
+	"github.com/timo-reymann/ContainerHive/pkg/progress"
 )
 
 // Client wraps the internal BuildKit client.
@@ -44,6 +43,10 @@ type BuildOpts struct {
 	OCIStores map[string]content.Store
 	// NamedContexts maps frontend attribute keys to OCI layout references.
 	NamedContexts map[string]string
+
+	// ProgressConfig controls how build progress is displayed.
+	// When zero-valued, AutoMode with DefaultColors is used.
+	ProgressConfig progress.Config
 }
 
 // NewClient connects to a BuildKit daemon at the given endpoint.
@@ -76,9 +79,17 @@ func (c *Client) Version(ctx context.Context) (string, error) {
 	return c.inner.Version(ctx)
 }
 
-// Build builds a container image. Progress output is written to w.
+// Build builds a container image. Progress output is written to w unless
+// opts.ProgressConfig.Writer is set, in which case that takes precedence.
 func (c *Client) Build(ctx context.Context, opts *BuildOpts, w io.Writer) error {
-	statusHandler := newProgressHandler(w)
+	cfg := opts.ProgressConfig
+	if cfg.Writer == nil {
+		cfg.Writer = w
+	}
+	if cfg.Colors == (progress.Colors{}) {
+		cfg.Colors = progress.DefaultColors()
+	}
+	statusHandler := progress.NewHandler(cfg)
 
 	return c.inner.Build(ctx, &buildkit.BuildOpts{
 		ImageName:        opts.ImageName,
@@ -96,18 +107,4 @@ func (c *Client) Build(ctx context.Context, opts *BuildOpts, w io.Writer) error 
 			Dockerfile: opts.Dockerfile,
 		},
 	}, statusHandler)
-}
-
-func newProgressHandler(w io.Writer) func(chan *client.SolveStatus) error {
-	return func(ch chan *client.SolveStatus) error {
-		if w == nil {
-			w = os.Stdout
-		}
-		d, err := progressui.NewDisplay(w, progressui.TtyMode)
-		if err != nil {
-			d, _ = progressui.NewDisplay(w, progressui.PlainMode)
-		}
-		_, err = d.UpdateFrom(context.TODO(), ch)
-		return err
-	}
 }
