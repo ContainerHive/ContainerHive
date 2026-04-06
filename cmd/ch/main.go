@@ -51,9 +51,11 @@ func setupRegistry(ctx context.Context, distPath string, config *model.RegistryC
 
 func main() {
 	app := &cli.Command{
-		Name:    "ch",
-		Usage:   "ContainerHive - Swarm it. Build it. Run it. Managing container base and library images has never been easier.",
-		Version: version.Get(),
+		Name:                  "ch",
+		Usage:                 "ContainerHive - Swarm it. Build it. Run it. Managing container base and library images has never been easier.",
+		Version:               version.Get(),
+		EnableShellCompletion: true,
+		Suggest:               true,
 		Flags: []cli.Flag{
 			&cli.StringFlag{
 				Name:    "project",
