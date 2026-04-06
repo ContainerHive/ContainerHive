@@ -15,4 +15,7 @@ jobs:
     uses: timo-reymann/.github/.github/workflows/ort.yml@main
     with:
       report-formats: PlainTextTemplate,StaticHtml,WebApp
-      pre-analyze-command: make generate
+      pre-analyze-command: |
+        go version
+        make generate
+        go list -deps -json=Module -buildvcs=false ./... > /dev/null 2>&1 && echo "go list: OK" || { echo "go list: FAILED"; go list -deps -json=Module -buildvcs=false ./... 2>&1 | tail -50; }
