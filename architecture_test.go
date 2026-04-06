@@ -2,6 +2,8 @@ package containerhive_test
 
 import (
 	"testing"
+
+	"github.com/kcmvp/archunit"
 )
 
 func TestPackageDirections(t *testing.T) {
@@ -22,6 +24,17 @@ func TestPackageDirections(t *testing.T) {
 	for _, check := range checks {
 		if check.err != nil {
 			t.Fatal(check.err, check.description)
+		}
+	}
+}
+
+func TestNoDirectLogImport(t *testing.T) {
+	layers := []archunit.Layer{cmdLayer, pkgLayer, internalLayer}
+	for _, layer := range layers {
+		for _, imp := range layer.Imports() {
+			if imp == "log" {
+				t.Errorf("layer %q imports \"log\" directly — use \"log/slog\" instead", layer.A)
+			}
 		}
 	}
 }
