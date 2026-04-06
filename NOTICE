@@ -2615,10 +2615,10 @@ SOFTWARE.
 ================================================================================
 
 Module:  github.com/moby/buildkit
-Version: v0.28.0
+Version: v0.28.1
 Licence: Apache-2.0
 
-Contents of probable licence file $GOMODCACHE/github.com/moby/buildkit@v0.28.0/LICENSE:
+Contents of probable licence file $GOMODCACHE/github.com/moby/buildkit@v0.28.1/LICENSE:
 
                                  Apache License
                            Version 2.0, January 2004
@@ -44673,10 +44673,10 @@ Contents of probable licence file $GOMODCACHE/github.com/moby/moby/client@v0.3.0
 ================================================================================
 
 Module:  github.com/moby/patternmatcher
-Version: v0.6.0
+Version: v0.6.1
 Licence: Apache-2.0
 
-Contents of probable licence file $GOMODCACHE/github.com/moby/patternmatcher@v0.6.0/LICENSE:
+Contents of probable licence file $GOMODCACHE/github.com/moby/patternmatcher@v0.6.1/LICENSE:
 
 
                                  Apache License
