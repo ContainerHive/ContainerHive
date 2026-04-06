@@ -1,0 +1,16 @@
+This software includes external packages and source code.
+The applicable license information is listed below:
+{{ define "depInfo" }}{{ range . }}
+{{ line "=" }}
+
+Module:  {{ .Name }}
+Version: {{ .Version }}
+Licence: {{ .LicenceType }}
+
+{{ licenceText . }}
+{{ end }}{{ end }}
+{{ template "depInfo" .Direct }}
+{{ if .Indirect }}
+Indirect dependencies:
+{{ template "depInfo" .Indirect }}
+{{ end }}
