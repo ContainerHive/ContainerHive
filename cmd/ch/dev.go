@@ -9,6 +9,7 @@ import (
 
 	"github.com/timo-reymann/ContainerHive/pkg/build"
 	"github.com/timo-reymann/ContainerHive/pkg/devenv"
+	"github.com/timo-reymann/ContainerHive/pkg/logging"
 	"github.com/timo-reymann/ContainerHive/pkg/wait"
 	"github.com/urfave/cli/v3"
 )
@@ -172,7 +173,7 @@ func buildkitdLogsCmd() *cli.Command {
 			}
 			defer b.Close()
 
-			w := devenv.NewLogWriter(os.Stdout, devenv.DefaultLogColors())
+			w := logging.NewLogWriter(os.Stdout, logging.DefaultLogColors())
 			return b.Logs(ctx, w, cmd.Bool("follow"))
 		},
 	}

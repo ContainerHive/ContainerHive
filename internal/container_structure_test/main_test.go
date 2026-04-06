@@ -155,7 +155,7 @@ fileExistenceTests:
 			DockerClient:        dockerClient,
 		}
 
-		err := runner.Run()
+		err := runner.Run(t.Context())
 		if err != nil {
 			t.Fatal("container-structure-test run failed:", err)
 		}
@@ -179,7 +179,7 @@ fileExistenceTests:
 			DockerClient:        dockerClient,
 		}
 
-		err := runner.Run()
+		err := runner.Run(t.Context())
 		if err != nil {
 			t.Fatal("container-structure-test with docker image name failed:", err)
 		}
@@ -215,7 +215,7 @@ fileExistenceTests:
 			DockerClient:        dockerClient,
 		}
 
-		err := runner.Run()
+		err := runner.Run(t.Context())
 		if err == nil {
 			t.Fatal("expected container-structure-test to report failure for missing file")
 		}

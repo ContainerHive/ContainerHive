@@ -48,7 +48,7 @@ fileExistenceTests:
 
 	t.Run("successful test execution", func(t *testing.T) {
 		opts := &Opts{DistPath: tempDir}
-		tested, failed, err := runTestsForTag(opts, "ubuntu", "24.04", []string{"linux/amd64"})
+		tested, failed, err := runTestsForTag(t.Context(), opts, "ubuntu", "24.04", []string{"linux/amd64"})
 		// Note: This will likely fail because we don't have a real Docker environment,
 		// but we can at least verify the function structure
 		if err != nil {
@@ -163,7 +163,7 @@ func TestRunTestsForTag_NoTestDefinitions(t *testing.T) {
 		t.Fatalf("failed to create tag dir: %v", err)
 	}
 
-	tested, failed, err := runTestsForTag(&Opts{DistPath: tempDir}, "app", "1.0", []string{"linux/amd64"})
+	tested, failed, err := runTestsForTag(t.Context(), &Opts{DistPath: tempDir}, "app", "1.0", []string{"linux/amd64"})
 	if err != nil {
 		t.Errorf("unexpected error: %v", err)
 	}
@@ -194,7 +194,7 @@ func TestRunTestsForTag_MissingTarFile(t *testing.T) {
 		t.Fatalf("failed to create platform dir: %v", err)
 	}
 
-	tested, failed, err := runTestsForTag(&Opts{DistPath: tempDir}, "app", "1.0", []string{"linux/amd64"})
+	tested, failed, err := runTestsForTag(t.Context(), &Opts{DistPath: tempDir}, "app", "1.0", []string{"linux/amd64"})
 	if err != nil {
 		t.Errorf("unexpected error: %v", err)
 	}

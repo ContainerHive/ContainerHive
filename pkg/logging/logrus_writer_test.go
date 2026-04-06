@@ -1,4 +1,4 @@
-package devenv
+package logging
 
 import (
 	"bytes"

@@ -1,4 +1,4 @@
-package devenv
+package logging
 
 import (
 	"bytes"
@@ -7,7 +7,7 @@ import (
 	"strings"
 )
 
-// LogColors holds ANSI escape sequences used to colorize buildkitd log output.
+// LogColors holds ANSI escape sequences used to colorize logrus-formatted log output.
 type LogColors struct {
 	Debug   string // debug level
 	Info    string // info level
@@ -18,7 +18,7 @@ type LogColors struct {
 	Reset   string // reset all attributes
 }
 
-// DefaultLogColors returns the default color scheme for buildkitd log output,
+// DefaultLogColors returns the default color scheme for logrus-formatted log output,
 // consistent with the progress and slog color palettes.
 func DefaultLogColors() LogColors {
 	if os.Getenv("NO_COLOR") != "" {
@@ -35,7 +35,7 @@ func DefaultLogColors() LogColors {
 	}
 }
 
-// NewLogWriter wraps w with a writer that colorizes buildkitd logrus-formatted lines.
+// NewLogWriter wraps w with a writer that colorizes logrus-formatted lines.
 // Pass a zero LogColors to disable colorization.
 func NewLogWriter(w io.Writer, colors LogColors) io.Writer {
 	return &logWriter{

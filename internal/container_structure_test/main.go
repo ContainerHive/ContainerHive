@@ -77,8 +77,8 @@ func (t *TestRunner) runTests(channel chan interface{}, imageName string, opts *
 }
 
 // Run resolves the test image, executes all configured test definitions, and writes a JUnit report.
-func (t *TestRunner) Run() error {
-	imageName, err := t.resolveImageName(context.Background())
+func (t *TestRunner) Run(ctx context.Context) error {
+	imageName, err := t.resolveImageName(ctx)
 	if err != nil {
 		return err
 	}
@@ -137,9 +137,9 @@ func (t *TestRunner) Close() error {
 }
 
 // RunTestsForImage executes container structure tests against the given image source.
-func (t *TestRunner) RunTestsForImage(imageSource string, testDefs []string, reportFile string) error {
+func (t *TestRunner) RunTestsForImage(ctx context.Context, imageSource string, testDefs []string, reportFile string) error {
 	t.TestDefinitionPaths = testDefs
 	t.Image = imageSource
 	t.ReportFile = reportFile
-	return t.Run()
+	return t.Run(ctx)
 }
