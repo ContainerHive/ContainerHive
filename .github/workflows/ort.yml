@@ -19,5 +19,7 @@ jobs:
         go version
         make generate
         echo "=== go list stderr ==="
-        go list -deps -json=Module -buildvcs=false ./... > /dev/null 2>/tmp/golist-stderr; echo "exit: $?"
-        cat /tmp/golist-stderr
+        go list -deps -json=Module -buildvcs=false ./... > /dev/null 2>/tmp/golist-stderr || true
+        echo "exit was: $?"
+        cat /tmp/golist-stderr || true
+        echo "=== end stderr ==="
