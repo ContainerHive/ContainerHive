@@ -18,4 +18,6 @@ jobs:
       pre-analyze-command: |
         go version
         make generate
-        go list -deps -json=Module -buildvcs=false ./... > /dev/null 2>&1 && echo "go list: OK" || { echo "go list: FAILED"; go list -deps -json=Module -buildvcs=false ./... 2>&1 | tail -50; }
+        echo "=== go list stderr ==="
+        go list -deps -json=Module -buildvcs=false ./... > /dev/null 2>/tmp/golist-stderr; echo "exit: $?"
+        cat /tmp/golist-stderr
