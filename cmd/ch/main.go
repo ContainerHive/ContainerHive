@@ -3,12 +3,13 @@ package main
 import (
 	"context"
 	"fmt"
-	"log"
+	"log/slog"
 	"os"
 	"os/signal"
 	"path/filepath"
 
 	"github.com/timo-reymann/ContainerHive/pkg/discovery"
+	"github.com/timo-reymann/ContainerHive/pkg/logging"
 	"github.com/timo-reymann/ContainerHive/pkg/model"
 	"github.com/timo-reymann/ContainerHive/pkg/registry"
 	"github.com/timo-reymann/ContainerHive/pkg/version"
@@ -43,7 +44,7 @@ func setupRegistry(ctx context.Context, distPath string, config *model.RegistryC
 		return nil, fmt.Errorf("failed to start registry: %w", err)
 	}
 	// Note: caller is responsible for deferring reg.Stop(ctx)
-	log.Printf("Registry started: local=%v address=%s", reg.IsLocal(), reg.Address())
+	slog.Info("Registry started", "local", reg.IsLocal(), "address", reg.Address())
 
 	return reg, nil
 }
@@ -64,6 +65,16 @@ func main() {
 				Name:  "build-id",
 				Usage: "Build ID to append to tags as +<id>",
 			},
+			&cli.StringFlag{
+				Name:    "log-level",
+				Usage:   "Log level (debug, info, warn, error)",
+				Sources: cli.EnvVars("LOG_LEVEL"),
+				Value:   "info",
+			},
+		},
+		Before: func(ctx context.Context, cmd *cli.Command) (context.Context, error) {
+			logging.Setup(os.Stderr, cmd.String("log-level"))
+			return ctx, nil
 		},
 		Commands: []*cli.Command{
 			generateCmd(),
