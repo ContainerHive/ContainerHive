@@ -75,6 +75,14 @@ jobs:
           name: licence-report
           path: /tmp/licence-output.txt
 
+      - name: Upload generated NOTICE
+        id: upload-notice
+        if: always() && steps.detect.outcome == 'success'
+        uses: actions/upload-artifact@v4
+        with:
+          name: licence-notice
+          path: /tmp/NOTICE_GENERATED
+
       - name: Check NOTICE file
         id: notice-check
         if: always() && steps.detect.outcome == 'success'
@@ -135,9 +143,15 @@ jobs:
             const passed = detect === 'success' && (!noticeOutdated || noticeAutoCommitted);
             const status = passed ? ':white_check_mark: passed' : ':x: failed';
 
+            const ghsBase = `https://ghs.timo-reymann.de/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}/artifacts`;
+            const noticeUrl = `${ghsBase}/licence-notice/NOTICE_GENERATED`;
+
             const sections = [
               `## License Compliance — ${status}`,
               'Using [go-licence-detector](https://github.com/elastic/go-licence-detector) to check licence compliance for Go dependencies.',
+              '',
+              '### Reports',
+              `- [:page_facing_up: Generated NOTICE](${noticeUrl})`,
             ];
 
             if (noticeOutdated && noticeAutoCommitted) {
