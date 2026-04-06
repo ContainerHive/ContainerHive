@@ -3,7 +3,7 @@ package registry
 import (
 	"context"
 	"fmt"
-	"log"
+	"log/slog"
 
 	"github.com/timo-reymann/ContainerHive/internal/gcr"
 	"github.com/timo-reymann/ContainerHive/internal/ocistore"
@@ -94,7 +94,7 @@ func (r *Registry) createManifestForTag(imageName, tag string, platforms []strin
 	manifestTag := build.WithBuildID(tag, buildID)
 	targetRef := fmt.Sprintf("%s/%s:%s", r.Address(), imageName, manifestTag)
 
-	log.Printf("Creating manifest %s:%s from %d platform(s)", imageName, manifestTag, len(platforms))
+	slog.Info("Creating manifest", "image", imageName, "tag", manifestTag, "platforms", len(platforms))
 
 	if !r.IsLocal() {
 		// Remote: reference images already in the registry by their push tags
@@ -190,7 +190,7 @@ func (r *Registry) retagAliases(imageDef *model.Image, filters []build.Filter, b
 			case "silent":
 				// do nothing
 			case "warning":
-				log.Printf("Warning: %v", err)
+				slog.Warn("Latest alias resolution failed", "error", err)
 			default: // "error" or unset
 				return err
 			}
@@ -207,9 +207,9 @@ func (r *Registry) retagAliases(imageDef *model.Image, filters []build.Filter, b
 		targetTag := build.WithBuildID(alias, buildID)
 		sourceRef := fmt.Sprintf("%s/%s:%s", r.Address(), imageDef.Name, sourceTag)
 		targetRef := fmt.Sprintf("%s/%s:%s", r.Address(), imageDef.Name, targetTag)
-		log.Printf("Tagging alias %s:%s -> %s:%s", imageDef.Name, targetTag, imageDef.Name, sourceTag)
+		slog.Info("Tagging alias", "image", imageDef.Name, "target", targetTag, "source", sourceTag)
 		if err := gcr.Retag(sourceRef, targetRef); err != nil {
-			log.Printf("Warning: Failed to retag %s -> %s: %v", sourceRef, targetRef, err)
+			slog.Warn("Failed to retag", "source", sourceRef, "target", targetRef, "error", err)
 		}
 	}
 	return nil

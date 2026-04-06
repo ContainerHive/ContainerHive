@@ -2,7 +2,7 @@ package build
 
 import (
 	"fmt"
-	"log"
+	"log/slog"
 	"os"
 	"strings"
 
@@ -93,7 +93,7 @@ func ResolveHiveDeps(opts HiveDepsOpts) (*HiveDeps, error) {
 			}
 			contextValue := fmt.Sprintf("docker-image://%s/%s:%s", opts.RegistryAddress, ref.ImageName, registryTag)
 			d.NamedContexts[contextKey] = contextValue
-			log.Printf("Resolved hive dep %s:%s -> %s (registry)", ref.ImageName, ref.Tag, contextValue)
+			slog.Info("Resolved hive dep via registry", "image", ref.ImageName, "tag", ref.Tag, "ref", contextValue)
 			continue
 		}
 
@@ -116,7 +116,7 @@ func ResolveHiveDeps(opts HiveDepsOpts) (*HiveDeps, error) {
 		d.OCIStores[storeID] = ols.Store
 		d.NamedContexts[contextKey] = contextValue
 
-		log.Printf("Resolved hive dep %s:%s -> %s", ref.ImageName, ref.Tag, contextValue)
+		slog.Info("Resolved hive dep", "image", ref.ImageName, "tag", ref.Tag, "ref", contextValue)
 	}
 
 	return d, nil

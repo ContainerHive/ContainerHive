@@ -3,7 +3,7 @@ package main
 import (
 	"context"
 	"errors"
-	"log"
+	"log/slog"
 	"os"
 
 	"github.com/timo-reymann/ContainerHive/pkg/login"
@@ -53,7 +53,7 @@ func loginCmd() *cli.Command {
 				return err
 			}
 
-			log.Printf("logged in via %s", configPath)
+			slog.Info("Logged in", "config", configPath)
 			return nil
 		},
 	}

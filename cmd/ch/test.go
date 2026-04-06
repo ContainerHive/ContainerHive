@@ -3,7 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
-	"log"
+	"log/slog"
 	"os"
 
 	"github.com/timo-reymann/ContainerHive/pkg/test"
@@ -49,7 +49,7 @@ func testCmd() *cli.Command {
 				return err
 			}
 
-			log.Printf("Tested %d image(s), %d failed", tested, failed)
+			slog.Info("Test results", "tested", tested, "failed", failed)
 			if failed > 0 {
 				return fmt.Errorf("%d test(s) failed", failed)
 			}

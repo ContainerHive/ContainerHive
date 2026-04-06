@@ -3,7 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
-	"log"
+	"log/slog"
 	"os"
 	"time"
 
@@ -78,7 +78,7 @@ func buildkitdStartCmd() *cli.Command {
 			}
 
 			endpoint := fmt.Sprintf("tcp://127.0.0.1:%d", hostPort)
-			log.Printf("Waiting for buildkitd to be ready at %s ...", endpoint)
+			slog.Info("Waiting for buildkitd to be ready", "endpoint", endpoint)
 
 			waitCtx, cancel := context.WithTimeout(ctx, cmd.Duration("timeout"))
 			defer cancel()
@@ -142,13 +142,12 @@ func buildkitdStatusCmd() *cli.Command {
 				return err
 			}
 
-			log.Printf("state:         %s", status.State)
+			slog.Info("Buildkitd status", "state", status.State)
 			if status.Image != "" {
-				log.Printf("image:         %s", status.Image)
+				slog.Info("Buildkitd image", "image", status.Image)
 			}
 			if status.HostPort > 0 {
-				log.Printf("port:          %d", status.HostPort)
-				log.Printf("BUILDKIT_HOST: tcp://127.0.0.1:%d", status.HostPort)
+				slog.Info("Buildkitd port", "port", status.HostPort, "BUILDKIT_HOST", fmt.Sprintf("tcp://127.0.0.1:%d", status.HostPort))
 			}
 			return nil
 		},

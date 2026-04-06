@@ -4,7 +4,7 @@ package main
 
 import (
 	"encoding/json"
-	"log"
+	"log/slog"
 	"os"
 
 	"github.com/google/jsonschema-go/jsonschema"
@@ -12,24 +12,27 @@ import (
 )
 
 func main() {
-	log.Println("Generating project schema...")
+	slog.Info("Generating project schema...")
 	schema, err := jsonschema.For[model.HiveProjectConfig](&jsonschema.ForOptions{})
 	if err != nil {
-		log.Fatal("failed to generate schema", err)
+		slog.Error("Failed to generate schema", "error", err)
+		os.Exit(1)
 	}
 
 	schema.ID = "https://container-hive.timo-reymann.de/schemas/project.schema.json"
 	schema.Title = "Project configuration"
 	schema.Description = "Project-level configuration schema for ContainerHive."
 
-	log.Println("Writing schema to file...")
+	slog.Info("Writing schema to file...")
 	indented, err := json.MarshalIndent(schema, "", "  ")
 	if err != nil {
-		log.Fatal("failed to marshal indented schema", err)
+		slog.Error("Failed to marshal indented schema", "error", err)
+		os.Exit(1)
 	}
 
 	err = os.WriteFile("schemas/project.schema.json", indented, 0644)
 	if err != nil {
-		log.Fatal("failed to write schema file", err)
+		slog.Error("Failed to write schema file", "error", err)
+		os.Exit(1)
 	}
 }

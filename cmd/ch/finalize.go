@@ -3,7 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
-	"log"
+	"log/slog"
 	"os"
 
 	"github.com/timo-reymann/ContainerHive/pkg/utils"
@@ -38,18 +38,18 @@ func finalizeCmd() *cli.Command {
 			defer reg.Stop(ctx)
 
 			// Step 1: Create multi-arch manifests from platform-specific images
-			log.Println("Creating multi-arch manifests...")
+			slog.Info("Creating multi-arch manifests...")
 			if err := reg.CreateAllManifests(project, filters, buildID, distPath); err != nil {
 				return fmt.Errorf("manifest creation failed: %w", err)
 			}
 
 			// Step 2: Retag manifests for semantic version aliases
-			log.Println("Retagging aliases...")
+			slog.Info("Retagging aliases...")
 			if err := reg.RetagAllAliases(project, filters, buildID); err != nil {
 				return fmt.Errorf("retagging failed: %w", err)
 			}
 
-			log.Println("Finalize complete")
+			slog.Info("Finalize complete")
 			return nil
 		},
 	}

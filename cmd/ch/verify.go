@@ -3,7 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
-	"log"
+	"log/slog"
 
 	"github.com/urfave/cli/v3"
 )
@@ -18,7 +18,7 @@ func verifyCmd() *cli.Command {
 				return fmt.Errorf("project verification failed: %w", err)
 			}
 
-			log.Printf("Project OK: %d image(s)", len(project.ImagesByIdentifier))
+			slog.Info("Project OK", "images", len(project.ImagesByIdentifier))
 			return nil
 		},
 	}

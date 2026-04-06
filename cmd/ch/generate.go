@@ -3,7 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
-	"log"
+	"log/slog"
 
 	"github.com/timo-reymann/ContainerHive/pkg/rendering"
 	"github.com/urfave/cli/v3"
@@ -24,7 +24,7 @@ func generateCmd() *cli.Command {
 				return fmt.Errorf("rendering failed: %w", err)
 			}
 
-			log.Printf("Rendered %d image(s) to %s", len(project.ImagesByIdentifier), distPath)
+			slog.Info("Rendered images to dist/", "count", len(project.ImagesByIdentifier), "path", distPath)
 			return nil
 		},
 	}

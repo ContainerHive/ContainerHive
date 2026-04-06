@@ -3,7 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
-	"log"
+	"log/slog"
 	"os"
 	"path/filepath"
 
@@ -57,12 +57,12 @@ func sbomCmd() *cli.Command {
 						platDir := filepath.Join(distPath, img.Name, tagName, platform.Sanitize(platformStr))
 						tarFile := filepath.Join(platDir, "image.tar")
 						if _, err := os.Stat(tarFile); err != nil {
-							log.Printf("Skipping %s:%s [%s] — no image.tar found, please build the image first", img.Name, tagName, platformStr)
+							slog.Warn("Skipping, no image.tar found", "image", img.Name, "tag", tagName, "platform", platformStr)
 							skipped++
 							continue
 						}
 
-						log.Printf("Generating SBOM for %s:%s [%s] ...", img.Name, tagName, platformStr)
+						slog.Info("Generating SBOM", "image", img.Name, "tag", tagName, "platform", platformStr)
 						sbomData, err := sbomGen.Generate(ctx, tarFile, "cyclonedx-json")
 						if err != nil {
 							return fmt.Errorf("SBOM generation failed for %s:%s [%s]: %w", img.Name, tagName, platformStr, err)
@@ -72,7 +72,7 @@ func sbomCmd() *cli.Command {
 						if err := os.WriteFile(sbomPath, sbomData, 0644); err != nil {
 							return fmt.Errorf("failed to write SBOM for %s:%s [%s]: %w", img.Name, tagName, platformStr, err)
 						}
-						log.Printf("SBOM written: %s (%d bytes)", sbomPath, len(sbomData))
+						slog.Info("SBOM written", "path", sbomPath, "bytes", len(sbomData))
 						generated++
 					}
 				}
@@ -82,7 +82,7 @@ func sbomCmd() *cli.Command {
 				return fmt.Errorf("no SBOMs generated — %d image(s) have no image.tar, please build images first", skipped)
 			}
 
-			log.Printf("Generated %d SBOM(s)", generated)
+			slog.Info("Generated SBOMs", "count", generated)
 			return nil
 		},
 	}

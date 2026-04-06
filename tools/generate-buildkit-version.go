@@ -4,7 +4,7 @@ package main
 
 import (
 	"fmt"
-	"log"
+	"log/slog"
 	"os"
 	"strings"
 )
@@ -23,11 +23,12 @@ const Version = %q
 )
 
 func main() {
-	log.Println("Generating BuildKit version from go.mod...")
+	slog.Info("Generating BuildKit version from go.mod...")
 
 	data, err := os.ReadFile(goModPath)
 	if err != nil {
-		log.Fatalf("failed to read %s: %v", goModPath, err)
+		slog.Error("Failed to read go.mod", "path", goModPath, "error", err)
+		os.Exit(1)
 	}
 
 	version := ""
@@ -43,15 +44,17 @@ func main() {
 	}
 
 	if version == "" {
-		log.Fatalf("could not find %s in %s", buildkitMod, goModPath)
+		slog.Error("Could not find module in go.mod", "module", buildkitMod, "path", goModPath)
+		os.Exit(1)
 	}
 
-	log.Printf("Found BuildKit version: %s", version)
+	slog.Info("Found BuildKit version", "version", version)
 
 	content := fmt.Sprintf(outputHeader, version)
 	if err := os.WriteFile(outputPath, []byte(content), 0644); err != nil {
-		log.Fatalf("failed to write %s: %v", outputPath, err)
+		slog.Error("Failed to write output", "path", outputPath, "error", err)
+		os.Exit(1)
 	}
 
-	log.Printf("Wrote %s", outputPath)
+	slog.Info("Wrote output", "path", outputPath)
 }
