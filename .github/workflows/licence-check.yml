@@ -64,9 +64,18 @@ jobs:
             -includeIndirect \
             -rules .github/licence-rules.json \
             -overrides .github/licence-overrides.json \
-            -noticeOut /tmp/NOTICE_GENERATED \
+            -noticeOut /tmp/NOTICE_DEPS \
             -noticeTemplate .github/NOTICE.tmpl 2>&1 | tee /tmp/licence-output.txt
           echo "exit_code=${PIPESTATUS[1]}" >> "$GITHUB_OUTPUT"
+
+          # Prepend project license to generated NOTICE
+          {
+            cat LICENSE
+            echo ""
+            echo "----"
+            echo ""
+            cat /tmp/NOTICE_DEPS
+          } > /tmp/NOTICE_GENERATED
 
       - name: Upload licence report
         if: always() && steps.detect.outcome != 'skipped'
