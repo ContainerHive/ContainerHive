@@ -79,7 +79,7 @@ jobs:
 
       - name: Upload licence report
         if: always() && steps.detect.outcome != 'skipped'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: licence-report
           path: /tmp/licence-output.txt
@@ -87,7 +87,7 @@ jobs:
       - name: Upload generated NOTICE
         id: upload-notice
         if: always() && steps.detect.outcome == 'success'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: licence-notice
           path: /tmp/NOTICE_GENERATED
