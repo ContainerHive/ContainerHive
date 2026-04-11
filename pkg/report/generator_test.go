@@ -230,15 +230,12 @@ func TestGenerator_Generate(t *testing.T) {
 		},
 	}
 
-	g := NewGenerator(SourceTar)
+	g := NewGenerator()
 	report, err := g.Generate(project)
 	if err != nil {
 		t.Fatalf("Generate() error = %v", err)
 	}
 
-	if report.Source != "tar" {
-		t.Errorf("Source = %q, want %q", report.Source, "tar")
-	}
 	if len(report.Images) != 1 {
 		t.Errorf("len(Images) = %d, want 1", len(report.Images))
 	}
@@ -248,11 +245,10 @@ func TestGenerator_Generate(t *testing.T) {
 }
 
 func TestGenerator_GenerateJSON(t *testing.T) {
-	g := NewGenerator(SourceTar)
+	g := NewGenerator()
 
 	report := &ProjectReport{
 		GeneratedAt: "2024-01-01T00:00:00Z",
-		Source:      "tar",
 		Images: []ImageReport{
 			{
 				Name:     "test-image",
@@ -294,27 +290,19 @@ func TestGenerator_GenerateJSON(t *testing.T) {
 func TestGenerator_Generate_SourceType(t *testing.T) {
 	tests := []struct {
 		name         string
-		source       SourceType
 		setCI        bool
-		wantSource   string
 		wantImgCount int
 	}{
 		{
 			name:         "tar source",
-			source:       SourceTar,
-			wantSource:   "tar",
 			wantImgCount: 1,
 		},
 		{
 			name:         "registry source",
-			source:       SourceRegistry,
-			wantSource:   "registry",
 			wantImgCount: 1,
 		},
 		{
 			name:         "auto in non-ci uses tar",
-			source:       SourceAuto,
-			wantSource:   "tar",
 			wantImgCount: 1,
 		},
 	}
@@ -337,15 +325,12 @@ func TestGenerator_Generate_SourceType(t *testing.T) {
 				},
 			}
 
-			g := NewGenerator(tc.source)
+			g := NewGenerator()
 			report, err := g.Generate(project)
 			if err != nil {
 				t.Fatalf("Generate() error = %v", err)
 			}
 
-			if report.Source != tc.wantSource {
-				t.Errorf("Source = %q, want %q", report.Source, tc.wantSource)
-			}
 			if len(report.Images) != tc.wantImgCount {
 				t.Errorf("len(Images) = %d, want %d", len(report.Images), tc.wantImgCount)
 			}
@@ -354,7 +339,7 @@ func TestGenerator_Generate_SourceType(t *testing.T) {
 }
 
 func TestNewGenerator(t *testing.T) {
-	g := NewGenerator(SourceTar)
+	g := NewGenerator()
 	if g == nil {
 		t.Fatal("NewGenerator() returned nil")
 	}
