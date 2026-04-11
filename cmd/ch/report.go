@@ -24,19 +24,9 @@ func reportCmd() *cli.Command {
 				Value: "",
 			},
 			&cli.StringFlag{
-				Name:  "dist-path",
-				Usage: "Path to dist/ directory",
-				Value: "",
-			},
-			&cli.StringFlag{
 				Name:  "source",
 				Usage: "Data source: tar, registry, or auto (default: auto)",
 				Value: "auto",
-			},
-			&cli.StringFlag{
-				Name:  "registry",
-				Usage: "Registry address (required for registry source)",
-				Value: "",
 			},
 			&cli.BoolFlag{
 				Name:  "json",
@@ -46,20 +36,13 @@ func reportCmd() *cli.Command {
 		Action: func(ctx context.Context, cmd *cli.Command) error {
 			projectRoot := cmd.String("project")
 			outputPath := cmd.String("output")
-			distPath := cmd.String("dist-path")
 			sourceStr := cmd.String("source")
-			registryAddr := cmd.String("registry")
 			jsonOnly := cmd.Bool("json")
 
-			if distPath == "" {
-				distPath = filepath.Join(projectRoot, "dist")
-			}
-
 			if outputPath == "" {
+				outputPath = filepath.Join(projectRoot, "dist", "report.html")
 				if jsonOnly {
-					outputPath = filepath.Join(distPath, "report.json")
-				} else {
-					outputPath = filepath.Join(distPath, "report.html")
+					outputPath = filepath.Join(projectRoot, "dist", "report.json")
 				}
 			}
 
@@ -73,16 +56,8 @@ func reportCmd() *cli.Command {
 				return fmt.Errorf("discovery failed: %w", err)
 			}
 
-			if registryAddr == "" && project.Config.Registry != nil {
-				registryAddr = project.Config.Registry.Address
-			}
-
-			if registryAddr == "" && source == report.SourceRegistry {
-				return fmt.Errorf("registry address required for registry source")
-			}
-
-			gen := report.NewGenerator(source, distPath)
-			reportData, err := gen.Generate(ctx, project, registryAddr)
+			gen := report.NewGenerator(source)
+			reportData, err := gen.Generate(project)
 			if err != nil {
 				return fmt.Errorf("failed to generate report: %w", err)
 			}
