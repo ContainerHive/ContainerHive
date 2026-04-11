@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react'
-import { Link } from 'react-router-dom'
 import ThemeToggle from './components/ThemeToggle'
+import ImageGalleryCard from './components/ImageGalleryCard'
 import type { ProjectReport } from './types'
 import logo from './logo.png'
 
@@ -11,6 +11,7 @@ interface FlattenedItem {
   displayName: string
   kind: Kind
   icon?: string
+  description?: string
   platforms: string[]
   tagCount: number
 }
@@ -27,6 +28,7 @@ function App({ data }: Readonly<{ data: ProjectReport }>) {
         displayName: img.name,
         kind: 'base',
         icon: img.report?.icon,
+        description: img.description,
         platforms: img.platforms || [],
         tagCount: img.tags.length,
       })
@@ -35,8 +37,9 @@ function App({ data }: Readonly<{ data: ProjectReport }>) {
         img.variants.forEach(variant => {
           items.push({
             imageName: img.name,
+            description: img.description,
             displayName: `${img.name}${variant.tagSuffix}`,
-            kind: variant.name as Kind,
+            kind: 'variant',
             icon: variant.report?.icon,
             platforms: variant.platforms || img.platforms || [],
             tagCount: variant.tags.length,
@@ -78,33 +81,16 @@ function App({ data }: Readonly<{ data: ProjectReport }>) {
             <div className="no-data">No images found</div>
           ) : (
             flattenedItems.map((item, idx) => (
-              <Link
-                to={`/image/${encodeURIComponent(item.imageName)}/${item.kind}`}
+              <ImageGalleryCard
                 key={`${item.imageName}-${item.kind}-${idx}`}
-                className="image-card"
-              >
-                <div className={`card-kind-badge ${item.kind}`}>
-                  {item.kind === 'base' ? 'Base' : 'Variant'}
-                </div>
-                <div className="card-header">
-                  <div className="card-icon">
-                    {item.icon ? (
-                      <i className={item.icon}></i>
-                    ) : (
-                      <span>📦</span>
-                    )}
-                  </div>
-                  <div className="image-name">{item.displayName}</div>
-                </div>
-                <div className="image-meta">
-                  <span><span className="tag-icon"></span> {item.tagCount} tag{item.tagCount !== 1 ? 's' : ''}</span>
-                </div>
-                <div className="platforms-list">
-                  {item.platforms.map(platform => (
-                    <span key={platform} className="platform-badge">{platform}</span>
-                  ))}
-                </div>
-              </Link>
+                imageName={item.imageName}
+                displayName={item.displayName}
+                kind={item.kind}
+                icon={item.icon}
+                description={item.description}
+                tagCount={item.tagCount}
+                platforms={item.platforms}
+              />
             ))
           )}
         </div>
