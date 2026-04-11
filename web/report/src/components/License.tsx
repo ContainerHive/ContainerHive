@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import noticeContent from '../NOTICE?raw'
+import noticeContent from '../../NOTICE?raw'
 
 function License() {
   return (
