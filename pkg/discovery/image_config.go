@@ -88,7 +88,12 @@ func processImageConfig(projectRoot, configFilePath string) (*model.Image, error
 		return nil, errors.Join(errors.New("failed to discover rootfs dir"), err)
 	}
 
-	indexedVariants, err := processVariants(parsedImageDef, imageRoot)
+	parentIcon := ""
+	if parsedImageDef.Report.Icon != nil {
+		parentIcon = *parsedImageDef.Report.Icon
+	}
+
+	indexedVariants, err := processVariants(parsedImageDef, imageRoot, parentIcon)
 	if err != nil {
 		return nil, err
 	}
@@ -114,6 +119,9 @@ func processImageConfig(projectRoot, configFilePath string) (*model.Image, error
 		DependsOn:           parsedImageDef.DependsOn,
 		Platforms:           parsedImageDef.Platforms,
 		LatestAlias:         parsedImageDef.LatestAlias,
+		Report: model.ReportModel{
+			Icon: parentIcon,
+		},
 	}, nil
 }
 
@@ -125,7 +133,7 @@ func processTags(imageDef *model.ImageDefinitionConfig) map[string]*model.Tag {
 	return tags
 }
 
-func processVariants(imageDef *model.ImageDefinitionConfig, imageRoot string) (map[string]*model.ImageVariant, error) {
+func processVariants(imageDef *model.ImageDefinitionConfig, imageRoot, parentIcon string) (map[string]*model.ImageVariant, error) {
 	indexedVariants := make(map[string]*model.ImageVariant)
 	for _, v := range imageDef.Variants {
 		variantRoot := filepath.Join(imageRoot, v.Name)
@@ -145,6 +153,11 @@ func processVariants(imageDef *model.ImageDefinitionConfig, imageRoot string) (m
 			return nil, errors.Join(errors.New("failed to discover Dockerfile for variant "+v.Name), err)
 		}
 
+		icon := parentIcon
+		if v.Report.Icon != nil {
+			icon = *v.Report.Icon
+		}
+
 		variant := &model.ImageVariant{
 			Name:                v.Name,
 			BuildEntryPointPath: dockerfilePath,
@@ -155,6 +168,9 @@ func processVariants(imageDef *model.ImageDefinitionConfig, imageRoot string) (m
 			BuildArgs:           v.BuildArgs,
 			RootFSDir:           variantFsRoot,
 			Platforms:           v.Platforms,
+			Report: model.ReportModel{
+				Icon: icon,
+			},
 		}
 
 		indexedVariants[v.Name] = variant

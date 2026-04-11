@@ -120,6 +120,18 @@ func DiscoverProject(ctx context.Context, root string) (*model.ContainerHiveProj
 	if err != nil {
 		return nil, errors.Join(errors.New("failed to discover images"), err)
 	}
+
+	for _, img := range images {
+		if len(img.Platforms) == 0 {
+			img.Platforms = hiveConfig.Platforms
+		}
+		for _, variant := range img.Variants {
+			if len(variant.Platforms) == 0 {
+				variant.Platforms = img.Platforms
+			}
+		}
+	}
+
 	imagesByName := make(map[string][]*model.Image)
 	for _, image := range images {
 		imagesByName[image.Name] = append(imagesByName[image.Name], image)

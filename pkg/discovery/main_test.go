@@ -50,9 +50,13 @@ func TestDiscoverProject(t *testing.T) {
 								TestConfigFilePath:  mustAbs(t, "../testdata/simple-project/images/dotnet/8/node/test.yml.gotpl"),
 								TagSuffix:           "-node",
 								Versions:            model.Versions{"nodejs": "24"},
+								Platforms:           []string{"linux/amd64"},
+								Report:              model.ReportModel{Icon: "nodejs-original"},
 							},
 						},
 						BuildArgs: model.BuildArgs{"foo": "bar"},
+						Platforms: []string{"linux/amd64"},
+						Report:    model.ReportModel{Icon: "dotnet-original"},
 						Tags: map[string]*model.Tag{
 							"8.0.100": {
 								Name: "8.0.100",
@@ -106,6 +110,7 @@ func TestDiscoverProject(t *testing.T) {
 								},
 							},
 						},
+						Platforms: []string{"linux/amd64"},
 					},
 				},
 				ImagesByName: map[string][]*model.Image{
@@ -128,8 +133,12 @@ func TestDiscoverProject(t *testing.T) {
 									TestConfigFilePath:  mustAbs(t, "../testdata/simple-project/images/dotnet/8/node/test.yml.gotpl"),
 									TagSuffix:           "-node",
 									Versions:            model.Versions{"nodejs": "24"},
+									Platforms:           []string{"linux/amd64"},
+									Report:              model.ReportModel{Icon: "nodejs-original"},
 								},
 							},
+							Platforms: []string{"linux/amd64"},
+							Report:    model.ReportModel{Icon: "dotnet-original"},
 							Tags: map[string]*model.Tag{
 								"8.0.100": {
 									Name: "8.0.100",
@@ -185,6 +194,7 @@ func TestDiscoverProject(t *testing.T) {
 									},
 								},
 							},
+							Platforms: []string{"linux/amd64"},
 						},
 					},
 				},
