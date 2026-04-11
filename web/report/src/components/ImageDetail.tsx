@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import type { ImageReport } from '../types'
+import NoData from './NoData'
 
 interface ImageDetailProps {
   data: {
@@ -150,9 +151,9 @@ function ImageDetail({ data, imageName, kind }: Readonly<ImageDetailProps>) {
                       </div>
                     </div>
                   ) : platSbom.length > 0 ? (
-                    <p className="no-data">No matches</p>
+                    <NoData message="No matches" />
                   ) : (
-                    <p className="no-data">No SBOM available</p>
+                    <NoData message="No SBOM available" />
                   )}
                 </div>
               )

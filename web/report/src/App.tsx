@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react'
 import ImageGalleryCard from './components/ImageGalleryCard'
+import NoData from './components/NoData'
 import type { ProjectReport } from './types'
 
 type Kind = 'base' | 'variant'
@@ -66,7 +67,7 @@ function App({ data }: Readonly<{ data: ProjectReport }>) {
 
         <div className="gallery">
           {flattenedItems.length === 0 ? (
-            <div className="no-data">No images found</div>
+            <NoData message="No images found" />
           ) : (
             flattenedItems.map((item, idx) => (
               <ImageGalleryCard

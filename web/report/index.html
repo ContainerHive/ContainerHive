@@ -640,9 +640,38 @@
       }
 
       .no-data { 
-        text-align: center; 
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
         padding: 48px; 
         color: var(--on-surface-variant); 
+        min-height: 200px;
+        width: 100%;
+        grid-column: 1 / -1;
+      }
+      .no-data-image {
+        width: 211px;
+        height: 211px;
+        margin-bottom: 16px;
+      }
+      .no-data-message {
+        text-align: center;
+        font-size: 16px;
+        font-weight: 500;
+        color: var(--on-surface-variant);
+      }
+      .platform-sbom .no-data {
+        padding: 24px;
+        min-height: auto;
+      }
+      .platform-sbom .no-data-image {
+        width: 106px;
+        height: 106px;
+        margin-bottom: 8px;
+      }
+      .platform-sbom .no-data-message {
+        font-size: 14px;
       }
     </style>
   </head>
