@@ -1,9 +1,6 @@
 import { useState, useMemo } from 'react'
-import { Link } from 'react-router-dom'
-import ThemeToggle from './components/ThemeToggle'
 import ImageGalleryCard from './components/ImageGalleryCard'
 import type { ProjectReport } from './types'
-import logo from './logo.png'
 
 type Kind = 'base' | 'variant'
 
@@ -58,21 +55,7 @@ function App({ data }: Readonly<{ data: ProjectReport }>) {
   }, [data.images, search])
 
   return (
-    <>
-      <header className="page-header">
-        <div className="header-content">
-            <div className="header-title">
-            <Link to="/" className="logo-icon">
-              <img src={logo} alt="Logo" />
-            </Link>
-            <h1>Image Overview</h1>
-          </div>
-          <div className="header-right">
-            <ThemeToggle />
-          </div>
-        </div>
-      </header>
-      <div className="container">
+    <div className="container">
         <input
           type="text"
           className="search-box"
@@ -100,8 +83,7 @@ function App({ data }: Readonly<{ data: ProjectReport }>) {
             ))
           )}
         </div>
-      </div>
-    </>
+    </div>
   )
 }
 

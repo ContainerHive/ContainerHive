@@ -1,8 +1,6 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import ThemeToggle from './ThemeToggle'
 import type { ImageReport } from '../types'
-import logo from "../logo.png"
 
 interface ImageDetailProps {
   data: {
@@ -32,25 +30,10 @@ function ImageDetail({ data, imageName, kind }: Readonly<ImageDetailProps>) {
 
   if (!image) {
     return (
-      <>
-        <header className="page-header">
-          <div className="header-content">
-            <div className="header-title">
-              <Link to="/" className="logo-icon">
-                <img src={logo} alt="Logo" />
-              </Link>
-              <h1>Image Not Found</h1>
-            </div>
-            <div className="header-right">
-              <ThemeToggle />
-            </div>
-          </div>
-        </header>
-        <div className="container">
-          <Link to="/" className="back-link">← Back to Gallery</Link>
-          <div className="no-data">Image not found</div>
-        </div>
-      </>
+      <div className="container">
+        <Link to="/" className="back-link">← Back to Gallery</Link>
+        <div className="no-data">Image not found</div>
+      </div>
     )
   }
 
@@ -61,22 +44,8 @@ function ImageDetail({ data, imageName, kind }: Readonly<ImageDetailProps>) {
   const mergedBuildArgs = { ...buildArgs, ...tagBuildArgs }
 
   return (
-    <>
-      <header className="page-header">
-        <div className="header-content">
-          <div className="header-title">
-            <Link to="/" className="logo-icon">
-              <img src={logo} alt="Logo" />
-            </Link>
-            <h1>{displayName}</h1>
-          </div>
-          <div className="header-right">
-            <ThemeToggle />
-          </div>
-        </div>
-      </header>
-      <div className="container">
-        <Link to="/" className="back-link">← Back to Gallery</Link>
+    <div className="container">
+      <Link to="/" className="back-link">← Back to Gallery</Link>
 
         {image.description && (
           <div className="description-panel">
@@ -190,8 +159,7 @@ function ImageDetail({ data, imageName, kind }: Readonly<ImageDetailProps>) {
             })}
           </div>
         </div>
-      </div>
-    </>
+    </div>
   )
 }
 
