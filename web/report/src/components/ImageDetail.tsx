@@ -24,6 +24,8 @@ function ImageDetail({ data, imageName, kind }: ImageDetailProps) {
     ? (selectedVariant.platforms || image?.platforms || [])
     : (image?.platforms || [])
 
+  const versions = selectedVariant?.versions || image?.versions || {}
+
   const [activeTag, setActiveTag] = useState<string>('')
   const [sbomSearch, setSbomSearch] = useState<string>('')
 
@@ -56,6 +58,9 @@ function ImageDetail({ data, imageName, kind }: ImageDetailProps) {
 
   const currentPlatforms = currentTagData?.platforms || []
   const allSbom = currentPlatforms.flatMap(p => p.sbom || [])
+
+  const tagBuildArgs = currentTagData?.buildArgs || {}
+  const mergedBuildArgs = { ...buildArgs, ...tagBuildArgs }
   const filteredSbom = sbomSearch
     ? allSbom.filter(pkg =>
         pkg.name.toLowerCase().includes(sbomSearch.toLowerCase()) ||
@@ -98,22 +103,22 @@ function ImageDetail({ data, imageName, kind }: ImageDetailProps) {
         </div>
 
         <div className="section">
-          {image.versions && Object.keys(image.versions).length > 0 && (
+          {Object.keys(versions).length > 0 && (
             <div className="versions-section">
-              <p><strong>Versions</strong></p>
+              <h2>Versions</h2>
               <ul>
-                {Object.entries(image.versions).map(([key, value]) => (
+                {Object.entries(versions).map(([key, value]) => (
                   <li key={key}><span className="arg-key">{key}</span>=<span className="arg-value">{value}</span></li>
                 ))}
               </ul>
             </div>
           )}
 
-          {Object.keys(buildArgs).length > 0 && (
+          {Object.keys(mergedBuildArgs).length > 0 && (
             <div className="build-args-section">
-              <p><strong>Build Args</strong></p>
+              <h2>Build Args</h2>
               <ul>
-                {Object.entries(buildArgs).map(([key, value]) => (
+                {Object.entries(mergedBuildArgs).map(([key, value]) => (
                   <li key={key}><span className="arg-key">{key}</span>=<span className="arg-value">{value}</span></li>
                 ))}
               </ul>
