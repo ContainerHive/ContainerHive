@@ -225,9 +225,11 @@ workflows:
           requires:
             - publish-container-image-snapshot
       - test
+      - build-web-report
       - build:
           requires:
             - test
+            - build-web-report
       - build-gh-pages:
           filters:
             branches:
@@ -246,6 +248,7 @@ workflows:
   #                - main
   release:
     jobs:
+      - build-web-report
       - build:
           <<: *only_tags
           requires:
