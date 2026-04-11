@@ -23,11 +23,6 @@ func reportCmd() *cli.Command {
 				Usage: "Output file path (default: dist/report.html)",
 				Value: "",
 			},
-			&cli.StringFlag{
-				Name:  "source",
-				Usage: "Data source: tar, registry, or auto (default: auto)",
-				Value: "auto",
-			},
 			&cli.BoolFlag{
 				Name:  "json",
 				Usage: "Output JSON instead of HTML",
@@ -36,7 +31,6 @@ func reportCmd() *cli.Command {
 		Action: func(ctx context.Context, cmd *cli.Command) error {
 			projectRoot := cmd.String("project")
 			outputPath := cmd.String("output")
-			sourceStr := cmd.String("source")
 			jsonOnly := cmd.Bool("json")
 
 			if outputPath == "" {
@@ -46,23 +40,18 @@ func reportCmd() *cli.Command {
 				}
 			}
 
-			source := report.SourceType(sourceStr)
-			if source == "" {
-				source = report.SourceAuto
-			}
-
 			project, err := discovery.DiscoverProject(ctx, projectRoot)
 			if err != nil {
 				return fmt.Errorf("discovery failed: %w", err)
 			}
 
-			gen := report.NewGenerator(source)
+			gen := report.NewGenerator()
 			reportData, err := gen.Generate(project)
 			if err != nil {
 				return fmt.Errorf("failed to generate report: %w", err)
 			}
 
-			slog.Info("Report generated", "images", len(reportData.Images), "source", reportData.Source)
+			slog.Info("Report generated", "images", len(reportData.Images))
 
 			if jsonOnly {
 				data, err := gen.GenerateJSON(reportData)

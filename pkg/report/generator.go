@@ -16,35 +16,16 @@ import (
 //go:embed assets/index.html
 var embeddedHTML []byte
 
-type SourceType string
-
-const (
-	SourceTar      SourceType = "tar"
-	SourceRegistry SourceType = "registry"
-	SourceAuto     SourceType = "auto"
-)
-
 type Generator struct {
-	source SourceType
 }
 
-func NewGenerator(source SourceType) *Generator {
-	return &Generator{source: source}
+func NewGenerator() *Generator {
+	return &Generator{}
 }
 
 func (g *Generator) Generate(project *model.ContainerHiveProject) (*ProjectReport, error) {
-	source := string(g.source)
-	if g.source == SourceAuto {
-		if os.Getenv("CI") != "" {
-			source = string(SourceRegistry)
-		} else {
-			source = string(SourceTar)
-		}
-	}
-
 	return &ProjectReport{
 		GeneratedAt: time.Now().UTC().Format(time.RFC3339),
-		Source:      source,
 		Images:      scanProject(project),
 	}, nil
 }
@@ -200,7 +181,6 @@ func (g *Generator) GenerateHTMLFromAssets(report *ProjectReport) ([]byte, error
 	html := string(embeddedHTML)
 	html = ReplacePlaceholder(html, string(reportJSON))
 	html = strings.ReplaceAll(html, "/*INJECT_GENERATED_AT*/", report.GeneratedAt)
-	html = strings.ReplaceAll(html, "/*INJECT_SOURCE*/", report.Source)
 	html = strings.ReplaceAll(html, "/*INJECT_REGISTRY*/", "")
 
 	return []byte(html), nil

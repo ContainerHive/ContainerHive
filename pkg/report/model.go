@@ -4,7 +4,6 @@ import "encoding/json"
 
 type ProjectReport struct {
 	GeneratedAt string        `json:"generatedAt"`
-	Source      string        `json:"source"`
 	Images      []ImageReport `json:"images"`
 }
 
