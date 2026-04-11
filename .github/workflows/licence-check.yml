@@ -37,6 +37,7 @@ jobs:
               - "web/report/package.json"
               - "web/report/yarn.lock"
               - "web/report/NOTICE"
+              - "web/report/src/NOTICE"
 
   licence-check:
     name: Go Licence Detector
@@ -298,20 +299,34 @@ jobs:
       - name: Check NOTICE file
         id: notice-check
         run: |
+          OUTDATED=false
+          REASON=""
+          DIFF_OUTPUT=""
+
           if [ ! -f web/report/NOTICE ]; then
-            echo "outdated=true" >> "$GITHUB_OUTPUT"
-            echo "reason=web/report/NOTICE file does not exist in the repository" >> "$GITHUB_OUTPUT"
+            OUTDATED=true
+            REASON="web/report/NOTICE file does not exist in the repository"
             DIFF_OUTPUT=$(head -100 /tmp/NOTICE_FRONTEND)
           elif ! diff -q --strip-trailing-cr web/report/NOTICE /tmp/NOTICE_FRONTEND > /dev/null 2>&1; then
-            echo "outdated=true" >> "$GITHUB_OUTPUT"
-            echo "reason=web/report/NOTICE file differs from generated NOTICE" >> "$GITHUB_OUTPUT"
+            OUTDATED=true
+            REASON="web/report/NOTICE file differs from generated NOTICE"
             DIFF_OUTPUT=$(diff -u --strip-trailing-cr web/report/NOTICE /tmp/NOTICE_FRONTEND || true)
             DIFF_OUTPUT=$(echo "$DIFF_OUTPUT" | head -100)
-          else
-            echo "outdated=false" >> "$GITHUB_OUTPUT"
-            DIFF_OUTPUT=""
           fi
 
+          if [ ! -f web/report/src/NOTICE ]; then
+            OUTDATED=true
+            REASON="${REASON:+$REASON; }web/report/src/NOTICE file does not exist in the repository"
+            DIFF_OUTPUT=$(head -100 /tmp/NOTICE_FRONTEND)
+          elif ! diff -q --strip-trailing-cr web/report/src/NOTICE /tmp/NOTICE_FRONTEND > /dev/null 2>&1; then
+            OUTDATED=true
+            REASON="${REASON:+$REASON; }web/report/src/NOTICE is out of sync with web/report/NOTICE"
+            SRC_DIFF=$(diff -u --strip-trailing-cr web/report/src/NOTICE /tmp/NOTICE_FRONTEND || true)
+            DIFF_OUTPUT="${DIFF_OUTPUT:+$DIFF_OUTPUT$'\n\n'}$(echo "$SRC_DIFF" | head -100)"
+          fi
+
+          echo "outdated=$OUTDATED" >> "$GITHUB_OUTPUT"
+          echo "reason=$REASON" >> "$GITHUB_OUTPUT"
           {
             echo "diff<<NOTICE_DIFF_EOF"
             echo "$DIFF_OUTPUT"
@@ -330,9 +345,10 @@ jobs:
           git fetch origin "${{ github.head_ref }}"
           git checkout "${{ github.head_ref }}"
           cp /tmp/NOTICE_FRONTEND web/report/NOTICE
+          cp /tmp/NOTICE_FRONTEND web/report/src/NOTICE
           git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add web/report/NOTICE
+          git config user.email "41898282+github-actions@users.noreply.github.com"
+          git add web/report/NOTICE web/report/src/NOTICE
           if git diff --cached --quiet; then
             echo "committed=false" >> "$GITHUB_OUTPUT"
           else
@@ -369,7 +385,7 @@ jobs:
               sections.push(
                 '',
                 '### :warning: web/report/NOTICE file out of date',
-                `${noticeReason}. Please update the \`web/report/NOTICE\` file by running \`yarn generate-notice\` in \`web/report/\`.`,
+                `${noticeReason}. Please run \`yarn generate-notice\` in \`web/report/\` and copy the result to \`web/report/src/NOTICE\` as well.`,
               );
               if (noticeDiff) {
                 sections.push(
