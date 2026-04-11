@@ -77,6 +77,23 @@
               "type": "string"
             },
             "description": "Target platforms for this variant (e.g. linux/amd64)"
+          },
+          "report": {
+            "type": "object",
+            "properties": {
+              "icon": {
+                "type": [
+                  "null",
+                  "string"
+                ],
+                "description": "Icon slug for devicon (e.g. go-original)"
+              }
+            },
+            "description": "Report metadata",
+            "required": [
+              "icon"
+            ],
+            "additionalProperties": false
           }
         },
         "required": [
@@ -160,6 +177,23 @@
       "description": "Configure an alias pointing to the highest semantic version tag",
       "required": [
         "tag"
+      ],
+      "additionalProperties": false
+    },
+    "report": {
+      "type": "object",
+      "properties": {
+        "icon": {
+          "type": [
+            "null",
+            "string"
+          ],
+          "description": "Icon slug for devicon (e.g. go-original)"
+        }
+      },
+      "description": "Report metadata",
+      "required": [
+        "icon"
       ],
       "additionalProperties": false
     }
