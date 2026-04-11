@@ -40,6 +40,7 @@ type LatestAliasConfig struct {
 
 // ImageDefinitionConfig is the parsed content of an image definition YAML file.
 type ImageDefinitionConfig struct {
+	Description string             `yaml:"description" json:"description,omitempty" jsonschema:"Description of the image"`
 	Tags        []*Tag             `yaml:"tags" json:"tags" jsonschema:"Tags to create for this image"`
 	Variants    []VariantConfig    `yaml:"variants" json:"variants,omitempty" jsonschema:"Variants to create for this image"`
 	Versions    Versions           `yaml:"versions" json:"versions,omitempty" jsonschema:"Versions to use for this image"`

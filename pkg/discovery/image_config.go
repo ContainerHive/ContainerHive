@@ -93,6 +93,8 @@ func processImageConfig(projectRoot, configFilePath string) (*model.Image, error
 		parentIcon = *parsedImageDef.Report.Icon
 	}
 
+	description := parsedImageDef.Description
+
 	indexedVariants, err := processVariants(parsedImageDef, imageRoot, parentIcon)
 	if err != nil {
 		return nil, err
@@ -109,6 +111,7 @@ func processImageConfig(projectRoot, configFilePath string) (*model.Image, error
 		RootFSDir:           rootFsPath,
 		Identifier:          relativeRoot,
 		Name:                name,
+		Description:         description,
 		TestConfigFilePath:  testConfigFilePath,
 		DefinitionFilePath:  configFilePath,
 		Versions:            parsedImageDef.Versions,
@@ -119,9 +122,7 @@ func processImageConfig(projectRoot, configFilePath string) (*model.Image, error
 		DependsOn:           parsedImageDef.DependsOn,
 		Platforms:           parsedImageDef.Platforms,
 		LatestAlias:         parsedImageDef.LatestAlias,
-		Report: model.ReportModel{
-			Icon: parentIcon,
-		},
+		Report:              model.ReportModel{Icon: parentIcon},
 	}, nil
 }
 

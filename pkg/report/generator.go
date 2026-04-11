@@ -14,9 +14,6 @@ import (
 	"github.com/timo-reymann/ContainerHive/pkg/platform"
 )
 
-//go:embed assets/index.html
-var embeddedHTML []byte
-
 type Generator struct {
 }
 
@@ -118,10 +115,11 @@ func scanImage(projectRoot, imageName string, img *model.Image) ImageReport {
 	}
 
 	return ImageReport{
-		Name:      imageName,
-		Platforms: img.Platforms,
-		Tags:      tagReports,
-		Variants:  variantReports,
+		Name:        imageName,
+		Description: img.Description,
+		Platforms:   img.Platforms,
+		Tags:        tagReports,
+		Variants:    variantReports,
 		Report: Report{
 			Icon: img.Report.Icon,
 		},

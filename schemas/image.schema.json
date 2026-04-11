@@ -1,6 +1,10 @@
 {
   "type": "object",
   "properties": {
+    "description": {
+      "type": "string",
+      "description": "Description of the image"
+    },
     "tags": {
       "type": [
         "null",

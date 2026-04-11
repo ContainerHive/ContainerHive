@@ -251,9 +251,8 @@ func TestGenerator_GenerateJSON(t *testing.T) {
 		GeneratedAt: "2024-01-01T00:00:00Z",
 		Images: []ImageReport{
 			{
-				Name:     "test-image",
-				Report:   Report{Icon: "go-original"},
-				Versions: map[string]string{"go": "1.22"},
+				Name:   "test-image",
+				Report: Report{Icon: "go-original"},
 				Tags: []TagReport{
 					{
 						Name:      "1.0.0",
