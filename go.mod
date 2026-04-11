@@ -10,7 +10,7 @@ require (
 	github.com/anchore/syft v1.42.1
 	github.com/containerd/containerd/v2 v2.2.2
 	github.com/containerd/errdefs v1.0.0
-	github.com/docker/cli v29.3.0+incompatible
+	github.com/docker/cli v29.4.0+incompatible
 	github.com/docker/docker v28.5.2+incompatible
 	github.com/docker/go-connections v0.6.0
 	github.com/google/go-cmp v0.7.0
