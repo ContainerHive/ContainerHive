@@ -43,12 +43,7 @@ jobs:
           key: test
           steps:
             - go/mod-download-cached
-            - run:
-                name: Run tests
-                command: |
-                  make generate
-                  go test -coverprofile=coverage.txt -covermode=atomic   -v ./...
-                  make save-coverage-report
+            - go/gotestsum
       - codecov/upload
       - store_artifacts:
           path: coverage.html
