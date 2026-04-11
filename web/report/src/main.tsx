@@ -1,6 +1,7 @@
 import { render } from 'react-dom'
 import { HashRouter, Route, Routes, useParams } from 'react-router-dom'
 import 'devicon/devicon-base.css'
+import './fonts.css'
 import App from './App.tsx'
 import ImageDetail from './components/ImageDetail.tsx'
 import { ThemeProvider } from './ThemeContext.tsx'

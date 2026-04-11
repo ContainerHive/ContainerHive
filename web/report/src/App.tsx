@@ -48,9 +48,11 @@ function App({ data }: Readonly<{ data: ProjectReport }>) {
       }
     })
 
+    const lowerSearchTerm = search.toLowerCase()
     return items.filter(item =>
-      item.displayName.toLowerCase().includes(search.toLowerCase()) ||
-      item.imageName.toLowerCase().includes(search.toLowerCase())
+      item.displayName.toLowerCase().includes(lowerSearchTerm) ||
+      item.imageName.toLowerCase().includes(lowerSearchTerm) ||
+      (item.description?.toLowerCase().includes(lowerSearchTerm) ?? false)
     )
   }, [data.images, search])
 
@@ -90,6 +92,7 @@ function App({ data }: Readonly<{ data: ProjectReport }>) {
                 description={item.description}
                 tagCount={item.tagCount}
                 platforms={item.platforms}
+                searchTerm={search}
               />
             ))
           )}

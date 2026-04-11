@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import { highlightText } from '../utils/highlight'
 
 type Kind = 'base' | 'variant'
 
@@ -10,6 +11,7 @@ interface ImageGalleryCardProps {
   description?: string
   tagCount: number
   platforms: string[]
+  searchTerm?: string
 }
 
 function ImageGalleryCard({
@@ -20,7 +22,11 @@ function ImageGalleryCard({
   description,
   tagCount,
   platforms,
+  searchTerm,
 }: Readonly<ImageGalleryCardProps>) {
+  const highlightedDisplayName = highlightText(displayName, searchTerm || '')
+  const highlightedDescription = description ? highlightText(description, searchTerm || '') : null
+
   return (
     <Link
       to={`/image/${encodeURIComponent(imageName)}/${kind}`}
@@ -37,10 +43,10 @@ function ImageGalleryCard({
             <span>📦</span>
           )}
         </div>
-        <div className="image-name">{displayName}</div>
+        <div className="image-name">{highlightedDisplayName}</div>
       </div>
-      {description && (
-        <div className="image-description">{description}</div>
+      {highlightedDescription && (
+        <div className="image-description">{highlightedDescription}</div>
       )}
       <div className="image-meta">
         <span><span className="tag-icon"></span> {tagCount} tag{tagCount !== 1 ? 's' : ''}</span>
