@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react'
+import { Link } from 'react-router-dom'
 import ThemeToggle from './components/ThemeToggle'
 import ImageGalleryCard from './components/ImageGalleryCard'
 import type { ProjectReport } from './types'
@@ -60,8 +61,10 @@ function App({ data }: Readonly<{ data: ProjectReport }>) {
     <>
       <header className="page-header">
         <div className="header-content">
-          <div className="header-title">
-            <img src={logo} alt="Logo" className="logo-icon" />
+            <div className="header-title">
+            <Link to="/" className="logo-icon">
+              <img src={logo} alt="Logo" />
+            </Link>
             <h1>Image Overview</h1>
           </div>
           <div className="header-right">
