@@ -19,6 +19,7 @@ orbs:
   go: circleci/go@3.0.4
   github-utils: trustedshops-public/github-utils@1.1.3
   semantic-release: trustedshops-public/semantic-release@6.1.0
+  node: circleci/node@7.2.1
 
 executors:
   go:
@@ -63,10 +64,26 @@ jobs:
           name: Attach binaries to release
           command: |
             gh release upload ${CIRCLE_TAG} dist/*.zst dist/*.zst.sha256
+  build-web-report:
+    executor: node
+    steps:
+      - checkout
+      - node/install-packages:
+          check-cache: always
+          pkg-manager: yarn-berry
+      - run:
+          name: Build
+          command: make build-web-report
+      - persist_to_workspace:
+          root: ./
+          paths:
+            - pkg/report/assets/index.html
   build:
     executor: go
     steps:
       - checkout
+      - attach_workspace:
+          at: ./
       - run:
           name: Install zstd
           command: |
@@ -231,6 +248,8 @@ workflows:
     jobs:
       - build:
           <<: *only_tags
+        requires:
+          - build-web-report
       - attach-binaries-to-release:
           <<: *only_tags
           requires:
