@@ -71,6 +71,7 @@ jobs:
       - node/install-packages:
           check-cache: always
           pkg-manager: yarn-berry
+          app-dir: web/report
       - run:
           name: Build
           command: make build-web-report
