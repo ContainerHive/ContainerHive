@@ -36,7 +36,9 @@ function ImageDetail({ data, imageName, kind }: Readonly<ImageDetailProps>) {
         <header className="page-header">
           <div className="header-content">
             <div className="header-title">
-              <img src={logo} alt="Logo" className="logo-icon" />
+              <Link to="/" className="logo-icon">
+                <img src={logo} alt="Logo" />
+              </Link>
               <h1>Image Not Found</h1>
             </div>
             <div className="header-right">
@@ -63,7 +65,9 @@ function ImageDetail({ data, imageName, kind }: Readonly<ImageDetailProps>) {
       <header className="page-header">
         <div className="header-content">
           <div className="header-title">
-            <img src={logo} alt="Logo" className="logo-icon" />
+            <Link to="/" className="logo-icon">
+              <img src={logo} alt="Logo" />
+            </Link>
             <h1>{displayName}</h1>
           </div>
           <div className="header-right">
