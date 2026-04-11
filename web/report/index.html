@@ -22,9 +22,9 @@
         --primary: #006591;
         --primary-container: #0ea5e9;
         --on-primary: #ffffff;
-        --on-primary-container: #003751;
+        --on-primary-container: #ffffff;
         --secondary-container: #b8dffe;
-        --on-secondary-container: #3d637d;
+        --on-secondary-container: #dde2e8;
         --on-surface: #191c1e;
         --on-surface-variant: #40484f;
         --error: #ba1a1a;
@@ -212,8 +212,8 @@
         color: var(--on-surface-variant);
       }
       .card-kind-badge.variant {
-        background: var(--primary);
-        color: var(--on-primary);
+        background: var(--primary-container);
+        color: var(--on-primary-container);
       }
 
       .card-header { 
@@ -244,6 +244,23 @@
         font-weight: 600; 
         flex: 1; 
         letter-spacing: -0.02em;
+      }
+
+      .image-description {
+        font-size: 13px;
+        color: var(--on-surface-variant);
+        margin-bottom: 12px;
+        line-height: 1.4;
+      }
+
+      .description-panel {
+        background: var(--surface-container-low);
+        border-left: 3px solid var(--primary);
+        padding: 12px 16px;
+        margin-bottom: 24px;
+        font-size: 14px;
+        color: var(--on-surface-variant);
+        line-height: 1.5;
       }
 
       .tag-badge { 
@@ -497,8 +514,11 @@
         text-transform: uppercase;
         letter-spacing: 0.05em;
       }
-      .sbom-table tr:hover { 
-        background: var(--surface-container-low); 
+      .sbom-table tbody tr:nth-child(even) {
+        background: var(--surface-container);
+      }
+      .sbom-table tr:hover {
+        background: var(--surface-container-low);
       }
       .sbom-badge { 
         background: var(--secondary-container); 
