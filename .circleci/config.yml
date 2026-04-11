@@ -79,6 +79,7 @@ jobs:
           root: ./
           paths:
             - pkg/report/assets/index.html
+            - pkg/report/assets/NOTICE
   build:
     executor: go
     steps:
