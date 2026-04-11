@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "generate-notice": "yarn licenses generate-disclaimer --production -R > NOTICE",
     "build": "vite build",
     "preview": "vite preview"
   },
