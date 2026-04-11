@@ -1,14 +1,16 @@
 package report
 
 import (
-	"context"
 	_ "embed"
 	"encoding/json"
 	"os"
+	"path/filepath"
+	"slices"
 	"strings"
 	"time"
 
 	"github.com/timo-reymann/ContainerHive/pkg/model"
+	"github.com/timo-reymann/ContainerHive/pkg/platform"
 )
 
 //go:embed assets/index.html
@@ -23,69 +25,166 @@ const (
 )
 
 type Generator struct {
-	source   SourceType
-	distPath string
+	source SourceType
 }
 
-func NewGenerator(source SourceType, distPath string) *Generator {
-	return &Generator{
-		source:   source,
-		distPath: distPath,
+func NewGenerator(source SourceType) *Generator {
+	return &Generator{source: source}
+}
+
+func (g *Generator) Generate(project *model.ContainerHiveProject) (*ProjectReport, error) {
+	source := string(g.source)
+	if g.source == SourceAuto {
+		if os.Getenv("CI") != "" {
+			source = string(SourceRegistry)
+		} else {
+			source = string(SourceTar)
+		}
+	}
+
+	return &ProjectReport{
+		GeneratedAt: time.Now().UTC().Format(time.RFC3339),
+		Source:      source,
+		Images:      scanProject(project),
+	}, nil
+}
+
+func scanProject(project *model.ContainerHiveProject) []ImageReport {
+	var images []ImageReport
+	for imageName, modelImages := range project.ImagesByName {
+		if len(modelImages) == 0 {
+			continue
+		}
+		images = append(images, scanImage(project.RootDir, imageName, modelImages[0]))
+	}
+	slices.SortFunc(images, func(a, b ImageReport) int {
+		return strings.Compare(a.Name, b.Name)
+	})
+	return images
+}
+
+func scanImage(projectRoot, imageName string, img *model.Image) ImageReport {
+	distPath := filepath.Join(projectRoot, "dist")
+
+	var tagReports []TagReport
+	for _, tagDef := range img.Tags {
+		var platforms []PlatformReport
+		for _, plat := range img.Platforms {
+			platDir := platform.Sanitize(plat)
+			sbomPath := filepath.Join(distPath, imageName, tagDef.Name, platDir, "cyclonedx.json")
+			var sbom []SBOMPackage
+			if sbomData, err := parseSBOMFile(sbomPath); err == nil {
+				sbom = sbomData
+			}
+			platforms = append(platforms, PlatformReport{
+				Platform: plat,
+				SBOM:     sbom,
+			})
+		}
+		tagReports = append(tagReports, TagReport{
+			Name:      tagDef.Name,
+			BuildArgs: tagDef.BuildArgs,
+			Platforms: platforms,
+		})
+	}
+
+	var variantReports []VariantReport
+	for _, variantDef := range img.Variants {
+		var variantTagReports []TagReport
+		variantPlatforms := variantDef.Platforms
+		if len(variantPlatforms) == 0 {
+			variantPlatforms = img.Platforms
+		}
+		for _, baseTag := range img.Tags {
+			var platforms []PlatformReport
+			for _, plat := range variantPlatforms {
+				platDir := platform.Sanitize(plat)
+				sbomPath := filepath.Join(distPath, imageName, baseTag.Name+variantDef.TagSuffix, platDir, "cyclonedx.json")
+				var sbom []SBOMPackage
+				if sbomData, err := parseSBOMFile(sbomPath); err == nil {
+					sbom = sbomData
+				}
+				platforms = append(platforms, PlatformReport{
+					Platform: plat,
+					SBOM:     sbom,
+				})
+			}
+			variantTagReports = append(variantTagReports, TagReport{
+				Name:      baseTag.Name + variantDef.TagSuffix,
+				BuildArgs: MergeBuildArgs(baseTag.BuildArgs, variantDef.BuildArgs),
+				Platforms: platforms,
+			})
+		}
+
+		variantReports = append(variantReports, VariantReport{
+			Name:      variantDef.Name,
+			Report:    Report{Icon: variantDef.Report.Icon},
+			TagSuffix: variantDef.TagSuffix,
+			Platforms: variantDef.Platforms,
+			Tags:      variantTagReports,
+		})
+	}
+
+	return ImageReport{
+		Name:      imageName,
+		Versions:  img.Versions,
+		Platforms: img.Platforms,
+		Tags:      tagReports,
+		Variants:  variantReports,
+		Report: Report{
+			Icon: img.Report.Icon,
+		},
 	}
 }
 
-func (g *Generator) Generate(ctx context.Context, project *model.ContainerHiveProject, registryAddr string) (*ProjectReport, error) {
-	source, images, err := g.collectImages(ctx, project, registryAddr)
+func parseSBOMFile(path string) ([]SBOMPackage, error) {
+	data, err := os.ReadFile(path)
 	if err != nil {
 		return nil, err
 	}
 
-	return &ProjectReport{
-		GeneratedAt:  time.Now().UTC().Format(time.RFC3339),
-		Source:       source,
-		RegistryAddr: registryAddr,
-		Images:       images,
-	}, nil
-}
+	var sbom struct {
+		Components []struct {
+			Name    string `json:"name"`
+			Version string `json:"version"`
+		} `json:"components"`
+	}
 
-func (g *Generator) collectImages(ctx context.Context, project *model.ContainerHiveProject, registryAddr string) (string, []ImageReport, error) {
-	switch g.source {
-	case SourceTar:
-		return g.fromTar(ctx, project)
-	case SourceRegistry:
-		return g.fromRegistry(ctx, project, registryAddr)
-	case SourceAuto:
-		if os.Getenv("CI") != "" {
-			return g.fromRegistry(ctx, project, registryAddr)
+	if err := json.Unmarshal(data, &sbom); err != nil {
+		return nil, err
+	}
+
+	var packages []SBOMPackage
+	for _, comp := range sbom.Components {
+		if comp.Name == "" {
+			continue
 		}
-		return g.fromTar(ctx, project)
-	default:
-		return g.fromTar(ctx, project)
+		if comp.Version == "" || comp.Version == "-" || comp.Version == "UNKNOWN" {
+			continue
+		}
+		packages = append(packages, SBOMPackage{
+			Name:    comp.Name,
+			Version: comp.Version,
+		})
 	}
+	slices.SortFunc(packages, func(a, b SBOMPackage) int {
+		return strings.Compare(a.Name, b.Name)
+	})
+	return packages, nil
 }
 
-func (g *Generator) fromTar(ctx context.Context, project *model.ContainerHiveProject) (string, []ImageReport, error) {
-	scanner, err := NewTarScanner(g.distPath, project)
-	if err != nil {
-		return "tar", nil, err
+func MergeBuildArgs(base, override map[string]string) map[string]string {
+	if base == nil && override == nil {
+		return nil
 	}
-
-	images, err := scanner.Scan()
-	if err != nil {
-		return "tar", nil, err
+	result := make(map[string]string)
+	for k, v := range base {
+		result[k] = v
 	}
-
-	return "tar", images, nil
-}
-
-func (g *Generator) fromRegistry(ctx context.Context, project *model.ContainerHiveProject, registryAddr string) (string, []ImageReport, error) {
-	scanner := NewRegistryScanner(registryAddr, project)
-	images, err := scanner.Scan(ctx)
-	if err != nil {
-		return "registry", nil, err
+	for k, v := range override {
+		result[k] = v
 	}
-
-	return "registry", images, nil
+	return result
 }
 
 func (g *Generator) GenerateJSON(report *ProjectReport) ([]byte, error) {
@@ -99,15 +198,15 @@ func (g *Generator) GenerateHTMLFromAssets(report *ProjectReport) ([]byte, error
 	}
 
 	html := string(embeddedHTML)
-	html = replacePlaceholder(html, string(reportJSON))
+	html = ReplacePlaceholder(html, string(reportJSON))
 	html = strings.ReplaceAll(html, "/*INJECT_GENERATED_AT*/", report.GeneratedAt)
 	html = strings.ReplaceAll(html, "/*INJECT_SOURCE*/", report.Source)
-	html = strings.ReplaceAll(html, "/*INJECT_REGISTRY*/", report.RegistryAddr)
+	html = strings.ReplaceAll(html, "/*INJECT_REGISTRY*/", "")
 
 	return []byte(html), nil
 }
 
-func replacePlaceholder(html, data string) string {
+func ReplacePlaceholder(html, data string) string {
 	for i := 0; i < len(html)-len("/*INJECT_JSON_DATA*/"); i++ {
 		if html[i:i+len("/*INJECT_JSON_DATA*/")] == "/*INJECT_JSON_DATA*/" {
 			return html[:i] + data + html[i+len("/*INJECT_JSON_DATA*/"):]
