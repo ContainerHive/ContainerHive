@@ -248,8 +248,8 @@ workflows:
     jobs:
       - build:
           <<: *only_tags
-        requires:
-          - build-web-report
+          requires:
+            - build-web-report
       - attach-binaries-to-release:
           <<: *only_tags
           requires:
