@@ -295,6 +295,13 @@ jobs:
         working-directory: web/report
         run: yarn licenses generate-disclaimer --production -R > /tmp/NOTICE_FRONTEND
 
+      - name: Upload generated NOTICE
+        if: always() && steps.generate.outcome == 'success'
+        uses: actions/upload-artifact@v7
+        with:
+          name: frontend-licence-notice
+          path: /tmp/NOTICE_FRONTEND
+
       - name: Check NOTICE file
         id: notice-check
         run: |
@@ -353,9 +360,15 @@ jobs:
             const passed = generate === 'success' && (!noticeOutdated || noticeAutoCommitted);
             const status = passed ? ':white_check_mark: passed' : ':x: failed';
 
+            const ghsBase = `https://ghs.timo-reymann.de/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}/artifacts`;
+            const noticeUrl = `${ghsBase}/frontend-licence-notice/NOTICE_FRONTEND`;
+
             const sections = [
               `## Frontend License Compliance — ${status}`,
               'Using [yarn licenses](https://yarnpkg.com/cli/licenses) to check licence compliance for frontend dependencies.',
+              '',
+              '### Reports',
+              `- [:page_facing_up: Generated NOTICE](${noticeUrl})`,
             ];
 
             if (noticeOutdated && noticeAutoCommitted) {
