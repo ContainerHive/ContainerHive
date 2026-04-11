@@ -33,5 +33,5 @@ render(
       </Routes>
     </HashRouter>
   </ThemeProvider>,
-  document.getElementById('root')!
+  document.getElementById('root')
 )

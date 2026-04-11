@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import ThemeToggle from './ThemeToggle'
 import type { ImageReport } from '../types'
-import logo from '../logo.png'
+import logo from "../logo.png"
 
 interface ImageDetailProps {
   data: {
@@ -13,18 +13,12 @@ interface ImageDetailProps {
   kind?: string
 }
 
-function ImageDetail({ data, imageName, kind }: ImageDetailProps) {
+function ImageDetail({ data, imageName, kind }: Readonly<ImageDetailProps>) {
   const image = data.images.find(img => img.name === imageName)
   const isVariant = !!kind && kind !== 'base'
   const selectedVariant = isVariant && kind ? image?.variants?.find(v => v.name === kind) : null
   const tags = selectedVariant ? selectedVariant.tags : image?.tags || []
   const displayName = isVariant && selectedVariant ? `${image?.name}${selectedVariant.tagSuffix}` : (image?.name || '')
-
-  const platforms = selectedVariant
-    ? (selectedVariant.platforms || image?.platforms || [])
-    : (image?.platforms || [])
-
-  const versions = selectedVariant?.versions || image?.versions || {}
 
   const [activeTag, setActiveTag] = useState<string>('')
   const [sbomSearch, setSbomSearch] = useState<string>('')
@@ -32,7 +26,9 @@ function ImageDetail({ data, imageName, kind }: ImageDetailProps) {
   const firstTag = tags[0]?.name || ''
   const currentTag = activeTag || firstTag
   const currentTagData = tags.find(t => t.name === currentTag)
+
   const buildArgs = currentTagData?.buildArgs || {}
+  const versions = currentTagData?.versions || {}
 
   if (!image) {
     return (
@@ -61,12 +57,6 @@ function ImageDetail({ data, imageName, kind }: ImageDetailProps) {
 
   const tagBuildArgs = currentTagData?.buildArgs || {}
   const mergedBuildArgs = { ...buildArgs, ...tagBuildArgs }
-  const filteredSbom = sbomSearch
-    ? allSbom.filter(pkg =>
-        pkg.name.toLowerCase().includes(sbomSearch.toLowerCase()) ||
-        (pkg.version && pkg.version.toLowerCase().includes(sbomSearch.toLowerCase()))
-      )
-    : allSbom
 
   return (
     <>

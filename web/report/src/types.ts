@@ -6,6 +6,7 @@ export interface SBOMPackage {
 export interface TagReport {
   name: string;
   buildArgs?: Record<string, string>;
+  versions?: Record<string, string>;
   platforms?: PlatformReport[];
 }
 
@@ -25,7 +26,6 @@ export interface VariantReport {
 export interface ImageReport {
   name: string;
   report?: { icon?: string };
-  versions?: Record<string, string>;
   platforms?: string[];
   tags: TagReport[];
   variants?: VariantReport[];

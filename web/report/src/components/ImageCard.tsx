@@ -4,7 +4,7 @@ interface ImageCardProps {
   image: ImageReport
 }
 
-function ImageCard({ image }: ImageCardProps) {
+function ImageCard({ image }: Readonly<ImageCardProps>) {
   return (
     <div className="image-card">
       <div className="image-name">{image.name}</div>

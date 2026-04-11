@@ -9,6 +9,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/timo-reymann/ContainerHive/internal/buildconfig_resolver"
 	"github.com/timo-reymann/ContainerHive/pkg/model"
 	"github.com/timo-reymann/ContainerHive/pkg/platform"
 )
@@ -62,10 +63,15 @@ func scanImage(projectRoot, imageName string, img *model.Image) ImageReport {
 				SBOM:     sbom,
 			})
 		}
+
+		// ignore error explicitly as in report step build already succeeded
+		resolvedTagArgs, _ := buildconfig_resolver.ForTag(img, tagDef)
+
 		tagReports = append(tagReports, TagReport{
 			Name:      tagDef.Name,
-			BuildArgs: tagDef.BuildArgs,
 			Platforms: platforms,
+			Versions:  resolvedTagArgs.Versions,
+			BuildArgs: resolvedTagArgs.BuildArgs,
 		})
 	}
 
@@ -90,10 +96,15 @@ func scanImage(projectRoot, imageName string, img *model.Image) ImageReport {
 					SBOM:     sbom,
 				})
 			}
+
+			// ignore error explicitly as in report step build already succeeded
+			resolvedVariantTagArgs, _ := buildconfig_resolver.ForTagVariant(img, variantDef, baseTag)
+
 			variantTagReports = append(variantTagReports, TagReport{
 				Name:      baseTag.Name + variantDef.TagSuffix,
-				BuildArgs: MergeBuildArgs(baseTag.BuildArgs, variantDef.BuildArgs),
 				Platforms: platforms,
+				BuildArgs: resolvedVariantTagArgs.BuildArgs,
+				Versions:  resolvedVariantTagArgs.Versions,
 			})
 		}
 
@@ -108,7 +119,6 @@ func scanImage(projectRoot, imageName string, img *model.Image) ImageReport {
 
 	return ImageReport{
 		Name:      imageName,
-		Versions:  img.Versions,
 		Platforms: img.Platforms,
 		Tags:      tagReports,
 		Variants:  variantReports,

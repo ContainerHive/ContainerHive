@@ -4,16 +4,18 @@ import ThemeToggle from './components/ThemeToggle'
 import type { ProjectReport } from './types'
 import logo from './logo.png'
 
+type Kind = 'base' | 'variant'
+
 interface FlattenedItem {
   imageName: string
   displayName: string
-  kind: 'base' | 'variant'
+  kind: Kind
   icon?: string
   platforms: string[]
   tagCount: number
 }
 
-function App({ data }: { data: ProjectReport }) {
+function App({ data }: Readonly<{ data: ProjectReport }>) {
   const [search, setSearch] = useState('')
 
   const flattenedItems = useMemo(() => {
@@ -34,7 +36,7 @@ function App({ data }: { data: ProjectReport }) {
           items.push({
             imageName: img.name,
             displayName: `${img.name}${variant.tagSuffix}`,
-            kind: variant.name,
+            kind: variant.name as Kind,
             icon: variant.report?.icon,
             platforms: variant.platforms || img.platforms || [],
             tagCount: variant.tags.length,
@@ -48,8 +50,6 @@ function App({ data }: { data: ProjectReport }) {
       item.imageName.toLowerCase().includes(search.toLowerCase())
     )
   }, [data.images, search])
-
-  const totalImages = data.images.length
 
   return (
     <>
