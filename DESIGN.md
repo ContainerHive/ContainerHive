@@ -85,6 +85,8 @@ Traditional divider lines create visual noise and break the "Monolith" feel. Bou
 |---|---|---|
 | Display, Headlines, Repo names | **Space Grotesk** | Geometric, monospaced-adjacent — architectural and futuristic |
 | Body copy, dense metadata, SHA hashes | **Inter** | Optimized for high-density legibility at small sizes |
+| properdocs (mkdocs-material) | **Inter** (body), **Roboto Mono** (code) | Consistent with report-webapp; loaded via Google Fonts |
+| Colors | Primary `#006591`, tertiary `#3cddc7` (dark) | Aligned via `docs/stylesheets/extra.css` |
 
 ### 4.2 Type Scale
 
@@ -132,15 +134,23 @@ Blur: 32px–64px. Opacity: 4–6% (light) / 30–45% (dark).
 
 ## 6. Components
 
-### 6.1 Buttons
+### 6.1 Header / Navbar
 
-| Variant | Light Theme | Dark Theme |
-|---|---|---|
-| **Primary** | `primary` (`#006591`) fill → `on_primary` text; `border-radius: 0.375rem` | Gradient fill: `primary` → `on_primary_container` at 135°; `on_primary` text; no border |
-| **Secondary** | `secondary_container` fill; `on_secondary_container` text; no border | `surface_container_highest` fill; `primary` ghost border at 10% opacity |
-| **Tertiary** | Transparent; `primary` text; no background | Transparent; `primary` text; `surface_bright` on hover |
+| Property   | Light Theme              | Dark Theme                          |
+|------------|--------------------------|-------------------------------------|
+| Background | `primary` (`#006591`)    | `surface_container_low` (`#131b2e`) |
+| Text       | `on_primary` (`#ffffff`) | `on_surface` (`#e2e8f0`)            |
+| Icons      | `#ffffff`                | `#e2e8f0`                           |
 
-### 6.2 Input Fields (Command Line Style)
+### 6.2 Buttons
+
+| Variant       | Light Theme                                                               | Dark Theme                                                                              |
+|---------------|---------------------------------------------------------------------------|-----------------------------------------------------------------------------------------|
+| **Primary**   | `primary` (`#006591`) fill → `on_primary` text; `border-radius: 0.375rem` | Gradient fill: `primary` → `on_primary_container` at 135°; `on_primary` text; no border |
+| **Secondary** | `secondary_container` fill; `on_secondary_container` text; no border      | `surface_container_highest` fill; `primary` ghost border at 10% opacity                 |
+| **Tertiary**  | Transparent; `primary` text; no background                                | Transparent; `primary` text; `surface_bright` on hover                                  |
+
+### 6.3 Input Fields (Command Line Style)
 
 Inputs mimic a terminal prompt — no boxing.
 
@@ -149,17 +159,17 @@ Inputs mimic a terminal prompt — no boxing.
 - **Focus state (light):** 2px bottom border in `primary` (`#006591`), mimicking a terminal cursor.
 - **Focus state (dark):** Bottom border transitions to `tertiary` (`#3cddc7`).
 
-### 6.3 Chips / Tags / Version Labels
+### 6.4 Chips / Tags / Version Labels
 
-| Property | Light | Dark |
-|---|---|---|
-| Background | `surface_container_high` | `secondary_container` |
-| Text | `on_surface_variant` | `on_secondary_container` |
-| Active background | `primary_container` (`#0ea5e9`) | `primary` (`#7bd0ff`) at 15% opacity |
-| Active text | `on_primary_container` (`#003751`) | `primary` |
-| Corner radius | `full` — approachable, badge-like | `sm` (0.125rem) — sharp, technical |
+| Property          | Light                              | Dark                                 |
+|-------------------|------------------------------------|--------------------------------------|
+| Background        | `surface_container_high`           | `secondary_container`                |
+| Text              | `on_surface_variant`               | `on_secondary_container`             |
+| Active background | `primary_container` (`#0ea5e9`)    | `primary` (`#7bd0ff`) at 15% opacity |
+| Active text       | `on_primary_container` (`#003751`) | `primary`                            |
+| Corner radius     | `full` — approachable, badge-like  | `sm` (0.125rem) — sharp, technical   |
 
-### 6.4 Cards & Technical Lists
+### 6.5 Cards & Technical Lists
 
 **Divider lines are forbidden in both themes.**
 
@@ -168,22 +178,22 @@ Inputs mimic a terminal prompt — no boxing.
 - **Hover state (dark):** Row shifts to `surface_container_high`; a 2px `primary_fixed` indicator line appears on the far left edge.
 - **Hover state (light):** Row background shifts to `surface_container_high`; left edge accent in `primary`.
 
-### 6.5 Code Blocks & Monospace Metadata
+### 6.6 Code Blocks & Monospace Metadata
 
-| Property | Light | Dark |
-|---|---|---|
-| Background | `surface_container_highest` (`#e0e3e5`) | `surface_container_lowest` (`#0d1520`) |
-| Text color | `on_surface` | `tertiary` (`#3cddc7`) — terminal vibes |
-| Border radius | `none` or `sm` — structured feel | `md` (4px) |
-| Font | Inter, `letter-spacing: -0.01em` | Inter, `letter-spacing: -0.01em` |
+| Property      | Light                                   | Dark                                    |
+|---------------|-----------------------------------------|-----------------------------------------|
+| Background    | `surface_container_highest` (`#e0e3e5`) | `surface_container_lowest` (`#0d1520`)  |
+| Text color    | `on_surface`                            | `tertiary` (`#3cddc7`) — terminal vibes |
+| Border radius | `none` or `sm` — structured feel        | `md` (4px)                              |
+| Font          | Inter, `letter-spacing: -0.01em`        | Inter, `letter-spacing: -0.01em`        |
 
-### 6.6 Status Indicators
+### 6.7 Status Indicators
 
-| Status | Light | Dark |
-|---|---|---|
-| Healthy / Running | `primary_container` accent | `tertiary` (`#3cddc7`) — "Crisp Teal" |
-| Vulnerability / Error | `error` (`#ba1a1a`) | `error` (`#ffb4ab`) |
-| Neutral / Unknown | `on_surface_variant` | `on_surface_variant` |
+| Status                | Light                      | Dark                                  |
+|-----------------------|----------------------------|---------------------------------------|
+| Healthy / Running     | `primary_container` accent | `tertiary` (`#3cddc7`) — "Crisp Teal" |
+| Vulnerability / Error | `error` (`#ba1a1a`)        | `error` (`#ffb4ab`)                   |
+| Neutral / Unknown     | `on_surface_variant`       | `on_surface_variant`                  |
 
 ---
 
