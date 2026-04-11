@@ -74,6 +74,12 @@ function ImageDetail({ data, imageName, kind }: Readonly<ImageDetailProps>) {
       <div className="container">
         <Link to="/" className="back-link">← Back to Gallery</Link>
 
+        {image.description && (
+          <div className="description-panel">
+            {image.description}
+          </div>
+        )}
+
         <div className="section">
           <h2>Tags</h2>
           <div className="tabs">

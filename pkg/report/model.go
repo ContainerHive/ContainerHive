@@ -12,12 +12,13 @@ type Report struct {
 }
 
 type ImageReport struct {
-	Name      string          `json:"name"`
-	Report    Report          `json:"report,omitempty"`
-	Platforms []string        `json:"platforms,omitempty"`
-	Tags      []TagReport     `json:"tags"`
-	Variants  []VariantReport `json:"variants,omitempty"`
-	SBOM      []SBOMPackage   `json:"sbom,omitempty"`
+	Name        string          `json:"name"`
+	Description string          `json:"description,omitempty"`
+	Report      Report          `json:"report,omitempty"`
+	Platforms   []string        `json:"platforms,omitempty"`
+	Tags        []TagReport     `json:"tags"`
+	Variants    []VariantReport `json:"variants,omitempty"`
+	SBOM        []SBOMPackage   `json:"sbom,omitempty"`
 }
 
 type VariantReport struct {

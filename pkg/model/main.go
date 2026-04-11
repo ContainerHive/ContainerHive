@@ -22,6 +22,7 @@ type Tag struct {
 type Image struct {
 	Identifier          string
 	Name                string
+	Description         string
 	RootDir             string
 	RootFSDir           string
 	TestConfigFilePath  string

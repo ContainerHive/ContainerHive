@@ -25,6 +25,7 @@ export interface VariantReport {
 
 export interface ImageReport {
   name: string;
+  description?: string;
   report?: { icon?: string };
   platforms?: string[];
   tags: TagReport[];

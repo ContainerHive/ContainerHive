@@ -6,7 +6,7 @@ export const mockData: ProjectReport = {
     images: [
         {
             name: 'alpine',
-
+            description: 'Minimal Docker image based on Alpine Linux with a focus on security and small footprint.',
             platforms: ['linux/amd64', 'linux/arm64'],
             tags: [
                 {
@@ -81,6 +81,7 @@ export const mockData: ProjectReport = {
         },
         {
             name: 'nginx',
+            description: 'Web server and reverse proxy with built-in load balancing and caching capabilities.',
             report: {icon: 'devicon-nginx-original'},
             platforms: ['linux/amd64'],
             tags: [
