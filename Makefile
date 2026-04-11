@@ -64,7 +64,7 @@ build-image: build-image-container-hive ## Build all images
 build: create-dist build-linux build-darwin ## Build binaries for all platform
 
 build-web-report: ## Build the web report SPA
-	cd web/report && npm install && npm run build
+	cd web/report && yarn build
 	@mkdir -p pkg/report/assets
 	@cp web/report/dist/index.html pkg/report/assets/index.html
 
