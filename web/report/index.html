@@ -132,9 +132,12 @@
       }
 
       .logo-icon {
+        flex-shrink: 0;
+      }
+
+      .logo-icon img {
         width: 42px;
         height: 42px;
-        flex-shrink: 0;
       }
 
       .theme-toggle {
@@ -545,10 +548,6 @@
       .sbom-badge { 
         background: var(--secondary-container); 
         color: var(--on-secondary-container); 
-      }
-
-      [data-theme="light"] .sbom-badge { 
-        color: var(--on-primary-container); 
         padding: 2px 8px; 
         border-radius: 100px; 
         font-size: 10px;
@@ -556,6 +555,11 @@
         display: inline-flex;
         align-items: center;
         gap: 4px;
+      }
+
+      [data-theme="light"] .sbom-badge { 
+        background: var(--primary);
+        color: var(--on-primary); 
       }
       .platform-sbom { 
         margin-top: 16px; 
