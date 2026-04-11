@@ -4,128 +4,113 @@ export const mockData: ProjectReport = {
   generatedAt: new Date().toISOString(),
   source: 'tar',
   images: [
-{
+    {
       name: 'alpine',
-      icon: 'docker',
+      report: { icon: 'docker' },
       versions: { distribution: 'alpine', os_version: '3.19.1' },
-      aliases: ['docker.io/alpine', 'ghcr.io/alpine'],
+      platforms: ['linux/amd64', 'linux/arm64'],
       tags: [
-                {
-                  name: '3.19',
-                  platforms: [
-                    {
-                      platform: 'linux-amd64',
-                      digest: 'sha256:abc123def456',
-                      size: 5242880,
-                      hasSbom: true,
-                      sbom: [
-                        { name: 'alpine-baselayout', version: '3.4.0' },
-                        { name: 'busybox', version: '1.36.1' },
-                      ],
-                      buildArgs: { BUILDKIT_TEMPLATE_UBI: 'ubi8' }
-                    },
-                    {
-                      platform: 'linux-arm64',
-                      digest: 'sha256:def456ghi789',
-                      size: 4980736,
-                      hasSbom: true,
-                      sbom: [
-                        { name: 'alpine-baselayout', version: '3.4.0' },
-                      ],
-                      buildArgs: { BUILDKIT_TEMPLATE_UBI: 'ubi8-arm64' }
-                    }
-                  ]
-                }
+        {
+          name: '3.19',
+          buildArgs: { FOO: 'bar' },
+          platforms: [
+            {
+              platform: 'linux/amd64',
+              sbom: [
+                { name: 'alpine-baselayout', version: '3.4.0' },
+                { name: 'busybox', version: '1.36.1' },
+                { name: 'ca-certificates-bundle', version: '20240226' },
               ],
+            },
+            {
+              platform: 'linux/arm64',
+              sbom: [
+                { name: 'alpine-baselayout', version: '3.4.0' },
+                { name: 'busybox', version: '1.36.1' },
+              ],
+            },
+          ],
+        },
+      ],
       variants: [
         {
-          name: 'alpine-node',
+          name: 'node',
           tagSuffix: '-node',
+          platforms: ['linux/amd64'],
+          report: { icon: 'nodejs-original' },
           tags: [
             {
               name: '3.19-node20',
+              buildArgs: { NODE_VERSION: '20' },
               platforms: [
                 {
-                  platform: 'linux-amd64',
-                  digest: 'sha256:var1digest',
-                  size: 180000000,
-                  hasSbom: true,
+                  platform: 'linux/amd64',
                   sbom: [
                     { name: 'node', version: '20.11.0' },
-                  ]
-                }
-              ]
-            }
-          ]
-        }
-      ]
+                    { name: 'icu', version: '73.2' },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+      ],
     },
     {
       name: 'nginx',
-      icon: 'nginx',
+      report: { icon: 'nginx-original' },
+      platforms: ['linux/amd64'],
       tags: [
         {
           name: '1.25',
           platforms: [
             {
-              platform: 'linux-amd64',
-              digest: 'sha256:mno345pqr678',
-              size: 142458880,
-              hasSbom: true,
+              platform: 'linux/amd64',
               sbom: [
                 { name: 'nginx', version: '1.25.4' },
-              ]
-            }
-          ]
-        }
-      ]
+                { name: 'openssl', version: '3.3.1' },
+                { name: 'pcre2', version: '10.44' },
+              ],
+            },
+          ],
+        },
+      ],
     },
     {
       name: 'node',
+      platforms: ['linux/amd64', 'linux/arm64'],
       tags: [
         {
           name: '20',
           platforms: [
             {
-              platform: 'linux-amd64',
-              digest: 'sha256:stu901vwx234',
-              size: 178257920,
-              hasSbom: true,
+              platform: 'linux/amd64',
               sbom: [
                 { name: 'node', version: '20.11.0' },
-              ]
-            }
-          ]
-        }
-      ]
+                { name: 'icu', version: '73.2' },
+                { name: 'c-ares', version: '1.26.0' },
+              ],
+            },
+            {
+              platform: 'linux/arm64',
+              sbom: [
+                { name: 'node', version: '20.11.0' },
+                { name: 'icu', version: '73.2' },
+              ],
+            },
+          ],
+        },
+      ],
     },
     {
       name: 'ubuntu',
-      tags: Array.from({ length: 20 }, (_, i) => ({
-        name: `24.04-${i + 1}`,
-        platforms: [
-          {
-            platform: 'linux-amd64',
-            digest: `sha256:ubuntu${String(i).padStart(3, '0')}`,
-            size: 80000000 + i * 1000000,
-            hasSbom: true,
-            sbom: [
-              { name: 'base-files', version: '24.04' },
-              { name: 'bash', version: '5.2' },
-              { name: 'coreutils', version: '9.4' },
-            ]
-          },
-          {
-            platform: 'linux-arm64',
-            digest: `sha256:ubuntu${String(i).padStart(3, '0')}+arm`,
-            size: 78000000 + i * 1000000,
-            hasSbom: false,
-            sbom: []
-          }
-        ]
-      }))
-    }
-  ]
+      platforms: ['linux/amd64', 'linux/arm64'],
+      tags: [
+        { name: '24.04-1' },
+        { name: '24.04-2' },
+      ],
+    },
+  ],
 }
 
 export function getReportData(): ProjectReport {

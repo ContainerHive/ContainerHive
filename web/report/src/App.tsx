@@ -11,8 +11,6 @@ interface FlattenedItem {
   icon?: string
   platforms: string[]
   tagCount: number
-  totalSize: number
-  hasSbom: boolean
 }
 
 function App({ data }: { data: ProjectReport }) {
@@ -20,46 +18,32 @@ function App({ data }: { data: ProjectReport }) {
 
   const flattenedItems = useMemo(() => {
     const items: FlattenedItem[] = []
-    
+
     data.images.forEach(img => {
-      const allBasePlatforms = img.tags.flatMap(t => t.platforms).filter(p => p !== null)
-      const basePlatforms = [...new Set(allBasePlatforms.map(p => p.platform))]
-      const baseSize = allBasePlatforms.reduce((acc, p) => acc + p.size, 0)
-      const baseHasSbom = allBasePlatforms.some(p => p.hasSbom)
-      
       items.push({
         imageName: img.name,
         displayName: img.name,
         kind: 'base',
-        icon: img.icon,
-        platforms: basePlatforms,
+        icon: img.report?.icon,
+        platforms: img.platforms || [],
         tagCount: img.tags.length,
-        totalSize: baseSize,
-        hasSbom: baseHasSbom
       })
-      
+
       if (img.variants) {
-        img.variants.forEach((variant, vIdx) => {
-          const variantPlatformsList = variant.tags.flatMap(t => t.platforms).filter(p => p !== null)
-          const variantPlatforms = [...new Set(variantPlatformsList.map(p => p.platform))]
-          const variantSize = variantPlatformsList.reduce((acc, p) => acc + p.size, 0)
-          const variantHasSbom = variantPlatformsList.some(p => p.hasSbom)
-          
+        img.variants.forEach(variant => {
           items.push({
             imageName: img.name,
             displayName: `${img.name}${variant.tagSuffix}`,
             kind: variant.name,
-            icon: variant.icon,
-            platforms: variantPlatforms,
+            icon: variant.report?.icon,
+            platforms: variant.platforms || img.platforms || [],
             tagCount: variant.tags.length,
-            totalSize: variantSize,
-            hasSbom: variantHasSbom
           })
         })
       }
     })
-    
-    return items.filter(item => 
+
+    return items.filter(item =>
       item.displayName.toLowerCase().includes(search.toLowerCase()) ||
       item.imageName.toLowerCase().includes(search.toLowerCase())
     )
@@ -94,9 +78,9 @@ function App({ data }: { data: ProjectReport }) {
             <div className="no-data">No images found</div>
           ) : (
             flattenedItems.map((item, idx) => (
-              <Link 
-                to={`/image/${encodeURIComponent(item.imageName)}/${item.kind}`} 
-                key={`${item.imageName}-${item.kind}-${idx}`} 
+              <Link
+                to={`/image/${encodeURIComponent(item.imageName)}/${item.kind}`}
+                key={`${item.imageName}-${item.kind}-${idx}`}
                 className="image-card"
               >
                 <div className={`card-kind-badge ${item.kind}`}>
@@ -105,7 +89,7 @@ function App({ data }: { data: ProjectReport }) {
                 <div className="card-header">
                   <div className="card-icon">
                     {item.icon ? (
-                      <i className={`devicon-${item.icon}-plain`}></i>
+                      <i className={item.icon}></i>
                     ) : (
                       <span>📦</span>
                     )}
@@ -114,9 +98,6 @@ function App({ data }: { data: ProjectReport }) {
                 </div>
                 <div className="image-meta">
                   <span><span className="tag-icon"></span> {item.tagCount} tag{item.tagCount !== 1 ? 's' : ''}</span>
-                  <span> | </span>
-                  <span>{(item.totalSize / 1024 / 1024).toFixed(2)} MB</span>
-                  {item.hasSbom && <span className="sbom-badge">✓ SBOM</span>}
                 </div>
                 <div className="platforms-list">
                   {item.platforms.map(platform => (
