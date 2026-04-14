@@ -15,21 +15,21 @@ type ResolvedBuildValues struct {
 
 func ForTag(image *model.Image, tag *model.Tag) (*ResolvedBuildValues, error) {
 	resolved := &ResolvedBuildValues{
-		BuildArgs: tag.BuildArgs,
-		Versions:  image.Versions,
+		BuildArgs: make(model.BuildArgs),
+		Versions:  make(model.Versions),
 		Secrets:   make(map[string][]byte),
 	}
 
-	if resolved.Versions == nil {
-		resolved.Versions = make(model.Versions)
-	}
-
-	if resolved.BuildArgs == nil {
-		resolved.BuildArgs = make(model.BuildArgs)
+	for k, v := range image.Versions {
+		resolved.Versions[k] = v
 	}
 
 	for k, v := range tag.Versions {
 		resolved.Versions[k] = v
+	}
+
+	for k, v := range tag.BuildArgs {
+		resolved.BuildArgs[k] = v
 	}
 
 	for k, v := range image.BuildArgs {
