@@ -173,18 +173,16 @@ func (g *Generator) GenerateHTMLFromAssets(report *ProjectReport) ([]byte, error
 	}
 
 	html := string(embeddedHTML)
-	html = ReplacePlaceholder(html, string(reportJSON))
+	html = replaceFirstPlaceholder(html, "/*INJECT_JSON_DATA*/", string(reportJSON))
 	html = strings.ReplaceAll(html, "/*INJECT_GENERATED_AT*/", report.GeneratedAt)
 	html = strings.ReplaceAll(html, "/*INJECT_REGISTRY*/", "")
 
 	return []byte(html), nil
 }
 
-func ReplacePlaceholder(html, data string) string {
-	for i := 0; i < len(html)-len("/*INJECT_JSON_DATA*/"); i++ {
-		if html[i:i+len("/*INJECT_JSON_DATA*/")] == "/*INJECT_JSON_DATA*/" {
-			return html[:i] + data + html[i+len("/*INJECT_JSON_DATA*/"):]
-		}
+func replaceFirstPlaceholder(html, placeholder, data string) string {
+	if idx := strings.Index(html, placeholder); idx >= 0 {
+		return html[:idx] + data + html[idx+len(placeholder):]
 	}
 	return html
 }

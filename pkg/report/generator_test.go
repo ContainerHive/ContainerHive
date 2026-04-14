@@ -7,7 +7,7 @@ import (
 	"github.com/timo-reymann/ContainerHive/pkg/model"
 )
 
-func TestReplacePlaceholder(t *testing.T) {
+func TestReplaceFirstPlaceholder(t *testing.T) {
 	tests := []struct {
 		name     string
 		html     string
@@ -38,13 +38,19 @@ func TestReplacePlaceholder(t *testing.T) {
 			data:     ``,
 			expected: `{"data": }`,
 		},
+		{
+			name:     "only first occurrence replaced",
+			html:     `/*INJECT_JSON_DATA*/ and /*INJECT_JSON_DATA*/ again`,
+			data:     `first`,
+			expected: `first and /*INJECT_JSON_DATA*/ again`,
+		},
 	}
 
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			got := ReplacePlaceholder(tc.html, tc.data)
+			got := replaceFirstPlaceholder(tc.html, "/*INJECT_JSON_DATA*/", tc.data)
 			if got != tc.expected {
-				t.Errorf("replacePlaceholder() = %q, want %q", got, tc.expected)
+				t.Errorf("replaceFirstPlaceholder() = %q, want %q", got, tc.expected)
 			}
 		})
 	}
