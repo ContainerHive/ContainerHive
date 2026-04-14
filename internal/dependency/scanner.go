@@ -126,7 +126,9 @@ func ScanRenderedProject(distPath string) (*Graph, error) {
 				}
 
 				for _, ref := range refs {
-					graph.AddDependency(imageName, ref.ImageName)
+					if ref.ImageName != imageName {
+						graph.AddDependency(imageName, ref.ImageName)
+					}
 				}
 			}
 		}

@@ -282,4 +282,28 @@ func TestScanRenderedProject(t *testing.T) {
 			t.Error("expected no dependencies")
 		}
 	})
+
+	t.Run("ignores self-references", func(t *testing.T) {
+		dir := t.TempDir()
+
+		os.MkdirAll(filepath.Join(dir, "myimg", "latest"), 0755)
+		os.WriteFile(filepath.Join(dir, "myimg", "latest", "Dockerfile"), []byte("FROM __hive__/myimg:v1"), 0644)
+
+		graph, err := ScanRenderedProject(dir)
+		if err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
+
+		if graph.HasDependencies() {
+			t.Error("expected no dependencies for self-reference")
+		}
+
+		order, err := graph.TopologicalSort()
+		if err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
+		if len(order) != 1 {
+			t.Errorf("expected 1 image, got %d", len(order))
+		}
+	})
 }
