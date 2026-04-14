@@ -162,20 +162,6 @@ func parseSBOMFile(path string) ([]SBOMPackage, error) {
 	return packages, nil
 }
 
-func MergeBuildArgs(base, override map[string]string) map[string]string {
-	if base == nil && override == nil {
-		return nil
-	}
-	result := make(map[string]string)
-	for k, v := range base {
-		result[k] = v
-	}
-	for k, v := range override {
-		result[k] = v
-	}
-	return result
-}
-
 func (g *Generator) GenerateJSON(report *ProjectReport) ([]byte, error) {
 	return json.MarshalIndent(report, "", "  ")
 }

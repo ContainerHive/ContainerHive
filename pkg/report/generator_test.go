@@ -50,54 +50,6 @@ func TestReplacePlaceholder(t *testing.T) {
 	}
 }
 
-func TestMergeBuildArgs(t *testing.T) {
-	tests := []struct {
-		name     string
-		base     map[string]string
-		override map[string]string
-		want     map[string]string
-	}{
-		{
-			name:     "both nil",
-			base:     nil,
-			override: nil,
-			want:     nil,
-		},
-		{
-			name:     "base only",
-			base:     map[string]string{"A": "a"},
-			override: nil,
-			want:     map[string]string{"A": "a"},
-		},
-		{
-			name:     "override only",
-			base:     nil,
-			override: map[string]string{"B": "b"},
-			want:     map[string]string{"B": "b"},
-		},
-		{
-			name:     "both set",
-			base:     map[string]string{"A": "a", "SHARED": "base"},
-			override: map[string]string{"B": "b", "SHARED": "override"},
-			want:     map[string]string{"A": "a", "B": "b", "SHARED": "override"},
-		},
-	}
-
-	for _, tc := range tests {
-		t.Run(tc.name, func(t *testing.T) {
-			got := MergeBuildArgs(tc.base, tc.override)
-			if len(got) != len(tc.want) {
-				t.Errorf("mergeBuildArgs() len = %d, want %d", len(got), len(tc.want))
-			}
-			for k, v := range tc.want {
-				if got[k] != v {
-					t.Errorf("mergeBuildArgs()[%q] = %q, want %q", k, got[k], v)
-				}
-			}
-		})
-	}
-}
-
 func TestScanImage_Platforms(t *testing.T) {
 	img := &model.Image{
 		Name:      "test",
