@@ -39,10 +39,14 @@ jobs:
       - setup_remote_docker:
           docker_layer_caching: true
       - checkout
+
       - go/with-cache:
           key: test
           steps:
             - go/mod-download-cached
+            - run:
+                name: Generate
+                command: make generate
             - go/gotestsum
       - codecov/upload
       - store_artifacts:
