@@ -102,6 +102,8 @@ report:
       - public/
     expose_as: "ContainerHive Report"
     expire_in: 1 week
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
 
 pages:
   needs:

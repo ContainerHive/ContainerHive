@@ -7,6 +7,7 @@ on:
   push:
     branches: [main]
   pull_request:
+    types: [opened, synchronize]
     branches: [main]
 
 permissions:
@@ -71,4 +72,5 @@ jobs:
         with:
           path: public/
       - uses: actions/deploy-pages@v4
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
 {{- end }}
