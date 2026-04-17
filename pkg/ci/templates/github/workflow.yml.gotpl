@@ -16,6 +16,7 @@ permissions:
   checks: write
   pull-requests: write
   pages: write
+  id-token: write
 
 env:
   SNAPSHOT_ID: "${{ "{{" }} github.event.pull_request.number {{ "}}" }}"

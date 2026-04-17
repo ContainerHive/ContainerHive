@@ -85,11 +85,12 @@ report:
     entrypoint: [""]
   stage: report
   needs:
+    - generate
   {{- range $img := .Images }}
     {{- range $p := $img.Platforms }}
       - build-{{ $img.Name }}-{{ $p }}
     {{- end }}
-  {{- end }}
+    {{- end }}
   script:
     - {{ .ChCmd }} report
     - {{ .ChCmd }} report --json
