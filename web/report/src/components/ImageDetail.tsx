@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
+import 'devicon/devicon-base.css'
 import type { ImageReport } from '../types'
 import NoData from './NoData'
 
@@ -14,10 +15,20 @@ interface ImageDetailProps {
 
 function ImageDetail({ data, imageName, kind }: Readonly<ImageDetailProps>) {
   const image = data.images.find(img => img.name === imageName)
-  const isVariant = !!kind && kind !== 'base'
-  const selectedVariant = isVariant && kind ? image?.variants?.find(v => v.name === kind) : null
+  const isBase = !kind || kind === 'base'
+  
+  let selectedVariant = null
+  let displayName = image?.name || ''
+  
+  if (!isBase && kind && image) {
+    selectedVariant = image.variants?.find(v => `${image.name}${v.tagSuffix}` === kind)
+    if (selectedVariant) {
+      displayName = `${image.name}${selectedVariant.tagSuffix}`
+    }
+  }
+  
   const tags = selectedVariant ? selectedVariant.tags : image?.tags || []
-  const displayName = isVariant && selectedVariant ? `${image?.name}${selectedVariant.tagSuffix}` : (image?.name || '')
+  const imageIcon = selectedVariant?.report?.icon || image?.report?.icon || ''
 
   const [activeTag, setActiveTag] = useState<string>('')
   const [sbomSearch, setSbomSearch] = useState<string>('')
@@ -47,6 +58,27 @@ function ImageDetail({ data, imageName, kind }: Readonly<ImageDetailProps>) {
   return (
     <div className="container">
       <Link to="/" className="back-link">← Back to Gallery</Link>
+
+      <div className="detail-header">
+        <div className="detail-header-content">
+          <div className="detail-logo">
+            {imageIcon ? (
+              <i className={imageIcon}></i>
+            ) : (
+              <span>📦</span>
+            )}
+          </div>
+          <h1 className="detail-title">{displayName}</h1>
+          {isBase ? (
+            <span className="variant-badge">base</span>
+          ) : (
+            <span className="variant-badge">variant</span>
+          )}
+        </div>
+        {image.source && (
+          <p className="detail-source">{image.source}</p>
+        )}
+      </div>
 
         {image.description && (
           <div className="description-panel">

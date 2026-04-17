@@ -29,11 +29,11 @@ function ImageGalleryCard({
 
   return (
     <Link
-      to={`/image/${encodeURIComponent(imageName)}/${kind}`}
+      to={`/image/${encodeURIComponent(imageName)}/${kind === 'base' ? 'base' : encodeURIComponent(displayName)}`}
       className="image-card"
     >
       <div className={`card-kind-badge ${kind}`}>
-        {kind === 'base' ? 'Base' : 'Variant'}
+        {kind === 'base' ? 'Base' : displayName}
       </div>
       <div className="card-header">
         <div className="card-icon">
