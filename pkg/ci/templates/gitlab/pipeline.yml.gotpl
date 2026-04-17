@@ -87,10 +87,10 @@ report:
   needs:
     - generate
   {{- range $img := .Images }}
-    {{- range $p := $img.Platforms }}
-      - build-{{ $img.Name }}-{{ $p }}
-    {{- end }}
-    {{- end }}
+  {{- range $p := $img.Platforms }}
+    - build-{{ $img.Name }}-{{ $p }}
+  {{- end }}
+  {{- end }}
   script:
     - {{ .ChCmd }} report
     - {{ .ChCmd }} report --json
@@ -104,8 +104,10 @@ report:
     expire_in: 1 week
 
 pages:
-  extends: report
+  needs:
+    - report
   script:
     - echo "Deploy happens via convention on job name"
   stage: pages
+  before_script: []
 {{- end }}
