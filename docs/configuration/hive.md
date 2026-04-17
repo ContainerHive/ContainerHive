@@ -92,9 +92,10 @@ template_options:
 
 All values must be strings. Keys prefixed with `ci_` have built-in defaults:
 
-| Key | Default | Description |
-|:----|:--------|:------------|
-| `ci_buildkit_image` | `moby/buildkit` | BuildKit container image |
-| `ci_buildkit_version` | *(matches go.mod dependency)* | BuildKit image tag |
+| Key                   | Default                       | Description                                                          |
+|:----------------------|:------------------------------|:---------------------------------------------------------------------|
+| `ci_buildkit_image`   | `moby/buildkit`               | BuildKit container image                                             |
+| `ci_buildkit_version` | *(matches go.mod dependency)* | BuildKit image tag                                                   |
+| `ci_report`           | `true`                        | Generate and publish HTML/JSON report to GitHub Pages / GitLab Pages |
 
 User-provided values override built-in defaults.

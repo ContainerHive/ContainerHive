@@ -6,6 +6,10 @@ stages:
 {{- range .Stages }}
   - {{ . }}
 {{- end }}
+{{- if eq (option "ci_report") "true" }}
+  - report
+  - pages
+{{- end }}
 
 variables:
   SNAPSHOT_ID: ${CI_MERGE_REQUEST_IID}
@@ -72,4 +76,34 @@ generate:
 {{ template "build-job.yml.gotpl" (dict "Image" . "Ctx" $) }}
 {{ template "manifest-job.yml.gotpl" (dict "Image" . "Ctx" $) }}
 {{ template "test-job.yml.gotpl" (dict "Image" . "Ctx" $) }}
+{{- end }}
+{{- if eq (option "ci_report") "true" }}
+report:
+  image:
+    name: {{ .ImageName }}:{{ .Version }}
+    entrypoint: [""]
+  stage: report
+  needs:
+{{- range .Images }}
+{{- range .Platforms }}
+    - build-{{ $.Image.Name }}-{{ . }}
+{{- end }}
+{{- end }}
+  script:
+    - {{ .ChCmd }} report
+    - {{ .ChCmd }} report --json
+  artifacts:
+    paths:
+      - {{ .Dist }}/report.html
+      - {{ .Dist }}/report.json
+    rename:
+      report.html: index.html
+      report.json: report.json
+    expose_as: "ContainerHive Report"
+    expire_in: 1 week
+
+pages:
+  extends: report
+  publish: true
+  stage: pages
 {{- end }}
