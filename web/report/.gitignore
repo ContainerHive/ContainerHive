@@ -2,4 +2,3 @@ dist/
 node_modules/
 .yarn/
 .pnp.*
-index.html
