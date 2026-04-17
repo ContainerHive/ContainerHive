@@ -3450,10 +3450,10 @@ limitations under the License.
 ================================================================================
 
 Module:  modernc.org/sqlite
-Version: v1.48.1
+Version: v1.48.2
 Licence: BSD-3-Clause
 
-Contents of probable licence file $GOMODCACHE/modernc.org/sqlite@v1.48.1/LICENSE:
+Contents of probable licence file $GOMODCACHE/modernc.org/sqlite@v1.48.2/LICENSE:
 
 Copyright (c) 2017 The Sqlite Authors. All rights reserved.
 
