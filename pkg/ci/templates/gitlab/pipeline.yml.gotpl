@@ -78,27 +78,27 @@ generate:
 {{ template "test-job.yml.gotpl" (dict "Image" . "Ctx" $) }}
 {{- end }}
 {{- if eq (option "ci_report") "true" }}
+
 report:
   image:
     name: {{ .ImageName }}:{{ .Version }}
     entrypoint: [""]
   stage: report
   needs:
-{{- range .Images }}
-{{- range .Platforms }}
-    - build-{{ $.Image.Name }}-{{ . }}
-{{- end }}
-{{- end }}
+  {{- range $img := .Images }}
+    {{- range $p := $img.Platforms }}
+      - build-{{ $img.Name }}-{{ $p }}
+    {{- end }}
+  {{- end }}
   script:
     - {{ .ChCmd }} report
     - {{ .ChCmd }} report --json
+    - mkdir -p public
+    - mv {{ .Dist }}/report.html public/index.html
+    - mv {{ .Dist }}/report.json public/report.json
   artifacts:
     paths:
-      - {{ .Dist }}/report.html
-      - {{ .Dist }}/report.json
-    rename:
-      report.html: index.html
-      report.json: report.json
+      - public/
     expose_as: "ContainerHive Report"
     expire_in: 1 week
 

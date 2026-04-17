@@ -46,9 +46,9 @@ jobs:
 {{- if eq (option "ci_report") "true" }}
   report:
     needs:
-{{- range .Images }}
-{{- range .Platforms }}
-      - build-{{ $.Image.Name }}-{{ . }}
+{{- range $img := .Images }}
+{{- range $p := $img.Platforms }}
+      - build-{{ $img.Name }}-{{ $p }}
 {{- end }}
 {{- end }}
     runs-on: ubuntu-latest
@@ -63,8 +63,11 @@ jobs:
       - run: mkdir -p "$RUNNER_TEMP/ch"
       - run: echo "${{ "{{" }} secrets.GITHUB_TOKEN {{ "}}" }}" | docker run --rm --entrypoint="" -u "$(id -u):$(id -g)" -e CI=1 -i -e HOME="$RUNNER_TEMP/ch" -v "$RUNNER_TEMP/ch:$RUNNER_TEMP/ch" -v "$GITHUB_WORKSPACE:$GITHUB_WORKSPACE" -w "$GITHUB_WORKSPACE" $CH_IMAGE {{ .ChCmd }} report
       - run: echo "${{ "{{" }} secrets.GITHUB_TOKEN {{ "}}" }}" | docker run --rm --entrypoint="" -u "$(id -u):$(id -g)" -e CI=1 -i -e HOME="$RUNNER_TEMP/ch" -v "$RUNNER_TEMP/ch:$RUNNER_TEMP/ch" -v "$GITHUB_WORKSPACE:$GITHUB_WORKSPACE" -w "$GITHUB_WORKSPACE" $CH_IMAGE {{ .ChCmd }} report --json
+      - run: mkdir -p public
+      - run: cp {{ .Dist }}/report.html public/index.html
+      - run: cp {{ .Dist }}/report.json public/report.json
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: {{ .Dist }}/report.html
+          path: public/
       - uses: actions/deploy-pages@v4
 {{- end }}
