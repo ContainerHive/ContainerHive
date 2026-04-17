@@ -909,10 +909,10 @@ THE SOFTWARE.
 ================================================================================
 
 Module:  github.com/anchore/syft
-Version: v1.42.1
+Version: v1.42.4
 Licence: Apache-2.0
 
-Contents of probable licence file $GOMODCACHE/github.com/anchore/syft@v1.42.1/LICENSE:
+Contents of probable licence file $GOMODCACHE/github.com/anchore/syft@v1.42.4/LICENSE:
 
                                  Apache License
                            Version 2.0, January 2004
@@ -2162,10 +2162,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ================================================================================
 
 Module:  github.com/google/go-containerregistry
-Version: v0.21.3
+Version: v0.21.4
 Licence: Apache-2.0
 
-Contents of probable licence file $GOMODCACHE/github.com/google/go-containerregistry@v0.21.3/LICENSE:
+Contents of probable licence file $GOMODCACHE/github.com/google/go-containerregistry@v0.21.4/LICENSE:
 
 
                                  Apache License
@@ -3450,10 +3450,10 @@ limitations under the License.
 ================================================================================
 
 Module:  modernc.org/sqlite
-Version: v1.48.1
+Version: v1.48.2
 Licence: BSD-3-Clause
 
-Contents of probable licence file $GOMODCACHE/modernc.org/sqlite@v1.48.1/LICENSE:
+Contents of probable licence file $GOMODCACHE/modernc.org/sqlite@v1.48.2/LICENSE:
 
 Copyright (c) 2017 The Sqlite Authors. All rights reserved.
 
@@ -4124,10 +4124,10 @@ Contents of probable licence file $GOMODCACHE/cloud.google.com/go@v0.123.0/LICEN
 ================================================================================
 
 Module:  cloud.google.com/go/auth
-Version: v0.18.0
+Version: v0.18.1
 Licence: Apache-2.0
 
-Contents of probable licence file $GOMODCACHE/cloud.google.com/go/auth@v0.18.0/LICENSE:
+Contents of probable licence file $GOMODCACHE/cloud.google.com/go/auth@v0.18.1/LICENSE:
 
 
                                  Apache License
@@ -5184,10 +5184,10 @@ Contents of probable licence file $GOMODCACHE/cloud.google.com/go/monitoring@v1.
 ================================================================================
 
 Module:  cloud.google.com/go/storage
-Version: v1.58.0
+Version: v1.60.0
 Licence: Apache-2.0
 
-Contents of probable licence file $GOMODCACHE/cloud.google.com/go/storage@v1.58.0/LICENSE:
+Contents of probable licence file $GOMODCACHE/cloud.google.com/go/storage@v1.60.0/LICENSE:
 
 
                                  Apache License
@@ -6764,10 +6764,10 @@ Contents of probable licence file $GOMODCACHE/github.com/!google!cloud!platform/
 ================================================================================
 
 Module:  github.com/GoogleCloudPlatform/opentelemetry-operations-go/exporter/metric
-Version: v0.54.0
+Version: v0.55.0
 Licence: Apache-2.0
 
-Contents of probable licence file $GOMODCACHE/github.com/!google!cloud!platform/opentelemetry-operations-go/exporter/metric@v0.54.0/LICENSE:
+Contents of probable licence file $GOMODCACHE/github.com/!google!cloud!platform/opentelemetry-operations-go/exporter/metric@v0.55.0/LICENSE:
 
 
                                  Apache License
@@ -6976,10 +6976,10 @@ Contents of probable licence file $GOMODCACHE/github.com/!google!cloud!platform/
 ================================================================================
 
 Module:  github.com/GoogleCloudPlatform/opentelemetry-operations-go/internal/resourcemapping
-Version: v0.54.0
+Version: v0.55.0
 Licence: Apache-2.0
 
-Contents of probable licence file $GOMODCACHE/github.com/!google!cloud!platform/opentelemetry-operations-go/internal/resourcemapping@v0.54.0/LICENSE:
+Contents of probable licence file $GOMODCACHE/github.com/!google!cloud!platform/opentelemetry-operations-go/internal/resourcemapping@v0.55.0/LICENSE:
 
 
                                  Apache License
@@ -7854,10 +7854,10 @@ Contents of probable licence file $GOMODCACHE/github.com/!one!of!one/xxhash@v1.2
 ================================================================================
 
 Module:  github.com/ProtonMail/go-crypto
-Version: v1.3.0
+Version: v1.4.0
 Licence: BSD-3-Clause
 
-Contents of probable licence file $GOMODCACHE/github.com/!proton!mail/go-crypto@v1.3.0/LICENSE:
+Contents of probable licence file $GOMODCACHE/github.com/!proton!mail/go-crypto@v1.4.0/LICENSE:
 
 Copyright (c) 2009 The Go Authors. All rights reserved.
 
@@ -10277,10 +10277,10 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ================================================================================
 
 Module:  github.com/anchore/stereoscope
-Version: v0.1.20
+Version: v0.1.22
 Licence: Apache-2.0
 
-Contents of probable licence file $GOMODCACHE/github.com/anchore/stereoscope@v0.1.20/LICENSE:
+Contents of probable licence file $GOMODCACHE/github.com/anchore/stereoscope@v0.1.22/LICENSE:
 
                                  Apache License
                            Version 2.0, January 2004
@@ -12567,10 +12567,10 @@ Contents of probable licence file $GOMODCACHE/github.com/aws/aws-sdk-go@v1.55.8/
 ================================================================================
 
 Module:  github.com/aws/aws-sdk-go-v2
-Version: v1.41.1
+Version: v1.41.2
 Licence: Apache-2.0
 
-Contents of probable licence file $GOMODCACHE/github.com/aws/aws-sdk-go-v2@v1.41.1/LICENSE.txt:
+Contents of probable licence file $GOMODCACHE/github.com/aws/aws-sdk-go-v2@v1.41.2/LICENSE.txt:
 
 
                                  Apache License
@@ -12991,10 +12991,10 @@ Contents of probable licence file $GOMODCACHE/github.com/aws/aws-sdk-go-v2/aws/p
 ================================================================================
 
 Module:  github.com/aws/aws-sdk-go-v2/config
-Version: v1.32.7
+Version: v1.32.10
 Licence: Apache-2.0
 
-Contents of probable licence file $GOMODCACHE/github.com/aws/aws-sdk-go-v2/config@v1.32.7/LICENSE.txt:
+Contents of probable licence file $GOMODCACHE/github.com/aws/aws-sdk-go-v2/config@v1.32.10/LICENSE.txt:
 
 
                                  Apache License
@@ -13203,10 +13203,10 @@ Contents of probable licence file $GOMODCACHE/github.com/aws/aws-sdk-go-v2/confi
 ================================================================================
 
 Module:  github.com/aws/aws-sdk-go-v2/credentials
-Version: v1.19.7
+Version: v1.19.10
 Licence: Apache-2.0
 
-Contents of probable licence file $GOMODCACHE/github.com/aws/aws-sdk-go-v2/credentials@v1.19.7/LICENSE.txt:
+Contents of probable licence file $GOMODCACHE/github.com/aws/aws-sdk-go-v2/credentials@v1.19.10/LICENSE.txt:
 
 
                                  Apache License
@@ -13627,10 +13627,10 @@ Contents of probable licence file $GOMODCACHE/github.com/aws/aws-sdk-go-v2/featu
 ================================================================================
 
 Module:  github.com/aws/aws-sdk-go-v2/feature/ec2/imds
-Version: v1.18.17
+Version: v1.18.18
 Licence: Apache-2.0
 
-Contents of probable licence file $GOMODCACHE/github.com/aws/aws-sdk-go-v2/feature/ec2/imds@v1.18.17/LICENSE.txt:
+Contents of probable licence file $GOMODCACHE/github.com/aws/aws-sdk-go-v2/feature/ec2/imds@v1.18.18/LICENSE.txt:
 
 
                                  Apache License
@@ -13839,10 +13839,10 @@ Contents of probable licence file $GOMODCACHE/github.com/aws/aws-sdk-go-v2/featu
 ================================================================================
 
 Module:  github.com/aws/aws-sdk-go-v2/internal/configsources
-Version: v1.4.17
+Version: v1.4.18
 Licence: Apache-2.0
 
-Contents of probable licence file $GOMODCACHE/github.com/aws/aws-sdk-go-v2/internal/configsources@v1.4.17/LICENSE.txt:
+Contents of probable licence file $GOMODCACHE/github.com/aws/aws-sdk-go-v2/internal/configsources@v1.4.18/LICENSE.txt:
 
 
                                  Apache License
@@ -14051,10 +14051,10 @@ Contents of probable licence file $GOMODCACHE/github.com/aws/aws-sdk-go-v2/inter
 ================================================================================
 
 Module:  github.com/aws/aws-sdk-go-v2/internal/endpoints/v2
-Version: v2.7.17
+Version: v2.7.18
 Licence: Apache-2.0
 
-Contents of probable licence file $GOMODCACHE/github.com/aws/aws-sdk-go-v2/internal/endpoints/v2@v2.7.17/LICENSE.txt:
+Contents of probable licence file $GOMODCACHE/github.com/aws/aws-sdk-go-v2/internal/endpoints/v2@v2.7.18/LICENSE.txt:
 
 
                                  Apache License
@@ -14475,10 +14475,10 @@ Contents of probable licence file $GOMODCACHE/github.com/aws/aws-sdk-go-v2/inter
 ================================================================================
 
 Module:  github.com/aws/aws-sdk-go-v2/internal/v4a
-Version: v1.4.16
+Version: v1.4.17
 Licence: Apache-2.0
 
-Contents of probable licence file $GOMODCACHE/github.com/aws/aws-sdk-go-v2/internal/v4a@v1.4.16/LICENSE.txt:
+Contents of probable licence file $GOMODCACHE/github.com/aws/aws-sdk-go-v2/internal/v4a@v1.4.17/LICENSE.txt:
 
 
                                  Apache License
@@ -15535,10 +15535,10 @@ Contents of probable licence file $GOMODCACHE/github.com/aws/aws-sdk-go-v2/servi
 ================================================================================
 
 Module:  github.com/aws/aws-sdk-go-v2/service/ecr
-Version: v1.55.1
+Version: v1.55.3
 Licence: Apache-2.0
 
-Contents of probable licence file $GOMODCACHE/github.com/aws/aws-sdk-go-v2/service/ecr@v1.55.1/LICENSE.txt:
+Contents of probable licence file $GOMODCACHE/github.com/aws/aws-sdk-go-v2/service/ecr@v1.55.3/LICENSE.txt:
 
 
                                  Apache License
@@ -15747,10 +15747,10 @@ Contents of probable licence file $GOMODCACHE/github.com/aws/aws-sdk-go-v2/servi
 ================================================================================
 
 Module:  github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding
-Version: v1.13.4
+Version: v1.13.5
 Licence: Apache-2.0
 
-Contents of probable licence file $GOMODCACHE/github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding@v1.13.4/LICENSE.txt:
+Contents of probable licence file $GOMODCACHE/github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding@v1.13.5/LICENSE.txt:
 
 
                                  Apache License
@@ -15959,10 +15959,10 @@ Contents of probable licence file $GOMODCACHE/github.com/aws/aws-sdk-go-v2/servi
 ================================================================================
 
 Module:  github.com/aws/aws-sdk-go-v2/service/internal/checksum
-Version: v1.9.7
+Version: v1.9.8
 Licence: Apache-2.0
 
-Contents of probable licence file $GOMODCACHE/github.com/aws/aws-sdk-go-v2/service/internal/checksum@v1.9.7/LICENSE.txt:
+Contents of probable licence file $GOMODCACHE/github.com/aws/aws-sdk-go-v2/service/internal/checksum@v1.9.8/LICENSE.txt:
 
 
                                  Apache License
@@ -16383,10 +16383,10 @@ Contents of probable licence file $GOMODCACHE/github.com/aws/aws-sdk-go-v2/servi
 ================================================================================
 
 Module:  github.com/aws/aws-sdk-go-v2/service/internal/presigned-url
-Version: v1.13.17
+Version: v1.13.18
 Licence: Apache-2.0
 
-Contents of probable licence file $GOMODCACHE/github.com/aws/aws-sdk-go-v2/service/internal/presigned-url@v1.13.17/LICENSE.txt:
+Contents of probable licence file $GOMODCACHE/github.com/aws/aws-sdk-go-v2/service/internal/presigned-url@v1.13.18/LICENSE.txt:
 
 
                                  Apache License
@@ -16595,10 +16595,10 @@ Contents of probable licence file $GOMODCACHE/github.com/aws/aws-sdk-go-v2/servi
 ================================================================================
 
 Module:  github.com/aws/aws-sdk-go-v2/service/internal/s3shared
-Version: v1.19.16
+Version: v1.19.17
 Licence: Apache-2.0
 
-Contents of probable licence file $GOMODCACHE/github.com/aws/aws-sdk-go-v2/service/internal/s3shared@v1.19.16/LICENSE.txt:
+Contents of probable licence file $GOMODCACHE/github.com/aws/aws-sdk-go-v2/service/internal/s3shared@v1.19.17/LICENSE.txt:
 
 
                                  Apache License
@@ -16807,10 +16807,10 @@ Contents of probable licence file $GOMODCACHE/github.com/aws/aws-sdk-go-v2/servi
 ================================================================================
 
 Module:  github.com/aws/aws-sdk-go-v2/service/s3
-Version: v1.95.0
+Version: v1.96.0
 Licence: Apache-2.0
 
-Contents of probable licence file $GOMODCACHE/github.com/aws/aws-sdk-go-v2/service/s3@v1.95.0/LICENSE.txt:
+Contents of probable licence file $GOMODCACHE/github.com/aws/aws-sdk-go-v2/service/s3@v1.96.0/LICENSE.txt:
 
 
                                  Apache License
@@ -17231,10 +17231,10 @@ Contents of probable licence file $GOMODCACHE/github.com/aws/aws-sdk-go-v2/servi
 ================================================================================
 
 Module:  github.com/aws/aws-sdk-go-v2/service/signin
-Version: v1.0.5
+Version: v1.0.6
 Licence: Apache-2.0
 
-Contents of probable licence file $GOMODCACHE/github.com/aws/aws-sdk-go-v2/service/signin@v1.0.5/LICENSE.txt:
+Contents of probable licence file $GOMODCACHE/github.com/aws/aws-sdk-go-v2/service/signin@v1.0.6/LICENSE.txt:
 
 
                                  Apache License
@@ -17443,10 +17443,10 @@ Contents of probable licence file $GOMODCACHE/github.com/aws/aws-sdk-go-v2/servi
 ================================================================================
 
 Module:  github.com/aws/aws-sdk-go-v2/service/sso
-Version: v1.30.9
+Version: v1.30.11
 Licence: Apache-2.0
 
-Contents of probable licence file $GOMODCACHE/github.com/aws/aws-sdk-go-v2/service/sso@v1.30.9/LICENSE.txt:
+Contents of probable licence file $GOMODCACHE/github.com/aws/aws-sdk-go-v2/service/sso@v1.30.11/LICENSE.txt:
 
 
                                  Apache License
@@ -17655,10 +17655,10 @@ Contents of probable licence file $GOMODCACHE/github.com/aws/aws-sdk-go-v2/servi
 ================================================================================
 
 Module:  github.com/aws/aws-sdk-go-v2/service/ssooidc
-Version: v1.35.13
+Version: v1.35.15
 Licence: Apache-2.0
 
-Contents of probable licence file $GOMODCACHE/github.com/aws/aws-sdk-go-v2/service/ssooidc@v1.35.13/LICENSE.txt:
+Contents of probable licence file $GOMODCACHE/github.com/aws/aws-sdk-go-v2/service/ssooidc@v1.35.15/LICENSE.txt:
 
 
                                  Apache License
@@ -17867,10 +17867,10 @@ Contents of probable licence file $GOMODCACHE/github.com/aws/aws-sdk-go-v2/servi
 ================================================================================
 
 Module:  github.com/aws/aws-sdk-go-v2/service/sts
-Version: v1.41.6
+Version: v1.41.7
 Licence: Apache-2.0
 
-Contents of probable licence file $GOMODCACHE/github.com/aws/aws-sdk-go-v2/service/sts@v1.41.6/LICENSE.txt:
+Contents of probable licence file $GOMODCACHE/github.com/aws/aws-sdk-go-v2/service/sts@v1.41.7/LICENSE.txt:
 
 
                                  Apache License
@@ -18264,10 +18264,10 @@ Contents of probable licence file $GOMODCACHE/github.com/aws/aws-secretsmanager-
 ================================================================================
 
 Module:  github.com/aws/smithy-go
-Version: v1.24.0
+Version: v1.24.1
 Licence: Apache-2.0
 
-Contents of probable licence file $GOMODCACHE/github.com/aws/smithy-go@v1.24.0/LICENSE:
+Contents of probable licence file $GOMODCACHE/github.com/aws/smithy-go@v1.24.1/LICENSE:
 
 
                                  Apache License
@@ -19402,10 +19402,10 @@ SOFTWARE.
 ================================================================================
 
 Module:  github.com/charmbracelet/x/ansi
-Version: v0.11.5
+Version: v0.11.6
 Licence: MIT
 
-Contents of probable licence file $GOMODCACHE/github.com/charmbracelet/x/ansi@v0.11.5/LICENSE:
+Contents of probable licence file $GOMODCACHE/github.com/charmbracelet/x/ansi@v0.11.6/LICENSE:
 
 MIT License
 
@@ -19517,10 +19517,10 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 ================================================================================
 
 Module:  github.com/clipperhouse/displaywidth
-Version: v0.9.0
+Version: v0.10.0
 Licence: MIT
 
-Contents of probable licence file $GOMODCACHE/github.com/clipperhouse/displaywidth@v0.9.0/LICENSE:
+Contents of probable licence file $GOMODCACHE/github.com/clipperhouse/displaywidth@v0.10.0/LICENSE:
 
 MIT License
 
@@ -19579,10 +19579,10 @@ SOFTWARE.
 ================================================================================
 
 Module:  github.com/clipperhouse/uax29/v2
-Version: v2.5.0
+Version: v2.6.0
 Licence: MIT
 
-Contents of probable licence file $GOMODCACHE/github.com/clipperhouse/uax29/v2@v2.5.0/LICENSE:
+Contents of probable licence file $GOMODCACHE/github.com/clipperhouse/uax29/v2@v2.6.0/LICENSE:
 
 MIT License
 
@@ -26855,10 +26855,10 @@ SOFTWARE.
 ================================================================================
 
 Module:  github.com/gabriel-vasile/mimetype
-Version: v1.4.12
+Version: v1.4.13
 Licence: MIT
 
-Contents of probable licence file $GOMODCACHE/github.com/gabriel-vasile/mimetype@v1.4.12/LICENSE:
+Contents of probable licence file $GOMODCACHE/github.com/gabriel-vasile/mimetype@v1.4.13/LICENSE:
 
 MIT License
 
@@ -26886,10 +26886,10 @@ SOFTWARE.
 ================================================================================
 
 Module:  github.com/github/go-spdx/v2
-Version: v2.3.6
+Version: v2.4.0
 Licence: MIT
 
-Contents of probable licence file $GOMODCACHE/github.com/github/go-spdx/v2@v2.3.6/LICENSE:
+Contents of probable licence file $GOMODCACHE/github.com/github/go-spdx/v2@v2.4.0/LICENSE:
 
 MIT License
 
@@ -27034,10 +27034,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ================================================================================
 
 Module:  github.com/go-git/go-billy/v5
-Version: v5.7.0
+Version: v5.8.0
 Licence: Apache-2.0
 
-Contents of probable licence file $GOMODCACHE/github.com/go-git/go-billy/v5@v5.7.0/LICENSE:
+Contents of probable licence file $GOMODCACHE/github.com/go-git/go-billy/v5@v5.8.0/LICENSE:
 
                                  Apache License
                            Version 2.0, January 2004
@@ -27245,10 +27245,10 @@ Contents of probable licence file $GOMODCACHE/github.com/go-git/go-billy/v5@v5.7
 ================================================================================
 
 Module:  github.com/go-git/go-git/v5
-Version: v5.16.5
+Version: v5.17.0
 Licence: Apache-2.0
 
-Contents of probable licence file $GOMODCACHE/github.com/go-git/go-git/v5@v5.16.5/LICENSE:
+Contents of probable licence file $GOMODCACHE/github.com/go-git/go-git/v5@v5.17.0/LICENSE:
 
                                  Apache License
                            Version 2.0, January 2004
@@ -35711,10 +35711,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ================================================================================
 
 Module:  github.com/googleapis/enterprise-certificate-proxy
-Version: v0.3.9
+Version: v0.3.11
 Licence: Apache-2.0
 
-Contents of probable licence file $GOMODCACHE/github.com/googleapis/enterprise-certificate-proxy@v0.3.9/LICENSE:
+Contents of probable licence file $GOMODCACHE/github.com/googleapis/enterprise-certificate-proxy@v0.3.11/LICENSE:
 
 
                                  Apache License
@@ -35923,10 +35923,10 @@ Contents of probable licence file $GOMODCACHE/github.com/googleapis/enterprise-c
 ================================================================================
 
 Module:  github.com/googleapis/gax-go/v2
-Version: v2.16.0
+Version: v2.17.0
 Licence: BSD-3-Clause
 
-Contents of probable licence file $GOMODCACHE/github.com/googleapis/gax-go/v2@v2.16.0/LICENSE:
+Contents of probable licence file $GOMODCACHE/github.com/googleapis/gax-go/v2@v2.17.0/LICENSE:
 
 Copyright 2016, Google Inc.
 All rights reserved.
@@ -36152,10 +36152,10 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 ================================================================================
 
 Module:  github.com/gpustack/gguf-parser-go
-Version: v0.23.1
+Version: v0.24.0
 Licence: MIT
 
-Contents of probable licence file $GOMODCACHE/github.com/gpustack/gguf-parser-go@v0.23.1/LICENSE:
+Contents of probable licence file $GOMODCACHE/github.com/gpustack/gguf-parser-go@v0.24.0/LICENSE:
 
 MIT License
 
@@ -37394,10 +37394,10 @@ Exhibit B - "Incompatible With Secondary Licenses" Notice
 ================================================================================
 
 Module:  github.com/hashicorp/go-getter
-Version: v1.8.4
+Version: v1.8.5
 Licence: MPL-2.0
 
-Contents of probable licence file $GOMODCACHE/github.com/hashicorp/go-getter@v1.8.4/LICENSE:
+Contents of probable licence file $GOMODCACHE/github.com/hashicorp/go-getter@v1.8.5/LICENSE:
 
 Copyright IBM Corp. 2015, 2025
 
@@ -40827,10 +40827,10 @@ SOFTWARE.
 ================================================================================
 
 Module:  github.com/klauspost/compress
-Version: v1.18.4
+Version: v1.18.5
 Licence: Apache-2.0
 
-Contents of probable licence file $GOMODCACHE/github.com/klauspost/compress@v1.18.4/LICENSE:
+Contents of probable licence file $GOMODCACHE/github.com/klauspost/compress@v1.18.5/LICENSE:
 
 Copyright (c) 2012 The Go Authors. All rights reserved.
 Copyright (c) 2019 Klaus Post. All rights reserved.
@@ -49733,10 +49733,10 @@ SOFTWARE.
 ================================================================================
 
 Module:  github.com/olekukonko/ll
-Version: v0.1.4-0.20260115111900-9e59c2286df0
+Version: v0.1.6
 Licence: MIT
 
-Contents of probable licence file $GOMODCACHE/github.com/olekukonko/ll@v0.1.4-0.20260115111900-9e59c2286df0/LICENSE:
+Contents of probable licence file $GOMODCACHE/github.com/olekukonko/ll@v0.1.6/LICENSE:
 
 MIT License
 
@@ -49764,10 +49764,10 @@ SOFTWARE.
 ================================================================================
 
 Module:  github.com/olekukonko/tablewriter
-Version: v1.1.3
+Version: v1.1.4
 Licence: MIT
 
-Contents of probable licence file $GOMODCACHE/github.com/olekukonko/tablewriter@v1.1.3/LICENSE.md:
+Contents of probable licence file $GOMODCACHE/github.com/olekukonko/tablewriter@v1.1.4/LICENSE.md:
 
 Copyright (C) 2014 by Oleku Konko
 
@@ -56919,10 +56919,10 @@ SOFTWARE.
 ================================================================================
 
 Module:  github.com/sylabs/sif/v2
-Version: v2.22.0
+Version: v2.24.0
 Licence: BSD-3-Clause
 
-Contents of probable licence file $GOMODCACHE/github.com/sylabs/sif/v2@v2.22.0/LICENSE.md:
+Contents of probable licence file $GOMODCACHE/github.com/sylabs/sif/v2@v2.24.0/LICENSE.md:
 
 # LICENSE
 
@@ -59579,10 +59579,10 @@ SOFTWARE.
 ================================================================================
 
 Module:  github.com/wagoodman/go-progress
-Version: v0.0.0-20230925121702-07e42b3cdba0
+Version: v0.0.0-20260303201901-10176f79b2c0
 Licence: MIT
 
-Contents of probable licence file $GOMODCACHE/github.com/wagoodman/go-progress@v0.0.0-20230925121702-07e42b3cdba0/LICENSE:
+Contents of probable licence file $GOMODCACHE/github.com/wagoodman/go-progress@v0.0.0-20260303201901-10176f79b2c0/LICENSE:
 
 MIT License
 
@@ -65777,10 +65777,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ================================================================================
 
 Module:  go.opentelemetry.io/otel/exporters/stdout/stdoutmetric
-Version: v1.38.0
+Version: v1.39.0
 Licence: Apache-2.0
 
-Contents of probable licence file $GOMODCACHE/go.opentelemetry.io/otel/exporters/stdout/stdoutmetric@v1.38.0/LICENSE:
+Contents of probable licence file $GOMODCACHE/go.opentelemetry.io/otel/exporters/stdout/stdoutmetric@v1.39.0/LICENSE:
 
                                  Apache License
                            Version 2.0, January 2004
@@ -68716,10 +68716,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ================================================================================
 
 Module:  golang.org/x/time
-Version: v0.14.0
+Version: v0.15.0
 Licence: BSD-3-Clause
 
-Contents of probable licence file $GOMODCACHE/golang.org/x/time@v0.14.0/LICENSE:
+Contents of probable licence file $GOMODCACHE/golang.org/x/time@v0.15.0/LICENSE:
 
 Copyright 2009 The Go Authors.
 
@@ -68859,10 +68859,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ================================================================================
 
 Module:  google.golang.org/api
-Version: v0.260.0
+Version: v0.267.0
 Licence: BSD-3-Clause
 
-Contents of probable licence file $GOMODCACHE/google.golang.org/api@v0.260.0/LICENSE:
+Contents of probable licence file $GOMODCACHE/google.golang.org/api@v0.267.0/LICENSE:
 
 Copyright (c) 2011 Google Inc. All rights reserved.
 
@@ -68896,10 +68896,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ================================================================================
 
 Module:  google.golang.org/genproto
-Version: v0.0.0-20251202230838-ff82c1b0f217
+Version: v0.0.0-20260128011058-8636f8732409
 Licence: Apache-2.0
 
-Contents of probable licence file $GOMODCACHE/google.golang.org/genproto@v0.0.0-20251202230838-ff82c1b0f217/LICENSE:
+Contents of probable licence file $GOMODCACHE/google.golang.org/genproto@v0.0.0-20260128011058-8636f8732409/LICENSE:
 
 
                                  Apache License
@@ -69532,10 +69532,10 @@ Contents of probable licence file $GOMODCACHE/google.golang.org/genproto/googlea
 ================================================================================
 
 Module:  google.golang.org/grpc
-Version: v1.79.1
+Version: v1.79.3
 Licence: Apache-2.0
 
-Contents of probable licence file $GOMODCACHE/google.golang.org/grpc@v1.79.1/LICENSE:
+Contents of probable licence file $GOMODCACHE/google.golang.org/grpc@v1.79.3/LICENSE:
 
 
                                  Apache License
