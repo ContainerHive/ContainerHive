@@ -31,7 +31,7 @@ func discoverProject(ctx context.Context, cmd *cli.Command) (*model.ContainerHiv
 // getDistPath returns the distribution path for the project
 func getDistPath(cmd *cli.Command) string {
 	projectRoot := cmd.String("project")
-	return filepath.Join(projectRoot, "dist")
+	return filepath.Join(projectRoot, model.DistDirName)
 }
 
 // setupRegistry creates, starts, and returns a registry instance with proper cleanup
@@ -91,6 +91,7 @@ func main() {
 			licenseCmd(),
 			devCmd(),
 			reportCmd(),
+			mcpCmd(),
 		},
 	}
 
