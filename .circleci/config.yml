@@ -79,6 +79,27 @@ jobs:
           paths:
             - pkg/report/assets/index.html
             - pkg/report/assets/NOTICE
+  test-web-report-e2e:
+    executor: node
+    steps:
+      - checkout
+      - node/install-packages:
+          check-cache: always
+          pkg-manager: yarn-berry
+          app-dir: web/report
+      - run:
+          name: Install Playwright browsers
+          working_directory: web/report
+          command: yarn test:e2e:install
+      - run:
+          name: Run Playwright e2e tests
+          working_directory: web/report
+          command: yarn test:e2e
+      - store_test_results:
+          path: web/report/test-results
+      - store_artifacts:
+          path: web/report/playwright-report
+          destination: playwright-report
   build:
     executor: go
     steps:
@@ -227,6 +248,7 @@ workflows:
             - publish-container-image-snapshot
       - test
       - build-web-report
+      - test-web-report-e2e
       - build:
           requires:
             - test

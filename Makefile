@@ -69,6 +69,11 @@ build-web-report: ## Build the web report SPA
 	@cp web/report/dist/index.html pkg/report/assets/index.html
 	@cp web/report/NOTICE pkg/report/assets/NOTICE
 
+test-web-report-e2e: ## Run Playwright e2e tests for the web report
+	cd web/report && yarn install --immutable
+	cd web/report && yarn test:e2e:install
+	cd web/report && yarn test:e2e
+
 bundle:
 	@cd dist/ && find * -type d -exec sh -c 'cd {} && cp ../../LICENSE LICENSE.txt && cp ../../NOTICE . && tar -cf - . | zstd -9 -o ../{}.tar.zst' \;
 	@find ./dist/*.tar.zst -type f -exec sh -c 'sha256sum {} | cut -d " " -f 1 > {}.sha256' {} \;
