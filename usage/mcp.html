@@ -23,7 +23,7 @@
     
     
       
-        <title>MCP Server - ContainerHive</title>
+        <title>Integration with AI Agents - ContainerHive</title>
       
     
     
@@ -76,7 +76,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#mcp-server" class="md-skip">
+        <a href="#integration-with-ai-agents" class="md-skip">
           Skip to content
         </a>
       
@@ -109,7 +109,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              MCP Server
+              Integration with AI Agents
             
           </span>
         </div>
@@ -640,7 +640,7 @@
   <span class="md-ellipsis">
     
   
-    MCP Server
+    Integration with AI Agents
   
 
     
@@ -658,7 +658,7 @@
   <span class="md-ellipsis">
     
   
-    MCP Server
+    Integration with AI Agents
   
 
     
@@ -688,6 +688,45 @@
     <span class="md-ellipsis">
       
         Usage
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ai-usage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        AI Usage
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="AI Usage">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#typical-workflow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Typical Workflow
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#mcp-client-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MCP Client Configuration
       
     </span>
   </a>
@@ -868,17 +907,6 @@
         
       </ul>
     </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#mcp-client-configuration" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        MCP Client Configuration
-      
-    </span>
-  </a>
   
 </li>
       
@@ -1781,6 +1809,45 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#ai-usage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        AI Usage
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="AI Usage">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#typical-workflow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Typical Workflow
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#mcp-client-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MCP Client Configuration
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#tools" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1957,17 +2024,6 @@
   
 </li>
       
-        <li class="md-nav__item">
-  <a href="#mcp-client-configuration" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        MCP Client Configuration
-      
-    </span>
-  </a>
-  
-</li>
-      
     </ul>
   
 </nav>
@@ -2036,8 +2092,8 @@
   
 
 
-<h1 id="mcp-server">MCP Server</h1>
-<p>ContainerHive provides an MCP (Model Context Protocol) server that enables AI assistants to manage container images
+<h1 id="integration-with-ai-agents">Integration with AI Agents</h1>
+<p>ContainerHive provides an MCP (Model Context Protocol) integration that enables AI assistants to manage container images
 programmatically.</p>
 <h2 id="usage">Usage</h2>
 <p>Start the MCP server:</p>
@@ -2045,80 +2101,24 @@ programmatically.</p>
 </span></code></pre></div>
 <p>The server uses stdio transport, making it compatible with MCP clients like Claude Code, Cursor, and other AI
 assistants.</p>
-<h2 id="tools">Tools</h2>
-<h3 id="list_images">list_images</h3>
-<p>List all images in the ContainerHive project.</p>
-<p><strong>Parameters:</strong> None</p>
-<p><strong>Returns:</strong> Array of images with name, description, tags, variants, versions, and platforms.</p>
-<h3 id="get_image">get_image</h3>
-<p>Get full configuration details for a specific image.</p>
-<p><strong>Parameters:</strong></p>
+<h2 id="ai-usage">AI Usage</h2>
+<p>ContainerHive's MCP server enables AI assistants to interact with your container project. When configured, AI can:</p>
 <ul>
-<li><code>name</code> (string, required): Name of the image</li>
+<li><strong>List and inspect images</strong> — Query all configured images, their variants, tags, and versions</li>
+<li><strong>Get dependencies</strong> — Understand build order by retrieving forward/reverse dependencies</li>
+<li><strong>Add new images</strong> — Create new image directories with starter Dockerfiles and configuration</li>
+<li><strong>Add variants</strong> — Extend existing images with new variants (e.g., <code>-slim</code>, <code>-alpine</code>)</li>
+<li><strong>Query schemas</strong> — Retrieve JSON schemas for validation and autocomplete</li>
+<li><strong>Search documentation</strong> — Find relevant docs within your project context</li>
 </ul>
-<p><strong>Returns:</strong> Image configuration including tags, variants, versions, build args, depends_on, and platforms. Secrets are
-excluded.</p>
-<h3 id="get_dependencies">get_dependencies</h3>
-<p>Get build dependencies for an image.</p>
-<p><strong>Parameters:</strong></p>
-<ul>
-<li><code>name</code> (string, required): Name of the image</li>
-<li><code>direction</code> (string, required): "forward" for dependencies, "reverse" for dependents</li>
-</ul>
-<p><strong>Returns:</strong> Ordered array of image names.</p>
-<h3 id="get_image_schema">get_image_schema</h3>
-<p>Get the JSON schema for image.yml configuration files.</p>
-<p><strong>Parameters:</strong> None</p>
-<p><strong>Returns:</strong> JSON schema string.</p>
-<h3 id="get_hive_schema">get_hive_schema</h3>
-<p>Get the JSON schema for hive.yml configuration files.</p>
-<p><strong>Parameters:</strong> None</p>
-<p><strong>Returns:</strong> JSON schema string.</p>
-<h3 id="add_image">add_image</h3>
-<p>Create a new image directory with a stub Dockerfile and image.yml.</p>
-<p><strong>Parameters:</strong></p>
-<ul>
-<li><code>name</code> (string, required): Name of the image to create</li>
-<li><code>description</code> (string, required): Description of the image</li>
-<li><code>base_tag</code> (string, required): Base Docker tag (e.g., ubuntu:22.04)</li>
-<li><code>dockerfile_content</code> (string, optional): Custom Dockerfile content</li>
-</ul>
-<p><strong>Returns:</strong> Confirmation message.</p>
-<h3 id="add_image_variant">add_image_variant</h3>
-<p>Add a new variant to an existing image with a stub Dockerfile.</p>
-<p><strong>Parameters:</strong></p>
-<ul>
-<li><code>image_name</code> (string, required): Name of the image to add variant to</li>
-<li><code>variant_name</code> (string, required): Name of the variant</li>
-<li><code>tag_suffix</code> (string, required): Suffix to append to tags (e.g., -slim)</li>
-<li><code>versions</code> (object, optional): Version overrides for this variant</li>
-<li><code>build_args</code> (object, optional): Build args for this variant</li>
-</ul>
-<p><strong>Returns:</strong> Confirmation message.</p>
-<h3 id="search_documentation">search_documentation</h3>
-<p>Search ContainerHive documentation by query text.</p>
-<p><strong>Parameters:</strong></p>
-<ul>
-<li><code>query</code> (string, required): Search query text</li>
-<li><code>limit</code> (integer, optional): Max results to return (default 10)</li>
-</ul>
-<p><strong>Returns:</strong> Array of results with title, path, and excerpt.</p>
-<h3 id="get_documentation">get_documentation</h3>
-<p>Fetch full documentation page content by path.</p>
-<p><strong>Parameters:</strong></p>
-<ul>
-<li><code>path</code> (string, required): Path to the documentation page (e.g., <code>index.html</code>, <code>usage/mcp.html</code>)</li>
-</ul>
-<p><strong>Returns:</strong> Object with title, url (GitHub link), and full content (markdown).</p>
-<h2 id="resources">Resources</h2>
-<h3 id="imageschema">image://schema</h3>
-<p>JSON schema for image.yml configuration files.</p>
-<h3 id="projectschema">project://schema</h3>
-<p>JSON schema for hive.yml configuration files.</p>
-<h3 id="projectconfig">project://config</h3>
-<p>The project's hive.yml configuration.</p>
-<h3 id="imagename">image://{name}</h3>
-<p>Image configuration file for a specific image. Use <code>{name}</code> as a URI template parameter.</p>
+<h3 id="typical-workflow">Typical Workflow</h3>
+<ol>
+<li><strong>Configure the MCP server</strong> in your AI client's settings (see MCP Client Configuration below)</li>
+<li><strong>Ask the AI to inspect your project</strong> — e.g., "What images are configured in this project?"</li>
+<li><strong>Request builds or modifications</strong> — e.g., "Build the api image for linux/amd64"</li>
+<li><strong>Iterate on changes</strong> — The AI can add new images or variants based on your requirements</li>
+</ol>
+<p>The MCP server acts as a bridge between the AI's natural language and your container infrastructure.</p>
 <h2 id="mcp-client-configuration">MCP Client Configuration</h2>
 <div class="tabbed-set tabbed-alternate" data-tabs="1:4"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><input id="__tabbed_1_3" name="__tabbed_1" type="radio" /><input id="__tabbed_1_4" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">OpenCode</label><label for="__tabbed_1_2">Claude Code</label><label for="__tabbed_1_3">Claude Desktop</label><label for="__tabbed_1_4">Cursor</label></div>
 <div class="tabbed-content">
@@ -2208,6 +2208,80 @@ excluded.</p>
 </div>
 </div>
 </div>
+<h2 id="tools">Tools</h2>
+<h3 id="list_images">list_images</h3>
+<p>List all images in the ContainerHive project.</p>
+<p><strong>Parameters:</strong> None</p>
+<p><strong>Returns:</strong> Array of images with name, description, tags, variants, versions, and platforms.</p>
+<h3 id="get_image">get_image</h3>
+<p>Get full configuration details for a specific image.</p>
+<p><strong>Parameters:</strong></p>
+<ul>
+<li><code>name</code> (string, required): Name of the image</li>
+</ul>
+<p><strong>Returns:</strong> Image configuration including tags, variants, versions, build args, depends_on, and platforms. Secrets are
+excluded.</p>
+<h3 id="get_dependencies">get_dependencies</h3>
+<p>Get build dependencies for an image.</p>
+<p><strong>Parameters:</strong></p>
+<ul>
+<li><code>name</code> (string, required): Name of the image</li>
+<li><code>direction</code> (string, required): "forward" for dependencies, "reverse" for dependents</li>
+</ul>
+<p><strong>Returns:</strong> Ordered array of image names.</p>
+<h3 id="get_image_schema">get_image_schema</h3>
+<p>Get the JSON schema for image.yml configuration files.</p>
+<p><strong>Parameters:</strong> None</p>
+<p><strong>Returns:</strong> JSON schema string.</p>
+<h3 id="get_hive_schema">get_hive_schema</h3>
+<p>Get the JSON schema for hive.yml configuration files.</p>
+<p><strong>Parameters:</strong> None</p>
+<p><strong>Returns:</strong> JSON schema string.</p>
+<h3 id="add_image">add_image</h3>
+<p>Create a new image directory with a stub Dockerfile and image.yml.</p>
+<p><strong>Parameters:</strong></p>
+<ul>
+<li><code>name</code> (string, required): Name of the image to create</li>
+<li><code>description</code> (string, required): Description of the image</li>
+<li><code>base_tag</code> (string, required): Base Docker tag (e.g., ubuntu:22.04)</li>
+<li><code>dockerfile_content</code> (string, optional): Custom Dockerfile content</li>
+</ul>
+<p><strong>Returns:</strong> Confirmation message.</p>
+<h3 id="add_image_variant">add_image_variant</h3>
+<p>Add a new variant to an existing image with a stub Dockerfile.</p>
+<p><strong>Parameters:</strong></p>
+<ul>
+<li><code>image_name</code> (string, required): Name of the image to add variant to</li>
+<li><code>variant_name</code> (string, required): Name of the variant</li>
+<li><code>tag_suffix</code> (string, required): Suffix to append to tags (e.g., -slim)</li>
+<li><code>versions</code> (object, optional): Version overrides for this variant</li>
+<li><code>build_args</code> (object, optional): Build args for this variant</li>
+</ul>
+<p><strong>Returns:</strong> Confirmation message.</p>
+<h3 id="search_documentation">search_documentation</h3>
+<p>Search ContainerHive documentation by query text.</p>
+<p><strong>Parameters:</strong></p>
+<ul>
+<li><code>query</code> (string, required): Search query text</li>
+<li><code>limit</code> (integer, optional): Max results to return (default 10)</li>
+</ul>
+<p><strong>Returns:</strong> Array of results with title, path, and excerpt.</p>
+<h3 id="get_documentation">get_documentation</h3>
+<p>Fetch full documentation page content by path.</p>
+<p><strong>Parameters:</strong></p>
+<ul>
+<li><code>path</code> (string, required): Path to the documentation page (e.g., <code>index.html</code>, <code>usage/mcp.html</code>)</li>
+</ul>
+<p><strong>Returns:</strong> Object with title, url (GitHub link), and full content (markdown).</p>
+<h2 id="resources">Resources</h2>
+<h3 id="imageschema">image://schema</h3>
+<p>JSON schema for image.yml configuration files.</p>
+<h3 id="projectschema">project://schema</h3>
+<p>JSON schema for hive.yml configuration files.</p>
+<h3 id="projectconfig">project://config</h3>
+<p>The project's hive.yml configuration.</p>
+<h3 id="imagename">image://{name}</h3>
+<p>Image configuration file for a specific image. Use <code>{name}</code> as a URI template parameter.</p>
 
 
 
