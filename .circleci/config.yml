@@ -248,11 +248,14 @@ workflows:
             - publish-container-image-snapshot
       - test
       - build-web-report
-      - test-web-report-e2e
+      - test-web-report-e2e:
+          requires:
+            - build-web-report
       - build:
           requires:
             - test
             - build-web-report
+            - test-web-report-e2e
       - build-gh-pages:
           filters:
             branches:
