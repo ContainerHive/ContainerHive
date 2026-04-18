@@ -44,10 +44,12 @@
         
         
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
-        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Inter";--md-code-font:"Roboto Mono"}</style>
       
     
+    
+      <link rel="stylesheet" href="../stylesheets/extra.css">
     
     <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
@@ -65,7 +67,7 @@
     
     
     
-    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="blue" data-md-color-accent="indigo">
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="indigo">
   
     
     <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
@@ -120,7 +122,7 @@
     
     
     
-    <input class="md-option" data-md-color-media="(prefers-color-scheme)" data-md-color-scheme="default" data-md-color-primary="blue" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_0">
+    <input class="md-option" data-md-color-media="(prefers-color-scheme)" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_0">
     
       <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m14.3 16-.7-2h-3.2l-.7 2H7.8L11 7h2l3.2 9zM20 8.69V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12zm-9.15 3.96h2.3L12 9z"/></svg>
@@ -130,7 +132,7 @@
     
     
     
-    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="blue" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
     
       <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_2" hidden>
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
@@ -140,7 +142,7 @@
     
     
     
-    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="blue" data-md-color-accent="indigo"  aria-label="Switch to system preference"  type="radio" name="__palette" id="__palette_2">
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="custom" data-md-color-accent="indigo"  aria-label="Switch to system preference"  type="radio" name="__palette" id="__palette_2">
     
       <label class="md-header__button md-icon" title="Switch to system preference" for="__palette_0" hidden>
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
@@ -1027,6 +1029,56 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#report-generation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Report generation
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Report generation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#github-pages" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GitHub Pages
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gitlab-pages" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GitLab Pages
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#disabling-report-generation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Disabling report generation
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -1840,6 +1892,56 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#report-generation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Report generation
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Report generation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#github-pages" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GitHub Pages
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gitlab-pages" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GitLab Pages
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#disabling-report-generation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Disabling report generation
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -1909,7 +2011,8 @@
 
 
 <h1 id="generate-ci-pipelines">Generate CI pipelines</h1>
-<p>ContainerHive generates CI pipeline configurations from your project definition, so you don't have to maintain pipeline YAML by hand.</p>
+<p>ContainerHive generates CI pipeline configurations from your project definition, so you don't have to maintain pipeline
+YAML by hand.</p>
 <h2 id="generating-ci-pipelines">Generating CI pipelines</h2>
 <p>Use <code>template ci</code> to generate a pipeline for your CI provider:</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>ch<span class="w"> </span>template<span class="w"> </span>ci<span class="w"> </span>--provider<span class="w"> </span>gitlab<span class="w"> </span>--output<span class="w"> </span>.gitlab-ci.yml
@@ -1941,9 +2044,12 @@
 <ol>
 <li>ContainerHive discovers your project and resolves image dependencies.</li>
 <li>Images are grouped into stages based on their dependency depth — images at the same depth can build in parallel.</li>
-<li>For each image, the pipeline includes jobs for building (per-platform), creating multi-arch manifests, and running tests.</li>
-<li>If an image has a <code>latest_alias</code> configured, the highest semantic version tag is automatically retagged as the specified alias (e.g., <code>latest</code>, <code>stable</code>).</li>
+<li>For each image, the pipeline includes jobs for building (per-platform), creating multi-arch manifests, and running
+   tests.</li>
+<li>If an image has a <code>latest_alias</code> configured, the highest semantic version tag is automatically retagged as the
+   specified alias (e.g., <code>latest</code>, <code>stable</code>).</li>
 <li>The generated pipeline references the ContainerHive container image to run all commands.</li>
+<li>After successful builds, an HTML and JSON report is generated and published to GitHub Pages or GitLab Pages.</li>
 </ol>
 <h3 id="options">Options</h3>
 <table>
@@ -1989,7 +2095,8 @@
 </span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="w">  </span>--artifacts
 </span></code></pre></div>
 <h2 id="custom-templates">Custom templates</h2>
-<p>For use cases beyond CI pipelines, the <code>template custom</code> command renders any Go template with full access to the project context.</p>
+<p>For use cases beyond CI pipelines, the <code>template custom</code> command renders any Go template with full access to the project
+context.</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>ch<span class="w"> </span>template<span class="w"> </span>custom<span class="w"> </span>--template<span class="w"> </span>my-template.gotpl<span class="w"> </span>--output<span class="w"> </span>output.yml
 </span></code></pre></div>
 <h3 id="template-context">Template context</h3>
@@ -2094,7 +2201,8 @@
 <p>You can override the built-in CI templates by providing a custom template directory:</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>ch<span class="w"> </span>template<span class="w"> </span>ci<span class="w"> </span>--provider<span class="w"> </span>gitlab<span class="w"> </span>--template-dir<span class="w"> </span>./my-templates<span class="w"> </span>--output<span class="w"> </span>.gitlab-ci.yml
 </span></code></pre></div>
-<p>The directory should contain <code>.gotpl</code> files following the same structure as the built-in templates. Files in the custom directory take precedence over the built-in ones.</p>
+<p>The directory should contain <code>.gotpl</code> files following the same structure as the built-in templates. Files in the custom
+directory take precedence over the built-in ones.</p>
 <h3 id="built-in-template-structure">Built-in template structure</h3>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>templates/&lt;provider&gt;/
 </span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>├── pipeline.yml.gotpl   (or workflow.yml.gotpl for GitHub)
@@ -2104,10 +2212,30 @@
 </span></code></pre></div>
 <p>The entrypoint template includes the job templates as partials using <code>{{ template "build-job.yml.gotpl" . }}</code>.</p>
 <h2 id="the-generate-command">The <code>generate</code> command</h2>
-<p>Before building or generating CI configs, run <code>generate</code> to discover the project and render all configurations to <code>dist/</code>:</p>
+<p>Before building or generating CI configs, run <code>generate</code> to discover the project and render all configurations to
+<code>dist/</code>:</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>ch<span class="w"> </span>generate
 </span></code></pre></div>
-<p>This processes <code>hive.yml</code> and all <code>image.yml</code> definitions, renders Dockerfiles and test templates, and prepares the <code>dist/</code> directory for subsequent <code>build</code>, <code>test</code>, and <code>sbom</code> commands.</p>
+<p>This processes <code>hive.yml</code> and all <code>image.yml</code> definitions, renders Dockerfiles and test templates, and prepares the
+<code>dist/</code> directory for subsequent <code>build</code>, <code>test</code>, and <code>sbom</code> commands.</p>
+<h2 id="report-generation">Report generation</h2>
+<p>By default, the generated CI pipeline includes a <code>report</code> job that runs after all build jobs complete. This job
+generates:</p>
+<ul>
+<li><code>dist/report.html</code> — Interactive HTML report with image details, tags, platforms, and SBOM data</li>
+<li><code>dist/report.json</code> — Machine-readable JSON report</li>
+</ul>
+<h3 id="github-pages">GitHub Pages</h3>
+<p>The HTML report is automatically deployed to GitHub Pages. Your repository must have Pages enabled in settings with the
+source set to "GitHub Actions".</p>
+<h3 id="gitlab-pages">GitLab Pages</h3>
+<p>The report is uploaded as a GitLab Pages artifact and exposed as "ContainerHive Report" in the merge request widget. The
+JSON report is also available as an artifact.</p>
+<h3 id="disabling-report-generation">Disabling report generation</h3>
+<p>To disable report generation, set <code>ci_report</code> to <code>false</code> in your <code>hive.yml</code>:</p>
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="nt">template_options</span><span class="p">:</span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="w">  </span><span class="nt">ci_report</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+</span></code></pre></div>
 
 
 
