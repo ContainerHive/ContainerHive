@@ -5,6 +5,7 @@ nav:
   - getting-started.md
   - Usage:
       - usage/cli.md
+      - usage/mcp.md
       - usage/build-ids.md
       - usage/caching.md
       - usage/dockerfiles.md
