@@ -43,7 +43,7 @@ func scanProject(project *model.ContainerHiveProject) []ImageReport {
 }
 
 func scanImage(projectRoot, imageName string, img *model.Image) ImageReport {
-	distPath := filepath.Join(projectRoot, "dist")
+	distPath := filepath.Join(projectRoot, model.DistDirName)
 
 	var tagReports []TagReport
 	for _, tagDef := range img.Tags {

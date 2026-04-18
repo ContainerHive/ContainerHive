@@ -1,5 +1,7 @@
 package model
 
+const DistDirName = "dist"
+
 // Secrets represents a collection of named secrets
 // This is a type alias to the secrets.Secrets type
 type Secrets map[string]Secret
