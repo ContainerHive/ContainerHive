@@ -102,8 +102,6 @@ report:
       - public/
     expose_as: "ContainerHive Report"
     expire_in: 1 week
-  rules:
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
 
 pages:
   needs:
@@ -112,4 +110,6 @@ pages:
     - echo "Deploy happens via convention on job name"
   stage: pages
   before_script: []
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
 {{- end }}
