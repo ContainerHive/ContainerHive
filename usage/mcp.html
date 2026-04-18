@@ -9,10 +9,10 @@
       
       
       
-        <link rel="prev" href="caching.html">
+        <link rel="prev" href="cli.html">
       
       
-        <link rel="next" href="multi-platform.html">
+        <link rel="next" href="build-ids.html">
       
       
         
@@ -23,7 +23,7 @@
     
     
       
-        <title>Write your Dockerfiles - ContainerHive</title>
+        <title>MCP Server - ContainerHive</title>
       
     
     
@@ -76,7 +76,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#write-your-dockerfiles" class="md-skip">
+        <a href="#mcp-server" class="md-skip">
           Skip to content
         </a>
       
@@ -109,7 +109,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Write your Dockerfiles
+              MCP Server
             
           </span>
         </div>
@@ -621,10 +621,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="mcp.html" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MCP Server
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="mcp.html" class="md-nav__link md-nav__link--active">
         
   
   
@@ -640,6 +667,225 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#usage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Usage
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tools" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tools
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Tools">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#list_images" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        list_images
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get_image" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        get_image
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get_dependencies" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        get_dependencies
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get_image_schema" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        get_image_schema
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get_hive_schema" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        get_hive_schema
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#add_image" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        add_image
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#add_image_variant" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        add_image_variant
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#search_documentation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        search_documentation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get_documentation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        get_documentation
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#resources" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Resources
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Resources">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#imageschema" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        image://schema
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#projectschema" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        project://schema
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#projectconfig" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        project://config
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#imagename" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        image://{name}
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#mcp-client-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MCP Client Configuration
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -705,37 +951,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Write your Dockerfiles
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="dockerfiles.html" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="dockerfiles.html" class="md-nav__link">
         
   
   
@@ -751,165 +970,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#plain-dockerfiles-vs-templates" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Plain Dockerfiles vs templates
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#using-versions" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Using versions
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#using-build-arguments" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Using build arguments
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#using-secrets" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Using secrets
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Using secrets">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#secret-sources" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Secret sources
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#inter-image-dependencies" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Inter-image dependencies
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Inter-image dependencies">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#variant-parent-references" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Variant parent references
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#go-template-dockerfiles" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Go template Dockerfiles
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Go template Dockerfiles">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#template-functions" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Template functions
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#example" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Example
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#complete-example" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Complete example
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -1710,10 +1770,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#plain-dockerfiles-vs-templates" class="md-nav__link">
+  <a href="#usage" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Plain Dockerfiles vs templates
+        Usage
       
     </span>
   </a>
@@ -1721,44 +1781,110 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#using-versions" class="md-nav__link">
+  <a href="#tools" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Using versions
+        Tools
       
     </span>
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#using-build-arguments" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Using build arguments
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#using-secrets" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Using secrets
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Using secrets">
+    <nav class="md-nav" aria-label="Tools">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#secret-sources" class="md-nav__link">
+  <a href="#list_images" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Secret sources
+        list_images
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get_image" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        get_image
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get_dependencies" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        get_dependencies
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get_image_schema" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        get_image_schema
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get_hive_schema" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        get_hive_schema
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#add_image" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        add_image
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#add_image_variant" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        add_image_variant
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#search_documentation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        search_documentation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get_documentation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        get_documentation
       
     </span>
   </a>
@@ -1771,22 +1897,55 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#inter-image-dependencies" class="md-nav__link">
+  <a href="#resources" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Inter-image dependencies
+        Resources
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Inter-image dependencies">
+    <nav class="md-nav" aria-label="Resources">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#variant-parent-references" class="md-nav__link">
+  <a href="#imageschema" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Variant parent references
+        image://schema
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#projectschema" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        project://schema
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#projectconfig" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        project://config
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#imagename" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        image://{name}
       
     </span>
   </a>
@@ -1799,49 +1958,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#go-template-dockerfiles" class="md-nav__link">
+  <a href="#mcp-client-configuration" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Go template Dockerfiles
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Go template Dockerfiles">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#template-functions" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Template functions
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#example" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Example
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#complete-example" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Complete example
+        MCP Client Configuration
       
     </span>
   </a>
@@ -1916,183 +2036,178 @@
   
 
 
-<h1 id="write-your-dockerfiles">Write your Dockerfiles</h1>
-<p>ContainerHive renders Dockerfiles as part of <code>ch generate</code>. This page covers how versions, build arguments, secrets, and inter-image dependencies work in your Dockerfiles.</p>
-<h2 id="plain-dockerfiles-vs-templates">Plain Dockerfiles vs templates</h2>
-<p>ContainerHive supports both plain Dockerfiles and Go template Dockerfiles:</p>
+<h1 id="mcp-server">MCP Server</h1>
+<p>ContainerHive provides an MCP (Model Context Protocol) server that enables AI assistants to manage container images
+programmatically.</p>
+<h2 id="usage">Usage</h2>
+<p>Start the MCP server:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>ch<span class="w"> </span>mcp<span class="w"> </span>--project<span class="w"> </span>/path/to/project
+</span></code></pre></div>
+<p>The server uses stdio transport, making it compatible with MCP clients like Claude Code, Cursor, and other AI
+assistants.</p>
+<h2 id="tools">Tools</h2>
+<h3 id="list_images">list_images</h3>
+<p>List all images in the ContainerHive project.</p>
+<p><strong>Parameters:</strong> None</p>
+<p><strong>Returns:</strong> Array of images with name, description, tags, variants, versions, and platforms.</p>
+<h3 id="get_image">get_image</h3>
+<p>Get full configuration details for a specific image.</p>
+<p><strong>Parameters:</strong></p>
 <ul>
-<li><strong><code>Dockerfile</code></strong> — copied as-is. Versions and build args are passed as Docker <code>ARG</code>s.</li>
-<li><strong><code>Dockerfile.gotpl</code></strong> — rendered as a Go template before building. Has access to template variables and functions in addition to Docker <code>ARG</code>s.</li>
+<li><code>name</code> (string, required): Name of the image</li>
 </ul>
-<p>The <code>.gotpl</code> extension is optional. Use it only when you need Go template features like <code>resolve_base</code> or conditional logic. For most cases, plain Dockerfiles with <code>ARG</code> are sufficient.</p>
-<div class="admonition info">
-<p class="admonition-title">Info</p>
-<p>The same applies to test files: <code>test.yml</code> is copied as-is, <code>test.yml.gotpl</code> is rendered as a template.</p>
+<p><strong>Returns:</strong> Image configuration including tags, variants, versions, build args, depends_on, and platforms. Secrets are
+excluded.</p>
+<h3 id="get_dependencies">get_dependencies</h3>
+<p>Get build dependencies for an image.</p>
+<p><strong>Parameters:</strong></p>
+<ul>
+<li><code>name</code> (string, required): Name of the image</li>
+<li><code>direction</code> (string, required): "forward" for dependencies, "reverse" for dependents</li>
+</ul>
+<p><strong>Returns:</strong> Ordered array of image names.</p>
+<h3 id="get_image_schema">get_image_schema</h3>
+<p>Get the JSON schema for image.yml configuration files.</p>
+<p><strong>Parameters:</strong> None</p>
+<p><strong>Returns:</strong> JSON schema string.</p>
+<h3 id="get_hive_schema">get_hive_schema</h3>
+<p>Get the JSON schema for hive.yml configuration files.</p>
+<p><strong>Parameters:</strong> None</p>
+<p><strong>Returns:</strong> JSON schema string.</p>
+<h3 id="add_image">add_image</h3>
+<p>Create a new image directory with a stub Dockerfile and image.yml.</p>
+<p><strong>Parameters:</strong></p>
+<ul>
+<li><code>name</code> (string, required): Name of the image to create</li>
+<li><code>description</code> (string, required): Description of the image</li>
+<li><code>base_tag</code> (string, required): Base Docker tag (e.g., ubuntu:22.04)</li>
+<li><code>dockerfile_content</code> (string, optional): Custom Dockerfile content</li>
+</ul>
+<p><strong>Returns:</strong> Confirmation message.</p>
+<h3 id="add_image_variant">add_image_variant</h3>
+<p>Add a new variant to an existing image with a stub Dockerfile.</p>
+<p><strong>Parameters:</strong></p>
+<ul>
+<li><code>image_name</code> (string, required): Name of the image to add variant to</li>
+<li><code>variant_name</code> (string, required): Name of the variant</li>
+<li><code>tag_suffix</code> (string, required): Suffix to append to tags (e.g., -slim)</li>
+<li><code>versions</code> (object, optional): Version overrides for this variant</li>
+<li><code>build_args</code> (object, optional): Build args for this variant</li>
+</ul>
+<p><strong>Returns:</strong> Confirmation message.</p>
+<h3 id="search_documentation">search_documentation</h3>
+<p>Search ContainerHive documentation by query text.</p>
+<p><strong>Parameters:</strong></p>
+<ul>
+<li><code>query</code> (string, required): Search query text</li>
+<li><code>limit</code> (integer, optional): Max results to return (default 10)</li>
+</ul>
+<p><strong>Returns:</strong> Array of results with title, path, and excerpt.</p>
+<h3 id="get_documentation">get_documentation</h3>
+<p>Fetch full documentation page content by path.</p>
+<p><strong>Parameters:</strong></p>
+<ul>
+<li><code>path</code> (string, required): Path to the documentation page (e.g., <code>index.html</code>, <code>usage/mcp.html</code>)</li>
+</ul>
+<p><strong>Returns:</strong> Object with title, url (GitHub link), and full content (markdown).</p>
+<h2 id="resources">Resources</h2>
+<h3 id="imageschema">image://schema</h3>
+<p>JSON schema for image.yml configuration files.</p>
+<h3 id="projectschema">project://schema</h3>
+<p>JSON schema for hive.yml configuration files.</p>
+<h3 id="projectconfig">project://config</h3>
+<p>The project's hive.yml configuration.</p>
+<h3 id="imagename">image://{name}</h3>
+<p>Image configuration file for a specific image. Use <code>{name}</code> as a URI template parameter.</p>
+<h2 id="mcp-client-configuration">MCP Client Configuration</h2>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:4"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><input id="__tabbed_1_3" name="__tabbed_1" type="radio" /><input id="__tabbed_1_4" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">OpenCode</label><label for="__tabbed_1_2">Claude Code</label><label for="__tabbed_1_3">Claude Desktop</label><label for="__tabbed_1_4">Cursor</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<p><strong>CLI:</strong>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>opencode<span class="w"> </span>mcp<span class="w"> </span>add<span class="w"> </span>containerhive<span class="w"> </span>--<span class="w"> </span>ch<span class="w"> </span>mcp<span class="w"> </span>--project<span class="w"> </span><span class="si">${</span><span class="nv">workspace</span><span class="si">}</span>
+</span></code></pre></div></p>
+<p><strong>Or JSON</strong> in <code>~/.opencode/mcp.json</code>:
+<div class="language-json highlight"><span class="filename">~/.opencode/mcp.json</span><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="p">{</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">  </span><span class="nt">&quot;mcpServers&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">    </span><span class="nt">&quot;containerhive&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">      </span><span class="nt">&quot;command&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ch&quot;</span><span class="p">,</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">      </span><span class="nt">&quot;args&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="w">        </span><span class="s2">&quot;mcp&quot;</span><span class="p">,</span>
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="w">        </span><span class="s2">&quot;--project&quot;</span><span class="p">,</span>
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="w">        </span><span class="s2">&quot;${workspace}&quot;</span>
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="w">      </span><span class="p">]</span>
+</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a><span class="p">}</span>
+</span></code></pre></div></p>
 </div>
-<h2 id="using-versions">Using versions</h2>
-<p>Versions defined in <code>image.yml</code> are automatically converted to Docker build arguments with an uppercase <code>_VERSION</code> suffix. Hyphens in the key name are replaced with underscores.</p>
-<p>Given this <code>image.yml</code>:</p>
-<div class="language-yaml highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nt">versions</span><span class="p">:</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">  </span><span class="nt">dotnet-sdk-channel</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;8.0&quot;</span>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">  </span><span class="nt">nodejs</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;24&quot;</span>
+<div class="tabbed-block">
+<p><strong>CLI:</strong>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>claude<span class="w"> </span>mcp<span class="w"> </span>add<span class="w"> </span>containerhive<span class="w"> </span>--<span class="w"> </span>ch<span class="w"> </span>mcp<span class="w"> </span>--project<span class="w"> </span><span class="si">${</span><span class="nv">workspace</span><span class="si">}</span>
+</span></code></pre></div></p>
+<p><strong>Or JSON</strong> at user scope in <code>~/.claude.json</code>:
+<div class="language-json highlight"><span class="filename">~/.claude.json</span><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="p">{</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="w">  </span><span class="nt">&quot;mcpServers&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">    </span><span class="nt">&quot;containerhive&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="w">      </span><span class="nt">&quot;command&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ch&quot;</span><span class="p">,</span>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="w">      </span><span class="nt">&quot;args&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="w">        </span><span class="s2">&quot;mcp&quot;</span><span class="p">,</span>
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="w">        </span><span class="s2">&quot;--project&quot;</span><span class="p">,</span>
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="w">        </span><span class="s2">&quot;${workspace}&quot;</span>
+</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="w">      </span><span class="p">]</span>
+</span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-4-11"><a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-4-12"><a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a><span class="p">}</span>
+</span></code></pre></div></p>
+<p><strong>Or project-scoped</strong> in project root:
+<div class="language-json highlight"><span class="filename">.mcp.json</span><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="p">{</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="w">  </span><span class="nt">&quot;mcpServers&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="w">    </span><span class="nt">&quot;containerhive&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="w">      </span><span class="nt">&quot;command&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ch&quot;</span><span class="p">,</span>
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="w">      </span><span class="nt">&quot;args&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="w">        </span><span class="s2">&quot;mcp&quot;</span><span class="p">,</span>
+</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="w">        </span><span class="s2">&quot;--project&quot;</span><span class="p">,</span>
+</span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a><span class="w">        </span><span class="s2">&quot;${workspace}&quot;</span>
+</span><span id="__span-5-9"><a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a><span class="w">      </span><span class="p">]</span>
+</span><span id="__span-5-10"><a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-5-11"><a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-5-12"><a id="__codelineno-5-12" name="__codelineno-5-12" href="#__codelineno-5-12"></a><span class="p">}</span>
+</span></code></pre></div></p>
+</div>
+<div class="tabbed-block">
+<p>Add to <code>~/Library/Application Support/Claude/settings.json</code>:</p>
+<div class="language-json highlight"><span class="filename">~/Library/Application Support/Claude/settings.json</span><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="p">{</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="w">  </span><span class="nt">&quot;mcpServers&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="w">    </span><span class="nt">&quot;containerhive&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="w">      </span><span class="nt">&quot;command&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ch&quot;</span><span class="p">,</span>
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="w">      </span><span class="nt">&quot;args&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a><span class="w">        </span><span class="s2">&quot;mcp&quot;</span><span class="p">,</span>
+</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="w">        </span><span class="s2">&quot;--project&quot;</span><span class="p">,</span>
+</span><span id="__span-6-8"><a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a><span class="w">        </span><span class="s2">&quot;/path/to/project&quot;</span>
+</span><span id="__span-6-9"><a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a><span class="w">      </span><span class="p">]</span>
+</span><span id="__span-6-10"><a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-6-11"><a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-6-12"><a id="__codelineno-6-12" name="__codelineno-6-12" href="#__codelineno-6-12"></a><span class="p">}</span>
 </span></code></pre></div>
-<p>The following build arguments are available in your Dockerfile:</p>
-<div class="language-dockerfile highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="k">ARG</span><span class="w"> </span>DOTNET_SDK_CHANNEL_VERSION
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="k">ARG</span><span class="w"> </span>NODEJS_VERSION
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="k">RUN</span><span class="w"> </span>install-dotnet<span class="w"> </span>--channel<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">DOTNET_SDK_CHANNEL_VERSION</span><span class="si">}</span><span class="s2">&quot;</span>
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="k">RUN</span><span class="w"> </span>setup-node<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">NODEJS_VERSION</span><span class="si">}</span><span class="s2">&quot;</span>
+</div>
+<div class="tabbed-block">
+<p>Add to <code>~/.cursor/mcp.json</code>:</p>
+<div class="language-json highlight"><span class="filename">~/.cursor/mcp.json</span><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="p">{</span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="w">  </span><span class="nt">&quot;mcpServers&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="w">    </span><span class="nt">&quot;containerhive&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="w">      </span><span class="nt">&quot;command&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ch&quot;</span><span class="p">,</span>
+</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="w">      </span><span class="nt">&quot;args&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a><span class="w">        </span><span class="s2">&quot;mcp&quot;</span><span class="p">,</span>
+</span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a><span class="w">        </span><span class="s2">&quot;--project&quot;</span><span class="p">,</span>
+</span><span id="__span-7-8"><a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a><span class="w">        </span><span class="s2">&quot;${workspace}&quot;</span>
+</span><span id="__span-7-9"><a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a><span class="w">      </span><span class="p">]</span>
+</span><span id="__span-7-10"><a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-7-11"><a id="__codelineno-7-11" name="__codelineno-7-11" href="#__codelineno-7-11"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-7-12"><a id="__codelineno-7-12" name="__codelineno-7-12" href="#__codelineno-7-12"></a><span class="p">}</span>
 </span></code></pre></div>
-<p>Tag-level versions override image-level versions:</p>
-<div class="language-yaml highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="nt">versions</span><span class="p">:</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">  </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">latest</span>
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="nt">tags</span><span class="p">:</span>
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1.0.0</span>
-</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="w">    </span><span class="nt">versions</span><span class="p">:</span>
-</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="w">      </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1.0.0</span><span class="w">   </span><span class="c1"># overrides &quot;latest&quot; for this tag</span>
-</span></code></pre></div>
-<h2 id="using-build-arguments">Using build arguments</h2>
-<p>Build arguments from <code>image.yml</code> are passed directly to Docker without any name transformation:</p>
-<div class="language-yaml highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="nt">build_args</span><span class="p">:</span>
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">  </span><span class="nt">foo</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">bar</span>
-</span></code></pre></div>
-<div class="language-dockerfile highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="k">ARG</span><span class="w"> </span>foo
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="k">RUN</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">foo</span><span class="si">}</span><span class="s2">&quot;</span>
-</span></code></pre></div>
-<h2 id="using-secrets">Using secrets</h2>
-<p>Secrets defined in <code>image.yml</code> are mounted via BuildKit's secret mount mechanism:</p>
-<div class="language-yaml highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="nt">secrets</span><span class="p">:</span>
-</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="w">  </span><span class="nt">my_credentials</span><span class="p">:</span>
-</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="w">    </span><span class="nt">source</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">env</span><span class="w">       </span><span class="c1"># read from environment variable</span>
-</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="w">    </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">API_KEY</span><span class="w">    </span><span class="c1"># name of the env var</span>
-</span></code></pre></div>
-<p>Access them in your Dockerfile with <code>--mount=type=secret</code>:</p>
-<div class="language-dockerfile highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="k">RUN</span><span class="w"> </span>--mount<span class="o">=</span><span class="nv">type</span><span class="o">=</span>secret,id<span class="o">=</span>my_credentials<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="w">    </span>cat<span class="w"> </span>/run/secrets/my_credentials
-</span></code></pre></div>
-<h3 id="secret-sources">Secret sources</h3>
-<table>
-<thead>
-<tr>
-<th style="text-align: left;">Source</th>
-<th style="text-align: left;">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: left;"><code>env</code></td>
-<td style="text-align: left;">Resolves <code>value</code> as an environment variable name (supports <code>$VAR</code> and <code>${VAR}</code> syntax)</td>
-</tr>
-<tr>
-<td style="text-align: left;"><code>plain</code></td>
-<td style="text-align: left;">Uses <code>value</code> as the literal secret content</td>
-</tr>
-<tr>
-<td style="text-align: left;"><code>vault</code></td>
-<td style="text-align: left;">Resolves <code>value</code> as a Vault path (<code>vault://&lt;path&gt;#&lt;field&gt;</code>)</td>
-</tr>
-</tbody>
-</table>
-<h2 id="inter-image-dependencies">Inter-image dependencies</h2>
-<p>When your image depends on another image in the same project, use the <code>__hive__/</code> prefix in <code>FROM</code>:</p>
-<div class="language-dockerfile highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="k">FROM</span><span class="w"> </span><span class="s">__hive__/ubuntu:22.04</span>
-</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="k">RUN</span><span class="w"> </span>apt-get<span class="w"> </span>update<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>apt-get<span class="w"> </span>install<span class="w"> </span>-y<span class="w"> </span>curl
-</span></code></pre></div>
-<p>ContainerHive resolves these references to local OCI layout contexts during the build, so inter-image dependencies don't need to be pushed to an external registry.</p>
-<h3 id="variant-parent-references">Variant parent references</h3>
-<p>Variants that build on top of their base image can use <code>__hive_parent__</code>:</p>
-<div class="language-dockerfile highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="k">FROM</span><span class="w"> </span><span class="s">__hive_parent__</span>
-</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="k">ARG</span><span class="w"> </span>NODEJS_VERSION
-</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="k">RUN</span><span class="w"> </span>setup-node<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">NODEJS_VERSION</span><span class="si">}</span><span class="s2">&quot;</span>
-</span></code></pre></div>
-<p>This is automatically replaced with the correct <code>__hive__/&lt;image&gt;:&lt;tag&gt;</code> reference for the current tag during <code>ch generate</code>.</p>
-<h2 id="go-template-dockerfiles">Go template Dockerfiles</h2>
-<p>When using the <code>.gotpl</code> extension, you get access to the full template context:</p>
-<table>
-<thead>
-<tr>
-<th style="text-align: left;">Variable</th>
-<th style="text-align: left;">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: left;"><code>{{ .Versions.key }}</code></td>
-<td style="text-align: left;">Version values from image/tag/variant</td>
-</tr>
-<tr>
-<td style="text-align: left;"><code>{{ .BuildArgs.key }}</code></td>
-<td style="text-align: left;">Build arguments from image/tag/variant</td>
-</tr>
-<tr>
-<td style="text-align: left;"><code>{{ .ImageName }}</code></td>
-<td style="text-align: left;">The image name</td>
-</tr>
-</tbody>
-</table>
-<h3 id="template-functions">Template functions</h3>
-<p>All <a href="http://masterminds.github.io/sprig/">Sprig</a> functions are available, plus:</p>
-<table>
-<thead>
-<tr>
-<th style="text-align: left;">Function</th>
-<th style="text-align: left;">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: left;"><code>resolve_base "name" "tag"</code></td>
-<td style="text-align: left;">Produces <code>__hive__/name:tag</code> — use this instead of hardcoding <code>__hive__/</code> references</td>
-</tr>
-</tbody>
-</table>
-<h3 id="example">Example</h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>FROM {{ resolve_base &quot;ubuntu&quot; .Versions.ubuntu_tag }}
-</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>RUN echo &quot;Building {{ .ImageName }}&quot;
-</span></code></pre></div>
-<h2 id="complete-example">Complete example</h2>
-<p><code>image.yml</code>:</p>
-<div class="language-yaml highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="nt">tags</span><span class="p">:</span>
-</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">8.0.100</span>
-</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="w">    </span><span class="nt">versions</span><span class="p">:</span>
-</span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="w">      </span><span class="nt">dotnet-sdk-channel</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">8.0.1xx</span>
-</span><span id="__span-10-5"><a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">8.0.200</span>
-</span><span id="__span-10-6"><a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a><span class="w">    </span><span class="nt">versions</span><span class="p">:</span>
-</span><span id="__span-10-7"><a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a><span class="w">      </span><span class="nt">dotnet-sdk-channel</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">8.0.2xx</span>
-</span><span id="__span-10-8"><a id="__codelineno-10-8" name="__codelineno-10-8" href="#__codelineno-10-8"></a>
-</span><span id="__span-10-9"><a id="__codelineno-10-9" name="__codelineno-10-9" href="#__codelineno-10-9"></a><span class="nt">variants</span><span class="p">:</span>
-</span><span id="__span-10-10"><a id="__codelineno-10-10" name="__codelineno-10-10" href="#__codelineno-10-10"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">node</span>
-</span><span id="__span-10-11"><a id="__codelineno-10-11" name="__codelineno-10-11" href="#__codelineno-10-11"></a><span class="w">    </span><span class="nt">tag_suffix</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">-node</span>
-</span><span id="__span-10-12"><a id="__codelineno-10-12" name="__codelineno-10-12" href="#__codelineno-10-12"></a><span class="w">    </span><span class="nt">versions</span><span class="p">:</span>
-</span><span id="__span-10-13"><a id="__codelineno-10-13" name="__codelineno-10-13" href="#__codelineno-10-13"></a><span class="w">      </span><span class="nt">nodejs</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;24&quot;</span>
-</span><span id="__span-10-14"><a id="__codelineno-10-14" name="__codelineno-10-14" href="#__codelineno-10-14"></a>
-</span><span id="__span-10-15"><a id="__codelineno-10-15" name="__codelineno-10-15" href="#__codelineno-10-15"></a><span class="nt">secrets</span><span class="p">:</span>
-</span><span id="__span-10-16"><a id="__codelineno-10-16" name="__codelineno-10-16" href="#__codelineno-10-16"></a><span class="w">  </span><span class="nt">foo</span><span class="p">:</span>
-</span><span id="__span-10-17"><a id="__codelineno-10-17" name="__codelineno-10-17" href="#__codelineno-10-17"></a><span class="w">    </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">bar</span>
-</span><span id="__span-10-18"><a id="__codelineno-10-18" name="__codelineno-10-18" href="#__codelineno-10-18"></a>
-</span><span id="__span-10-19"><a id="__codelineno-10-19" name="__codelineno-10-19" href="#__codelineno-10-19"></a><span class="nt">depends_on</span><span class="p">:</span>
-</span><span id="__span-10-20"><a id="__codelineno-10-20" name="__codelineno-10-20" href="#__codelineno-10-20"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ubuntu</span>
-</span><span id="__span-10-21"><a id="__codelineno-10-21" name="__codelineno-10-21" href="#__codelineno-10-21"></a>
-</span><span id="__span-10-22"><a id="__codelineno-10-22" name="__codelineno-10-22" href="#__codelineno-10-22"></a><span class="nt">platforms</span><span class="p">:</span>
-</span><span id="__span-10-23"><a id="__codelineno-10-23" name="__codelineno-10-23" href="#__codelineno-10-23"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">linux/amd64</span>
-</span></code></pre></div>
-<p><code>Dockerfile</code>:</p>
-<div class="language-dockerfile highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="k">FROM</span><span class="w"> </span><span class="s">__hive__/ubuntu:22.04</span>
-</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="k">ARG</span><span class="w"> </span>DOTNET_SDK_CHANNEL_VERSION
-</span><span id="__span-11-3"><a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a><span class="k">RUN</span><span class="w"> </span>curl<span class="w"> </span>-L<span class="w"> </span>https://dot.net/v1/dotnet-install.sh<span class="w"> </span>-o<span class="w"> </span>/usr/bin/install-dotnet<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-11-4"><a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a><span class="w">    </span><span class="o">&amp;&amp;</span><span class="w"> </span>chmod<span class="w"> </span>+x<span class="w"> </span>/usr/bin/install-dotnet<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-11-5"><a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a><span class="w">    </span><span class="o">&amp;&amp;</span><span class="w"> </span>install-dotnet<span class="w"> </span>--channel<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">DOTNET_SDK_CHANNEL_VERSION</span><span class="si">}</span><span class="s2">&quot;</span><span class="w"> </span>--install-dir<span class="w"> </span>/usr/share/dotnet
-</span><span id="__span-11-6"><a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a>
-</span><span id="__span-11-7"><a id="__codelineno-11-7" name="__codelineno-11-7" href="#__codelineno-11-7"></a><span class="k">RUN</span><span class="w"> </span>--mount<span class="o">=</span><span class="nv">type</span><span class="o">=</span>secret,id<span class="o">=</span>foo<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-11-8"><a id="__codelineno-11-8" name="__codelineno-11-8" href="#__codelineno-11-8"></a><span class="w">    </span>cat<span class="w"> </span>/run/secrets/foo
-</span></code></pre></div>
-<p><code>node/Dockerfile</code> (variant):</p>
-<div class="language-dockerfile highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="k">FROM</span><span class="w"> </span><span class="s">__hive_parent__</span>
-</span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="k">ARG</span><span class="w"> </span>NODEJS_VERSION
-</span><span id="__span-12-3"><a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a><span class="k">RUN</span><span class="w"> </span>apt-get<span class="w"> </span>update<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-12-4"><a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a><span class="w">    </span><span class="o">&amp;&amp;</span><span class="w"> </span>apt-get<span class="w"> </span>install<span class="w"> </span>--no-install-recommends<span class="w"> </span>-y<span class="w"> </span><span class="nv">nodejs</span><span class="o">=</span><span class="si">${</span><span class="nv">NODEJS_VERSION</span><span class="si">}</span>
-</span></code></pre></div>
+</div>
+</div>
+</div>
 
 
 
