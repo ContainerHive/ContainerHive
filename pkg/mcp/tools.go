@@ -24,14 +24,6 @@ type GetDependenciesOutput struct {
 	Images []string `json:"images"`
 }
 
-type GetImageSchemaOutput struct {
-	Schema string `json:"schema"`
-}
-
-type GetHiveSchemaOutput struct {
-	Schema string `json:"schema"`
-}
-
 type AddImageInput struct {
 	Name              string `json:"name" jsonschema:"name of the image to create"`
 	Description       string `json:"description" jsonschema:"description of the image"`

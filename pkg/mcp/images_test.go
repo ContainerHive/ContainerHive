@@ -6,8 +6,8 @@ import (
 	"path/filepath"
 	"testing"
 
+	"github.com/goccy/go-yaml"
 	"github.com/timo-reymann/ContainerHive/pkg/model"
-	"gopkg.in/yaml.v3"
 )
 
 func getTestDataPath(t *testing.T, name string) string {
@@ -23,6 +23,10 @@ func getTestDataPath(t *testing.T, name string) string {
 }
 
 func TestListImages(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping filesystem test in short mode")
+	}
+
 	tests := []struct {
 		name        string
 		projectRoot string
@@ -60,6 +64,10 @@ func TestListImages(t *testing.T) {
 }
 
 func TestGetImage(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping filesystem test in short mode")
+	}
+
 	simpleProjectPath := getTestDataPath(t, "pkg/testdata/simple-project")
 
 	tests := []struct {
@@ -93,6 +101,26 @@ func TestGetImage(t *testing.T) {
 				t.Error("GetImage() expected image, got nil")
 			}
 		})
+	}
+}
+
+func TestGetDependencies_InvalidProjectRoot(t *testing.T) {
+	_, err := getDependencies(context.Background(), "/nonexistent/path", "python", "forward")
+	if err == nil {
+		t.Error("getDependencies() expected error for invalid project root, got nil")
+	}
+}
+
+func TestGetDependencies_MissingDist(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping filesystem test in short mode")
+	}
+
+	// getDependencies requires a rendered dist/ directory; without it ResolveOrder returns an error.
+	simpleProjectPath := getTestDataPath(t, "pkg/testdata/simple-project")
+	_, err := getDependencies(context.Background(), simpleProjectPath, "python", "forward")
+	if err == nil {
+		t.Error("getDependencies() expected error when dist/ is missing, got nil")
 	}
 }
 
@@ -130,6 +158,29 @@ func TestAddImage(t *testing.T) {
 
 	if len(config.Tags) != 1 || config.Tags[0].Name != "ubuntu:22.04" {
 		t.Errorf("AddImage() tags = %v, want [ubuntu:22.04]", config.Tags)
+	}
+}
+
+func TestAddImage_SpecialCharsInDescription(t *testing.T) {
+	tmpDir := t.TempDir()
+
+	err := addImage(context.Background(), tmpDir, "test-image", "Description: with colon & \"quotes\"", "ubuntu:22.04", "")
+	if err != nil {
+		t.Fatalf("AddImage() error = %v", err)
+	}
+
+	data, err := os.ReadFile(filepath.Join(tmpDir, "images", "test-image", "image.yml"))
+	if err != nil {
+		t.Fatalf("Failed to read image.yml: %v", err)
+	}
+
+	var config model.ImageDefinitionConfig
+	if err := yaml.Unmarshal(data, &config); err != nil {
+		t.Fatalf("Failed to parse image.yml with special chars: %v", err)
+	}
+
+	if config.Description != "Description: with colon & \"quotes\"" {
+		t.Errorf("AddImage() description = %v, want original", config.Description)
 	}
 }
 

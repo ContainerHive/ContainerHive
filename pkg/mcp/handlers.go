@@ -16,11 +16,6 @@ func newHandlers(projectRoot string) *handlers {
 }
 
 func (h *handlers) handleListImages(ctx context.Context, req *mcp.CallToolRequest) (*mcp.CallToolResult, error) {
-	var input ListImagesInput
-	if err := json.Unmarshal(req.Params.Arguments, &input); err != nil {
-		return nil, err
-	}
-
 	images, err := listImages(ctx, h.projectRoot)
 	if err != nil {
 		return nil, err
@@ -85,31 +80,17 @@ func (h *handlers) handleGetDependencies(ctx context.Context, req *mcp.CallToolR
 }
 
 func (h *handlers) handleGetImageSchema(ctx context.Context, req *mcp.CallToolRequest) (*mcp.CallToolResult, error) {
-	schema := getImageSchema()
-
-	data, err := json.Marshal(GetImageSchemaOutput{Schema: schema})
-	if err != nil {
-		return nil, err
-	}
-
 	return &mcp.CallToolResult{
 		Content: []mcp.Content{
-			&mcp.TextContent{Text: string(data)},
+			&mcp.TextContent{Text: getImageSchema()},
 		},
 	}, nil
 }
 
 func (h *handlers) handleGetHiveSchema(ctx context.Context, req *mcp.CallToolRequest) (*mcp.CallToolResult, error) {
-	schema := getHiveSchema()
-
-	data, err := json.Marshal(GetHiveSchemaOutput{Schema: schema})
-	if err != nil {
-		return nil, err
-	}
-
 	return &mcp.CallToolResult{
 		Content: []mcp.Content{
-			&mcp.TextContent{Text: string(data)},
+			&mcp.TextContent{Text: getHiveSchema()},
 		},
 	}, nil
 }

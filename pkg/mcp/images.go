@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"strings"
 
 	"github.com/goccy/go-yaml"
 	"github.com/timo-reymann/ContainerHive/pkg/deps"
@@ -124,16 +123,12 @@ func getDependencies(ctx context.Context, projectRoot, imageName, direction stri
 
 	order := buildOrder.Order()
 	var result []string
-	var found bool
 
 	for _, name := range order {
 		if name == imageName {
-			found = true
-			continue
+			break
 		}
-		if found {
-			result = append(result, name)
-		}
+		result = append(result, name)
 	}
 
 	return result, nil
@@ -159,8 +154,15 @@ func addImage(ctx context.Context, projectRoot, name, description, baseTag, dock
 	}
 
 	imageYAMLPath := filepath.Join(imagesDir, "image.yml")
-	imageYAMLContent := fmt.Sprintf("description: %s\ntags:\n  - name: %q\n", description, baseTag)
-	if err := os.WriteFile(imageYAMLPath, []byte(imageYAMLContent), 0644); err != nil {
+	config := model.ImageDefinitionConfig{
+		Description: description,
+		Tags:        []*model.Tag{{Name: baseTag}},
+	}
+	imageYAMLContent, err := yaml.Marshal(config)
+	if err != nil {
+		return fmt.Errorf("failed to marshal image.yml: %w", err)
+	}
+	if err := os.WriteFile(imageYAMLPath, imageYAMLContent, 0644); err != nil {
 		return fmt.Errorf("failed to write image.yml: %w", err)
 	}
 
@@ -203,24 +205,16 @@ func addImageVariant(ctx context.Context, projectRoot, imageName, variantName, t
 		return fmt.Errorf("failed to write image.yml: %w", err)
 	}
 
-	var variantYAMLContent string
-	if len(versions) > 0 || len(buildArgs) > 0 {
-		var lines []string
-		if len(versions) > 0 {
-			lines = append(lines, "versions:")
-			for k, v := range versions {
-				lines = append(lines, fmt.Sprintf("  %s: %q", k, v))
-			}
-		}
-		if len(buildArgs) > 0 {
-			lines = append(lines, "build_args:")
-			for k, v := range buildArgs {
-				lines = append(lines, fmt.Sprintf("  %s: %q", k, v))
-			}
-		}
-		variantYAMLContent = strings.Join(lines, "\n") + "\n"
-	} else {
-		variantYAMLContent = "tags: []\n"
+	variantConfig := model.ImageDefinitionConfig{}
+	if len(versions) > 0 {
+		variantConfig.Versions = versions
+	}
+	if len(buildArgs) > 0 {
+		variantConfig.BuildArgs = buildArgs
+	}
+	variantYAMLContent, err := yaml.Marshal(variantConfig)
+	if err != nil {
+		return fmt.Errorf("failed to marshal variant image.yml: %w", err)
 	}
 
 	variantDir := filepath.Join(imagesDir, variantName)

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 )
@@ -82,6 +83,10 @@ func (h *imageResourceHandler) ReadResource(ctx context.Context, req *mcp.ReadRe
 				},
 			},
 		}, nil
+	}
+
+	if !strings.HasPrefix(uri, "image://") {
+		return nil, mcp.ResourceNotFoundError(uri)
 	}
 
 	imageName := uri[len("image://"):]

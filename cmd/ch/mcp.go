@@ -22,8 +22,7 @@ This server can be used by AI assistants to:
 - Add variants to existing images`,
 		Action: func(ctx context.Context, cmd *cli.Command) error {
 			projectRoot := cmd.String("project")
-			mcp.RunMCPServer(projectRoot)
-			return nil
+			return mcp.RunMCPServer(projectRoot)
 		},
 	}
 }

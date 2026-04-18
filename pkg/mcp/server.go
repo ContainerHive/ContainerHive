@@ -3,9 +3,9 @@ package mcp
 import (
 	"context"
 	"encoding/json"
-	"os"
 
 	"github.com/modelcontextprotocol/go-sdk/mcp"
+	"github.com/timo-reymann/ContainerHive/pkg/version"
 )
 
 var (
@@ -18,10 +18,10 @@ var (
 	addImageVariantSchema = json.RawMessage(`{"type": "object", "properties": {"image_name": {"type": "string", "description": "name of the image to add variant to"}, "variant_name": {"type": "string", "description": "name of the variant"}, "tag_suffix": {"type": "string", "description": "suffix to append to tags (e.g., -slim)"}, "versions": {"type": "object", "description": "version overrides for this variant"}, "build_args": {"type": "object", "description": "build args for this variant"}}, "required": ["image_name", "variant_name", "tag_suffix"]}`)
 )
 
-func RunMCPServer(projectRoot string) {
+func RunMCPServer(projectRoot string) error {
 	s := mcp.NewServer(&mcp.Implementation{
 		Name:    "containerhive",
-		Version: "1.0.0",
+		Version: version.Get(),
 	}, nil)
 
 	handlers := newHandlers(projectRoot)
@@ -95,7 +95,5 @@ func RunMCPServer(projectRoot string) {
 		Description: "Image configuration files",
 	}, resourceHandler.ReadResource)
 
-	if err := s.Run(context.Background(), &mcp.StdioTransport{}); err != nil {
-		os.Exit(1)
-	}
+	return s.Run(context.Background(), &mcp.StdioTransport{})
 }
