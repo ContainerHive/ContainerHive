@@ -89,6 +89,27 @@ Add a new variant to an existing image with a stub Dockerfile.
 
 **Returns:** Confirmation message.
 
+### search_documentation
+
+Search ContainerHive documentation by query text.
+
+**Parameters:**
+
+- `query` (string, required): Search query text
+- `limit` (integer, optional): Max results to return (default 10)
+
+**Returns:** Array of results with title, path, and excerpt.
+
+### get_documentation
+
+Fetch full documentation page content by path.
+
+**Parameters:**
+
+- `path` (string, required): Path to the documentation page (e.g., `index.html`, `usage/mcp.html`)
+
+**Returns:** Object with title, url, and full content (HTML).
+
 ## Resources
 
 ### image://schema

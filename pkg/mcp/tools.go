@@ -46,3 +46,28 @@ type AddImageVariantInput struct {
 type AddImageVariantOutput struct {
 	Message string `json:"message"`
 }
+
+type SearchDocumentationInput struct {
+	Query string `json:"query" jsonschema:"search query text"`
+	Limit int    `json:"limit,omitempty" jsonschema:"max results (default 10)"`
+}
+
+type SearchDocumentationOutput struct {
+	Results []SearchResult `json:"results"`
+}
+
+type SearchResult struct {
+	Title   string `json:"title"`
+	Path    string `json:"path"`
+	Excerpt string `json:"excerpt"`
+}
+
+type GetDocumentationInput struct {
+	Path string `json:"path" jsonschema:"path to the documentation page (e.g., index.html, usage/mcp.html)"`
+}
+
+type GetDocumentationOutput struct {
+	Title   string `json:"title"`
+	URL     string `json:"url"`
+	Content string `json:"content"`
+}

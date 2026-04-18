@@ -9,13 +9,15 @@ import (
 )
 
 var (
-	listImagesSchema      = json.RawMessage(`{"type": "object", "properties": {}}`)
-	getImageInputSchema   = json.RawMessage(`{"type": "object", "properties": {"name": {"type": "string", "description": "name of the image to get"}}, "required": ["name"]}`)
-	getDependenciesSchema = json.RawMessage(`{"type": "object", "properties": {"name": {"type": "string", "description": "name of the image"}, "direction": {"type": "string", "description": "direction: forward (dependencies) or reverse (dependents)", "enum": ["forward", "reverse"]}}, "required": ["name", "direction"]}`)
-	getImageFileSchema    = json.RawMessage(`{"type": "object", "properties": {}}`)
-	getHiveFileSchema     = json.RawMessage(`{"type": "object", "properties": {}}`)
-	addImageSchema        = json.RawMessage(`{"type": "object", "properties": {"name": {"type": "string", "description": "name of the image to create"}, "description": {"type": "string", "description": "description of the image"}, "base_tag": {"type": "string", "description": "base docker tag (e.g., ubuntu:22.04)"}, "dockerfile_content": {"type": "string", "description": "optional custom Dockerfile content"}}, "required": ["name", "description", "base_tag"]}`)
-	addImageVariantSchema = json.RawMessage(`{"type": "object", "properties": {"image_name": {"type": "string", "description": "name of the image to add variant to"}, "variant_name": {"type": "string", "description": "name of the variant"}, "tag_suffix": {"type": "string", "description": "suffix to append to tags (e.g., -slim)"}, "versions": {"type": "object", "description": "version overrides for this variant"}, "build_args": {"type": "object", "description": "build args for this variant"}}, "required": ["image_name", "variant_name", "tag_suffix"]}`)
+	listImagesSchema          = json.RawMessage(`{"type": "object", "properties": {}}`)
+	getImageInputSchema       = json.RawMessage(`{"type": "object", "properties": {"name": {"type": "string", "description": "name of the image to get"}}, "required": ["name"]}`)
+	getDependenciesSchema     = json.RawMessage(`{"type": "object", "properties": {"name": {"type": "string", "description": "name of the image"}, "direction": {"type": "string", "description": "direction: forward (dependencies) or reverse (dependents)", "enum": ["forward", "reverse"]}}, "required": ["name", "direction"]}`)
+	getImageFileSchema        = json.RawMessage(`{"type": "object", "properties": {}}`)
+	getHiveFileSchema         = json.RawMessage(`{"type": "object", "properties": {}}`)
+	addImageSchema            = json.RawMessage(`{"type": "object", "properties": {"name": {"type": "string", "description": "name of the image to create"}, "description": {"type": "string", "description": "description of the image"}, "base_tag": {"type": "string", "description": "base docker tag (e.g., ubuntu:22.04)"}, "dockerfile_content": {"type": "string", "description": "optional custom Dockerfile content"}}, "required": ["name", "description", "base_tag"]}`)
+	addImageVariantSchema     = json.RawMessage(`{"type": "object", "properties": {"image_name": {"type": "string", "description": "name of the image to add variant to"}, "variant_name": {"type": "string", "description": "name of the variant"}, "tag_suffix": {"type": "string", "description": "suffix to append to tags (e.g., -slim)"}, "versions": {"type": "object", "description": "version overrides for this variant"}, "build_args": {"type": "object", "description": "build args for this variant"}}, "required": ["image_name", "variant_name", "tag_suffix"]}`)
+	searchDocumentationSchema = json.RawMessage(`{"type": "object", "properties": {"query": {"type": "string", "description": "search query text"}, "limit": {"type": "integer", "description": "max results to return (default 10)"}}, "required": ["query"]}`)
+	getDocumentationSchema    = json.RawMessage(`{"type": "object", "properties": {"path": {"type": "string", "description": "path to the documentation page (e.g., index.html, usage/mcp.html)"}}, "required": ["path"]}`)
 )
 
 func RunMCPServer(projectRoot string) error {
@@ -67,6 +69,18 @@ func RunMCPServer(projectRoot string) error {
 		Description: "Add a new variant to an existing image with a stub Dockerfile in the variant subdirectory",
 		InputSchema: addImageVariantSchema,
 	}, handlers.handleAddImageVariant)
+
+	s.AddTool(&mcp.Tool{
+		Name:        "search_documentation",
+		Description: "Search ContainerHive documentation by query text",
+		InputSchema: searchDocumentationSchema,
+	}, handlers.handleSearchDocumentation)
+
+	s.AddTool(&mcp.Tool{
+		Name:        "get_documentation",
+		Description: "Fetch full documentation page content by path",
+		InputSchema: getDocumentationSchema,
+	}, handlers.handleGetDocumentation)
 
 	resourceHandler := &imageResourceHandler{projectRoot: projectRoot}
 

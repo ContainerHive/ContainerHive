@@ -140,3 +140,49 @@ func (h *handlers) handleAddImageVariant(ctx context.Context, req *mcp.CallToolR
 		},
 	}, nil
 }
+
+func (h *handlers) handleSearchDocumentation(ctx context.Context, req *mcp.CallToolRequest) (*mcp.CallToolResult, error) {
+	var input SearchDocumentationInput
+	if err := json.Unmarshal(req.Params.Arguments, &input); err != nil {
+		return nil, err
+	}
+
+	results, err := searchDocumentation(ctx, input.Query, input.Limit)
+	if err != nil {
+		return nil, err
+	}
+
+	data, err := json.Marshal(SearchDocumentationOutput{Results: results})
+	if err != nil {
+		return nil, err
+	}
+
+	return &mcp.CallToolResult{
+		Content: []mcp.Content{
+			&mcp.TextContent{Text: string(data)},
+		},
+	}, nil
+}
+
+func (h *handlers) handleGetDocumentation(ctx context.Context, req *mcp.CallToolRequest) (*mcp.CallToolResult, error) {
+	var input GetDocumentationInput
+	if err := json.Unmarshal(req.Params.Arguments, &input); err != nil {
+		return nil, err
+	}
+
+	result, err := getDocumentation(ctx, input.Path)
+	if err != nil {
+		return nil, err
+	}
+
+	data, err := json.Marshal(result)
+	if err != nil {
+		return nil, err
+	}
+
+	return &mcp.CallToolResult{
+		Content: []mcp.Content{
+			&mcp.TextContent{Text: string(data)},
+		},
+	}, nil
+}
