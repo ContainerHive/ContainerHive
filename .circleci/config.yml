@@ -47,10 +47,13 @@ jobs:
             - run:
                 name: Generate
                 command: make generate
-            - go/gotestsum
-      - codecov/upload
+            - go/gotestsum:
+                coverprofile: coverage.out
+                covermode: count
+      - codecov/upload:
+          files: coverage.out
       - store_artifacts:
-          path: coverage.html
+          path: coverage.out
   attach-binaries-to-release:
     executor: python
     steps:
