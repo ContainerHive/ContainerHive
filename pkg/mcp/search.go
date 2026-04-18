@@ -7,6 +7,7 @@ import (
 	"io"
 	"net/http"
 	"path/filepath"
+	"sort"
 	"strings"
 	"sync"
 	"time"
@@ -118,13 +119,9 @@ func searchDocumentation(ctx context.Context, query string, limit int) ([]Search
 		}
 	}
 
-	for i := range scoredResults {
-		for j := i + 1; j < len(scoredResults); j++ {
-			if scoredResults[j].score > scoredResults[i].score {
-				scoredResults[i], scoredResults[j] = scoredResults[j], scoredResults[i]
-			}
-		}
-	}
+	sort.Slice(scoredResults, func(i, j int) bool {
+		return scoredResults[i].score > scoredResults[j].score
+	})
 
 	if len(scoredResults) > limit {
 		scoredResults = scoredResults[:limit]
@@ -150,6 +147,10 @@ const (
 func getDocumentation(ctx context.Context, path string) (GetDocumentationOutput, error) {
 	if strings.HasPrefix(path, "/") {
 		path = strings.TrimPrefix(path, "/")
+	}
+
+	if isValidDocPath(path) == false {
+		return GetDocumentationOutput{}, fmt.Errorf("invalid path: path must not contain '..' or be absolute")
 	}
 
 	cacheKey := path
@@ -321,4 +322,14 @@ func extractTitleFromMarkdown(markdown string) string {
 		}
 	}
 	return ""
+}
+
+func isValidDocPath(path string) bool {
+	if filepath.IsAbs(path) {
+		return false
+	}
+	if strings.Contains(path, "..") {
+		return false
+	}
+	return true
 }

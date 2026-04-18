@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/goccy/go-yaml"
 	"github.com/timo-reymann/ContainerHive/pkg/deps"
@@ -135,6 +136,10 @@ func getDependencies(ctx context.Context, projectRoot, imageName, direction stri
 }
 
 func addImage(ctx context.Context, projectRoot, name, description, baseTag, dockerfileContent string) error {
+	if !isValidImageName(name) {
+		return fmt.Errorf("invalid image name: must not contain '..' or be absolute")
+	}
+
 	imagesDir := filepath.Join(projectRoot, "images", name)
 
 	if _, err := os.Stat(imagesDir); err == nil {
@@ -170,6 +175,13 @@ func addImage(ctx context.Context, projectRoot, name, description, baseTag, dock
 }
 
 func addImageVariant(ctx context.Context, projectRoot, imageName, variantName, tagSuffix string, versions, buildArgs map[string]string) error {
+	if !isValidImageName(imageName) {
+		return fmt.Errorf("invalid image name: must not contain '..' or be absolute")
+	}
+	if !isValidImageName(variantName) {
+		return fmt.Errorf("invalid variant name: must not contain '..' or be absolute")
+	}
+
 	imagesDir := filepath.Join(projectRoot, "images", imageName)
 	imageYAMLPath := filepath.Join(imagesDir, "image.yml")
 
@@ -234,4 +246,17 @@ func addImageVariant(ctx context.Context, projectRoot, imageName, variantName, t
 	}
 
 	return nil
+}
+
+func isValidImageName(name string) bool {
+	if filepath.IsAbs(name) {
+		return false
+	}
+	if strings.Contains(name, "..") {
+		return false
+	}
+	if strings.Contains(name, "/") {
+		return false
+	}
+	return true
 }
