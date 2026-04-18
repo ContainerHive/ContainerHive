@@ -108,7 +108,7 @@ Fetch full documentation page content by path.
 
 - `path` (string, required): Path to the documentation page (e.g., `index.html`, `usage/mcp.html`)
 
-**Returns:** Object with title, url, and full content (HTML).
+**Returns:** Object with title, url (GitHub link), and full content (markdown).
 
 ## Resources
 
