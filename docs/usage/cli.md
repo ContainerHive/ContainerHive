@@ -150,6 +150,20 @@ ch dev buildkitd status
 ch dev buildkitd logs
 ```
 
+### `report`
+
+Generate an HTML or JSON report of container images.
+
+```bash
+ch report
+```
+
+| Flag | Description |
+|:-----|:------------|
+| `--output`, `-o` | Output file path (default: dist/report.html or dist/report.json based on extension) |
+
+Generates a report containing information about all configured images, including their build status, dependencies, and metadata.
+
 ### `license`
 
 Show third-party license notices.
