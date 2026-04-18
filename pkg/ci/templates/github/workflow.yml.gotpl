@@ -7,6 +7,7 @@ on:
   push:
     branches: [main]
   pull_request:
+    types: [opened, synchronize]
     branches: [main]
 
 permissions:
@@ -15,6 +16,8 @@ permissions:
   actions: read
   checks: write
   pull-requests: write
+  pages: write
+  id-token: write
 
 env:
   SNAPSHOT_ID: "${{ "{{" }} github.event.pull_request.number {{ "}}" }}"
@@ -41,4 +44,33 @@ jobs:
 {{ template "build-job.yml.gotpl" (dict "Image" . "Ctx" $) }}
 {{ template "manifest-job.yml.gotpl" (dict "Image" . "Ctx" $) }}
 {{ template "test-job.yml.gotpl" (dict "Image" . "Ctx" $) }}
+{{- end }}
+{{- if eq (option "ci_report") "true" }}
+  report:
+    needs:
+{{- range $img := .Images }}
+{{- range $p := $img.Platforms }}
+      - build-{{ $img.Name }}-{{ $p }}
+{{- end }}
+{{- end }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          lfs: true
+      - uses: actions/download-artifact@v7
+        with:
+          name: generated
+          path: {{ .Dist }}/
+      - run: mkdir -p "$RUNNER_TEMP/ch"
+      - run: echo "${{ "{{" }} secrets.GITHUB_TOKEN {{ "}}" }}" | docker run --rm --entrypoint="" -u "$(id -u):$(id -g)" -e CI=1 -i -e HOME="$RUNNER_TEMP/ch" -v "$RUNNER_TEMP/ch:$RUNNER_TEMP/ch" -v "$GITHUB_WORKSPACE:$GITHUB_WORKSPACE" -w "$GITHUB_WORKSPACE" $CH_IMAGE {{ .ChCmd }} report
+      - run: echo "${{ "{{" }} secrets.GITHUB_TOKEN {{ "}}" }}" | docker run --rm --entrypoint="" -u "$(id -u):$(id -g)" -e CI=1 -i -e HOME="$RUNNER_TEMP/ch" -v "$RUNNER_TEMP/ch:$RUNNER_TEMP/ch" -v "$GITHUB_WORKSPACE:$GITHUB_WORKSPACE" -w "$GITHUB_WORKSPACE" $CH_IMAGE {{ .ChCmd }} report --json
+      - run: mkdir -p public
+      - run: cp {{ .Dist }}/report.html public/index.html
+      - run: cp {{ .Dist }}/report.json public/report.json
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: public/
+      - uses: actions/deploy-pages@v4
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
 {{- end }}

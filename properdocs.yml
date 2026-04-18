@@ -14,6 +14,9 @@ theme:
   logo: images/logo.png
   icon:
     repo: material/github
+  font:
+    text: Inter
+    code: Roboto Mono
   features:
     - navigation.instant
     - navigation.instant.prefetch
@@ -26,19 +29,19 @@ theme:
       toggle:
         icon: material/brightness-auto
         name: Switch to light mode
-      primary: blue
+      primary: custom
     - media: "(prefers-color-scheme: light)"
       scheme: default
       toggle:
         icon: material/brightness-7
         name: Switch to dark mode
-      primary: blue
+      primary: custom
     - media: "(prefers-color-scheme: dark)"
       scheme: slate
       toggle:
         icon: material/brightness-4
         name: Switch to system preference
-      primary: blue
+      primary: custom
 
 markdown_extensions:
   - admonition
@@ -53,6 +56,9 @@ markdown_extensions:
   - md_in_html
   - pymdownx.tabbed:
       alternate_style: true
+
+extra_css:
+  - stylesheets/extra.css
 
 plugins:
   - decision-records:

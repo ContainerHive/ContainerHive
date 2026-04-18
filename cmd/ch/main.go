@@ -90,6 +90,7 @@ func main() {
 			loginCmd(),
 			licenseCmd(),
 			devCmd(),
+			reportCmd(),
 		},
 	}
 

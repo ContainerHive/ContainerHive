@@ -5,6 +5,7 @@ import (
 	"embed"
 	"fmt"
 
+	"github.com/timo-reymann/ContainerHive/pkg/report"
 	"github.com/urfave/cli/v3"
 )
 
@@ -18,9 +19,12 @@ func licenseCmd() *cli.Command {
 		Action: func(ctx context.Context, cmd *cli.Command) error {
 			content, err := noticeFS.ReadFile("NOTICE")
 			if err != nil {
-				return fmt.Errorf("license notices not available: %w", err)
+				panic(err)
 			}
+			fmt.Println("--- CLI ---")
 			fmt.Print(string(content))
+			fmt.Println("--- Web Report ---")
+			fmt.Println(string(report.NoticeContent))
 			return nil
 		},
 	}

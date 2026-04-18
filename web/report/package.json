@@ -1,0 +1,33 @@
+{
+  "name": "container-hive-report",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "generate-notice": "yarn licenses generate-disclaimer --production -R > NOTICE",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "devicon": "^2.17.0",
+    "entypo": "^2.2.1",
+    "preact": "^10.29.1",
+    "preact-render-to-string": "^6.3.1",
+    "preact-router": "^4.1.2",
+    "react": "^19.2.5",
+    "react-dom": "^19.2.5",
+    "react-router-dom": "^7.14.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.29.0",
+    "@preact/preset-vite": "^2.8.2",
+    "@types/babel__core": "^7",
+    "@types/react": "^19.2.14",
+    "typescript": "~5.6.2",
+    "vite": "^6.0.3",
+    "vite-plugin-compression": "^0.5.1",
+    "vite-plugin-singlefile": "^2.3.0",
+    "vite-plugin-webfont-dl": "3.12.0"
+  }
+}

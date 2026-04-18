@@ -185,6 +185,9 @@ func TestBuildCIContext_DefaultTemplateOptions(t *testing.T) {
 	if ctx.TemplateOptions["ci_buildkit_version"] == "" {
 		t.Error("expected ci_buildkit_version to have a default value")
 	}
+	if ctx.TemplateOptions["ci_report"] != "true" {
+		t.Errorf("expected default ci_report 'true', got %q", ctx.TemplateOptions["ci_report"])
+	}
 }
 
 func TestBuildCIContext_UserOverridesTemplateOptions(t *testing.T) {
@@ -193,6 +196,7 @@ func TestBuildCIContext_UserOverridesTemplateOptions(t *testing.T) {
 			Platforms: []string{"linux/amd64"},
 			TemplateOptions: map[string]string{
 				"ci_buildkit_image": "registry.io/buildkit",
+				"ci_report":         "false",
 				"custom_var":        "custom_value",
 			},
 		},
@@ -214,5 +218,8 @@ func TestBuildCIContext_UserOverridesTemplateOptions(t *testing.T) {
 	}
 	if ctx.TemplateOptions["custom_var"] != "custom_value" {
 		t.Errorf("expected custom_var 'custom_value', got %q", ctx.TemplateOptions["custom_var"])
+	}
+	if ctx.TemplateOptions["ci_report"] != "false" {
+		t.Errorf("expected user override ci_report 'false', got %q", ctx.TemplateOptions["ci_report"])
 	}
 }

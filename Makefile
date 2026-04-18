@@ -63,6 +63,12 @@ build-image: build-image-container-hive ## Build all images
 
 build: create-dist build-linux build-darwin ## Build binaries for all platform
 
+build-web-report: ## Build the web report SPA
+	cd web/report && yarn build
+	@mkdir -p pkg/report/assets
+	@cp web/report/dist/index.html pkg/report/assets/index.html
+	@cp web/report/NOTICE pkg/report/assets/NOTICE
+
 bundle:
 	@cd dist/ && find * -type d -exec sh -c 'cd {} && cp ../../LICENSE LICENSE.txt && cp ../../NOTICE . && tar -cf - . | zstd -9 -o ../{}.tar.zst' \;
 	@find ./dist/*.tar.zst -type f -exec sh -c 'sha256sum {} | cut -d " " -f 1 > {}.sha256' {} \;

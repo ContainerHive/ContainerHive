@@ -6,6 +6,11 @@ type Versions map[string]string
 // BuildArgs maps Docker build argument names to their values.
 type BuildArgs map[string]string
 
+// ReportModel holds report-related metadata for an image or variant.
+type ReportModel struct {
+	Icon string
+}
+
 // Tag defines a single image tag with its version overrides and build arguments.
 type Tag struct {
 	Name      string    `yaml:"name" json:"name" jsonschema:"Name of the tag"`
@@ -17,6 +22,7 @@ type Tag struct {
 type Image struct {
 	Identifier          string
 	Name                string
+	Description         string
 	RootDir             string
 	RootFSDir           string
 	TestConfigFilePath  string
@@ -30,6 +36,7 @@ type Image struct {
 	DependsOn           []string
 	Platforms           []string
 	LatestAlias         *LatestAliasConfig
+	Report              ReportModel
 }
 
 // ImageVariant represents an alternative build of an image with different configuration.
@@ -43,6 +50,7 @@ type ImageVariant struct {
 	Versions            Versions
 	BuildArgs           BuildArgs `yaml:"build_args"`
 	Platforms           []string
+	Report              ReportModel
 }
 
 // ContainerHiveProject represents a fully loaded project with its configuration and images.
