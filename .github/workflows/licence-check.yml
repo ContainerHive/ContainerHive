@@ -350,7 +350,7 @@ jobs:
 
       - name: Comment on PR
         if: always() && steps.generate.outcome != 'skipped' && github.event_name == 'pull_request'
-        uses: actions/github-script@v8
+        uses: actions/github-script@v9
         with:
           script: |
             const generate = '${{ steps.generate.outcome }}';
@@ -430,7 +430,7 @@ jobs:
 
       - name: Create GitHub Checks
         if: always() && steps.generate.outcome != 'skipped' && github.event_name == 'pull_request'
-        uses: actions/github-script@v8
+        uses: actions/github-script@v9
         with:
           script: |
             const noticeOutdated = '${{ steps.notice-check.outputs.outdated }}' === 'true';
