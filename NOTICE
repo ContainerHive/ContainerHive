@@ -1120,10 +1120,10 @@ Contents of probable licence file $GOMODCACHE/github.com/anchore/syft@v1.42.4/LI
 ================================================================================
 
 Module:  github.com/containerd/containerd/v2
-Version: v2.2.2
+Version: v2.2.3
 Licence: Apache-2.0
 
-Contents of probable licence file $GOMODCACHE/github.com/containerd/containerd/v2@v2.2.2/LICENSE:
+Contents of probable licence file $GOMODCACHE/github.com/containerd/containerd/v2@v2.2.3/LICENSE:
 
 
                                  Apache License
@@ -7884,10 +7884,10 @@ SOFTWARE.
 ================================================================================
 
 Module:  github.com/Microsoft/hcsshim
-Version: v0.14.0-rc.1
+Version: v0.14.1
 Licence: MIT
 
-Contents of probable licence file $GOMODCACHE/github.com/!microsoft/hcsshim@v0.14.0-rc.1/LICENSE:
+Contents of probable licence file $GOMODCACHE/github.com/!microsoft/hcsshim@v0.14.1/LICENSE:
 
 The MIT License (MIT)
 
@@ -44919,10 +44919,10 @@ Contents of probable licence file $GOMODCACHE/github.com/moby/patternmatcher@v0.
 ================================================================================
 
 Module:  github.com/moby/spdystream
-Version: v0.5.0
+Version: v0.5.1
 Licence: Apache-2.0
 
-Contents of probable licence file $GOMODCACHE/github.com/moby/spdystream@v0.5.0/LICENSE:
+Contents of probable licence file $GOMODCACHE/github.com/moby/spdystream@v0.5.1/LICENSE:
 
 
                                  Apache License
