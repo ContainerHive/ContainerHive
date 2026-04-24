@@ -120,7 +120,7 @@ func TestBuildCIContext_Stages(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	expected := []string{"build-alpha", "manifest-alpha", "build-beta", "manifest-beta", "test"}
+	expected := []string{"build-alpha", "test-alpha", "manifest-alpha", "build-beta", "test-beta", "manifest-beta"}
 	if !reflect.DeepEqual(ctx.Stages, expected) {
 		t.Errorf("expected stages %v, got %v", expected, ctx.Stages)
 	}

@@ -2,7 +2,9 @@
   test-{{ .Image.Name }}:
     runs-on: ubuntu-latest
     needs:
-      - manifest-{{ .Image.Name }}
+{{- range .Image.Platforms }}
+      - build-{{ $.Image.Name }}-{{ . }}
+{{- end }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
@@ -14,11 +16,13 @@
           name: generated
           path: {{ .Ctx.Dist }}/
 {{- if $.Ctx.Artifacts }}
-      - name: Download manifest artifacts
+{{- range .Image.Platforms }}
+      - name: Download build artifacts for {{ . }}
         uses: actions/download-artifact@v7
         with:
-          name: {{ .Image.Name }}-manifest
-          path: {{ .Ctx.Dist }}/
+          name: {{ $.Image.Name }}-{{ . }}
+          path: {{ $.Ctx.Dist }}/
+{{- end }}
 {{- end }}
       - name: Prepare temp directory
         run: mkdir -p "$RUNNER_TEMP/ch"

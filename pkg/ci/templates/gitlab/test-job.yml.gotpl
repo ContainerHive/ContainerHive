@@ -1,11 +1,14 @@
 {{ define "test-job.yml.gotpl" }}
 test-{{ .Image.Name }}:
   extends: .test
+  stage: test-{{ .Image.Name }}
   variables:
     IMAGE_NAME: {{ .Image.Name }}
   needs:
     - generate
-    - manifest-{{ .Image.Name }}
+{{- range .Image.Platforms }}
+    - build-{{ $.Image.Name }}-{{ . }}
+{{- end }}
   artifacts:
     when: always
     paths:

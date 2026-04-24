@@ -149,9 +149,9 @@ func BuildCIContext(project *model.ContainerHiveProject, artifacts bool) (*CICon
 	var stages []string
 	for _, img := range ciImages {
 		stages = append(stages, fmt.Sprintf("build-%s", img.Name))
+		stages = append(stages, fmt.Sprintf("test-%s", img.Name))
 		stages = append(stages, fmt.Sprintf("manifest-%s", img.Name))
 	}
-	stages = append(stages, "test")
 
 	// Collect all unique platforms sorted
 	platformList := make([]string, 0, len(allPlatforms))

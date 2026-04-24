@@ -2,6 +2,7 @@
   manifest-{{ .Image.Name }}:
     runs-on: ubuntu-latest
     needs:
+      - test-{{ .Image.Name }}
 {{- range .Image.Platforms }}
       - build-{{ $.Image.Name }}-{{ . }}
 {{- end }}
