@@ -3,8 +3,10 @@ package main
 import (
 	"context"
 	"errors"
+	"io"
 	"log/slog"
 	"os"
+	"strings"
 
 	"github.com/timo-reymann/ContainerHive/pkg/login"
 	"github.com/urfave/cli/v3"
@@ -37,18 +39,33 @@ func loginCmd() *cli.Command {
 				return errors.New("expected exactly one argument: REGISTRY")
 			}
 
-			opts := login.Options{
-				ServerAddress: args.First(),
-				Username:      cmd.String("username"),
-				Password:      cmd.String("password"),
-				ConfigDir:     os.Getenv("DOCKER_CONFIG"),
-			}
+			username := cmd.String("username")
+			password := cmd.String("password")
 
+			// Resolve the password up-front so we can recognise the "no
+			// credentials provided" case and skip gracefully. This keeps the
+			// generated CI workflows simple: a login step can unconditionally
+			// run with `${{ secrets.X }}`, and missing secrets make it a no-op
+			// rather than failing the entire job.
 			if cmd.Bool("password-stdin") {
-				opts.PasswordStdin = os.Stdin
+				data, err := io.ReadAll(os.Stdin)
+				if err != nil {
+					return err
+				}
+				password = strings.TrimRight(string(data), "\r\n")
 			}
 
-			configPath, err := login.Login(opts)
+			if username == "" && password == "" {
+				slog.Warn("Skipping login: no credentials provided", "registry", args.First())
+				return nil
+			}
+
+			configPath, err := login.Login(login.Options{
+				ServerAddress: args.First(),
+				Username:      username,
+				Password:      password,
+				ConfigDir:     os.Getenv("DOCKER_CONFIG"),
+			})
 			if err != nil {
 				return err
 			}
