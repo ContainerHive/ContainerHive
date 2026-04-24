@@ -158,81 +158,26 @@ func buildWithoutDeps(ctx context.Context, client *Client, opts *ProjectBuildOpt
 				if matchesFilters(opts.Filters, imageDef.Name, tagName) {
 					platforms := platform.Resolve(opts.Project.Config.Platforms, imageDef.Platforms, nil)
 					for _, platformStr := range platforms {
-						if err := buildNoDeps(ctx, client, opts, imageDef.Name, tagName, platformStr); err != nil {
+						if err := buildTag(ctx, client, opts, imageDef, tagName, platformStr); err != nil {
 							return err
 						}
 					}
 				}
 
-				for _, variantDef := range imageDef.Variants {
+				for variantName, variantDef := range imageDef.Variants {
 					variantTag := tagName + variantDef.TagSuffix
 					if !matchesFilters(opts.Filters, imageDef.Name, variantTag) {
 						continue
 					}
 					platforms := platform.Resolve(opts.Project.Config.Platforms, imageDef.Platforms, variantDef.Platforms)
 					for _, platformStr := range platforms {
-						if err := buildNoDeps(ctx, client, opts, imageDef.Name, variantTag, platformStr); err != nil {
+						if err := buildVariant(ctx, client, opts, imageDef, tagName, variantName, variantDef, platformStr); err != nil {
 							return err
 						}
 					}
 				}
 			}
 		}
-	}
-	return nil
-}
-
-func buildNoDeps(ctx context.Context, client *Client, opts *ProjectBuildOpts, imageName, tagName, platformStr string) error {
-	dockerfilePath := filepath.Join(opts.DistPath, imageName, tagName, "Dockerfile")
-	if _, err := os.Stat(dockerfilePath); os.IsNotExist(err) {
-		slog.Warn("Dockerfile not found", "image", imageName, "tag", tagName, "path", dockerfilePath)
-		return nil
-	}
-
-	hiveDeps, err := ResolveHiveDeps(HiveDepsOpts{
-		DockerfilePath:  dockerfilePath,
-		DistPath:        opts.DistPath,
-		PlatformStr:     platformStr,
-		RegistryAddress: opts.registryAddress(),
-		BuildID:         opts.BuildID,
-	})
-	if err != nil {
-		return fmt.Errorf("failed to resolve hive deps for %s:%s: %w", imageName, tagName, err)
-	}
-	if hiveDeps != nil {
-		defer hiveDeps.Cleanup()
-	}
-
-	imageTag := fmt.Sprintf("%s:%s", imageName, tagName)
-	tf := TarFilePath(opts.DistPath, imageName, tagName, platformStr)
-
-	if err := os.MkdirAll(filepath.Dir(tf), 0755); err != nil {
-		return fmt.Errorf("failed to create platform dir for %s: %w", imageTag, err)
-	}
-
-	buildOpts := &BuildOpts{
-		ImageName:        imageTag,
-		Platform:         platformStr,
-		TarFile:          tf,
-		Cache:            opts.Cache,
-		ContextDir:       filepath.Dir(dockerfilePath),
-		RegistryRef:      opts.registryRef(imageName, tagName, platformStr),
-		RegistryInsecure: opts.registryInsecure(),
-		ProgressConfig:   opts.ProgressConfig,
-	}
-	if hiveDeps != nil {
-		buildOpts.OCIStores = hiveDeps.OCIStores
-		buildOpts.NamedContexts = hiveDeps.NamedContexts
-		buildOpts.Dockerfile = filepath.Base(hiveDeps.Dockerfile)
-	}
-
-	if err := client.Build(ctx, buildOpts, opts.ProgressOut); err != nil {
-		return fmt.Errorf("build failed for %s (%s): %w", imageTag, platformStr, err)
-	}
-	slog.Info("Built image", "image", imageTag, "platform", platformStr, "tar", tf)
-
-	if opts.OnBuild != nil {
-		opts.OnBuild(imageTag, tf)
 	}
 	return nil
 }

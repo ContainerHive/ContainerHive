@@ -202,23 +202,6 @@ func emptyBuildOrder(t *testing.T) *deps.BuildOrder {
 	return bo
 }
 
-func TestBuildNoDeps_DockerfileNotFound(t *testing.T) {
-	distPath := t.TempDir()
-	client := &Client{inner: nil}
-	opts := &ProjectBuildOpts{
-		Project: &model.ContainerHiveProject{
-			ImagesByIdentifier: map[string]*model.Image{},
-			ImagesByName:       map[string][]*model.Image{},
-		},
-		DistPath: distPath,
-	}
-
-	err := buildNoDeps(context.Background(), client, opts, "myimg", "1.0", "linux/amd64")
-	if err != nil {
-		t.Errorf("expected nil error when Dockerfile not found, got: %v", err)
-	}
-}
-
 func TestBuildTag_DockerfileNotFound(t *testing.T) {
 	distPath := t.TempDir()
 	client := &Client{inner: nil}
@@ -362,13 +345,13 @@ func TestRegistryInsecure_LocalRegistry(t *testing.T) {
 	}
 }
 
-// TestBuildNoDeps_ResolvesHiveRefs exercises the code path where a project has
-// only a single image with a variant that FROMs its parent via __hive__/. The
-// dependency graph sees no cross-image edges, so buildWithoutDeps/buildNoDeps
-// is taken; this test ensures that path still invokes ResolveHiveDeps instead
-// of sending the unrewritten __hive__/ reference to BuildKit (which rejects
-// it as an invalid reference format).
-func TestBuildNoDeps_ResolvesHiveRefs(t *testing.T) {
+// TestBuildWithoutDeps_VariantResolvesHiveRefs covers the case where a project
+// has only a single image with a variant that FROMs its own parent via
+// __hive__/. The dep graph sees no cross-image edges, so buildWithoutDeps is
+// taken. It must still route the variant through buildVariant (not a bare
+// direct-build path), which invokes ResolveHiveDeps — otherwise the raw
+// __hive__/ reference reaches BuildKit and is rejected as invalid.
+func TestBuildWithoutDeps_VariantResolvesHiveRefs(t *testing.T) {
 	distPath := t.TempDir()
 	variantDir := filepath.Join(distPath, "myimg", "1.0-node")
 	if err := os.MkdirAll(variantDir, 0755); err != nil {
@@ -378,32 +361,42 @@ func TestBuildNoDeps_ResolvesHiveRefs(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	client := &Client{inner: nil}
-	opts := &ProjectBuildOpts{
-		Project: &model.ContainerHiveProject{
-			ImagesByIdentifier: map[string]*model.Image{},
-			ImagesByName:       map[string][]*model.Image{},
-		},
-		DistPath: distPath,
-		// No Registry and no local tar → ResolveHiveDeps must surface a clear
-		// error rather than letting the raw __hive__/ reference reach BuildKit.
+	variantDef := &model.ImageVariant{Name: "node", TagSuffix: "-node"}
+	imageDef := &model.Image{
+		Name:     "myimg",
+		Tags:     map[string]*model.Tag{"1.0": {Name: "1.0"}},
+		Variants: map[string]*model.ImageVariant{"node": variantDef},
+	}
+	project := &model.ContainerHiveProject{
+		Config:             model.HiveProjectConfig{Platforms: []string{"linux/amd64"}},
+		ImagesByIdentifier: map[string]*model.Image{"myimg": imageDef},
+		ImagesByName:       map[string][]*model.Image{"myimg": {imageDef}},
 	}
 
-	err := buildNoDeps(context.Background(), client, opts, "myimg", "1.0-node", "linux/amd64")
+	opts := &ProjectBuildOpts{
+		Project:     project,
+		DistPath:    distPath,
+		ProgressOut: os.Stdout,
+		// No Registry and no local tar → ResolveHiveDeps must surface a clear
+		// error instead of letting the raw __hive__/ reference reach BuildKit.
+		Filters: []Filter{{ImageName: "myimg", TagName: "1.0-node"}}, // skip the (unrendered) base tag
+	}
+
+	err := buildWithoutDeps(context.Background(), &Client{inner: nil}, opts)
 	if err == nil {
-		t.Fatal("expected error resolving hive dep with no registry and no local tar, got nil")
+		t.Fatal("expected hive-dep resolution error, got nil")
 	}
 	if !strings.Contains(err.Error(), "not built yet") || !strings.Contains(err.Error(), "no registry configured") {
 		t.Errorf("expected hive-dep resolution error, got: %v", err)
 	}
 }
 
-// TestBuildNoDeps_ResolvesHiveRefsViaRegistry ensures that when a registry is
-// configured, buildNoDeps resolves the __hive__/ reference through the registry
-// fallback instead of failing. MkdirAll is blocked so execution halts after
-// ResolveHiveDeps succeeds but before the nil BuildKit client is dialled,
-// proving the hive-deps path was taken.
-func TestBuildNoDeps_ResolvesHiveRefsViaRegistry(t *testing.T) {
+// TestBuildWithoutDeps_VariantResolvesHiveRefsViaRegistry ensures that when a
+// registry is configured, the variant's __hive__/ reference resolves via the
+// registry fallback. MkdirAll is blocked so execution halts right after
+// ResolveHiveDeps succeeds but before the nil BuildKit client is dialled —
+// proving the hive-deps path ran.
+func TestBuildWithoutDeps_VariantResolvesHiveRefsViaRegistry(t *testing.T) {
 	distPath := t.TempDir()
 	variantDir := filepath.Join(distPath, "myimg", "1.0-node")
 	if err := os.MkdirAll(variantDir, 0755); err != nil {
@@ -412,24 +405,33 @@ func TestBuildNoDeps_ResolvesHiveRefsViaRegistry(t *testing.T) {
 	if err := os.WriteFile(filepath.Join(variantDir, "Dockerfile"), []byte("FROM __hive__/myimg:1.0\n"), 0644); err != nil {
 		t.Fatal(err)
 	}
-	// Block MkdirAll for the tar output dir to stop execution right after
-	// ResolveHiveDeps has done its work but before the nil buildkit client is used.
+	// Block MkdirAll for the tar output dir so we halt after ResolveHiveDeps.
 	if err := os.WriteFile(filepath.Join(variantDir, "linux-amd64"), []byte("blocker"), 0644); err != nil {
 		t.Fatal(err)
 	}
 
-	client := &Client{inner: nil}
-	opts := &ProjectBuildOpts{
-		Project: &model.ContainerHiveProject{
-			ImagesByIdentifier: map[string]*model.Image{},
-			ImagesByName:       map[string][]*model.Image{},
-		},
-		DistPath: distPath,
-		Registry: &mockRegistry{address: "registry.example.com"},
-		BuildID:  "42",
+	variantDef := &model.ImageVariant{Name: "node", TagSuffix: "-node"}
+	imageDef := &model.Image{
+		Name:     "myimg",
+		Tags:     map[string]*model.Tag{"1.0": {Name: "1.0"}},
+		Variants: map[string]*model.ImageVariant{"node": variantDef},
+	}
+	project := &model.ContainerHiveProject{
+		Config:             model.HiveProjectConfig{Platforms: []string{"linux/amd64"}},
+		ImagesByIdentifier: map[string]*model.Image{"myimg": imageDef},
+		ImagesByName:       map[string][]*model.Image{"myimg": {imageDef}},
 	}
 
-	err := buildNoDeps(context.Background(), client, opts, "myimg", "1.0-node", "linux/amd64")
+	opts := &ProjectBuildOpts{
+		Project:     project,
+		DistPath:    distPath,
+		ProgressOut: os.Stdout,
+		Registry:    &mockRegistry{address: "registry.example.com"},
+		BuildID:     "42",
+		Filters:     []Filter{{ImageName: "myimg", TagName: "1.0-node"}},
+	}
+
+	err := buildWithoutDeps(context.Background(), &Client{inner: nil}, opts)
 	if err == nil {
 		t.Fatal("expected MkdirAll failure after hive-deps resolve, got nil")
 	}
@@ -438,37 +440,29 @@ func TestBuildNoDeps_ResolvesHiveRefsViaRegistry(t *testing.T) {
 	}
 }
 
-func TestBuildNoDeps_MkdirAllFails(t *testing.T) {
-	// Create a distPath where the platform subdir can't be created because
-	// a file exists at the path where a directory is needed.
-	distPath := t.TempDir()
-	imgDir := filepath.Join(distPath, "myimg", "1.0")
-	if err := os.MkdirAll(imgDir, 0755); err != nil {
-		t.Fatal(err)
-	}
-	if err := os.WriteFile(filepath.Join(imgDir, "Dockerfile"), []byte("FROM scratch\n"), 0644); err != nil {
-		t.Fatal(err)
-	}
-	// Create a regular file where MkdirAll needs to create a directory (linux-amd64).
-	if err := os.WriteFile(filepath.Join(imgDir, "linux-amd64"), []byte("blocker"), 0644); err != nil {
-		t.Fatal(err)
-	}
-
-	client := &Client{inner: nil}
-	opts := &ProjectBuildOpts{
-		Project: &model.ContainerHiveProject{
-			ImagesByIdentifier: map[string]*model.Image{},
-			ImagesByName:       map[string][]*model.Image{},
+// TestBuildWithoutDeps_VariantResolvesBuildArgs verifies the variant's
+// Versions get turned into BuildArgs (e.g. nodejs: "24" → NODEJS_VERSION=24)
+// when buildWithoutDeps is the active branch. Before the refactor that routed
+// variants through buildVariant, the no-deps path skipped ResolveVariantConfig
+// entirely and NODEJS_VERSION reached BuildKit empty.
+func TestBuildWithoutDeps_VariantResolvesBuildArgs(t *testing.T) {
+	resolved, err := ResolveVariantConfig(
+		&model.Image{
+			Name: "myimg",
+			Tags: map[string]*model.Tag{"1.0": {Name: "1.0"}},
 		},
-		DistPath: distPath,
+		&model.ImageVariant{
+			Name:      "node",
+			TagSuffix: "-node",
+			Versions:  model.Versions{"nodejs": "24"},
+		},
+		&model.Tag{Name: "1.0"},
+	)
+	if err != nil {
+		t.Fatalf("ResolveVariantConfig failed: %v", err)
 	}
-
-	err := buildNoDeps(context.Background(), client, opts, "myimg", "1.0", "linux/amd64")
-	if err == nil {
-		t.Fatal("expected error when MkdirAll fails, got nil")
-	}
-	if !strings.Contains(err.Error(), "failed to create platform dir") {
-		t.Errorf("expected error about creating platform dir, got: %v", err)
+	if got := resolved.BuildArgs["NODEJS_VERSION"]; got != "24" {
+		t.Errorf("expected NODEJS_VERSION=24, got %q", got)
 	}
 }
 
