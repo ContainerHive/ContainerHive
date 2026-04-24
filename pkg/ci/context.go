@@ -54,6 +54,21 @@ type CIConfigContext struct {
 	Cache    *model.CacheConfig
 }
 
+// RegistryHost returns the registry hostname (without path) for login.
+// E.g., "docker.io/timoreymann" -> "docker.io"
+func (c *CIConfigContext) RegistryHost() string {
+	if c.Registry == nil {
+		return ""
+	}
+	addr := c.Registry.Address
+	for i := 0; i < len(addr); i++ {
+		if addr[i] == '/' {
+			return addr[:i]
+		}
+	}
+	return addr
+}
+
 // defaultTemplateOptions returns the built-in template option defaults.
 func defaultTemplateOptions() map[string]string {
 	return map[string]string{

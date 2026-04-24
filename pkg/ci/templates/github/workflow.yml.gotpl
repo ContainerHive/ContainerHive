@@ -33,7 +33,7 @@ jobs:
           lfs: true
       - run: mkdir -p "$RUNNER_TEMP/ch"
 {{- if .Config.Registry }}
-      - run: echo "${{ "{{" }} secrets.CONTAINER_HIVE_REGISTRY_PASSWORD {{ "}}" }}" | docker run --rm --entrypoint="" -u "$(id -u):$(id -g)" -e CI=1 -i -e HOME="$RUNNER_TEMP/ch" -v "$RUNNER_TEMP/ch:$RUNNER_TEMP/ch" -v "$GITHUB_WORKSPACE:$GITHUB_WORKSPACE" -w "$GITHUB_WORKSPACE" $CH_IMAGE {{ .ChCmd }} login -u "${{ "{{" }} secrets.CONTAINER_HIVE_REGISTRY_USERNAME {{ "}}" }}" --password-stdin "{{ .Config.Registry.Address }}"
+      - run: echo "${{ "{{" }} secrets.CONTAINER_HIVE_REGISTRY_PASSWORD {{ "}}" }}" | docker run --rm --entrypoint="" -u "$(id -u):$(id -g)" -e CI=1 -i -e HOME="$RUNNER_TEMP/ch" -v "$RUNNER_TEMP/ch:$RUNNER_TEMP/ch" -v "$GITHUB_WORKSPACE:$GITHUB_WORKSPACE" -w "$GITHUB_WORKSPACE" $CH_IMAGE {{ .ChCmd }} login -u "${{ "{{" }} secrets.CONTAINER_HIVE_REGISTRY_USERNAME {{ "}}" }}" --password-stdin "{{ .Config.RegistryHost }}"
 {{- end }}
       - run: echo "${{ "{{" }} secrets.GITHUB_TOKEN {{ "}}" }}" | docker run --rm --entrypoint="" -u "$(id -u):$(id -g)" -e CI=1 -i -e HOME="$RUNNER_TEMP/ch" -v "$RUNNER_TEMP/ch:$RUNNER_TEMP/ch" -v "$GITHUB_WORKSPACE:$GITHUB_WORKSPACE" -w "$GITHUB_WORKSPACE" $CH_IMAGE {{ .ChCmd }} login -u "${{ "{{" }} github.actor {{ "}}" }}" --password-stdin ghcr.io
       - run: docker run --rm --entrypoint="" -u "$(id -u):$(id -g)" -e CI=1 -e HOME="$RUNNER_TEMP/ch" -v "$RUNNER_TEMP/ch:$RUNNER_TEMP/ch" -v "$GITHUB_WORKSPACE:$GITHUB_WORKSPACE" -w "$GITHUB_WORKSPACE" $CH_IMAGE {{ .ChCmd }} generate --build-id "$SNAPSHOT_ID"
