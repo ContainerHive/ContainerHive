@@ -16,6 +16,9 @@ variables:
 
 before_script:
   - echo "$CI_REGISTRY_PASSWORD" | {{ .ChCmd }} login -u "$CI_REGISTRY_USER" --password-stdin "$CI_REGISTRY"
+{{- if .Config.Registry }}
+  - echo "$CONTAINER_HIVE_REGISTRY_PASSWORD" | {{ .ChCmd }} login -u "$CONTAINER_HIVE_REGISTRY_USERNAME" --password-stdin "{{ .Config.Registry.Address }}"
+{{- end }}
 
 # === BASE TEMPLATES ===
 
