@@ -20,7 +20,7 @@ RUN if [[ "$(arch)" == "x86_64" ]]; then \
     && chown 1000:1000 /bin/ch
 
 # Final stage - use distroless static base
-FROM ubuntu:24.04
+FROM ubuntu:26.04
 ENV DEBIAN_FRONTEND="noninteractive"
 RUN apt update \
     && apt-get install -y --upgrade ca-certificates \
