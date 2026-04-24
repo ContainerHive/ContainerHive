@@ -64,10 +64,12 @@ jobs:
 {{- end }}
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - name: Checkout code
+        uses: actions/checkout@v6
         with:
           lfs: true
-      - uses: actions/download-artifact@v7
+      - name: Download generated files
+        uses: actions/download-artifact@v7
         with:
           name: generated
           path: {{ .Dist }}/
@@ -85,15 +87,23 @@ jobs:
 {{- end }}
 {{- end }}
 {{- end }}
-      - run: mkdir -p "$RUNNER_TEMP/ch"
-      - run: echo "${{ "{{" }} secrets.GITHUB_TOKEN {{ "}}" }}" | docker run --rm --entrypoint="" -u "$(id -u):$(id -g)" -e CI=1 -i -e HOME="$RUNNER_TEMP/ch" -v "$RUNNER_TEMP/ch:$RUNNER_TEMP/ch" -v "$GITHUB_WORKSPACE:$GITHUB_WORKSPACE" -w "$GITHUB_WORKSPACE" $CH_IMAGE {{ .ChCmd }} report
-      - run: echo "${{ "{{" }} secrets.GITHUB_TOKEN {{ "}}" }}" | docker run --rm --entrypoint="" -u "$(id -u):$(id -g)" -e CI=1 -i -e HOME="$RUNNER_TEMP/ch" -v "$RUNNER_TEMP/ch:$RUNNER_TEMP/ch" -v "$GITHUB_WORKSPACE:$GITHUB_WORKSPACE" -w "$GITHUB_WORKSPACE" $CH_IMAGE {{ .ChCmd }} report --json
-      - run: mkdir -p public
-      - run: cp {{ .Dist }}/report.html public/index.html
-      - run: cp {{ .Dist }}/report.json public/report.json
-      - uses: actions/upload-pages-artifact@v3
+      - name: Prepare temp directory
+        run: mkdir -p "$RUNNER_TEMP/ch"
+      - name: Generate HTML report
+        run: echo "${{ "{{" }} secrets.GITHUB_TOKEN {{ "}}" }}" | docker run --rm --entrypoint="" -u "$(id -u):$(id -g)" -e CI=1 -i -e HOME="$RUNNER_TEMP/ch" -v "$RUNNER_TEMP/ch:$RUNNER_TEMP/ch" -v "$GITHUB_WORKSPACE:$GITHUB_WORKSPACE" -w "$GITHUB_WORKSPACE" $CH_IMAGE {{ .ChCmd }} report
+      - name: Generate JSON report
+        run: echo "${{ "{{" }} secrets.GITHUB_TOKEN {{ "}}" }}" | docker run --rm --entrypoint="" -u "$(id -u):$(id -g)" -e CI=1 -i -e HOME="$RUNNER_TEMP/ch" -v "$RUNNER_TEMP/ch:$RUNNER_TEMP/ch" -v "$GITHUB_WORKSPACE:$GITHUB_WORKSPACE" -w "$GITHUB_WORKSPACE" $CH_IMAGE {{ .ChCmd }} report --json
+      - name: Prepare Pages content
+        run: mkdir -p public
+      - name: Copy HTML report
+        run: cp {{ .Dist }}/report.html public/index.html
+      - name: Copy JSON report
+        run: cp {{ .Dist }}/report.json public/report.json
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
         with:
           path: public/
-      - uses: actions/deploy-pages@v4
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v4
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
 {{- end }}
