@@ -12,6 +12,7 @@ import (
 	"github.com/google/go-containerregistry/pkg/name"
 	v1 "github.com/google/go-containerregistry/pkg/v1"
 	"github.com/google/go-containerregistry/pkg/v1/remote"
+	"github.com/google/go-containerregistry/pkg/v1/types"
 	"github.com/moby/buildkit/client"
 	"github.com/testcontainers/testcontainers-go"
 	"github.com/testcontainers/testcontainers-go/wait"
@@ -195,6 +196,16 @@ func TestIntegrationCreateManifestList(t *testing.T) {
 	}
 	if manifest.Platform.OS != "linux" {
 		t.Errorf("expected OS linux, got %s", manifest.Platform.OS)
+	}
+
+	// Docker Hub's frontend rejects pure OCI image indexes with an HTML 400,
+	// so we emit the Docker manifest list media type for compatibility.
+	mt, err := idx.MediaType()
+	if err != nil {
+		t.Fatal("failed to get index media type:", err)
+	}
+	if want := types.DockerManifestList; mt != want {
+		t.Errorf("expected index media type %q, got %q", want, mt)
 	}
 }
 

@@ -11,6 +11,7 @@ import (
 	"github.com/google/go-containerregistry/pkg/v1/mutate"
 	"github.com/google/go-containerregistry/pkg/v1/partial"
 	"github.com/google/go-containerregistry/pkg/v1/remote"
+	"github.com/google/go-containerregistry/pkg/v1/types"
 )
 
 // Retag creates an additional tag alias for an existing image in a registry.
@@ -70,7 +71,10 @@ func CreateManifestList(targetRef string, images []PlatformImage) error {
 		})
 	}
 
-	idx := mutate.AppendManifests(empty.Index, adds...)
+	// Use the Docker manifest list media type for broad registry compatibility
+	// — Docker Hub's frontend rejects pure OCI image indexes with an HTML 400,
+	// while accepting the Docker-scheme list with identical child descriptors.
+	idx := mutate.IndexMediaType(mutate.AppendManifests(empty.Index, adds...), types.DockerManifestList)
 	return remote.WriteIndex(dst, idx, remote.WithAuthFromKeychain(authn.DefaultKeychain))
 }
 
@@ -118,6 +122,9 @@ func CreateManifestListFromRefs(targetRef string, refs []PlatformRef) error {
 		})
 	}
 
-	idx := mutate.AppendManifests(empty.Index, adds...)
+	// Use the Docker manifest list media type for broad registry compatibility
+	// — Docker Hub's frontend rejects pure OCI image indexes with an HTML 400,
+	// while accepting the Docker-scheme list with identical child descriptors.
+	idx := mutate.IndexMediaType(mutate.AppendManifests(empty.Index, adds...), types.DockerManifestList)
 	return remote.WriteIndex(dst, idx, remote.WithAuthFromKeychain(authn.DefaultKeychain))
 }
