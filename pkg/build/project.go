@@ -189,6 +189,20 @@ func buildNoDeps(ctx context.Context, client *Client, opts *ProjectBuildOpts, im
 		return nil
 	}
 
+	hiveDeps, err := ResolveHiveDeps(HiveDepsOpts{
+		DockerfilePath:  dockerfilePath,
+		DistPath:        opts.DistPath,
+		PlatformStr:     platformStr,
+		RegistryAddress: opts.registryAddress(),
+		BuildID:         opts.BuildID,
+	})
+	if err != nil {
+		return fmt.Errorf("failed to resolve hive deps for %s:%s: %w", imageName, tagName, err)
+	}
+	if hiveDeps != nil {
+		defer hiveDeps.Cleanup()
+	}
+
 	imageTag := fmt.Sprintf("%s:%s", imageName, tagName)
 	tf := TarFilePath(opts.DistPath, imageName, tagName, platformStr)
 
@@ -196,7 +210,7 @@ func buildNoDeps(ctx context.Context, client *Client, opts *ProjectBuildOpts, im
 		return fmt.Errorf("failed to create platform dir for %s: %w", imageTag, err)
 	}
 
-	err := client.Build(ctx, &BuildOpts{
+	buildOpts := &BuildOpts{
 		ImageName:        imageTag,
 		Platform:         platformStr,
 		TarFile:          tf,
@@ -205,8 +219,14 @@ func buildNoDeps(ctx context.Context, client *Client, opts *ProjectBuildOpts, im
 		RegistryRef:      opts.registryRef(imageName, tagName, platformStr),
 		RegistryInsecure: opts.registryInsecure(),
 		ProgressConfig:   opts.ProgressConfig,
-	}, opts.ProgressOut)
-	if err != nil {
+	}
+	if hiveDeps != nil {
+		buildOpts.OCIStores = hiveDeps.OCIStores
+		buildOpts.NamedContexts = hiveDeps.NamedContexts
+		buildOpts.Dockerfile = filepath.Base(hiveDeps.Dockerfile)
+	}
+
+	if err := client.Build(ctx, buildOpts, opts.ProgressOut); err != nil {
 		return fmt.Errorf("build failed for %s (%s): %w", imageTag, platformStr, err)
 	}
 	slog.Info("Built image", "image", imageTag, "platform", platformStr, "tar", tf)

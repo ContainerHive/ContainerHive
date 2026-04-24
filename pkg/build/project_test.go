@@ -362,6 +362,82 @@ func TestRegistryInsecure_LocalRegistry(t *testing.T) {
 	}
 }
 
+// TestBuildNoDeps_ResolvesHiveRefs exercises the code path where a project has
+// only a single image with a variant that FROMs its parent via __hive__/. The
+// dependency graph sees no cross-image edges, so buildWithoutDeps/buildNoDeps
+// is taken; this test ensures that path still invokes ResolveHiveDeps instead
+// of sending the unrewritten __hive__/ reference to BuildKit (which rejects
+// it as an invalid reference format).
+func TestBuildNoDeps_ResolvesHiveRefs(t *testing.T) {
+	distPath := t.TempDir()
+	variantDir := filepath.Join(distPath, "myimg", "1.0-node")
+	if err := os.MkdirAll(variantDir, 0755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(variantDir, "Dockerfile"), []byte("FROM __hive__/myimg:1.0\n"), 0644); err != nil {
+		t.Fatal(err)
+	}
+
+	client := &Client{inner: nil}
+	opts := &ProjectBuildOpts{
+		Project: &model.ContainerHiveProject{
+			ImagesByIdentifier: map[string]*model.Image{},
+			ImagesByName:       map[string][]*model.Image{},
+		},
+		DistPath: distPath,
+		// No Registry and no local tar → ResolveHiveDeps must surface a clear
+		// error rather than letting the raw __hive__/ reference reach BuildKit.
+	}
+
+	err := buildNoDeps(context.Background(), client, opts, "myimg", "1.0-node", "linux/amd64")
+	if err == nil {
+		t.Fatal("expected error resolving hive dep with no registry and no local tar, got nil")
+	}
+	if !strings.Contains(err.Error(), "not built yet") || !strings.Contains(err.Error(), "no registry configured") {
+		t.Errorf("expected hive-dep resolution error, got: %v", err)
+	}
+}
+
+// TestBuildNoDeps_ResolvesHiveRefsViaRegistry ensures that when a registry is
+// configured, buildNoDeps resolves the __hive__/ reference through the registry
+// fallback instead of failing. MkdirAll is blocked so execution halts after
+// ResolveHiveDeps succeeds but before the nil BuildKit client is dialled,
+// proving the hive-deps path was taken.
+func TestBuildNoDeps_ResolvesHiveRefsViaRegistry(t *testing.T) {
+	distPath := t.TempDir()
+	variantDir := filepath.Join(distPath, "myimg", "1.0-node")
+	if err := os.MkdirAll(variantDir, 0755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(variantDir, "Dockerfile"), []byte("FROM __hive__/myimg:1.0\n"), 0644); err != nil {
+		t.Fatal(err)
+	}
+	// Block MkdirAll for the tar output dir to stop execution right after
+	// ResolveHiveDeps has done its work but before the nil buildkit client is used.
+	if err := os.WriteFile(filepath.Join(variantDir, "linux-amd64"), []byte("blocker"), 0644); err != nil {
+		t.Fatal(err)
+	}
+
+	client := &Client{inner: nil}
+	opts := &ProjectBuildOpts{
+		Project: &model.ContainerHiveProject{
+			ImagesByIdentifier: map[string]*model.Image{},
+			ImagesByName:       map[string][]*model.Image{},
+		},
+		DistPath: distPath,
+		Registry: &mockRegistry{address: "registry.example.com"},
+		BuildID:  "42",
+	}
+
+	err := buildNoDeps(context.Background(), client, opts, "myimg", "1.0-node", "linux/amd64")
+	if err == nil {
+		t.Fatal("expected MkdirAll failure after hive-deps resolve, got nil")
+	}
+	if !strings.Contains(err.Error(), "failed to create platform dir") {
+		t.Errorf("expected platform-dir error (hive-deps already resolved), got: %v", err)
+	}
+}
+
 func TestBuildNoDeps_MkdirAllFails(t *testing.T) {
 	// Create a distPath where the platform subdir can't be created because
 	// a file exists at the path where a directory is needed.
