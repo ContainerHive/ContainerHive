@@ -65,28 +65,34 @@ func sbomCmd() *cli.Command {
 			}
 
 			var workItems []workItem
-			for _, img := range project.ImagesByIdentifier {
-				for tagName := range img.Tags {
-					if !utils.MatchesFilter(filters, img.Name, tagName) {
+			enqueue := func(img *model.Image, tagName string, platforms []string) {
+				if !utils.MatchesFilter(filters, img.Name, tagName) {
+					return
+				}
+				for _, platformStr := range platforms {
+					platDir := filepath.Join(distPath, img.Name, tagName, platform.Sanitize(platformStr))
+					tarFile := filepath.Join(platDir, "image.tar")
+					if _, err := os.Stat(tarFile); err != nil {
+						slog.Warn("Skipping, no image.tar found", "image", img.Name, "tag", tagName, "platform", platformStr)
 						continue
 					}
+					workItems = append(workItems, workItem{
+						img:         img,
+						tagName:     tagName,
+						platformStr: platformStr,
+						tarFile:     tarFile,
+						platDir:     platDir,
+					})
+				}
+			}
 
-					platforms := platform.Resolve(project.Config.Platforms, img.Platforms, nil)
-					for _, platformStr := range platforms {
-						platDir := filepath.Join(distPath, img.Name, tagName, platform.Sanitize(platformStr))
-						tarFile := filepath.Join(platDir, "image.tar")
-						if _, err := os.Stat(tarFile); err != nil {
-							slog.Warn("Skipping, no image.tar found", "image", img.Name, "tag", tagName, "platform", platformStr)
-							continue
-						}
+			for _, img := range project.ImagesByIdentifier {
+				for tagName := range img.Tags {
+					enqueue(img, tagName, platform.Resolve(project.Config.Platforms, img.Platforms, nil))
 
-						workItems = append(workItems, workItem{
-							img:         img,
-							tagName:     tagName,
-							platformStr: platformStr,
-							tarFile:     tarFile,
-							platDir:     platDir,
-						})
+					for _, variantDef := range img.Variants {
+						variantPlatforms := platform.Resolve(project.Config.Platforms, img.Platforms, variantDef.Platforms)
+						enqueue(img, tagName+variantDef.TagSuffix, variantPlatforms)
 					}
 				}
 			}
