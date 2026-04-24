@@ -71,6 +71,30 @@ func TestBuildExports_WithRegistryRef(t *testing.T) {
 	if _, ok := imageEntry.Attrs["registry.insecure"]; ok {
 		t.Error("expected no \"registry.insecure\" attr, but it was present")
 	}
+
+	if _, ok := imageEntry.Attrs["oci-mediatypes"]; ok {
+		t.Error("expected no \"oci-mediatypes\" attr by default, but it was present")
+	}
+}
+
+func TestBuildExports_WithDockerMediaTypes(t *testing.T) {
+	opts := &BuildOpts{
+		ImageName:        "my-image:latest",
+		TarFile:          "/tmp/unused.tar",
+		RegistryRef:      "docker.io/me/my-image:latest",
+		DockerMediaTypes: true,
+	}
+
+	exports := buildExports(opts)
+
+	if len(exports) != 2 {
+		t.Fatalf("expected 2 export entries, got %d", len(exports))
+	}
+
+	imageEntry := exports[1]
+	if got := imageEntry.Attrs["oci-mediatypes"]; got != "false" {
+		t.Errorf("expected attrs[\"oci-mediatypes\"] = \"false\", got %q", got)
+	}
 }
 
 func TestBuildExports_WithRegistryRefAndInsecure(t *testing.T) {

@@ -102,12 +102,14 @@ func TestMatchesFilters_MultipleFilters(t *testing.T) {
 }
 
 type mockRegistry struct {
-	address string
-	local   bool
+	address          string
+	local            bool
+	dockerMediaTypes bool
 }
 
-func (r *mockRegistry) Address() string { return r.address }
-func (r *mockRegistry) IsLocal() bool   { return r.local }
+func (r *mockRegistry) Address() string             { return r.address }
+func (r *mockRegistry) IsLocal() bool               { return r.local }
+func (r *mockRegistry) UseDockerMediaTypes() bool   { return r.dockerMediaTypes }
 
 func TestPushTag(t *testing.T) {
 	tests := []struct {

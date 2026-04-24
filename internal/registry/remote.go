@@ -14,12 +14,23 @@ import (
 // RemoteRegistry is a passthrough registry for CI environments.
 // Start and Stop are no-ops; Push pushes to the configured remote registry.
 type RemoteRegistry struct {
-	address string
+	address          string
+	dockerMediaTypes *bool // explicit override; nil = auto-detect
 }
 
-// NewRemoteRegistry creates a remote registry with the given address.
+// NewRemoteRegistry creates a remote registry with the given address. Media
+// types default to auto-detection (Docker Hub → Docker-scheme, everything
+// else → OCI). Callers wanting an explicit override should use
+// NewRemoteRegistryWithMediaTypes.
 func NewRemoteRegistry(address string) *RemoteRegistry {
 	return &RemoteRegistry{address: address}
+}
+
+// NewRemoteRegistryWithMediaTypes creates a remote registry with an explicit
+// Docker-media-types override. Pass nil to fall back to auto-detection, a
+// non-nil value to force the choice.
+func NewRemoteRegistryWithMediaTypes(address string, dockerMediaTypes *bool) *RemoteRegistry {
+	return &RemoteRegistry{address: address, dockerMediaTypes: dockerMediaTypes}
 }
 
 func (r *RemoteRegistry) Start(_ context.Context) error {
@@ -36,6 +47,13 @@ func (r *RemoteRegistry) Address() string {
 
 func (r *RemoteRegistry) IsLocal() bool {
 	return false
+}
+
+// UseDockerMediaTypes reports whether image manifests and the manifest list
+// should use Docker-scheme media types. An explicit override from the registry
+// config wins; otherwise the address is auto-detected.
+func (r *RemoteRegistry) UseDockerMediaTypes() bool {
+	return resolveDockerMediaTypes(r.address, r.dockerMediaTypes)
 }
 
 func (r *RemoteRegistry) Push(_ context.Context, imageName, tag, ociTarPath string) error {

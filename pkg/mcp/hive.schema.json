@@ -76,6 +76,13 @@
         "address": {
           "type": "string",
           "description": "Container registry address"
+        },
+        "docker_media_types": {
+          "type": [
+            "null",
+            "boolean"
+          ],
+          "description": "Force Docker-scheme media types. Omit for auto-detect (Docker Hub auto-enables)."
         }
       },
       "description": "Container registry configuration",

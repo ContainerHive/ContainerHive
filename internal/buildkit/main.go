@@ -38,6 +38,10 @@ type BuildOpts struct {
 	RegistryRef string
 	// RegistryInsecure allows pushing over HTTP (for local registries).
 	RegistryInsecure bool
+	// DockerMediaTypes forces the image exporter to emit Docker-scheme media
+	// types instead of OCI. Set when the target registry rejects pure OCI
+	// (e.g. Docker Hub).
+	DockerMediaTypes bool
 
 	// OCIStores maps store IDs to content stores for OCI layout named contexts.
 	// Used to resolve inter-image dependencies without a registry.
@@ -158,6 +162,9 @@ func buildExports(opts *BuildOpts) []client.ExportEntry {
 		}
 		if opts.RegistryInsecure {
 			attrs["registry.insecure"] = "true"
+		}
+		if opts.DockerMediaTypes {
+			attrs["oci-mediatypes"] = "false"
 		}
 		exports = append(exports, client.ExportEntry{
 			Type:  "image",

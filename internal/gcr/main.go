@@ -42,11 +42,15 @@ type PlatformImage struct {
 	Platform string // e.g. "linux/amd64"
 }
 
-// CreateManifestList builds an OCI image index (manifest list) from the given
-// platform images and pushes it to targetRef. It uses mutate.AppendManifests
-// and remote.WriteIndex (same approach as crane index append), which pushes
-// all child image manifests and layers before pushing the index itself.
-func CreateManifestList(targetRef string, images []PlatformImage) error {
+// CreateManifestList builds a multi-arch manifest list from the given platform
+// images and pushes it to targetRef. It uses mutate.AppendManifests and
+// remote.WriteIndex (same approach as crane index append), which pushes all
+// child image manifests and layers before pushing the index itself.
+//
+// When dockerMediaTypes is true, the index is emitted as a Docker manifest
+// list (application/vnd.docker.distribution.manifest.list.v2+json) for
+// Docker Hub compatibility; otherwise an OCI image index is emitted.
+func CreateManifestList(targetRef string, images []PlatformImage, dockerMediaTypes bool) error {
 	dst, err := name.NewTag(targetRef)
 	if err != nil {
 		return fmt.Errorf("invalid target reference %q: %w", targetRef, err)
@@ -71,10 +75,10 @@ func CreateManifestList(targetRef string, images []PlatformImage) error {
 		})
 	}
 
-	// Use the Docker manifest list media type for broad registry compatibility
-	// — Docker Hub's frontend rejects pure OCI image indexes with an HTML 400,
-	// while accepting the Docker-scheme list with identical child descriptors.
-	idx := mutate.IndexMediaType(mutate.AppendManifests(empty.Index, adds...), types.DockerManifestList)
+	var idx v1.ImageIndex = mutate.AppendManifests(empty.Index, adds...)
+	if dockerMediaTypes {
+		idx = mutate.IndexMediaType(idx, types.DockerManifestList)
+	}
 	return remote.WriteIndex(dst, idx, remote.WithAuthFromKeychain(authn.DefaultKeychain))
 }
 
@@ -84,10 +88,13 @@ type PlatformRef struct {
 	Platform string // e.g. "linux/amd64"
 }
 
-// CreateManifestListFromRefs builds an OCI image index from images that already
-// exist in the registry. It fetches only the descriptors (no layers) and creates
-// a manifest list pointing to them.
-func CreateManifestListFromRefs(targetRef string, refs []PlatformRef) error {
+// CreateManifestListFromRefs builds a multi-arch manifest list from images
+// that already exist in the registry. It fetches only the descriptors (no
+// layers) and creates a manifest list pointing to them.
+//
+// When dockerMediaTypes is true, the index is emitted as a Docker manifest
+// list for Docker Hub compatibility; otherwise an OCI image index is emitted.
+func CreateManifestListFromRefs(targetRef string, refs []PlatformRef, dockerMediaTypes bool) error {
 	dst, err := name.NewTag(targetRef)
 	if err != nil {
 		return fmt.Errorf("invalid target reference %q: %w", targetRef, err)
@@ -122,9 +129,9 @@ func CreateManifestListFromRefs(targetRef string, refs []PlatformRef) error {
 		})
 	}
 
-	// Use the Docker manifest list media type for broad registry compatibility
-	// — Docker Hub's frontend rejects pure OCI image indexes with an HTML 400,
-	// while accepting the Docker-scheme list with identical child descriptors.
-	idx := mutate.IndexMediaType(mutate.AppendManifests(empty.Index, adds...), types.DockerManifestList)
+	var idx v1.ImageIndex = mutate.AppendManifests(empty.Index, adds...)
+	if dockerMediaTypes {
+		idx = mutate.IndexMediaType(idx, types.DockerManifestList)
+	}
 	return remote.WriteIndex(dst, idx, remote.WithAuthFromKeychain(authn.DefaultKeychain))
 }

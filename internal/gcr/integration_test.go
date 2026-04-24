@@ -158,54 +158,60 @@ func TestIntegrationCreateManifestList(t *testing.T) {
 	platformRef := fmt.Sprintf("%s/test-img:latest.%s", registryAddr, runtime.GOARCH)
 	img := pushImageToRegistry(t, tarPath, platformRef)
 
-	// Create a manifest list referencing the pushed image
-	targetRef := fmt.Sprintf("%s/test-img:latest", registryAddr)
-	err := CreateManifestList(targetRef, []PlatformImage{
-		{Image: img, Platform: plat},
-	})
-	if err != nil {
-		t.Fatal("CreateManifestList failed:", err)
+	cases := []struct {
+		name             string
+		tag              string
+		dockerMediaTypes bool
+		wantMediaType    types.MediaType
+	}{
+		{"oci (default)", "latest-oci", false, types.OCIImageIndex},
+		{"docker manifest list", "latest-docker", true, types.DockerManifestList},
 	}
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			targetRef := fmt.Sprintf("%s/test-img:%s", registryAddr, tc.tag)
+			if err := CreateManifestList(targetRef, []PlatformImage{{Image: img, Platform: plat}}, tc.dockerMediaTypes); err != nil {
+				t.Fatal("CreateManifestList failed:", err)
+			}
 
-	// Verify the manifest list exists in the registry
-	tag, err := name.NewTag(targetRef, name.Insecure)
-	if err != nil {
-		t.Fatal(err)
-	}
+			tag, err := name.NewTag(targetRef, name.Insecure)
+			if err != nil {
+				t.Fatal(err)
+			}
 
-	idx, err := remote.Index(tag, remote.WithTransport(http.DefaultTransport))
-	if err != nil {
-		t.Fatal("failed to fetch manifest list from registry:", err)
-	}
+			idx, err := remote.Index(tag, remote.WithTransport(http.DefaultTransport))
+			if err != nil {
+				t.Fatal("failed to fetch manifest list from registry:", err)
+			}
 
-	idxManifest, err := idx.IndexManifest()
-	if err != nil {
-		t.Fatal("failed to get index manifest:", err)
-	}
+			idxManifest, err := idx.IndexManifest()
+			if err != nil {
+				t.Fatal("failed to get index manifest:", err)
+			}
 
-	if len(idxManifest.Manifests) != 1 {
-		t.Fatalf("expected 1 manifest in index, got %d", len(idxManifest.Manifests))
-	}
+			if len(idxManifest.Manifests) != 1 {
+				t.Fatalf("expected 1 manifest in index, got %d", len(idxManifest.Manifests))
+			}
 
-	manifest := idxManifest.Manifests[0]
-	if manifest.Platform == nil {
-		t.Fatal("expected platform to be set on manifest descriptor")
-	}
-	if manifest.Platform.Architecture != runtime.GOARCH {
-		t.Errorf("expected architecture %s, got %s", runtime.GOARCH, manifest.Platform.Architecture)
-	}
-	if manifest.Platform.OS != "linux" {
-		t.Errorf("expected OS linux, got %s", manifest.Platform.OS)
-	}
+			manifest := idxManifest.Manifests[0]
+			if manifest.Platform == nil {
+				t.Fatal("expected platform to be set on manifest descriptor")
+			}
+			if manifest.Platform.Architecture != runtime.GOARCH {
+				t.Errorf("expected architecture %s, got %s", runtime.GOARCH, manifest.Platform.Architecture)
+			}
+			if manifest.Platform.OS != "linux" {
+				t.Errorf("expected OS linux, got %s", manifest.Platform.OS)
+			}
 
-	// Docker Hub's frontend rejects pure OCI image indexes with an HTML 400,
-	// so we emit the Docker manifest list media type for compatibility.
-	mt, err := idx.MediaType()
-	if err != nil {
-		t.Fatal("failed to get index media type:", err)
-	}
-	if want := types.DockerManifestList; mt != want {
-		t.Errorf("expected index media type %q, got %q", want, mt)
+			mt, err := idx.MediaType()
+			if err != nil {
+				t.Fatal("failed to get index media type:", err)
+			}
+			if mt != tc.wantMediaType {
+				t.Errorf("expected index media type %q, got %q", tc.wantMediaType, mt)
+			}
+		})
 	}
 }
 
@@ -222,43 +228,59 @@ func TestIntegrationCreateManifestListFromRefs(t *testing.T) {
 	pushedRef := fmt.Sprintf("%s/test-img:latest.%s", registryAddr, runtime.GOARCH)
 	pushImageToRegistry(t, tarPath, pushedRef)
 
-	// Create a manifest list from refs
-	targetRef := fmt.Sprintf("%s/test-img:latest", registryAddr)
-	err := CreateManifestListFromRefs(targetRef, []PlatformRef{
-		{Ref: pushedRef, Platform: plat},
-	})
-	if err != nil {
-		t.Fatal("CreateManifestListFromRefs failed:", err)
+	cases := []struct {
+		name             string
+		tag              string
+		dockerMediaTypes bool
+		wantMediaType    types.MediaType
+	}{
+		{"oci (default)", "fromrefs-oci", false, types.OCIImageIndex},
+		{"docker manifest list", "fromrefs-docker", true, types.DockerManifestList},
 	}
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			targetRef := fmt.Sprintf("%s/test-img:%s", registryAddr, tc.tag)
+			if err := CreateManifestListFromRefs(targetRef, []PlatformRef{{Ref: pushedRef, Platform: plat}}, tc.dockerMediaTypes); err != nil {
+				t.Fatal("CreateManifestListFromRefs failed:", err)
+			}
 
-	// Verify the manifest list exists in the registry
-	tag, err := name.NewTag(targetRef, name.Insecure)
-	if err != nil {
-		t.Fatal(err)
-	}
+			tag, err := name.NewTag(targetRef, name.Insecure)
+			if err != nil {
+				t.Fatal(err)
+			}
 
-	idx, err := remote.Index(tag, remote.WithTransport(http.DefaultTransport))
-	if err != nil {
-		t.Fatal("failed to fetch manifest list from registry:", err)
-	}
+			idx, err := remote.Index(tag, remote.WithTransport(http.DefaultTransport))
+			if err != nil {
+				t.Fatal("failed to fetch manifest list from registry:", err)
+			}
 
-	idxManifest, err := idx.IndexManifest()
-	if err != nil {
-		t.Fatal("failed to get index manifest:", err)
-	}
+			idxManifest, err := idx.IndexManifest()
+			if err != nil {
+				t.Fatal("failed to get index manifest:", err)
+			}
 
-	if len(idxManifest.Manifests) != 1 {
-		t.Fatalf("expected 1 manifest in index, got %d", len(idxManifest.Manifests))
-	}
+			if len(idxManifest.Manifests) != 1 {
+				t.Fatalf("expected 1 manifest in index, got %d", len(idxManifest.Manifests))
+			}
 
-	manifest := idxManifest.Manifests[0]
-	if manifest.Platform == nil {
-		t.Fatal("expected platform to be set on manifest descriptor")
-	}
-	if manifest.Platform.Architecture != runtime.GOARCH {
-		t.Errorf("expected architecture %s, got %s", runtime.GOARCH, manifest.Platform.Architecture)
-	}
-	if manifest.Platform.OS != "linux" {
-		t.Errorf("expected OS linux, got %s", manifest.Platform.OS)
+			manifest := idxManifest.Manifests[0]
+			if manifest.Platform == nil {
+				t.Fatal("expected platform to be set on manifest descriptor")
+			}
+			if manifest.Platform.Architecture != runtime.GOARCH {
+				t.Errorf("expected architecture %s, got %s", runtime.GOARCH, manifest.Platform.Architecture)
+			}
+			if manifest.Platform.OS != "linux" {
+				t.Errorf("expected OS linux, got %s", manifest.Platform.OS)
+			}
+
+			mt, err := idx.MediaType()
+			if err != nil {
+				t.Fatal("failed to get index media type:", err)
+			}
+			if mt != tc.wantMediaType {
+				t.Errorf("expected index media type %q, got %q", tc.wantMediaType, mt)
+			}
+		})
 	}
 }

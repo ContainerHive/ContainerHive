@@ -139,6 +139,12 @@ func (z *ZotRegistry) IsLocal() bool {
 	return true
 }
 
+// UseDockerMediaTypes reports false: zot is a local OCI-native registry with
+// no reason to emit Docker-scheme types.
+func (z *ZotRegistry) UseDockerMediaTypes() bool {
+	return false
+}
+
 func (z *ZotRegistry) Push(_ context.Context, imageName, tag, ociTarPath string) error {
 	tmpDir, err := os.MkdirTemp("", "oci-push-*")
 	if err != nil {

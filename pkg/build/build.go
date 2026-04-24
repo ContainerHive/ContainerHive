@@ -38,6 +38,10 @@ type BuildOpts struct {
 	RegistryRef string
 	// RegistryInsecure allows pushing over HTTP.
 	RegistryInsecure bool
+	// DockerMediaTypes forces BuildKit's image exporter to emit Docker-scheme
+	// media types (manifest, config, layers) rather than OCI. Required when
+	// the target registry (e.g. Docker Hub) doesn't accept pure OCI.
+	DockerMediaTypes bool
 
 	// OCIStores maps store IDs to content stores for OCI layout named contexts.
 	OCIStores map[string]content.Store
@@ -100,6 +104,7 @@ func (c *Client) Build(ctx context.Context, opts *BuildOpts, w io.Writer) error 
 		Cache:            opts.Cache,
 		RegistryRef:      opts.RegistryRef,
 		RegistryInsecure: opts.RegistryInsecure,
+		DockerMediaTypes: opts.DockerMediaTypes,
 		OCIStores:        opts.OCIStores,
 		NamedContexts:    opts.NamedContexts,
 		BuildContext: &build_context.DockerfileBuildContext{

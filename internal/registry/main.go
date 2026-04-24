@@ -15,6 +15,7 @@ type Registry interface {
 	Address() string
 	Push(ctx context.Context, imageName, tag, ociTarPath string) error
 	IsLocal() bool
+	UseDockerMediaTypes() bool
 }
 
 // NewRegistry creates a Registry based on the environment.
@@ -35,7 +36,11 @@ func NewRegistry(dataDir string, registryConfig *model.RegistryConfig) (Registry
 		if remoteAddr == "" {
 			return nil, fmt.Errorf("CI detected but no registry configured: set CONTAINER_HIVE_REGISTRY env var or registry.address in hive.yml")
 		}
-		return NewRemoteRegistry(remoteAddr), nil
+		var override *bool
+		if registryConfig != nil {
+			override = registryConfig.DockerMediaTypes
+		}
+		return NewRemoteRegistryWithMediaTypes(remoteAddr, override), nil
 	}
 	return NewZotRegistry(dataDir), nil
 }

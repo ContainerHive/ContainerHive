@@ -19,6 +19,7 @@ import (
 type Registry interface {
 	Address() string
 	IsLocal() bool
+	UseDockerMediaTypes() bool
 }
 
 // Filter selects a subset of images/tags to build.
@@ -70,6 +71,12 @@ func (o *ProjectBuildOpts) registryAddress() string {
 // registryInsecure returns true if the registry uses HTTP (local registries).
 func (o *ProjectBuildOpts) registryInsecure() bool {
 	return o.Registry != nil && o.Registry.IsLocal()
+}
+
+// useDockerMediaTypes returns true if BuildKit's image exporter should emit
+// Docker-scheme media types for the target registry.
+func (o *ProjectBuildOpts) useDockerMediaTypes() bool {
+	return o.Registry != nil && o.Registry.UseDockerMediaTypes()
 }
 
 // matchesFilters checks whether a tag should be built.
@@ -225,6 +232,7 @@ func buildTag(ctx context.Context, client *Client, opts *ProjectBuildOpts, image
 		Secrets:          config.Secrets,
 		RegistryRef:      opts.registryRef(imageDef.Name, tagName, platformStr),
 		RegistryInsecure: opts.registryInsecure(),
+		DockerMediaTypes: opts.useDockerMediaTypes(),
 		ProgressConfig:   opts.ProgressConfig,
 	}
 	if hiveDeps != nil {
@@ -290,6 +298,7 @@ func buildVariant(ctx context.Context, client *Client, opts *ProjectBuildOpts, i
 		Secrets:          config.Secrets,
 		RegistryRef:      opts.registryRef(imageDef.Name, variantTagName, platformStr),
 		RegistryInsecure: opts.registryInsecure(),
+		DockerMediaTypes: opts.useDockerMediaTypes(),
 		ProgressConfig:   opts.ProgressConfig,
 	}
 	if hiveDeps != nil {

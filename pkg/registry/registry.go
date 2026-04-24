@@ -51,6 +51,14 @@ func (r *Registry) IsLocal() bool {
 	return r.inner.IsLocal()
 }
 
+// UseDockerMediaTypes reports whether image manifests and the manifest list
+// should be emitted in Docker-scheme media types rather than OCI. Docker Hub's
+// frontend rejects pure OCI indexes, so pushes to docker.io (or a configured
+// mirror marked as Docker-scheme via hive.yml) need this flag.
+func (r *Registry) UseDockerMediaTypes() bool {
+	return r.inner.UseDockerMediaTypes()
+}
+
 // Push pushes an OCI tar to the registry.
 func (r *Registry) Push(ctx context.Context, imageName, tag, ociTarPath string) error {
 	return r.inner.Push(ctx, imageName, tag, ociTarPath)
@@ -105,7 +113,7 @@ func (r *Registry) createManifestForTag(imageName, tag string, platforms []strin
 				Platform: p,
 			})
 		}
-		return gcr.CreateManifestListFromRefs(targetRef, refs)
+		return gcr.CreateManifestListFromRefs(targetRef, refs, r.UseDockerMediaTypes())
 	}
 
 	// Local: load from OCI tars
@@ -130,7 +138,7 @@ func (r *Registry) createManifestForTag(imageName, tag string, platforms []strin
 		})
 	}
 
-	return gcr.CreateManifestList(targetRef, images)
+	return gcr.CreateManifestList(targetRef, images, r.UseDockerMediaTypes())
 }
 
 // CreateAllManifests creates multi-arch manifest lists for all tags of all

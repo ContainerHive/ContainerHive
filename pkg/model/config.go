@@ -80,6 +80,13 @@ type CacheConfig struct {
 // RegistryConfig holds the container registry connection settings.
 type RegistryConfig struct {
 	Address string `yaml:"address" json:"address" jsonschema:"Container registry address"`
+	// DockerMediaTypes forces Docker-scheme media types for image manifests
+	// and the multi-arch manifest list instead of OCI. Unset (nil) enables
+	// auto-detect: Docker Hub addresses (docker.io / index.docker.io /
+	// registry-1.docker.io) default to Docker-scheme; everything else stays
+	// OCI. Set explicitly for Docker Hub mirrors or proxies that need the
+	// same handling.
+	DockerMediaTypes *bool `yaml:"docker_media_types,omitempty" json:"docker_media_types,omitempty" jsonschema:"Force Docker-scheme media types. Omit for auto-detect (Docker Hub auto-enables)."`
 }
 
 // HiveProjectConfig is the top-level project configuration from hive.yml.
