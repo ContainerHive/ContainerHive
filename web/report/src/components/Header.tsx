@@ -19,6 +19,8 @@ function Header({ title }: HeaderProps) {
         <div className="header-right">
           <Link to="/about" className="header-link">About</Link>
           <Link to="/license" className="header-link">Licenses</Link>
+        </div>
+        <div className="header-right">
           <ThemeToggle />
         </div>
       </div>

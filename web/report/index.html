@@ -119,12 +119,27 @@
         margin: 0 auto;
       }
 
+      @media(max-width: 500px) {
+        .container {
+          max-width: 90%;
+        }
+      }
+
       .header-content {
         display: flex;
         justify-content: space-between;
         align-items: center;
         width: 100%;
         max-width: 100%;
+      }
+
+      @media(max-width:500px) {
+        .header-content {
+          flex-direction: column;
+        }
+        .header-content>* {
+          padding-top: 20px;
+        }
       }
 
       .header-title {
