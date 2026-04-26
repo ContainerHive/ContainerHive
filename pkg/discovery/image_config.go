@@ -123,6 +123,7 @@ func processImageConfig(projectRoot, configFilePath string) (*model.Image, error
 		Platforms:           parsedImageDef.Platforms,
 		LatestAlias:         parsedImageDef.LatestAlias,
 		Report:              model.ReportModel{Icon: parentIcon},
+		Labels:              parsedImageDef.Labels,
 	}, nil
 }
 
@@ -172,6 +173,7 @@ func processVariants(imageDef *model.ImageDefinitionConfig, imageRoot, parentIco
 			Report: model.ReportModel{
 				Icon: icon,
 			},
+			Labels: v.Labels,
 		}
 
 		indexedVariants[v.Name] = variant

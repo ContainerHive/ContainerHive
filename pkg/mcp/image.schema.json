@@ -33,6 +33,13 @@
             "additionalProperties": {
               "type": "string"
             }
+          },
+          "labels": {
+            "type": "object",
+            "description": "Custom OCI image labels applied to this tag. Overrides image-level labels.",
+            "additionalProperties": {
+              "type": "string"
+            }
           }
         },
         "required": [
@@ -98,6 +105,13 @@
               "icon"
             ],
             "additionalProperties": false
+          },
+          "labels": {
+            "type": "object",
+            "description": "Custom OCI image labels applied to this variant. Overrides tag and image labels.",
+            "additionalProperties": {
+              "type": "string"
+            }
           }
         },
         "required": [
@@ -200,6 +214,13 @@
         "icon"
       ],
       "additionalProperties": false
+    },
+    "labels": {
+      "type": "object",
+      "description": "Custom OCI image labels applied to this image. Standard auto-derived OCI keys override these.",
+      "additionalProperties": {
+        "type": "string"
+      }
     }
   },
   "$id": "https://container-hive.timo-reymann.de/schemas/image.schema.json",

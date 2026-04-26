@@ -48,6 +48,10 @@ type BuildOpts struct {
 	// NamedContexts maps frontend attribute keys to OCI layout references.
 	NamedContexts map[string]string
 
+	// Labels is the OCI image label map applied to the built image. Each
+	// entry becomes a `label:<key>` BuildKit frontend attribute.
+	Labels map[string]string
+
 	// ProgressConfig controls how build progress is displayed.
 	// When zero-valued, AutoMode with DefaultColors is used.
 	ProgressConfig progress.Config
@@ -101,6 +105,7 @@ func (c *Client) Build(ctx context.Context, opts *BuildOpts, w io.Writer) error 
 		TarFile:          opts.TarFile,
 		BuildArgs:        opts.BuildArgs,
 		Secrets:          opts.Secrets,
+		Labels:           opts.Labels,
 		Cache:            opts.Cache,
 		RegistryRef:      opts.RegistryRef,
 		RegistryInsecure: opts.RegistryInsecure,
