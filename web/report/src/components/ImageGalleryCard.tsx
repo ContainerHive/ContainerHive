@@ -33,7 +33,7 @@ function ImageGalleryCard({
       className="image-card"
     >
       <div className={`card-kind-badge ${kind}`}>
-        {kind === 'base' ? 'Base' : displayName}
+        {kind === 'base' ? 'Base' : 'Variant'}
       </div>
       <div className="card-header">
         <div className="card-icon">

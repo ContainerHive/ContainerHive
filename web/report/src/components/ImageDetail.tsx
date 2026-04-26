@@ -72,7 +72,7 @@ function ImageDetail({ data, imageName, kind }: Readonly<ImageDetailProps>) {
           {isBase ? (
             <span className="variant-badge">base</span>
           ) : (
-            <span className="variant-badge">variant</span>
+            <span className="base-badge">variant</span>
           )}
         </div>
         {image.source && (
