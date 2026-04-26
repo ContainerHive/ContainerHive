@@ -58,7 +58,7 @@ test.describe('Image detail — variant', () => {
     await page.goto(`/#/image/${base.name}/${variantDisplayName}`)
 
     await expect(page.locator('.detail-title')).toHaveText(variantDisplayName)
-    await expect(page.locator('.variant-badge')).toHaveText('variant')
+    await expect(page.locator('.base-badge')).toHaveText('variant')
   })
 
   test('variant shows only its own tags', async ({ page }) => {

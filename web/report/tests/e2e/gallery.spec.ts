@@ -32,7 +32,7 @@ test.describe('Gallery', () => {
     if (variant) {
       await expect(
         page.locator('.image-card').filter({ hasText: variant }).locator('.card-kind-badge.variant')
-      ).toContainText(variant)
+      ).toHaveText('Variant')
     }
   })
 
