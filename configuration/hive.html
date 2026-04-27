@@ -1144,6 +1144,45 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#labels" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        labels
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="labels">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#auto-derived-labels" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Auto-derived labels
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#precedence" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Precedence
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#template_options" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1777,6 +1816,45 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#labels" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        labels
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="labels">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#auto-derived-labels" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Auto-derived labels
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#precedence" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Precedence
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#template_options" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2002,12 +2080,103 @@
 </tr>
 </tbody>
 </table>
+<h3 id="labels"><code>labels</code></h3>
+<p>Project-level OCI image labels applied to every built image. All fields are optional.</p>
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="nt">labels</span><span class="p">:</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">  </span><span class="nt">vendor</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Acme Corp</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">  </span><span class="nt">authors</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">platform@acme.test</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">  </span><span class="nt">url</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://github.com/acme/images/tree/main/%image%</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">  </span><span class="nt">documentation</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://docs.acme.test/images/%image%/%tag%</span>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="w">  </span><span class="nt">custom</span><span class="p">:</span>
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="w">    </span><span class="nt">com.acme.team</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">platform</span>
+</span></code></pre></div>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Field</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>vendor</code></td>
+<td style="text-align: left;">string</td>
+<td style="text-align: left;">Sets <code>org.opencontainers.image.vendor</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>authors</code></td>
+<td style="text-align: left;">string</td>
+<td style="text-align: left;">Sets <code>org.opencontainers.image.authors</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>url</code></td>
+<td style="text-align: left;">string</td>
+<td style="text-align: left;">Sets <code>org.opencontainers.image.url</code>. Supports <code>%image%</code> and <code>%tag%</code> placeholders</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>documentation</code></td>
+<td style="text-align: left;">string</td>
+<td style="text-align: left;">Sets <code>org.opencontainers.image.documentation</code>. Supports <code>%image%</code> and <code>%tag%</code> placeholders</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>custom</code></td>
+<td style="text-align: left;">map</td>
+<td style="text-align: left;">Arbitrary labels merged into every image. Standard auto-derived OCI keys override colliding entries</td>
+</tr>
+</tbody>
+</table>
+<h4 id="auto-derived-labels">Auto-derived labels</h4>
+<p>ContainerHive applies the following labels to every image without configuration:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Label</th>
+<th style="text-align: left;">Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>org.opencontainers.image.title</code></td>
+<td style="text-align: left;">Image name</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>org.opencontainers.image.ref.name</code></td>
+<td style="text-align: left;">Image name</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>org.opencontainers.image.version</code></td>
+<td style="text-align: left;">Tag name (including any variant suffix)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>org.opencontainers.image.created</code></td>
+<td style="text-align: left;">Build time in RFC3339</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>org.opencontainers.image.description</code></td>
+<td style="text-align: left;"><code>description</code> field from <code>image.yml</code>, when set</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>org.opencontainers.image.revision</code></td>
+<td style="text-align: left;">Current git commit, when the build runs in a git repo</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>org.opencontainers.image.source</code></td>
+<td style="text-align: left;"><code>origin</code> remote URL, when available</td>
+</tr>
+</tbody>
+</table>
+<h4 id="precedence">Precedence</h4>
+<p>Custom labels can be declared at four scopes. They merge from least to most specific, so deeper scopes override shallower ones:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>project labels &lt; image labels &lt; tag labels &lt; variant labels
+</span></code></pre></div>
+<p>Standard auto-derived OCI keys (the table above plus the structured project fields like <code>vendor</code>) always win over a custom-map entry with the same key.</p>
 <h3 id="template_options"><code>template_options</code></h3>
 <p>Custom key-value variables available in CI and custom templates via the <code>option</code> function.</p>
-<div class="language-yaml highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="nt">template_options</span><span class="p">:</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">  </span><span class="nt">ci_buildkit_image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">registry.io/buildkit</span>
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">  </span><span class="nt">ci_buildkit_version</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1.4.0</span>
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">  </span><span class="nt">my_custom_var</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">some-value</span>
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="nt">template_options</span><span class="p">:</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="w">  </span><span class="nt">ci_buildkit_image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">registry.io/buildkit</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">  </span><span class="nt">ci_buildkit_version</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1.4.0</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="w">  </span><span class="nt">my_custom_var</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">some-value</span>
 </span></code></pre></div>
 <p>All values must be strings. Keys prefixed with <code>ci_</code> have built-in defaults:</p>
 <table>

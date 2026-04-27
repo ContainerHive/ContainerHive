@@ -107,6 +107,39 @@
       "additionalProperties": {
         "type": "string"
       }
+    },
+    "labels": {
+      "type": [
+        "null",
+        "object"
+      ],
+      "properties": {
+        "vendor": {
+          "type": "string",
+          "description": "Vendor name applied as org.opencontainers.image.vendor"
+        },
+        "authors": {
+          "type": "string",
+          "description": "Authors applied as org.opencontainers.image.authors"
+        },
+        "url": {
+          "type": "string",
+          "description": "URL applied as org.opencontainers.image.url. Supports %image% and %tag% placeholders."
+        },
+        "documentation": {
+          "type": "string",
+          "description": "Documentation URL applied as org.opencontainers.image.documentation. Supports %image% and %tag% placeholders."
+        },
+        "custom": {
+          "type": "object",
+          "description": "Arbitrary custom labels applied to every built image. Standard OCI keys are reserved and override these.",
+          "additionalProperties": {
+            "type": "string"
+          }
+        }
+      },
+      "description": "Project-level OCI image labels applied to every built image",
+      "additionalProperties": false
     }
   },
   "$id": "https://container-hive.timo-reymann.de/schemas/project.schema.json",
