@@ -142,7 +142,7 @@
       "additionalProperties": false
     }
   },
-  "$id": "https://container-hive.timo-reymann.de/schemas/project.schema.json",
+  "$id": "https://schema-nest.timo-reymann.de/api/schema/json-schema/containerhive-project/latest",
   "title": "Project configuration",
   "description": "Project-level configuration schema for ContainerHive.",
   "additionalProperties": false

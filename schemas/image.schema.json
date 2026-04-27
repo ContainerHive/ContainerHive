@@ -223,7 +223,7 @@
       }
     }
   },
-  "$id": "https://container-hive.timo-reymann.de/schemas/image.schema.json",
+  "$id": "https://schema-nest.timo-reymann.de/api/schema/json-schema/containerhive-image/latest",
   "title": "Image definition",
   "description": "Image definition configuration schema for ContainerHive.",
   "required": [

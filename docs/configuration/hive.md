@@ -2,7 +2,7 @@
 
 The `hive.yml` file is the project-level configuration file. It must be placed at the root of your ContainerHive project.
 
-A JSON schema is available at [container-hive.timo-reymann.de/schemas/project.schema.json](https://container-hive.timo-reymann.de/schemas/project.schema.json).
+A JSON schema is published to [SchemaNest](https://schema-nest.timo-reymann.de/schemas/json-schema/containerhive-project/latest?tab=setup) and can be referenced directly at [schema-nest.timo-reymann.de/api/schema/json-schema/containerhive-project/latest](https://schema-nest.timo-reymann.de/api/schema/json-schema/containerhive-project/latest).
 
 ## Example
 

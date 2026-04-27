@@ -19,7 +19,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	schema.ID = "https://container-hive.timo-reymann.de/schemas/project.schema.json"
+	schema.ID = "https://schema-nest.timo-reymann.de/api/schema/json-schema/containerhive-project/latest"
 	schema.Title = "Project configuration"
 	schema.Description = "Project-level configuration schema for ContainerHive."
 

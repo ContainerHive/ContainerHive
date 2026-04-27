@@ -2,7 +2,7 @@
 
 Each image is defined by an `image.yml` file located at `images/<image-name>/image.yml`.
 
-A JSON schema is available at [container-hive.timo-reymann.de/schemas/image.schema.json](https://container-hive.timo-reymann.de/schemas/image.schema.json).
+A JSON schema is published to [SchemaNest](https://schema-nest.timo-reymann.de/schemas/json-schema/containerhive-image/latest?tab=setup) and can be referenced directly at [schema-nest.timo-reymann.de/api/schema/json-schema/containerhive-image/latest](https://schema-nest.timo-reymann.de/api/schema/json-schema/containerhive-image/latest).
 
 ## Example
 

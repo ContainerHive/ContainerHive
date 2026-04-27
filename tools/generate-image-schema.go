@@ -19,7 +19,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	schema.ID = "https://container-hive.timo-reymann.de/schemas/image.schema.json"
+	schema.ID = "https://schema-nest.timo-reymann.de/api/schema/json-schema/containerhive-image/latest"
 	schema.Title = "Image definition"
 	schema.Description = "Image definition configuration schema for ContainerHive."
 
