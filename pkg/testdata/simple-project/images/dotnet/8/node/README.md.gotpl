@@ -1,0 +1,5 @@
+# Dotnet Node Variant
+
+.NET runtime with Node.js support.
+
+Node version: {{ .Versions.node_version }}

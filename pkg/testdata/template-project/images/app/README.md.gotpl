@@ -1,0 +1,5 @@
+# App Image
+
+Application image with templated Dockerfile.
+
+Version: {{ .Versions.app_version }}
