@@ -111,6 +111,10 @@ func fixUpEntrypoint(root, entryPath string) string {
 	return filepath.Join(root, filepath.Base(file_resolver.RemoveTemplateExt(entryPath)))
 }
 
+func fixUpReadme(root, readmePath string) string {
+	return filepath.Join(root, filepath.Base(file_resolver.RemoveTemplateExt(readmePath)))
+}
+
 func setupImageTagDir(tagPath string, image *model.Image, tag *model.Tag) error {
 	if err := mkdir(tagPath); err != nil {
 		return errors.Join(errors.New("failed to create tag directory"), err)
@@ -127,6 +131,12 @@ func setupImageTagDir(tagPath string, image *model.Image, tag *model.Tag) error 
 		// Strip template extension for output filename
 		if err := file_resolver.CopyAndRenderFile(tmplCtx, image.BuildEntryPointPath, fixUpEntrypoint(tagPath, image.BuildEntryPointPath)); err != nil {
 			return errors.Join(errors.New("failed to copy build entrypoint"), err)
+		}
+	}
+
+	if image.ReadmePath != "" {
+		if err := file_resolver.CopyAndRenderFile(tmplCtx, image.ReadmePath, fixUpReadme(tagPath, image.ReadmePath)); err != nil {
+			return errors.Join(errors.New("failed to copy readme"), err)
 		}
 	}
 
@@ -169,6 +179,12 @@ func setupVariantDir(variantPath string, image *model.Image, tagName string, tag
 		}
 		if err := replaceHiveParent(entrypoint, image.Name, tagName); err != nil {
 			return errors.Join(errors.New("failed to resolve __hive_parent__ in variant entrypoint"), err)
+		}
+	}
+
+	if variantDef.ReadmePath != "" {
+		if err := file_resolver.CopyAndRenderFile(tmplCtx, variantDef.ReadmePath, fixUpReadme(variantPath, variantDef.ReadmePath)); err != nil {
+			return errors.Join(errors.New("failed to copy readme"), err)
 		}
 	}
 
