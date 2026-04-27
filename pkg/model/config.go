@@ -21,12 +21,13 @@ type SecretValue struct {
 
 // VariantConfig defines a variant in the image definition YAML file.
 type VariantConfig struct {
-	Name      string       `yaml:"name" json:"name" jsonschema:"Name of the variant"`
-	TagSuffix string       `yaml:"tag_suffix" json:"tag_suffix" jsonschema:"Suffix to append to the tag name for this variant"`
-	Versions  Versions     `yaml:"versions" json:"versions,omitempty" jsonschema:"Versions to use for this variant"`
-	BuildArgs BuildArgs    `yaml:"build_args" json:"build_args,omitempty" jsonschema:"Build args to add for this variant"`
-	Platforms []string     `yaml:"platforms,omitempty" json:"platforms,omitempty" jsonschema:"Target platforms for this variant (e.g. linux/amd64)"`
-	Report    ReportConfig `yaml:"report" json:"report,omitempty" jsonschema:"Report metadata"`
+	Name      string            `yaml:"name" json:"name" jsonschema:"Name of the variant"`
+	TagSuffix string            `yaml:"tag_suffix" json:"tag_suffix" jsonschema:"Suffix to append to the tag name for this variant"`
+	Versions  Versions          `yaml:"versions" json:"versions,omitempty" jsonschema:"Versions to use for this variant"`
+	BuildArgs BuildArgs         `yaml:"build_args" json:"build_args,omitempty" jsonschema:"Build args to add for this variant"`
+	Platforms []string          `yaml:"platforms,omitempty" json:"platforms,omitempty" jsonschema:"Target platforms for this variant (e.g. linux/amd64)"`
+	Report    ReportConfig      `yaml:"report" json:"report,omitempty" jsonschema:"Report metadata"`
+	Labels    map[string]string `yaml:"labels,omitempty" json:"labels,omitempty" jsonschema:"Custom OCI image labels applied to this variant. Overrides tag and image labels."`
 }
 
 // ReportConfig holds report-related metadata for an image or variant.
@@ -52,6 +53,7 @@ type ImageDefinitionConfig struct {
 	Platforms   []string           `yaml:"platforms,omitempty" json:"platforms,omitempty" jsonschema:"Target platforms for this image (e.g. linux/amd64)"`
 	LatestAlias *LatestAliasConfig `yaml:"latest_alias,omitempty" json:"latest_alias,omitempty" jsonschema:"Configure an alias pointing to the highest semantic version tag"`
 	Report      ReportConfig       `yaml:"report" json:"report,omitempty" jsonschema:"Report metadata"`
+	Labels      map[string]string  `yaml:"labels,omitempty" json:"labels,omitempty" jsonschema:"Custom OCI image labels applied to this image. Standard auto-derived OCI keys override these."`
 }
 
 // BuildKitConfig holds the BuildKit daemon connection settings.
@@ -89,6 +91,18 @@ type RegistryConfig struct {
 	DockerMediaTypes *bool `yaml:"docker_media_types,omitempty" json:"docker_media_types,omitempty" jsonschema:"Force Docker-scheme media types. Omit for auto-detect (Docker Hub auto-enables)."`
 }
 
+// LabelsConfig holds project-level OCI image label values applied to every
+// built image. Url and Documentation support %image% and %tag% placeholders.
+// Custom carries arbitrary user-defined labels; keys colliding with the
+// standard fields above or with auto-derived OCI labels are ignored.
+type LabelsConfig struct {
+	Vendor        string            `yaml:"vendor,omitempty" json:"vendor,omitempty" jsonschema:"Vendor name applied as org.opencontainers.image.vendor"`
+	Authors       string            `yaml:"authors,omitempty" json:"authors,omitempty" jsonschema:"Authors applied as org.opencontainers.image.authors"`
+	Url           string            `yaml:"url,omitempty" json:"url,omitempty" jsonschema:"URL applied as org.opencontainers.image.url. Supports %image% and %tag% placeholders."`
+	Documentation string            `yaml:"documentation,omitempty" json:"documentation,omitempty" jsonschema:"Documentation URL applied as org.opencontainers.image.documentation. Supports %image% and %tag% placeholders."`
+	Custom        map[string]string `yaml:"custom,omitempty" json:"custom,omitempty" jsonschema:"Arbitrary custom labels applied to every built image. Standard OCI keys are reserved and override these."`
+}
+
 // HiveProjectConfig is the top-level project configuration from hive.yml.
 type HiveProjectConfig struct {
 	BuildKit        *BuildKitConfig   `yaml:"buildkit,omitempty" json:"buildkit,omitempty" jsonschema:"BuildKit daemon configuration"`
@@ -96,4 +110,5 @@ type HiveProjectConfig struct {
 	Registry        *RegistryConfig   `yaml:"registry,omitempty" json:"registry,omitempty" jsonschema:"Container registry configuration"`
 	Platforms       []string          `yaml:"platforms,omitempty" json:"platforms,omitempty" jsonschema:"Default target platforms for all images (e.g. linux/amd64)"`
 	TemplateOptions map[string]string `yaml:"template_options,omitempty" json:"template_options,omitempty" jsonschema:"Custom template variables available via the option function in CI and custom templates"`
+	Labels          *LabelsConfig     `yaml:"labels,omitempty" json:"labels,omitempty" jsonschema:"Project-level OCI image labels applied to every built image"`
 }

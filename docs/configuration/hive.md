@@ -79,6 +79,52 @@ Local OCI registry used for inter-image dependencies and multi-arch manifest cre
 |:------|:-----|:------------|
 | `address` | string | Registry address (e.g. `localhost:8500`) |
 
+### `labels`
+
+Project-level OCI image labels applied to every built image. All fields are optional.
+
+```yaml
+labels:
+  vendor: Acme Corp
+  authors: platform@acme.test
+  url: https://github.com/acme/images/tree/main/%image%
+  documentation: https://docs.acme.test/images/%image%/%tag%
+  custom:
+    com.acme.team: platform
+```
+
+| Field           | Type   | Description                                                                                         |
+|:----------------|:-------|:----------------------------------------------------------------------------------------------------|
+| `vendor`        | string | Sets `org.opencontainers.image.vendor`                                                              |
+| `authors`       | string | Sets `org.opencontainers.image.authors`                                                             |
+| `url`           | string | Sets `org.opencontainers.image.url`. Supports `%image%` and `%tag%` placeholders                    |
+| `documentation` | string | Sets `org.opencontainers.image.documentation`. Supports `%image%` and `%tag%` placeholders          |
+| `custom`        | map    | Arbitrary labels merged into every image. Standard auto-derived OCI keys override colliding entries |
+
+#### Auto-derived labels
+
+ContainerHive applies the following labels to every image without configuration:
+
+| Label                                  | Value                                                 |
+|:---------------------------------------|:------------------------------------------------------|
+| `org.opencontainers.image.title`       | Image name                                            |
+| `org.opencontainers.image.ref.name`    | Image name                                            |
+| `org.opencontainers.image.version`     | Tag name (including any variant suffix)               |
+| `org.opencontainers.image.created`     | Build time in RFC3339                                 |
+| `org.opencontainers.image.description` | `description` field from `image.yml`, when set        |
+| `org.opencontainers.image.revision`    | Current git commit, when the build runs in a git repo |
+| `org.opencontainers.image.source`      | `origin` remote URL, when available                   |
+
+#### Precedence
+
+Custom labels can be declared at four scopes. They merge from least to most specific, so deeper scopes override shallower ones:
+
+```
+project labels < image labels < tag labels < variant labels
+```
+
+Standard auto-derived OCI keys (the table above plus the structured project fields like `vendor`) always win over a custom-map entry with the same key.
+
 ### `template_options`
 
 Custom key-value variables available in CI and custom templates via the `option` function.

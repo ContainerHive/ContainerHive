@@ -13,9 +13,10 @@ type ReportModel struct {
 
 // Tag defines a single image tag with its version overrides and build arguments.
 type Tag struct {
-	Name      string    `yaml:"name" json:"name" jsonschema:"Name of the tag"`
-	Versions  Versions  `yaml:"versions" json:"versions,omitempty" jsonschema:"Versions to use for this tag"`
-	BuildArgs BuildArgs `yaml:"build_args" json:"build_args,omitempty" jsonschema:"Build args to specify for this tag"`
+	Name      string            `yaml:"name" json:"name" jsonschema:"Name of the tag"`
+	Versions  Versions          `yaml:"versions" json:"versions,omitempty" jsonschema:"Versions to use for this tag"`
+	BuildArgs BuildArgs         `yaml:"build_args" json:"build_args,omitempty" jsonschema:"Build args to specify for this tag"`
+	Labels    map[string]string `yaml:"labels,omitempty" json:"labels,omitempty" jsonschema:"Custom OCI image labels applied to this tag. Overrides image-level labels."`
 }
 
 // Image represents a fully resolved container image definition within a project.
@@ -37,6 +38,7 @@ type Image struct {
 	Platforms           []string
 	LatestAlias         *LatestAliasConfig
 	Report              ReportModel
+	Labels              map[string]string
 }
 
 // ImageVariant represents an alternative build of an image with different configuration.
@@ -51,6 +53,7 @@ type ImageVariant struct {
 	BuildArgs           BuildArgs `yaml:"build_args"`
 	Platforms           []string
 	Report              ReportModel
+	Labels              map[string]string
 }
 
 // ContainerHiveProject represents a fully loaded project with its configuration and images.

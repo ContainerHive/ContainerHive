@@ -55,6 +55,7 @@ List of tags to build for this image. Each tag can override versions and build a
 | `name` | string | Tag name |
 | `versions` | map | Version overrides for this tag |
 | `build_args` | map | Build arg overrides for this tag |
+| `labels` | map | Custom OCI labels for this tag. Overrides image-level labels. See [`labels`](#labels) |
 
 ### `versions`
 
@@ -84,6 +85,7 @@ Variants allow building multiple flavors of the same image (e.g. slim, debug).
 | `versions` | map | Version overrides |
 | `build_args` | map | Build arg overrides |
 | `platforms` | list | Platform overrides |
+| `labels` | map | Custom OCI labels for this variant. Overrides tag- and image-level labels. See [`labels`](#labels) |
 
 Each variant can have its own `Dockerfile`, `test.yml.gotpl`, and `rootfs/` directory in a subdirectory named after the variant.
 
@@ -94,6 +96,29 @@ List of image names this image depends on. ContainerHive resolves dependencies a
 ### `platforms`
 
 Override the project-level platform list for this specific image.
+
+### `labels`
+
+Custom OCI image labels applied to every tag and variant of this image. Values are merged with project-, tag-, and variant-level labels following the precedence chain documented in [Configure your project › `labels`](hive.md#labels).
+
+```yaml
+labels:
+  com.acme.layer: image
+  com.acme.image: python
+
+tags:
+  - name: 3.13.7
+    labels:
+      com.acme.layer: tag        # overrides image-level entry for this tag
+
+variants:
+  - name: slim
+    tag_suffix: -slim
+    labels:
+      com.acme.layer: variant    # overrides image and tag for the variant build
+```
+
+Standard auto-derived OCI keys (`title`, `version`, `created`, etc.) always win over custom map entries with the same key.
 
 ### `latest_alias`
 
