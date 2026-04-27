@@ -1684,7 +1684,63 @@
 
 <h1 id="build-process-overview">Build Process Overview</h1>
 <p>ContainerHive builds container images through a sequential pipeline:</p>
-<p><span style="display: block; text-align: center"><img alt="Kroki" src="kroki-generated-7bbbdf78-47b1-3529-8bae-7cbde3910d47.svg#only-light" /><img alt="Kroki" src="kroki-generated-0a87dd26-6a35-3d59-8b8d-91efab26f4cd.svg#only-dark" /></span></p>
+<details open=""><summary>Request error [url:https://kroki.io/plantuml/svg]: </summary><p></p><pre><code linenums="1">@startuml build-pipeline
+skinparam RectangleBackgroundColor #B3D9FF
+skinparam ComponentBackgroundColor #B3D9FF
+skinparam ClassBackgroundColor #B3D9FF
+skinparam ObjectBackgroundColor #B3D9FF
+skinparam ActivityBackgroundColor #B3D9FF
+skinparam StateBackgroundColor #B3D9FF
+skinparam UsecaseBackgroundColor #B3D9FF
+skinparam SequenceBackgroundColor #B3D9FF
+skinparam ParticipantBackgroundColor #B3D9FF
+skinparam EntityBackgroundColor #B3D9FF
+skinparam DatabaseBackgroundColor #B3D9FF
+skinparam CollectionsBackgroundColor #B3D9FF
+skinparam QueueBackgroundColor #B3D9FF
+skinparam NodeBackgroundColor #B3D9FF
+skinparam CardBackgroundColor #B3D9FF
+skinparam PackageBackgroundColor #B3D9FF
+skinparam RectangleBorderColor #303f9f
+skinparam ComponentBorderColor #303f9f
+skinparam ClassBorderColor #303f9f
+skinparam ObjectBorderColor #303f9f
+skinparam ActivityBorderColor #303f9f
+skinparam StateBorderColor #303f9f
+skinparam UsecaseBorderColor #303f9f
+skinparam SequenceBorderColor #303f9f
+skinparam ParticipantBorderColor #303f9f
+skinparam EntityBorderColor #303f9f
+skinparam DatabaseBorderColor #303f9f
+skinparam CollectionsBorderColor #303f9f
+skinparam QueueBorderColor #303f9f
+skinparam NodeBorderColor #303f9f
+skinparam CardBorderColor #303f9f
+skinparam PackageBorderColor #303f9f
+skinparam defaultFontColor #333333
+skinparam defaultFontName Arial
+skinparam defaultFontSize 14
+skinparam ArrowColor #1a237e
+skinparam NoteBackgroundColor #fff9c4
+skinparam NoteBorderColor #f57f17
+skinparam NoteFontColor #000000
+skinparam BackgroundColor transparent
+left to right direction
+
+rectangle "1. Discovery" as discovery
+rectangle "2. Dependency Resolution" as deps
+rectangle "3. Preparation" as prep
+rectangle "4. Execution" as build
+rectangle "5. Post-Processing" as post
+
+discovery -> deps
+deps -> prep
+prep -> build
+build -> post
+
+@enduml
+</code></pre></details>
+
 <h2 id="pipeline-steps">Pipeline Steps</h2>
 <ol>
 <li><strong>Discovery</strong> - Find and validate configuration files</li>

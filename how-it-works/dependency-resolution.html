@@ -1737,7 +1737,58 @@
 <p>Both sources are combined to build a directed acyclic graph (DAG) that determines the build order.</p>
 <h2 id="build-order">Build order</h2>
 <p>Images are grouped into layers based on their dependency depth:</p>
-<p><img alt="Kroki" src="kroki-generated-a301bc72-e3f5-3921-b170-1ecf7f209efa.svg#only-light" /><img alt="Kroki" src="kroki-generated-20425fbd-362e-3257-9d3d-fb94c0807b98.svg#only-dark" /></p>
+<details open=""><summary>Request error [url:https://kroki.io/plantuml/svg]: </summary><p></p><pre><code linenums="1">@startuml build-layers
+skinparam RectangleBackgroundColor #B3D9FF
+skinparam ComponentBackgroundColor #B3D9FF
+skinparam ClassBackgroundColor #B3D9FF
+skinparam ObjectBackgroundColor #B3D9FF
+skinparam ActivityBackgroundColor #B3D9FF
+skinparam StateBackgroundColor #B3D9FF
+skinparam UsecaseBackgroundColor #B3D9FF
+skinparam SequenceBackgroundColor #B3D9FF
+skinparam ParticipantBackgroundColor #B3D9FF
+skinparam EntityBackgroundColor #B3D9FF
+skinparam DatabaseBackgroundColor #B3D9FF
+skinparam CollectionsBackgroundColor #B3D9FF
+skinparam QueueBackgroundColor #B3D9FF
+skinparam NodeBackgroundColor #B3D9FF
+skinparam CardBackgroundColor #B3D9FF
+skinparam PackageBackgroundColor #B3D9FF
+skinparam RectangleBorderColor #303f9f
+skinparam ComponentBorderColor #303f9f
+skinparam ClassBorderColor #303f9f
+skinparam ObjectBorderColor #303f9f
+skinparam ActivityBorderColor #303f9f
+skinparam StateBorderColor #303f9f
+skinparam UsecaseBorderColor #303f9f
+skinparam SequenceBorderColor #303f9f
+skinparam ParticipantBorderColor #303f9f
+skinparam EntityBorderColor #303f9f
+skinparam DatabaseBorderColor #303f9f
+skinparam CollectionsBorderColor #303f9f
+skinparam QueueBorderColor #303f9f
+skinparam NodeBorderColor #303f9f
+skinparam CardBorderColor #303f9f
+skinparam PackageBorderColor #303f9f
+skinparam defaultFontColor #333333
+skinparam defaultFontName Arial
+skinparam defaultFontSize 14
+skinparam ArrowColor #1a237e
+skinparam NoteBackgroundColor #fff9c4
+skinparam NoteBorderColor #f57f17
+skinparam NoteFontColor #000000
+skinparam BackgroundColor transparent
+left to right direction
+
+rectangle "Depth 0\nBase images\n(no dependencies)" as depth0
+rectangle "Depth 1\nLibraries\n(depend on base)" as depth1
+rectangle "Depth 2\nSpecific images for e.g. Python CI\n(depend on libraries)" as depth2
+
+depth0 --> depth1 : depends on
+depth1 --> depth2 : depends on
+@enduml
+</code></pre></details>
+
 <ol>
 <li>Images with no dependencies are built first (depth 0).</li>
 <li>Images depending only on depth-0 images are built next (depth 1).</li>
