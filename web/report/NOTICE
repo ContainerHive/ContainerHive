@@ -187,7 +187,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 -----
 
-The following software may be included in this product: buffer-from. A copy of the source code may be downloaded from https://github.com/LinusU/buffer-from.git. This software contains the following license and notice below:
+The following software may be included in this product: buffer-from. A copy of the source code may be downloaded from git+https://github.com/LinusU/buffer-from.git. This software contains the following license and notice below:
 
 MIT License
 
@@ -270,7 +270,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 
 -----
 
-The following software may be included in this product: cookie. A copy of the source code may be downloaded from https://github.com/jshttp/cookie.git. This software contains the following license and notice below:
+The following software may be included in this product: cookie. A copy of the source code may be downloaded from git+https://github.com/jshttp/cookie.git. This software contains the following license and notice below:
 
 (The MIT License)
 
@@ -322,7 +322,7 @@ IN THE SOFTWARE.
 
 -----
 
-The following software may be included in this product: d, es6-symbol, esniff. A copy of the source code may be downloaded from https://github.com/medikoo/d.git (d), https://github.com/medikoo/es6-symbol.git (es6-symbol), https://github.com/medikoo/esniff.git (esniff). This software contains the following license and notice below:
+The following software may be included in this product: d, es6-symbol, esniff. A copy of the source code may be downloaded from git+https://github.com/medikoo/d.git (d), git+https://github.com/medikoo/es6-symbol.git (es6-symbol), git+https://github.com/medikoo/esniff.git (esniff). This software contains the following license and notice below:
 
 ISC License
 
@@ -414,7 +414,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 -----
 
-The following software may be included in this product: duplexer2. A copy of the source code may be downloaded from https://github.com/deoxxa/duplexer2.git. This software contains the following license and notice below:
+The following software may be included in this product: duplexer2. A copy of the source code may be downloaded from git+https://github.com/deoxxa/duplexer2.git. This software contains the following license and notice below:
 
 Copyright (c) 2013, Deoxxa Development
 ======================================
@@ -483,7 +483,7 @@ SOFTWARE.
 
 -----
 
-The following software may be included in this product: es5-ext. A copy of the source code may be downloaded from https://github.com/medikoo/es5-ext.git. This software contains the following license and notice below:
+The following software may be included in this product: es5-ext. A copy of the source code may be downloaded from git+https://github.com/medikoo/es5-ext.git. This software contains the following license and notice below:
 
 ISC License
 
@@ -553,7 +553,7 @@ THE SOFTWARE.
 
 -----
 
-The following software may be included in this product: es6-set. A copy of the source code may be downloaded from https://github.com/medikoo/es6-set.git. This software contains the following license and notice below:
+The following software may be included in this product: es6-set. A copy of the source code may be downloaded from git+https://github.com/medikoo/es6-set.git. This software contains the following license and notice below:
 
 ISC License
 
@@ -962,7 +962,7 @@ SOFTWARE.
 
 -----
 
-The following software may be included in this product: preact. A copy of the source code may be downloaded from https://github.com/preactjs/preact.git. This software contains the following license and notice below:
+The following software may be included in this product: preact. A copy of the source code may be downloaded from git+https://github.com/preactjs/preact.git. This software contains the following license and notice below:
 
 The MIT License (MIT)
 
@@ -988,7 +988,7 @@ SOFTWARE.
 
 -----
 
-The following software may be included in this product: preact-render-to-string, preact-router. A copy of the source code may be downloaded from https://github.com/preactjs/preact-render-to-string (preact-render-to-string), https://github.com/preactjs/preact-router.git (preact-router). This software contains the following license and notice below:
+The following software may be included in this product: preact-render-to-string, preact-router. A copy of the source code may be downloaded from https://github.com/preactjs/preact-render-to-string (preact-render-to-string), git+https://github.com/preactjs/preact-router.git (preact-router). This software contains the following license and notice below:
 
 The MIT License (MIT)
 
@@ -1196,7 +1196,7 @@ THE SOFTWARE.
 
 -----
 
-The following software may be included in this product: set-cookie-parser. A copy of the source code may be downloaded from https://github.com/nfriedly/set-cookie-parser.git. This software contains the following license and notice below:
+The following software may be included in this product: set-cookie-parser. A copy of the source code may be downloaded from git+https://github.com/nfriedly/set-cookie-parser.git. This software contains the following license and notice below:
 
 The MIT License (MIT)
 
@@ -1422,7 +1422,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 -----
 
-The following software may be included in this product: type. A copy of the source code may be downloaded from https://github.com/medikoo/type.git. This software contains the following license and notice below:
+The following software may be included in this product: type. A copy of the source code may be downloaded from git+https://github.com/medikoo/type.git. This software contains the following license and notice below:
 
 ISC License
 
@@ -1511,7 +1511,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 
 -----
 
-The following software may be included in this product: word-wrap. A copy of the source code may be downloaded from https://github.com/jonschlinkert/word-wrap.git. This software contains the following license and notice below:
+The following software may be included in this product: word-wrap. A copy of the source code may be downloaded from git+https://github.com/jonschlinkert/word-wrap.git. This software contains the following license and notice below:
 
 The MIT License (MIT)
 

@@ -312,6 +312,92 @@
         line-height: 1.5;
       }
 
+      .readme-panel {
+        background: var(--surface-container-low);
+        border-radius: 2px;
+        padding: 16px;
+        margin-bottom: 16px;
+      }
+
+      .readme-panel h3 {
+        font-size: 14px;
+        font-weight: 500;
+        color: var(--on-surface);
+        margin: 0 0 12px 0;
+      }
+
+      .readme-content {
+        font-family: 'Inter', sans-serif;
+        font-size: 14px;
+        color: var(--on-surface);
+        background: var(--surface-container-high);
+        padding: 16px;
+        border-radius: 2px;
+        overflow-x: auto;
+        line-height: 1.6;
+      }
+
+      .readme-content h1,
+      .readme-content h2,
+      .readme-content h3,
+      .readme-content h4 {
+        font-family: 'Space Grotesk', sans-serif;
+        font-weight: 600;
+        margin: 16px 0 8px 0;
+        color: var(--on-surface);
+      }
+
+      .readme-content h1 { font-size: 20px; }
+      .readme-content h2 { font-size: 17px; }
+      .readme-content h3 { font-size: 15px; }
+      .readme-content h4 { font-size: 14px; }
+
+      .readme-content p {
+        margin: 0 0 8px 0;
+      }
+
+      .readme-content p:last-child {
+        margin-bottom: 0;
+      }
+
+      .readme-content ul,
+      .readme-content ol {
+        padding-left: 20px;
+        margin: 4px 0 8px 0;
+      }
+
+      .readme-content li {
+        margin-bottom: 2px;
+      }
+
+      .readme-content code {
+        font-family: 'Space Grotesk', monospace;
+        font-size: 13px;
+        background: var(--surface-container);
+        padding: 2px 6px;
+        border-radius: 2px;
+        color: var(--primary);
+      }
+
+      .readme-content pre {
+        background: var(--surface-container);
+        padding: 12px;
+        border-radius: 2px;
+        overflow-x: auto;
+        margin: 8px 0;
+      }
+
+      .readme-content pre code {
+        background: none;
+        padding: 0;
+        color: var(--on-surface-variant);
+      }
+
+      .readme-content a {
+        color: var(--primary);
+        text-decoration: underline;
+      }
+
       .tag-badge { 
         background: var(--secondary-container); 
         color: var(--on-secondary-container); 
