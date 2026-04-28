@@ -10,9 +10,28 @@ import (
 	"time"
 
 	"github.com/timo-reymann/ContainerHive/internal/buildconfig_resolver"
+	"github.com/timo-reymann/ContainerHive/internal/file_resolver"
+	"github.com/timo-reymann/ContainerHive/internal/file_resolver/templating"
 	"github.com/timo-reymann/ContainerHive/pkg/model"
 	"github.com/timo-reymann/ContainerHive/pkg/platform"
 )
+
+func renderReadmeContent(readmePath string, imageName string, versions model.Versions, buildArgs model.BuildArgs) string {
+	if readmePath == "" {
+		return ""
+	}
+
+	tplCtx := &templating.TemplateContext{
+		Versions:  versions,
+		BuildArgs: buildArgs,
+		ImageName: imageName,
+	}
+	rendered, err := file_resolver.ReadAndRenderFile(tplCtx, readmePath)
+	if err != nil {
+		return ""
+	}
+	return string(rendered)
+}
 
 type Generator struct {
 }
@@ -105,8 +124,11 @@ func scanImage(projectRoot, imageName string, img *model.Image) ImageReport {
 			})
 		}
 
+		variantReadme := renderReadmeContent(variantDef.ReadmePath, imageName, variantDef.Versions, variantDef.BuildArgs)
+
 		variantReports = append(variantReports, VariantReport{
 			Name:      variantDef.Name,
+			Readme:    variantReadme,
 			Report:    Report{Icon: variantDef.Report.Icon},
 			TagSuffix: variantDef.TagSuffix,
 			Platforms: variantDef.Platforms,
@@ -114,9 +136,12 @@ func scanImage(projectRoot, imageName string, img *model.Image) ImageReport {
 		})
 	}
 
+	readmeContent := renderReadmeContent(img.ReadmePath, imageName, img.Versions, img.BuildArgs)
+
 	return ImageReport{
 		Name:        imageName,
 		Description: img.Description,
+		Readme:      readmeContent,
 		Platforms:   img.Platforms,
 		Tags:        tagReports,
 		Variants:    variantReports,

@@ -29,6 +29,7 @@ type Image struct {
 	TestConfigFilePath  string
 	DefinitionFilePath  string
 	BuildEntryPointPath string
+	ReadmePath          string
 	Versions            Versions
 	BuildArgs           BuildArgs `yaml:"build_args"`
 	Secrets             Secrets   `yaml:"secrets"`
@@ -45,6 +46,7 @@ type Image struct {
 type ImageVariant struct {
 	Name                string
 	BuildEntryPointPath string
+	ReadmePath          string
 	RootDir             string
 	RootFSDir           string
 	TagSuffix           string `yaml:"tag_suffix"`

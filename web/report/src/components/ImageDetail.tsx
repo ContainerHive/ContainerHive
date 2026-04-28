@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import 'devicon/devicon-base.css'
+import Markdown from 'react-markdown'
 import type { ImageReport } from '../types'
 import NoData from './NoData'
 
@@ -29,6 +30,7 @@ function ImageDetail({ data, imageName, kind }: Readonly<ImageDetailProps>) {
   
   const tags = selectedVariant ? selectedVariant.tags : image?.tags || []
   const imageIcon = selectedVariant?.report?.icon || image?.report?.icon || ''
+  const readme = selectedVariant?.readme || image?.readme || ''
 
   const [activeTag, setActiveTag] = useState<string>('')
   const [sbomSearch, setSbomSearch] = useState<string>('')
@@ -83,6 +85,15 @@ function ImageDetail({ data, imageName, kind }: Readonly<ImageDetailProps>) {
         {image.description && (
           <div className="description-panel">
             {image.description}
+          </div>
+        )}
+
+        {readme && (
+          <div className="readme-panel">
+            <h3>README</h3>
+            <div className="readme-content">
+              <Markdown>{readme}</Markdown>
+            </div>
           </div>
         )}
 

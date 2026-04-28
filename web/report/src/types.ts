@@ -17,6 +17,7 @@ export interface PlatformReport {
 
 export interface VariantReport {
   name: string;
+  readme?: string;
   report?: { icon?: string };
   tagSuffix: string;
   platforms?: string[];
@@ -26,6 +27,7 @@ export interface VariantReport {
 export interface ImageReport {
   name: string;
   description?: string;
+  readme?: string;
   report?: { icon?: string };
   platforms?: string[];
   tags: TagReport[];

@@ -7,6 +7,7 @@ export const mockData: ProjectReport = {
         {
             name: 'alpine',
             description: 'Minimal Docker image based on Alpine Linux with a focus on security and small footprint.',
+            readme: '# Alpine Linux\n\nA minimal, security-focused Linux distribution.\n\n## Features\n\n- Small footprint (~5MB)\n- Security updates\n- Package manager: apk\n\n## Usage\n\n```bash\ndocker run -it alpine:latest\n```',
             platforms: ['linux/amd64', 'linux/arm64'],
             tags: [
                 {
@@ -58,6 +59,7 @@ export const mockData: ProjectReport = {
                 {
                     name: 'node',
                     tagSuffix: '-node',
+                    readme: '# Node Variant\n\nAlpine Linux with Node.js {{ .Versions.node }} pre-installed.\n\n## Included Versions\n\n- Node.js {{ .Versions.node }}\n- npm package manager',
                     platforms: ['linux/amd64'],
                     report: {icon: 'devicon-nodejs-plain-wordmark'},
                     tags: [

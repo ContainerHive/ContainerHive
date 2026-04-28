@@ -14,6 +14,7 @@ type Report struct {
 type ImageReport struct {
 	Name        string          `json:"name"`
 	Description string          `json:"description,omitempty"`
+	Readme      string          `json:"readme,omitempty"`
 	Report      Report          `json:"report,omitempty"`
 	Platforms   []string        `json:"platforms,omitempty"`
 	Tags        []TagReport     `json:"tags"`
@@ -23,6 +24,7 @@ type ImageReport struct {
 
 type VariantReport struct {
 	Name      string      `json:"name"`
+	Readme    string      `json:"readme,omitempty"`
 	Report    Report      `json:"report,omitempty"`
 	TagSuffix string      `json:"tagSuffix"`
 	Platforms []string    `json:"platforms,omitempty"`

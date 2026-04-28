@@ -105,9 +105,15 @@ func processImageConfig(projectRoot, configFilePath string) (*model.Image, error
 		return nil, errors.Join(errors.New("failed to discover Dockerfile"), err)
 	}
 
+	readmePath, err := getReadmePath(imageRoot)
+	if err != nil {
+		return nil, errors.Join(errors.New("failed to discover README"), err)
+	}
+
 	return &model.Image{
 		RootDir:             filepath.Join(projectRoot, relativeRoot),
 		BuildEntryPointPath: dockerfilePath,
+		ReadmePath:          readmePath,
 		RootFSDir:           rootFsPath,
 		Identifier:          relativeRoot,
 		Name:                name,
@@ -155,6 +161,11 @@ func processVariants(imageDef *model.ImageDefinitionConfig, imageRoot, parentIco
 			return nil, errors.Join(errors.New("failed to discover Dockerfile for variant "+v.Name), err)
 		}
 
+		readmePath, err := getReadmePath(variantRoot)
+		if err != nil {
+			return nil, errors.Join(errors.New("failed to discover README for variant "+v.Name), err)
+		}
+
 		icon := parentIcon
 		if v.Report.Icon != nil {
 			icon = *v.Report.Icon
@@ -163,6 +174,7 @@ func processVariants(imageDef *model.ImageDefinitionConfig, imageRoot, parentIco
 		variant := &model.ImageVariant{
 			Name:                v.Name,
 			BuildEntryPointPath: dockerfilePath,
+			ReadmePath:          readmePath,
 			TestConfigFilePath:  testConfigFilePath,
 			RootDir:             variantRoot,
 			TagSuffix:           v.TagSuffix,

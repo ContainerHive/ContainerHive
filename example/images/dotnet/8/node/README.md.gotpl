@@ -1,0 +1,25 @@
+# .NET Node Variant
+
+.NET SDK image with Node.js support for full-stack development.
+
+## Included Tools
+
+- .NET SDK (version depends on tag)
+- Node.js {{ .Versions.nodejs }}
+- npm package manager
+
+## Usage
+
+```dockerfile
+FROM __hive__/dotnet:8.0.100-node
+
+# Build backend
+RUN dotnet build -c Release
+
+# Build frontend
+RUN npm install && npm run build
+```
+
+## Versions
+
+- Node.js: {{ .Versions.nodejs }}
