@@ -112,10 +112,6 @@
             "additionalProperties": {
               "type": "string"
             }
-          },
-          "readme_path": {
-            "type": "string",
-            "description": "Path to README.md file for this variant (supports .gotpl extension for templates)"
           }
         },
         "required": [
@@ -225,10 +221,6 @@
       "additionalProperties": {
         "type": "string"
       }
-    },
-    "readme_path": {
-      "type": "string",
-      "description": "Path to README.md file (supports .gotpl extension for templates)"
     }
   },
   "$id": "https://schema-nest.timo-reymann.de/api/schema/json-schema/containerhive-image/latest",
