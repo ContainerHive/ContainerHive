@@ -205,6 +205,26 @@ func (r *Registry) retagAliases(imageDef *model.Image, filters []build.Filter, b
 		} else {
 			aliases[imageDef.LatestAlias.Tag] = latestTarget
 		}
+
+		for _, variantDef := range imageDef.Variants {
+			variantTags := make([]string, 0, len(imageDef.Tags))
+			for tagName := range imageDef.Tags {
+				variantTags = append(variantTags, tagName+variantDef.TagSuffix)
+			}
+			variantTarget, err := rendering.ResolveLatestAlias(variantTags, imageDef.LatestAlias.Tag)
+			if err != nil {
+				switch imageDef.LatestAlias.OnMissing {
+				case "silent":
+					// do nothing
+				case "warning":
+					slog.Warn("Latest alias resolution failed for variant", "variant", variantDef.Name, "error", err)
+				default: // "error" or unset
+					return err
+				}
+			} else {
+				aliases[imageDef.LatestAlias.Tag+variantDef.TagSuffix] = variantTarget
+			}
+		}
 	}
 
 	for alias, tag := range aliases {
