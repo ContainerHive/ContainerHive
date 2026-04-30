@@ -255,6 +255,26 @@ jobs:
           folder: gh-pages/
           git_commit_author_email: "no-reply@timo-reymann.de"
           git_commit_author_name: "CircleCI"
+  update_homebrew_formula:
+    executor: python
+    steps:
+      - attach_workspace:
+          at: ./
+      - run:
+          name: Create new Homebrew formula
+          command: |
+            git clone https://${GITHUB_TOKEN}@github.com/ContainerHive/homebrew-ContainerHive.git
+            cd homebrew-ContainerHive
+
+            python3 ./generate.py \
+              --version "${CIRCLE_TAG#v}" \
+              --sha256-mac-arm "$(<../dist/darwin-arm64.tar.zst.sha256)" \
+              --sha256-mac-amd "$(<../dist/darwin-amd64.tar.zst.sha256)"
+            git config --global user.name "CircleCI"
+            git config --global user.email no-reply@circleci.com
+            git add .
+            git commit -m "chore: Update formula for version $CIRCLE_TAG" || true
+            git push
 
 workflows:
   version: 2
@@ -313,3 +333,8 @@ workflows:
           <<: *only_tags
       - upload-schema:
           <<: *only_tags
+      - update_homebrew_formula:
+          <<: *only_tags
+          requires:
+            - build
+            - attach-binaries-to-release
