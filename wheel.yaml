@@ -1,0 +1,35 @@
+package: containerhive
+executable: ch
+name: containerhive
+version: !Env CIRCLE_TAG
+summary: Swarm it. Build it. Run it. — Managing container base and library images has never been easier.
+description: !FileContent README.md
+license: AGPLv3
+requires_python: ">=3.12"
+classifier:
+  - "Development Status :: 4 - Beta"
+  - "Intended Audience :: Developers"
+  - "Environment :: Console"
+  - "Environment :: MacOS X"
+  - "Operating System :: POSIX"
+  - "Operating System :: Unix"
+  - "Programming Language :: Python :: 3.12"
+  - "Programming Language :: Python :: 3.13"
+  - "License :: OSI Approved :: GNU Affero General Public License v3"
+project_urls:
+  "Homepage": "https://github.com/ContainerHive/ContainerHive"
+  "Source Code": "https://github.com/ContainerHive/ContainerHive.git"
+  "Bug Tracker": "https://github.com/ContainerHive/ContainerHive/issues"
+source: !WheelSource
+  implementation: binary_wheel_builder.api.wheel_sources.platform_based_file.PlatformBasedFileSource
+  executable_path: ch
+  file_name_mapping:
+    !WellknownPlatform MAC_SILICON: "dist/darwin-arm64/ch"
+    !WellknownPlatform MAC_INTEL: "dist/darwin-amd64/ch"
+    !WellknownPlatform LINUX_GENERIC_x86_64: "dist/linux-amd64/ch"
+    !WellknownPlatform LINUX_GENERIC_aarch64: "dist/linux-arm64/ch"
+platforms:
+  - !WellknownPlatform MAC_INTEL
+  - !WellknownPlatform MAC_SILICON
+  - !WellknownPlatform LINUX_GENERIC_x86_64
+  - !WellknownPlatform LINUX_GENERIC_aarch64

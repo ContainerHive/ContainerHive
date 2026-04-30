@@ -131,6 +131,10 @@ jobs:
                 paths:
                   - dist/*.zst
                   - dist/*.zst.sha256
+                  - dist/darwin-amd64/ch
+                  - dist/darwin-arm64/ch
+                  - dist/linux-amd64/ch
+                  - dist/linux-arm64/ch
   publish-container-image-snapshot:
     executor: docker/docker
     steps:
@@ -255,6 +259,27 @@ jobs:
           folder: gh-pages/
           git_commit_author_email: "no-reply@timo-reymann.de"
           git_commit_author_name: "CircleCI"
+  publish_python_wheel:
+    executor: python
+    steps:
+      - checkout
+      - attach_workspace:
+          at: .
+          name: Retrieve persisted binaries
+      - run:
+          name: Install dependencies
+          command: |
+            pip install twine==5.* binary_wheel_builder[cli]>=3.14.0
+      - run:
+          name: Build wheel
+          command: |
+            mkdir -p dist/wheel/
+            binary-wheel-builder --wheel-spec wheel.yaml --dist-folder dist/wheel/
+      - run:
+          name: Upload wheel
+          command: |
+            twine upload -r pypi dist/wheel/*
+
   update_homebrew_formula:
     executor: python
     steps:
@@ -338,3 +363,7 @@ workflows:
           requires:
             - build
             - attach-binaries-to-release
+      - publish_python_wheel:
+          <<: *only_tags
+          requires:
+            - build
