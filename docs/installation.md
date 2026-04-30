@@ -2,6 +2,13 @@
 
 ContainerHive supports a variety of platforms.
 
+## Homebrew
+
+```sh
+brew tap ContainerHive/homebrew-ContainerHive
+brew install containerhive
+```
+
 ## Containerized
 
 If you prefer to use containerized workflows, use the provided OCI image.

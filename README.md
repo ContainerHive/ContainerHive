@@ -64,18 +64,7 @@ The following platforms have prebuilt binaries:
 
 ## Installation
 
-### Containerized
-
-```sh
-docker run --rm -it -v $PWD:/workspace timoreymann/containerhive
-```
-
-### Binaries
-
-Binaries for all platforms can be found on
-the [latest release page](https://github.com/ContainerHive/ContainerHive/releases/latest).
-
-For the Docker image, check [Docker Hub](https://hub.docker.com/r/timoreymann/containerhive).
+See the [installation guide](https://container-hive.timo-reymann.de/installation.html) for detailed instructions.
 
 ## Documentation
 
