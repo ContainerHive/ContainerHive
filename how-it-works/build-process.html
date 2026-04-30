@@ -199,7 +199,7 @@
     
     
       <div class="md-header__source">
-        <a href="https://github.com/timo-reymann/ContainerHive" title="Go to repository" class="md-source" data-md-component="source">
+        <a href="https://github.com/ContainerHive/ContainerHive" title="Go to repository" class="md-source" data-md-component="source">
   <div class="md-source__icon md-icon">
     
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2A10 10 0 0 0 2 12c0 4.42 2.87 8.17 6.84 9.5.5.08.66-.23.66-.5v-1.69c-2.77.6-3.36-1.34-3.36-1.34-.46-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.87 1.52 2.34 1.07 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.92 0-1.11.38-2 1.03-2.71-.1-.25-.45-1.29.1-2.64 0 0 .84-.27 2.75 1.02.79-.22 1.65-.33 2.5-.33s1.71.11 2.5.33c1.91-1.29 2.75-1.02 2.75-1.02.55 1.35.2 2.39.1 2.64.65.71 1.03 1.6 1.03 2.71 0 3.82-2.34 4.66-4.57 4.91.36.31.69.92.69 1.85V21c0 .27.16.59.67.5C19.14 20.16 22 16.42 22 12A10 10 0 0 0 12 2"/></svg>
@@ -413,7 +413,7 @@
   </label>
   
     <div class="md-nav__source">
-      <a href="https://github.com/timo-reymann/ContainerHive" title="Go to repository" class="md-source" data-md-component="source">
+      <a href="https://github.com/ContainerHive/ContainerHive" title="Go to repository" class="md-source" data-md-component="source">
   <div class="md-source__icon md-icon">
     
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2A10 10 0 0 0 2 12c0 4.42 2.87 8.17 6.84 9.5.5.08.66-.23.66-.5v-1.69c-2.77.6-3.36-1.34-3.36-1.34-.46-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.87 1.52 2.34 1.07 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.92 0-1.11.38-2 1.03-2.71-.1-.25-.45-1.29.1-2.64 0 0 .84-.27 2.75 1.02.79-.22 1.65-.33 2.5-.33s1.71.11 2.5.33c1.91-1.29 2.75-1.02 2.75-1.02.55 1.35.2 2.39.1 2.64.65.71 1.03 1.6 1.03 2.71 0 3.82-2.34 4.66-4.57 4.91.36.31.69.92.69 1.85V21c0 .27.16.59.67.5C19.14 20.16 22 16.42 22 12A10 10 0 0 0 12 2"/></svg>
@@ -1684,63 +1684,7 @@
 
 <h1 id="build-process-overview">Build Process Overview</h1>
 <p>ContainerHive builds container images through a sequential pipeline:</p>
-<details open=""><summary>Request error [url:https://kroki.io/plantuml/svg]: </summary><p></p><pre><code linenums="1">@startuml build-pipeline
-skinparam RectangleBackgroundColor #B3D9FF
-skinparam ComponentBackgroundColor #B3D9FF
-skinparam ClassBackgroundColor #B3D9FF
-skinparam ObjectBackgroundColor #B3D9FF
-skinparam ActivityBackgroundColor #B3D9FF
-skinparam StateBackgroundColor #B3D9FF
-skinparam UsecaseBackgroundColor #B3D9FF
-skinparam SequenceBackgroundColor #B3D9FF
-skinparam ParticipantBackgroundColor #B3D9FF
-skinparam EntityBackgroundColor #B3D9FF
-skinparam DatabaseBackgroundColor #B3D9FF
-skinparam CollectionsBackgroundColor #B3D9FF
-skinparam QueueBackgroundColor #B3D9FF
-skinparam NodeBackgroundColor #B3D9FF
-skinparam CardBackgroundColor #B3D9FF
-skinparam PackageBackgroundColor #B3D9FF
-skinparam RectangleBorderColor #303f9f
-skinparam ComponentBorderColor #303f9f
-skinparam ClassBorderColor #303f9f
-skinparam ObjectBorderColor #303f9f
-skinparam ActivityBorderColor #303f9f
-skinparam StateBorderColor #303f9f
-skinparam UsecaseBorderColor #303f9f
-skinparam SequenceBorderColor #303f9f
-skinparam ParticipantBorderColor #303f9f
-skinparam EntityBorderColor #303f9f
-skinparam DatabaseBorderColor #303f9f
-skinparam CollectionsBorderColor #303f9f
-skinparam QueueBorderColor #303f9f
-skinparam NodeBorderColor #303f9f
-skinparam CardBorderColor #303f9f
-skinparam PackageBorderColor #303f9f
-skinparam defaultFontColor #333333
-skinparam defaultFontName Arial
-skinparam defaultFontSize 14
-skinparam ArrowColor #1a237e
-skinparam NoteBackgroundColor #fff9c4
-skinparam NoteBorderColor #f57f17
-skinparam NoteFontColor #000000
-skinparam BackgroundColor transparent
-left to right direction
-
-rectangle "1. Discovery" as discovery
-rectangle "2. Dependency Resolution" as deps
-rectangle "3. Preparation" as prep
-rectangle "4. Execution" as build
-rectangle "5. Post-Processing" as post
-
-discovery -> deps
-deps -> prep
-prep -> build
-build -> post
-
-@enduml
-</code></pre></details>
-
+<p><span style="display: block; text-align: center"><img alt="Kroki" src="kroki-generated-7bbbdf78-47b1-3529-8bae-7cbde3910d47.svg#only-light" /><img alt="Kroki" src="kroki-generated-0a87dd26-6a35-3d59-8b8d-91efab26f4cd.svg#only-dark" /></span></p>
 <h2 id="pipeline-steps">Pipeline Steps</h2>
 <ol>
 <li><strong>Discovery</strong> - Find and validate configuration files</li>
