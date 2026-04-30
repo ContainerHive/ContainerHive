@@ -1,4 +1,4 @@
-package main
+package cli
 
 import (
 	"context"
@@ -42,11 +42,6 @@ func loginCmd() *cli.Command {
 			username := cmd.String("username")
 			password := cmd.String("password")
 
-			// Resolve the password up-front so we can recognise the "no
-			// credentials provided" case and skip gracefully. This keeps the
-			// generated CI workflows simple: a login step can unconditionally
-			// run with `${{ secrets.X }}`, and missing secrets make it a no-op
-			// rather than failing the entire job.
 			if cmd.Bool("password-stdin") {
 				data, err := io.ReadAll(os.Stdin)
 				if err != nil {

@@ -1,4 +1,4 @@
-package main
+package cli
 
 import (
 	"context"
@@ -89,7 +89,6 @@ func sbomCmd() *cli.Command {
 			for _, img := range project.ImagesByIdentifier {
 				for tagName := range img.Tags {
 					enqueue(img, tagName, platform.Resolve(project.Config.Platforms, img.Platforms, nil))
-
 					for _, variantDef := range img.Variants {
 						variantPlatforms := platform.Resolve(project.Config.Platforms, img.Platforms, variantDef.Platforms)
 						enqueue(img, tagName+variantDef.TagSuffix, variantPlatforms)

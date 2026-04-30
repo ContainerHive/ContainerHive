@@ -17,4 +17,4 @@ internal/buildkit/version_generated.go
 
 # Test and temporary files
 test-project/
-cmd/ch/NOTICE
+pkg/cli/NOTICE

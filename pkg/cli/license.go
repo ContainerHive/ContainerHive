@@ -1,8 +1,8 @@
-package main
+package cli
 
 import (
 	"context"
-	"embed"
+	_ "embed"
 	"fmt"
 
 	"github.com/ContainerHive/ContainerHive/pkg/report"
@@ -10,19 +10,15 @@ import (
 )
 
 //go:embed NOTICE
-var noticeFS embed.FS
+var noticeContent string
 
 func licenseCmd() *cli.Command {
 	return &cli.Command{
 		Name:  "license",
 		Usage: "Show third-party license notices",
 		Action: func(ctx context.Context, cmd *cli.Command) error {
-			content, err := noticeFS.ReadFile("NOTICE")
-			if err != nil {
-				panic(err)
-			}
 			fmt.Println("--- CLI ---")
-			fmt.Print(string(content))
+			fmt.Print(noticeContent)
 			fmt.Println("--- Web Report ---")
 			fmt.Println(string(report.NoticeContent))
 			return nil

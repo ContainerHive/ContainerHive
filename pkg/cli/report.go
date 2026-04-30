@@ -1,4 +1,4 @@
-package main
+package cli
 
 import (
 	"context"
@@ -7,7 +7,6 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/ContainerHive/ContainerHive/pkg/discovery"
 	"github.com/ContainerHive/ContainerHive/pkg/report"
 	"github.com/urfave/cli/v3"
 )
@@ -40,9 +39,9 @@ func reportCmd() *cli.Command {
 				}
 			}
 
-			project, err := discovery.DiscoverProject(ctx, projectRoot)
+			project, err := discoverProject(ctx, cmd)
 			if err != nil {
-				return fmt.Errorf("discovery failed: %w", err)
+				return err
 			}
 
 			gen := report.NewGenerator()

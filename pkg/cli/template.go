@@ -1,4 +1,4 @@
-package main
+package cli
 
 import (
 	"context"
@@ -72,7 +72,6 @@ func templateCICmd() *cli.Command {
 
 			ciCtx.Command = buildCICommand(cmd)
 
-			// Set version: use override if provided, otherwise use current CLI version
 			versionOverride := cmd.String("version")
 			if versionOverride != "" {
 				ciCtx.Version = versionOverride
@@ -80,7 +79,6 @@ func templateCICmd() *cli.Command {
 				ciCtx.Version = version.Get()
 			}
 
-			// Set image name: use override if provided, otherwise use default
 			imageName := cmd.String("image-name")
 			if imageName != "" {
 				ciCtx.ImageName = imageName

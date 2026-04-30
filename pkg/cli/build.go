@@ -1,4 +1,4 @@
-package main
+package cli
 
 import (
 	"context"
@@ -34,7 +34,6 @@ func buildCmd() *cli.Command {
 			useRegistry := cmd.Bool("registry") || os.Getenv("CI") != ""
 			filters := utils.ParseFilters(cmd.Args().Slice())
 
-			// Discover project
 			project, err := discoverProject(ctx, cmd)
 			if err != nil {
 				return err
@@ -48,20 +47,17 @@ func buildCmd() *cli.Command {
 				return fmt.Errorf("no platforms configured — set platforms in hive.yml or pass --platform")
 			}
 
-			// Expect dist/ to already exist (created by `ch generate`)
 			distPath := getDistPath(cmd)
 			if _, err := os.Stat(distPath); err != nil {
 				return fmt.Errorf("dist/ not found — run 'ch generate' first: %w", err)
 			}
 
-			// Resolve dependency build order
 			buildOrder, err := deps.ResolveOrder(distPath, project)
 			if err != nil {
 				return fmt.Errorf("dependency resolution failed: %w", err)
 			}
 			slog.Info("Build order resolved", "order", buildOrder.Order())
 
-			// Connect to BuildKit (BUILDKIT_HOST env > hive.yml > default)
 			buildkitAddr := ""
 			if project.Config.BuildKit != nil && project.Config.BuildKit.Address != "" {
 				buildkitAddr = project.Config.BuildKit.Address
@@ -72,20 +68,16 @@ func buildCmd() *cli.Command {
 			}
 			defer bkClient.Close()
 
-			// Configure cache
 			buildCache, err := cache.BuildCacheFromConfig(project.Config.Cache, "ch-build")
 			if err != nil {
 				return fmt.Errorf("cache configuration failed: %w", err)
 			}
 
-			// Select progress display mode: linear for CI, auto-detect otherwise.
-			// Colors are enabled by default; suppressed only when NO_COLOR is set.
 			progressMode := progress.AutoMode
 			if os.Getenv("CI") != "" {
 				progressMode = progress.LinearMode
 			}
 
-			// Build
 			buildOpts := &build.ProjectBuildOpts{
 				Project:     project,
 				BuildOrder:  buildOrder,

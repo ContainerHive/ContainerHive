@@ -11,7 +11,7 @@ CONTAINER_REGISTRY?="docker.io/timoreymann"
 
 clean: ## Cleanup artifacts
 	@rm -rf dist/
-	@rm -f cmd/ch/NOTICE
+	@rm -f pkg/cli/NOTICE
 
 help: ## Display this help page
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[33m%-30s\033[0m %s\n", $$1, $$2}'
@@ -25,13 +25,13 @@ test-coverage-report: coverage ## Run test and display coverage report in browse
 save-coverage-report: coverage ## Save coverage report to coverage.html
 	@go tool cover -html=/tmp/count.out -o coverage.html
 
-cmd/ch/NOTICE: NOTICE ## Copy NOTICE for embedding
-	@cp NOTICE cmd/ch/NOTICE
+pkg/cli/NOTICE: NOTICE ## Copy NOTICE for embedding
+	@cp NOTICE pkg/cli/NOTICE
 
 internal/buildkit/version_generated.go: go.mod tools/generate-buildkit-version.go
 	@go run tools/generate-buildkit-version.go
 
-generate: cmd/ch/NOTICE internal/buildkit/version_generated.go ## Run go generate for embedded resources
+generate: pkg/cli/NOTICE internal/buildkit/version_generated.go ## Run go generate for embedded resources
 
 create-dist: ## Create dist folder if not already existent
 	@mkdir -p dist/
