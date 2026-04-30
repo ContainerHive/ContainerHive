@@ -7,7 +7,7 @@ COMMIT_REF=$(shell git rev-parse --short HEAD)
 BUILD_ARGS=-ldflags "-X github.com/ContainerHive/ContainerHive/internal/buildinfo.GitSha=$(COMMIT_REF) -X github.com/ContainerHive/ContainerHive/internal/buildinfo.Version=$(VERSION) -X github.com/ContainerHive/ContainerHive/internal/buildinfo.BuildTime=$(NOW)" -tags prod
 BIN_PREFIX="dist/"
 CMD_CH_CLI = "./cmd/ch"
-CONTAINER_REGISTRY?="docker.io/timoreymann"
+CONTAINER_REGISTRY?="docker.io/containerhive"
 
 clean: ## Cleanup artifacts
 	@rm -rf dist/
