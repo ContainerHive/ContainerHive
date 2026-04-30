@@ -3,7 +3,7 @@ package dependency
 import (
 	"testing"
 
-	"github.com/timo-reymann/ContainerHive/pkg/model"
+	"github.com/ContainerHive/ContainerHive/pkg/model"
 )
 
 func TestBuildDependencyGraph(t *testing.T) {

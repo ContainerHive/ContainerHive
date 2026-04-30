@@ -9,8 +9,8 @@ import (
 	"slices"
 	"sync"
 
-	"github.com/timo-reymann/ContainerHive/pkg/model"
-	"github.com/timo-reymann/ContainerHive/pkg/platform"
+	"github.com/ContainerHive/ContainerHive/pkg/model"
+	"github.com/ContainerHive/ContainerHive/pkg/platform"
 	"golang.org/x/sync/errgroup"
 )
 

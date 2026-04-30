@@ -8,10 +8,10 @@ import (
 	"path/filepath"
 	"sync"
 
-	"github.com/timo-reymann/ContainerHive/pkg/model"
-	"github.com/timo-reymann/ContainerHive/pkg/platform"
-	"github.com/timo-reymann/ContainerHive/pkg/sbom"
-	"github.com/timo-reymann/ContainerHive/pkg/utils"
+	"github.com/ContainerHive/ContainerHive/pkg/model"
+	"github.com/ContainerHive/ContainerHive/pkg/platform"
+	"github.com/ContainerHive/ContainerHive/pkg/sbom"
+	"github.com/ContainerHive/ContainerHive/pkg/utils"
 	"github.com/urfave/cli/v3"
 	"golang.org/x/sync/errgroup"
 )

@@ -3,7 +3,7 @@ package utils
 import (
 	"testing"
 
-	"github.com/timo-reymann/ContainerHive/pkg/build"
+	"github.com/ContainerHive/ContainerHive/pkg/build"
 )
 
 func TestParseFilters(t *testing.T) {

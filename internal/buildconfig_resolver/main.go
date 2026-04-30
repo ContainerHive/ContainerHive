@@ -3,8 +3,8 @@ package buildconfig_resolver
 import (
 	"fmt"
 
-	"github.com/timo-reymann/ContainerHive/internal/secrets"
-	"github.com/timo-reymann/ContainerHive/pkg/model"
+	"github.com/ContainerHive/ContainerHive/internal/secrets"
+	"github.com/ContainerHive/ContainerHive/pkg/model"
 )
 
 type ResolvedBuildValues struct {

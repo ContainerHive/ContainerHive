@@ -3,8 +3,8 @@ package buildconfig_resolver
 import (
 	"testing"
 
+	"github.com/ContainerHive/ContainerHive/pkg/model"
 	"github.com/google/go-cmp/cmp"
-	"github.com/timo-reymann/ContainerHive/pkg/model"
 )
 
 func TestForTag(t *testing.T) {

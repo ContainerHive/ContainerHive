@@ -6,7 +6,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/timo-reymann/ContainerHive/internal/file_resolver/templating"
+	"github.com/ContainerHive/ContainerHive/internal/file_resolver/templating"
 )
 
 // TemplateExtensionGoTemplate is the file extension used for Go template files.

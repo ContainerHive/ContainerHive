@@ -5,7 +5,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/timo-reymann/ContainerHive/pkg/model"
+	"github.com/ContainerHive/ContainerHive/pkg/model"
 )
 
 func setupDistDir(t *testing.T, images map[string]map[string]string) string {

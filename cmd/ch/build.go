@@ -6,11 +6,11 @@ import (
 	"log/slog"
 	"os"
 
-	"github.com/timo-reymann/ContainerHive/pkg/build"
-	"github.com/timo-reymann/ContainerHive/pkg/cache"
-	"github.com/timo-reymann/ContainerHive/pkg/deps"
-	"github.com/timo-reymann/ContainerHive/pkg/progress"
-	"github.com/timo-reymann/ContainerHive/pkg/utils"
+	"github.com/ContainerHive/ContainerHive/pkg/build"
+	"github.com/ContainerHive/ContainerHive/pkg/cache"
+	"github.com/ContainerHive/ContainerHive/pkg/deps"
+	"github.com/ContainerHive/ContainerHive/pkg/progress"
+	"github.com/ContainerHive/ContainerHive/pkg/utils"
 	"github.com/urfave/cli/v3"
 )
 

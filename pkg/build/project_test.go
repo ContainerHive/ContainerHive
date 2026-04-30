@@ -7,8 +7,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/timo-reymann/ContainerHive/pkg/deps"
-	"github.com/timo-reymann/ContainerHive/pkg/model"
+	"github.com/ContainerHive/ContainerHive/pkg/deps"
+	"github.com/ContainerHive/ContainerHive/pkg/model"
 )
 
 func TestMatchesFilters_Empty(t *testing.T) {
@@ -107,9 +107,9 @@ type mockRegistry struct {
 	dockerMediaTypes bool
 }
 
-func (r *mockRegistry) Address() string             { return r.address }
-func (r *mockRegistry) IsLocal() bool               { return r.local }
-func (r *mockRegistry) UseDockerMediaTypes() bool   { return r.dockerMediaTypes }
+func (r *mockRegistry) Address() string           { return r.address }
+func (r *mockRegistry) IsLocal() bool             { return r.local }
+func (r *mockRegistry) UseDockerMediaTypes() bool { return r.dockerMediaTypes }
 
 func TestPushTag(t *testing.T) {
 	tests := []struct {

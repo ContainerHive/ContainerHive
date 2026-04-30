@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/timo-reymann/ContainerHive/pkg/model"
+	"github.com/ContainerHive/ContainerHive/pkg/model"
 )
 
 func TestRemoteRegistry(t *testing.T) {

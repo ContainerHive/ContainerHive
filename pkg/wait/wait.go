@@ -8,7 +8,7 @@ import (
 
 	dockerClient "github.com/docker/docker/client"
 
-	"github.com/timo-reymann/ContainerHive/pkg/build"
+	"github.com/ContainerHive/ContainerHive/pkg/build"
 )
 
 const pollInterval = 500 * time.Millisecond

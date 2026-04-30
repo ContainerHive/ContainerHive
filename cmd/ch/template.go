@@ -6,9 +6,9 @@ import (
 	"os"
 	"strings"
 
-	"github.com/timo-reymann/ContainerHive/pkg/ci"
-	"github.com/timo-reymann/ContainerHive/pkg/templating"
-	"github.com/timo-reymann/ContainerHive/pkg/version"
+	"github.com/ContainerHive/ContainerHive/pkg/ci"
+	"github.com/ContainerHive/ContainerHive/pkg/templating"
+	"github.com/ContainerHive/ContainerHive/pkg/version"
 	"github.com/urfave/cli/v3"
 )
 

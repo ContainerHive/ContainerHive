@@ -1,4 +1,4 @@
-module github.com/timo-reymann/ContainerHive
+module github.com/ContainerHive/ContainerHive
 
 go 1.25.8
 

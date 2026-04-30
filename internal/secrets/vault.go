@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/timo-reymann/ContainerHive/internal/vault"
+	"github.com/ContainerHive/ContainerHive/internal/vault"
 )
 
 const vaultResolver = "vault"

@@ -12,8 +12,8 @@ import (
 	"sort"
 	"testing"
 
-	"github.com/timo-reymann/ContainerHive/pkg/build"
-	"github.com/timo-reymann/ContainerHive/pkg/model"
+	"github.com/ContainerHive/ContainerHive/pkg/build"
+	"github.com/ContainerHive/ContainerHive/pkg/model"
 )
 
 func TestCollectAllTags_NoVariants(t *testing.T) {
@@ -99,7 +99,7 @@ func (n *noopRegistry) Stop(_ context.Context) error                 { return ni
 func (n *noopRegistry) Address() string                              { return "127.0.0.1:0" }
 func (n *noopRegistry) IsLocal() bool                                { return true }
 func (n *noopRegistry) Push(_ context.Context, _, _, _ string) error { return nil }
-func (n *noopRegistry) UseDockerMediaTypes() bool                     { return false }
+func (n *noopRegistry) UseDockerMediaTypes() bool                    { return false }
 
 // ---------------------------------------------------------------------------
 // pushTag

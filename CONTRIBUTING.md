@@ -21,7 +21,7 @@ Pull requests are the best way to propose changes to the codebase (I use [Circle
 6. Issue that pull request!
 
 ## Any contributions you make will be under the AGPL-3.0
-In short, when you submit code changes, your submissions are understood to be under the same [AGPL-3.0](https://github.com/timo-reymann/ContainerHive/blob/main/LICENSE) that covers the project. Feel free to contact the maintainers if that's a concern.
+In short, when you submit code changes, your submissions are understood to be under the same [AGPL-3.0](https://github.com/ContainerHive/ContainerHive/blob/main/LICENSE) that covers the project. Feel free to contact the maintainers if that's a concern.
 
 ## Report bugs using Github's issues
 I use GitHub issues to track public bugs. Report a bug by opening a new issue, it's that easy!

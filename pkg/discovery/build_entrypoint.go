@@ -1,7 +1,7 @@
 package discovery
 
 import (
-	"github.com/timo-reymann/ContainerHive/internal/file_resolver"
+	"github.com/ContainerHive/ContainerHive/internal/file_resolver"
 )
 
 var dockerfileConfigFileNames = file_resolver.GetFileCandidates("Dockerfile")

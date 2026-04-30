@@ -7,7 +7,7 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/timo-reymann/ContainerHive/pkg/model"
+	"github.com/ContainerHive/ContainerHive/pkg/model"
 )
 
 // HivePrefix is the Dockerfile image reference prefix used to denote project-local hive dependencies.

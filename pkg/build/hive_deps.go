@@ -6,9 +6,9 @@ import (
 	"os"
 	"strings"
 
+	"github.com/ContainerHive/ContainerHive/internal/dependency"
+	"github.com/ContainerHive/ContainerHive/internal/ocistore"
 	"github.com/containerd/containerd/v2/core/content"
-	"github.com/timo-reymann/ContainerHive/internal/dependency"
-	"github.com/timo-reymann/ContainerHive/internal/ocistore"
 )
 
 // namedContextPrefix replaces __hive__/ in the rewritten Dockerfile. It must be

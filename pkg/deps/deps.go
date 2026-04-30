@@ -1,8 +1,8 @@
 package deps
 
 import (
-	"github.com/timo-reymann/ContainerHive/internal/dependency"
-	"github.com/timo-reymann/ContainerHive/pkg/model"
+	"github.com/ContainerHive/ContainerHive/internal/dependency"
+	"github.com/ContainerHive/ContainerHive/pkg/model"
 )
 
 // BuildOrder wraps a resolved dependency graph, providing build-order

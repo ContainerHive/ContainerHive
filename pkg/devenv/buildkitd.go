@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/timo-reymann/ContainerHive/internal/buildkit"
-	"github.com/timo-reymann/ContainerHive/internal/docker"
+	"github.com/ContainerHive/ContainerHive/internal/buildkit"
+	"github.com/ContainerHive/ContainerHive/internal/docker"
 )
 
 const (

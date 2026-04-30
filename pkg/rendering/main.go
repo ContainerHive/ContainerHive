@@ -8,10 +8,10 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/timo-reymann/ContainerHive/internal/buildconfig_resolver"
-	"github.com/timo-reymann/ContainerHive/internal/file_resolver"
-	"github.com/timo-reymann/ContainerHive/internal/semantic_tags"
-	"github.com/timo-reymann/ContainerHive/pkg/model"
+	"github.com/ContainerHive/ContainerHive/internal/buildconfig_resolver"
+	"github.com/ContainerHive/ContainerHive/internal/file_resolver"
+	"github.com/ContainerHive/ContainerHive/internal/semantic_tags"
+	"github.com/ContainerHive/ContainerHive/pkg/model"
 	"golang.org/x/sync/errgroup"
 )
 

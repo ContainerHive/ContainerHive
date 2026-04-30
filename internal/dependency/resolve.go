@@ -3,7 +3,7 @@ package dependency
 import (
 	"fmt"
 
-	"github.com/timo-reymann/ContainerHive/pkg/model"
+	"github.com/ContainerHive/ContainerHive/pkg/model"
 )
 
 // BuildDependencyGraph merges a scanned dependency graph (from Dockerfile analysis)

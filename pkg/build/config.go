@@ -1,8 +1,8 @@
 package build
 
 import (
-	"github.com/timo-reymann/ContainerHive/internal/buildconfig_resolver"
-	"github.com/timo-reymann/ContainerHive/pkg/model"
+	"github.com/ContainerHive/ContainerHive/internal/buildconfig_resolver"
+	"github.com/ContainerHive/ContainerHive/pkg/model"
 )
 
 // ResolvedConfig holds the resolved build arguments and secrets for an image build.

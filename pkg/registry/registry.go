@@ -5,13 +5,13 @@ import (
 	"fmt"
 	"log/slog"
 
-	"github.com/timo-reymann/ContainerHive/internal/gcr"
-	"github.com/timo-reymann/ContainerHive/internal/ocistore"
-	internalregistry "github.com/timo-reymann/ContainerHive/internal/registry"
-	"github.com/timo-reymann/ContainerHive/pkg/build"
-	"github.com/timo-reymann/ContainerHive/pkg/model"
-	"github.com/timo-reymann/ContainerHive/pkg/platform"
-	"github.com/timo-reymann/ContainerHive/pkg/rendering"
+	"github.com/ContainerHive/ContainerHive/internal/gcr"
+	"github.com/ContainerHive/ContainerHive/internal/ocistore"
+	internalregistry "github.com/ContainerHive/ContainerHive/internal/registry"
+	"github.com/ContainerHive/ContainerHive/pkg/build"
+	"github.com/ContainerHive/ContainerHive/pkg/model"
+	"github.com/ContainerHive/ContainerHive/pkg/platform"
+	"github.com/ContainerHive/ContainerHive/pkg/rendering"
 )
 
 // Registry wraps the internal registry and adds alias retagging.

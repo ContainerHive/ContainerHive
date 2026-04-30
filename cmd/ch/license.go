@@ -5,7 +5,7 @@ import (
 	"embed"
 	"fmt"
 
-	"github.com/timo-reymann/ContainerHive/pkg/report"
+	"github.com/ContainerHive/ContainerHive/pkg/report"
 	"github.com/urfave/cli/v3"
 )
 

@@ -4,7 +4,7 @@ SHELL := /bin/bash
 VERSION?=$(shell git describe --tags --always)
 NOW=$(shell date +"%Y-%m-%d_%H:%M:%S")
 COMMIT_REF=$(shell git rev-parse --short HEAD)
-BUILD_ARGS=-ldflags "-X github.com/timo-reymann/ContainerHive/internal/buildinfo.GitSha=$(COMMIT_REF) -X github.com/timo-reymann/ContainerHive/internal/buildinfo.Version=$(VERSION) -X github.com/timo-reymann/ContainerHive/internal/buildinfo.BuildTime=$(NOW)" -tags prod
+BUILD_ARGS=-ldflags "-X github.com/ContainerHive/ContainerHive/internal/buildinfo.GitSha=$(COMMIT_REF) -X github.com/ContainerHive/ContainerHive/internal/buildinfo.Version=$(VERSION) -X github.com/ContainerHive/ContainerHive/internal/buildinfo.BuildTime=$(NOW)" -tags prod
 BIN_PREFIX="dist/"
 CMD_CH_CLI = "./cmd/ch"
 CONTAINER_REGISTRY?="docker.io/timoreymann"
@@ -102,9 +102,9 @@ build-docker: ## Build docker image based on the built linux builds in the dist 
 
 checkout-test-project: ## Checkout fresh instance of latest test project
 	@rm -rf test-project || true
-	@git clone git@github.com:timo-reymann/ContainerHive-test-project.git test-project
+	@git clone git@github.com:ContainerHive/ContainerHive-test-project.git test-project
 
 render-test-project-ci: generate ## Render the test project CI configuration
 	@go run ./cmd/ch/ -p test-project/gitlab generate
-	@cd test-project && go run ../cmd/ch/ -p gitlab template ci --provider gitlab --output gitlab/pipeline.gitlab-ci.yml --image-name ghcr.io/timo-reymann/containerhive --version $(COMMIT_REF)
-	@cd test-project && go run ../cmd/ch/ -p github template ci --provider github --output .github/workflows/main.yml --image-name ghcr.io/timo-reymann/containerhive --version $(COMMIT_REF)
+	@cd test-project && go run ../cmd/ch/ -p gitlab template ci --provider gitlab --output gitlab/pipeline.gitlab-ci.yml --image-name ghcr.io/ContainerHive/ContainerHive --version $(COMMIT_REF)
+	@cd test-project && go run ../cmd/ch/ -p github template ci --provider github --output .github/workflows/main.yml --image-name ghcr.io/ContainerHive/ContainerHive --version $(COMMIT_REF)

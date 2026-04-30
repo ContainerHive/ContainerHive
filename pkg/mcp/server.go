@@ -4,8 +4,8 @@ import (
 	"context"
 	"encoding/json"
 
+	"github.com/ContainerHive/ContainerHive/pkg/version"
 	"github.com/modelcontextprotocol/go-sdk/mcp"
-	"github.com/timo-reymann/ContainerHive/pkg/version"
 )
 
 var (

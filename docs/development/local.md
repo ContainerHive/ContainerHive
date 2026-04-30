@@ -3,7 +3,7 @@
 If you want to work on ContainerHive you can do so, easily.
 
 Before starting to develop make sure you have read
-the [Contribution Guidelines](https://github.com/timo-reymann/ContainerHive/blob/main/CONTRIBUTING.md).
+the [Contribution Guidelines](https://github.com/ContainerHive/ContainerHive/blob/main/CONTRIBUTING.md).
 
 ## Requirements
 

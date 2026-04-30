@@ -3,7 +3,7 @@ package templating
 import (
 	"testing"
 
-	"github.com/timo-reymann/ContainerHive/pkg/model"
+	"github.com/ContainerHive/ContainerHive/pkg/model"
 )
 
 func TestGoTemplateTemplatingProcessor_Process(t *testing.T) {

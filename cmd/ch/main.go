@@ -8,11 +8,11 @@ import (
 	"os/signal"
 	"path/filepath"
 
-	"github.com/timo-reymann/ContainerHive/pkg/discovery"
-	"github.com/timo-reymann/ContainerHive/pkg/logging"
-	"github.com/timo-reymann/ContainerHive/pkg/model"
-	"github.com/timo-reymann/ContainerHive/pkg/registry"
-	"github.com/timo-reymann/ContainerHive/pkg/version"
+	"github.com/ContainerHive/ContainerHive/pkg/discovery"
+	"github.com/ContainerHive/ContainerHive/pkg/logging"
+	"github.com/ContainerHive/ContainerHive/pkg/model"
+	"github.com/ContainerHive/ContainerHive/pkg/registry"
+	"github.com/ContainerHive/ContainerHive/pkg/version"
 	"github.com/urfave/cli/v3"
 )
 

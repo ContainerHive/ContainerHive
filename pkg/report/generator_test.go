@@ -4,7 +4,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/timo-reymann/ContainerHive/pkg/model"
+	"github.com/ContainerHive/ContainerHive/pkg/model"
 )
 
 func TestReplaceFirstPlaceholder(t *testing.T) {

@@ -4,12 +4,12 @@ import (
 	"context"
 	"errors"
 
+	"github.com/ContainerHive/ContainerHive/internal/ocistore"
 	dockerClient "github.com/docker/docker/client"
 	"github.com/google/go-containerregistry/pkg/authn"
 	"github.com/google/go-containerregistry/pkg/name"
 	"github.com/google/go-containerregistry/pkg/v1/daemon"
 	"github.com/google/go-containerregistry/pkg/v1/remote"
-	"github.com/timo-reymann/ContainerHive/internal/ocistore"
 )
 
 // Client wraps the Docker client library for image operations.

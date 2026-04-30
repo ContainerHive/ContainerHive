@@ -6,7 +6,7 @@ import (
 	"os"
 	"sync"
 
-	"github.com/timo-reymann/ContainerHive/pkg/templating"
+	"github.com/ContainerHive/ContainerHive/pkg/templating"
 )
 
 // Provider represents a CI provider with its template files.

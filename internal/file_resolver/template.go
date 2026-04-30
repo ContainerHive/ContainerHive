@@ -5,8 +5,8 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/ContainerHive/ContainerHive/internal/file_resolver/templating"
 	"github.com/docker/docker/pkg/fileutils"
-	"github.com/timo-reymann/ContainerHive/internal/file_resolver/templating"
 )
 
 // ReadAndRenderFile reads src and renders it through a template processor if the file extension matches a supported templating engine. Returns raw content otherwise.

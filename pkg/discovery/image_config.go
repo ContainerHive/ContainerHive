@@ -6,8 +6,8 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/timo-reymann/ContainerHive/internal/file_resolver"
-	"github.com/timo-reymann/ContainerHive/pkg/model"
+	"github.com/ContainerHive/ContainerHive/internal/file_resolver"
+	"github.com/ContainerHive/ContainerHive/pkg/model"
 	"gopkg.in/yaml.v3"
 )
 

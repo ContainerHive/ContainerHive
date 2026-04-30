@@ -8,6 +8,10 @@ import (
 	"runtime"
 	"testing"
 
+	"github.com/ContainerHive/ContainerHive/internal/buildkit"
+	"github.com/ContainerHive/ContainerHive/internal/buildkit/build_context"
+	"github.com/ContainerHive/ContainerHive/internal/ocistore"
+	"github.com/ContainerHive/ContainerHive/internal/testutil"
 	"github.com/docker/docker/api/types/container"
 	"github.com/google/go-containerregistry/pkg/name"
 	v1 "github.com/google/go-containerregistry/pkg/v1"
@@ -16,10 +20,6 @@ import (
 	"github.com/moby/buildkit/client"
 	"github.com/testcontainers/testcontainers-go"
 	"github.com/testcontainers/testcontainers-go/wait"
-	"github.com/timo-reymann/ContainerHive/internal/buildkit"
-	"github.com/timo-reymann/ContainerHive/internal/buildkit/build_context"
-	"github.com/timo-reymann/ContainerHive/internal/ocistore"
-	"github.com/timo-reymann/ContainerHive/internal/testutil"
 )
 
 func drainStatus(ch chan *client.SolveStatus) error {

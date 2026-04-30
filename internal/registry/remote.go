@@ -5,10 +5,10 @@ import (
 	"errors"
 	"os"
 
+	"github.com/ContainerHive/ContainerHive/internal/utils"
 	"github.com/google/go-containerregistry/pkg/name"
 	"github.com/google/go-containerregistry/pkg/v1/layout"
 	"github.com/google/go-containerregistry/pkg/v1/remote"
-	"github.com/timo-reymann/ContainerHive/internal/utils"
 )
 
 // RemoteRegistry is a passthrough registry for CI environments.

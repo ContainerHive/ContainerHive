@@ -3,7 +3,7 @@ package cache
 import (
 	"fmt"
 
-	"github.com/timo-reymann/ContainerHive/pkg/model"
+	"github.com/ContainerHive/ContainerHive/pkg/model"
 )
 
 // BuildCacheFromConfig creates a BuildkitCache from the hive.yml cache config,

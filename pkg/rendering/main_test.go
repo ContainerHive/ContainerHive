@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/timo-reymann/ContainerHive/pkg/discovery"
+	"github.com/ContainerHive/ContainerHive/pkg/discovery"
 )
 
 func discoverAndRender(t *testing.T, projectPath string) string {

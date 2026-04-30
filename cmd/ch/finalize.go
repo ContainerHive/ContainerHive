@@ -6,7 +6,7 @@ import (
 	"log/slog"
 	"os"
 
-	"github.com/timo-reymann/ContainerHive/pkg/utils"
+	"github.com/ContainerHive/ContainerHive/pkg/utils"
 	"github.com/urfave/cli/v3"
 )
 

@@ -5,8 +5,8 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/timo-reymann/ContainerHive/internal/file_resolver/templating"
-	"github.com/timo-reymann/ContainerHive/pkg/model"
+	"github.com/ContainerHive/ContainerHive/internal/file_resolver/templating"
+	"github.com/ContainerHive/ContainerHive/pkg/model"
 )
 
 func TestCopyAndRenderFile(t *testing.T) {

@@ -7,19 +7,19 @@ import (
 	"runtime"
 	"testing"
 
+	"github.com/ContainerHive/ContainerHive/internal/buildkit"
+	"github.com/ContainerHive/ContainerHive/internal/buildkit/build_context"
+	internalregistry "github.com/ContainerHive/ContainerHive/internal/registry"
+	"github.com/ContainerHive/ContainerHive/internal/testutil"
+	"github.com/ContainerHive/ContainerHive/pkg/build"
+	"github.com/ContainerHive/ContainerHive/pkg/model"
+	"github.com/ContainerHive/ContainerHive/pkg/platform"
 	"github.com/docker/docker/api/types/container"
 	"github.com/google/go-containerregistry/pkg/name"
 	"github.com/google/go-containerregistry/pkg/v1/remote"
 	"github.com/moby/buildkit/client"
 	"github.com/testcontainers/testcontainers-go"
 	"github.com/testcontainers/testcontainers-go/wait"
-	"github.com/timo-reymann/ContainerHive/internal/buildkit"
-	"github.com/timo-reymann/ContainerHive/internal/buildkit/build_context"
-	internalregistry "github.com/timo-reymann/ContainerHive/internal/registry"
-	"github.com/timo-reymann/ContainerHive/internal/testutil"
-	"github.com/timo-reymann/ContainerHive/pkg/build"
-	"github.com/timo-reymann/ContainerHive/pkg/model"
-	"github.com/timo-reymann/ContainerHive/pkg/platform"
 )
 
 func integrationDrainStatus(ch chan *client.SolveStatus) error {

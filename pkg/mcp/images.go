@@ -7,10 +7,10 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/ContainerHive/ContainerHive/pkg/deps"
+	"github.com/ContainerHive/ContainerHive/pkg/discovery"
+	"github.com/ContainerHive/ContainerHive/pkg/model"
 	"github.com/goccy/go-yaml"
-	"github.com/timo-reymann/ContainerHive/pkg/deps"
-	"github.com/timo-reymann/ContainerHive/pkg/discovery"
-	"github.com/timo-reymann/ContainerHive/pkg/model"
 )
 
 type imageInfo struct {

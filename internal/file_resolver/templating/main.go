@@ -1,7 +1,7 @@
 package templating
 
 import (
-	"github.com/timo-reymann/ContainerHive/pkg/model"
+	"github.com/ContainerHive/ContainerHive/pkg/model"
 )
 
 // TemplateContext holds the data available to template processors during rendering.

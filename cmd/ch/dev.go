@@ -7,10 +7,10 @@ import (
 	"os"
 	"time"
 
-	"github.com/timo-reymann/ContainerHive/pkg/build"
-	"github.com/timo-reymann/ContainerHive/pkg/devenv"
-	"github.com/timo-reymann/ContainerHive/pkg/logging"
-	"github.com/timo-reymann/ContainerHive/pkg/wait"
+	"github.com/ContainerHive/ContainerHive/pkg/build"
+	"github.com/ContainerHive/ContainerHive/pkg/devenv"
+	"github.com/ContainerHive/ContainerHive/pkg/logging"
+	"github.com/ContainerHive/ContainerHive/pkg/wait"
 	"github.com/urfave/cli/v3"
 )
 

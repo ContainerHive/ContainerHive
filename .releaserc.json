@@ -34,7 +34,7 @@
       "@semantic-release/github",
       {
         "path": "semantic-release",
-        "name": "timo-reymann/ContainerHive",
+        "name": "ContainerHive/ContainerHive",
         "message": "chore(release): ${nextRelease.version}\n\n${nextRelease.notes}"
       }
     ]

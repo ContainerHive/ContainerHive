@@ -9,10 +9,10 @@ import (
 	"os"
 	"time"
 
+	"github.com/ContainerHive/ContainerHive/internal/utils"
 	"github.com/google/go-containerregistry/pkg/name"
 	"github.com/google/go-containerregistry/pkg/v1/layout"
 	"github.com/google/go-containerregistry/pkg/v1/remote"
-	"github.com/timo-reymann/ContainerHive/internal/utils"
 	"zotregistry.dev/zot/v2/pkg/api"
 	"zotregistry.dev/zot/v2/pkg/api/config"
 )

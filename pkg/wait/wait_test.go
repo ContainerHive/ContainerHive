@@ -6,10 +6,10 @@ import (
 	"testing"
 	"time"
 
+	"github.com/ContainerHive/ContainerHive/internal/testutil"
 	"github.com/docker/docker/api/types/container"
 	"github.com/testcontainers/testcontainers-go"
 	"github.com/testcontainers/testcontainers-go/wait"
-	"github.com/timo-reymann/ContainerHive/internal/testutil"
 )
 
 func TestBuildkitdTarget(t *testing.T) {

@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"log/slog"
 
-	"github.com/timo-reymann/ContainerHive/pkg/rendering"
+	"github.com/ContainerHive/ContainerHive/pkg/rendering"
 	"github.com/urfave/cli/v3"
 )
 

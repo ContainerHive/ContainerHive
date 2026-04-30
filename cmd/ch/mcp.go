@@ -3,7 +3,7 @@ package main
 import (
 	"context"
 
-	"github.com/timo-reymann/ContainerHive/pkg/mcp"
+	"github.com/ContainerHive/ContainerHive/pkg/mcp"
 	"github.com/urfave/cli/v3"
 )
 

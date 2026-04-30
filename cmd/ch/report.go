@@ -7,8 +7,8 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/timo-reymann/ContainerHive/pkg/discovery"
-	"github.com/timo-reymann/ContainerHive/pkg/report"
+	"github.com/ContainerHive/ContainerHive/pkg/discovery"
+	"github.com/ContainerHive/ContainerHive/pkg/report"
 	"github.com/urfave/cli/v3"
 )
 

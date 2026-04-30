@@ -5,10 +5,10 @@ import (
 	"testing"
 	"time"
 
+	"github.com/ContainerHive/ContainerHive/pkg/model"
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/config"
 	"github.com/go-git/go-git/v5/plumbing/object"
-	"github.com/timo-reymann/ContainerHive/pkg/model"
 )
 
 func TestApplyLabelPlaceholders(t *testing.T) {

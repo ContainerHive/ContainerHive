@@ -6,11 +6,11 @@ import (
 	"io"
 	"os"
 
+	"github.com/ContainerHive/ContainerHive/internal/buildkit"
+	"github.com/ContainerHive/ContainerHive/internal/buildkit/build_context"
+	"github.com/ContainerHive/ContainerHive/pkg/cache"
+	"github.com/ContainerHive/ContainerHive/pkg/progress"
 	"github.com/containerd/containerd/v2/core/content"
-	"github.com/timo-reymann/ContainerHive/internal/buildkit"
-	"github.com/timo-reymann/ContainerHive/internal/buildkit/build_context"
-	"github.com/timo-reymann/ContainerHive/pkg/cache"
-	"github.com/timo-reymann/ContainerHive/pkg/progress"
 )
 
 // Client wraps the internal BuildKit client.

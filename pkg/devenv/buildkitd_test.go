@@ -3,7 +3,7 @@ package devenv
 import (
 	"testing"
 
-	"github.com/timo-reymann/ContainerHive/internal/buildkit"
+	"github.com/ContainerHive/ContainerHive/internal/buildkit"
 )
 
 func TestResolveImage(t *testing.T) {

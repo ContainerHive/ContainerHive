@@ -3,7 +3,7 @@ package build
 import (
 	"path/filepath"
 
-	"github.com/timo-reymann/ContainerHive/pkg/platform"
+	"github.com/ContainerHive/ContainerHive/pkg/platform"
 )
 
 // TarFilePath returns the OCI tar output path for a given image tag and platform

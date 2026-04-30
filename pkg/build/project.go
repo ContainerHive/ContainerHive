@@ -8,11 +8,11 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/timo-reymann/ContainerHive/pkg/cache"
-	"github.com/timo-reymann/ContainerHive/pkg/deps"
-	"github.com/timo-reymann/ContainerHive/pkg/model"
-	"github.com/timo-reymann/ContainerHive/pkg/platform"
-	"github.com/timo-reymann/ContainerHive/pkg/progress"
+	"github.com/ContainerHive/ContainerHive/pkg/cache"
+	"github.com/ContainerHive/ContainerHive/pkg/deps"
+	"github.com/ContainerHive/ContainerHive/pkg/model"
+	"github.com/ContainerHive/ContainerHive/pkg/platform"
+	"github.com/ContainerHive/ContainerHive/pkg/progress"
 )
 
 // Registry provides registry metadata for direct BuildKit pushes.
@@ -223,13 +223,13 @@ func buildTag(ctx context.Context, client *Client, opts *ProjectBuildOpts, image
 	}
 
 	buildOpts := &BuildOpts{
-		ImageName:        imageTag,
-		Platform:         platformStr,
-		TarFile:          tf,
-		Cache:            opts.Cache,
-		ContextDir:       root,
-		BuildArgs:        config.BuildArgs,
-		Secrets:          config.Secrets,
+		ImageName:  imageTag,
+		Platform:   platformStr,
+		TarFile:    tf,
+		Cache:      opts.Cache,
+		ContextDir: root,
+		BuildArgs:  config.BuildArgs,
+		Secrets:    config.Secrets,
 		Labels: BuildOCILabels(OCILabelArgs{
 			ImageName:   imageDef.Name,
 			Tag:         tagName,
@@ -298,13 +298,13 @@ func buildVariant(ctx context.Context, client *Client, opts *ProjectBuildOpts, i
 	}
 
 	buildOpts := &BuildOpts{
-		ImageName:        variantTag,
-		Platform:         platformStr,
-		TarFile:          tf,
-		Cache:            opts.Cache,
-		ContextDir:       root,
-		BuildArgs:        config.BuildArgs,
-		Secrets:          config.Secrets,
+		ImageName:  variantTag,
+		Platform:   platformStr,
+		TarFile:    tf,
+		Cache:      opts.Cache,
+		ContextDir: root,
+		BuildArgs:  config.BuildArgs,
+		Secrets:    config.Secrets,
 		Labels: BuildOCILabels(OCILabelArgs{
 			ImageName:     imageDef.Name,
 			Tag:           variantTagName,

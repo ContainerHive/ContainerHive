@@ -47,7 +47,7 @@ ch template ci --provider github --output .github/workflows/build.yml
 ch template ci \
   --provider github \
   --output .github/workflows/build.yml \
-  --image-name ghcr.io/timo-reymann/containerhive \
+  --image-name ghcr.io/containerhive/containerhive \
   --version v1.0.0 \
   --artifacts
 ```

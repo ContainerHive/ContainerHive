@@ -1,6 +1,6 @@
 package version
 
-import "github.com/timo-reymann/ContainerHive/internal/buildinfo"
+import "github.com/ContainerHive/ContainerHive/internal/buildinfo"
 
 func Get() string {
 	return buildinfo.Version

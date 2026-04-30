@@ -1,7 +1,7 @@
 package templating
 
 import (
-	pkgtemplating "github.com/timo-reymann/ContainerHive/pkg/templating"
+	pkgtemplating "github.com/ContainerHive/ContainerHive/pkg/templating"
 )
 
 // GoTemplateTemplatingProcessor implements Processor using Go's text/template engine.

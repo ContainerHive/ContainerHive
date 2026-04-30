@@ -3,7 +3,7 @@ package sbom
 import (
 	"context"
 
-	"github.com/timo-reymann/ContainerHive/internal/syft"
+	"github.com/ContainerHive/ContainerHive/internal/syft"
 )
 
 // Generator wraps the internal SBOM tool, providing a simpler API that

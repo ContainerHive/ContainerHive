@@ -3,7 +3,7 @@ package utils
 import (
 	"strings"
 
-	"github.com/timo-reymann/ContainerHive/pkg/build"
+	"github.com/ContainerHive/ContainerHive/pkg/build"
 )
 
 // ParseFilters converts positional CLI arguments into build filters.

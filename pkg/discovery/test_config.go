@@ -3,7 +3,7 @@ package discovery
 import (
 	"errors"
 
-	"github.com/timo-reymann/ContainerHive/internal/file_resolver"
+	"github.com/ContainerHive/ContainerHive/internal/file_resolver"
 )
 
 var testConfigFileNames = file_resolver.GetFileCandidates("test", "yml", "yaml")

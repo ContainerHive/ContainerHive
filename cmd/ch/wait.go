@@ -6,7 +6,7 @@ import (
 	"log/slog"
 	"time"
 
-	"github.com/timo-reymann/ContainerHive/pkg/wait"
+	"github.com/ContainerHive/ContainerHive/pkg/wait"
 	"github.com/urfave/cli/v3"
 )
 

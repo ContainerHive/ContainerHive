@@ -7,15 +7,15 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/ContainerHive/ContainerHive/internal/buildkit/build_context"
+	"github.com/ContainerHive/ContainerHive/internal/utils"
+	"github.com/ContainerHive/ContainerHive/pkg/cache"
 	"github.com/containerd/containerd/v2/core/content"
 	"github.com/docker/cli/cli/config"
 	"github.com/moby/buildkit/client"
 	"github.com/moby/buildkit/session"
 	"github.com/moby/buildkit/session/auth/authprovider"
 	"github.com/moby/buildkit/session/secrets/secretsprovider"
-	"github.com/timo-reymann/ContainerHive/internal/buildkit/build_context"
-	"github.com/timo-reymann/ContainerHive/internal/utils"
-	"github.com/timo-reymann/ContainerHive/pkg/cache"
 	"golang.org/x/sync/errgroup"
 )
 

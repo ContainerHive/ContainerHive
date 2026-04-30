@@ -8,7 +8,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/timo-reymann/ContainerHive/pkg/login"
+	"github.com/ContainerHive/ContainerHive/pkg/login"
 	"github.com/urfave/cli/v3"
 )
 

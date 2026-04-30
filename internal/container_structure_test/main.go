@@ -7,11 +7,11 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/ContainerHive/ContainerHive/internal/docker"
 	"github.com/GoogleContainerTools/container-structure-test/cmd/container-structure-test/app/cmd/test"
 	"github.com/GoogleContainerTools/container-structure-test/pkg/config"
 	"github.com/GoogleContainerTools/container-structure-test/pkg/drivers"
 	"github.com/GoogleContainerTools/container-structure-test/pkg/types/unversioned"
-	"github.com/timo-reymann/ContainerHive/internal/docker"
 )
 
 // TestRunner executes container structure tests against a Docker image and produces JUnit reports.

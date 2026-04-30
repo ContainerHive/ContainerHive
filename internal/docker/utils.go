@@ -1,7 +1,7 @@
 package docker
 
 import (
-	"github.com/timo-reymann/ContainerHive/internal/utils"
+	"github.com/ContainerHive/ContainerHive/internal/utils"
 )
 
 func extractTar(tarPath, destDir string) error {

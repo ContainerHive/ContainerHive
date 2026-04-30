@@ -7,8 +7,8 @@ import (
 	"log/slog"
 	"os"
 
+	"github.com/ContainerHive/ContainerHive/pkg/model"
 	"github.com/google/jsonschema-go/jsonschema"
-	"github.com/timo-reymann/ContainerHive/pkg/model"
 )
 
 func main() {

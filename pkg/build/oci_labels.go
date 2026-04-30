@@ -4,8 +4,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/ContainerHive/ContainerHive/pkg/model"
 	"github.com/go-git/go-git/v5"
-	"github.com/timo-reymann/ContainerHive/pkg/model"
 )
 
 const (

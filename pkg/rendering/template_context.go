@@ -1,9 +1,9 @@
 package rendering
 
 import (
-	"github.com/timo-reymann/ContainerHive/internal/buildconfig_resolver"
-	"github.com/timo-reymann/ContainerHive/internal/file_resolver/templating"
-	"github.com/timo-reymann/ContainerHive/pkg/model"
+	"github.com/ContainerHive/ContainerHive/internal/buildconfig_resolver"
+	"github.com/ContainerHive/ContainerHive/internal/file_resolver/templating"
+	"github.com/ContainerHive/ContainerHive/pkg/model"
 )
 
 func newTemplateContext(image *model.Image, values *buildconfig_resolver.ResolvedBuildValues) *templating.TemplateContext {

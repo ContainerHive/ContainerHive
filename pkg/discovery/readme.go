@@ -3,7 +3,7 @@ package discovery
 import (
 	"errors"
 
-	"github.com/timo-reymann/ContainerHive/internal/file_resolver"
+	"github.com/ContainerHive/ContainerHive/internal/file_resolver"
 )
 
 var readmeFileNames = file_resolver.GetFileCandidates("README.md")

@@ -4,8 +4,8 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/timo-reymann/ContainerHive/pkg/discovery"
-	"github.com/timo-reymann/ContainerHive/pkg/rendering"
+	"github.com/ContainerHive/ContainerHive/pkg/discovery"
+	"github.com/ContainerHive/ContainerHive/pkg/rendering"
 )
 
 func mustAbs(t *testing.T, path string) string {

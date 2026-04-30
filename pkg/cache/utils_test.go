@@ -3,7 +3,7 @@ package cache
 import (
 	"testing"
 
-	"github.com/timo-reymann/ContainerHive/pkg/model"
+	"github.com/ContainerHive/ContainerHive/pkg/model"
 )
 
 func TestBuildCacheFromConfig(t *testing.T) {

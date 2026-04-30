@@ -6,8 +6,8 @@ import (
 	"path/filepath"
 	"testing"
 
+	"github.com/ContainerHive/ContainerHive/pkg/model"
 	"github.com/goccy/go-yaml"
-	"github.com/timo-reymann/ContainerHive/pkg/model"
 )
 
 func getTestDataPath(t *testing.T, name string) string {

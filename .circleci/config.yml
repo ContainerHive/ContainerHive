@@ -179,7 +179,7 @@ jobs:
             fi
             PR_NUMBER=$(echo "$CIRCLE_PULL_REQUEST" | grep -oE '[0-9]+$')
             LABELS=$(curl -s -H "Authorization: token ${GITHUB_TOKEN}" \
-              "https://api.github.com/repos/timo-reymann/ContainerHive/pulls/${PR_NUMBER}" \
+              "https://api.github.com/repos/ContainerHive/ContainerHive/pulls/${PR_NUMBER}" \
               | jq -r '.labels[].name')
             if echo "$LABELS" | grep -q "^update-test-project$"; then
               echo "Label found, proceeding"
@@ -203,7 +203,7 @@ jobs:
                   cd test-project
                   git config user.name "CircleCI"
                   git config user.email "no-reply@timo-reymann.de"
-                  git remote set-url origin https://x-access-token:${GITHUB_TOKEN}@github.com/timo-reymann/ContainerHive-test-project.git
+                  git remote set-url origin https://x-access-token:${GITHUB_TOKEN}@github.com/ContainerHive/ContainerHive-test-project.git
                   git add -A
                   git commit -m "chore: Update CI configuration" || echo "No changes to commit"
                   git push

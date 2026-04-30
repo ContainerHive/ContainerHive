@@ -9,11 +9,11 @@ import (
 	"strings"
 	"time"
 
-	"github.com/timo-reymann/ContainerHive/internal/buildconfig_resolver"
-	"github.com/timo-reymann/ContainerHive/internal/file_resolver"
-	"github.com/timo-reymann/ContainerHive/internal/file_resolver/templating"
-	"github.com/timo-reymann/ContainerHive/pkg/model"
-	"github.com/timo-reymann/ContainerHive/pkg/platform"
+	"github.com/ContainerHive/ContainerHive/internal/buildconfig_resolver"
+	"github.com/ContainerHive/ContainerHive/internal/file_resolver"
+	"github.com/ContainerHive/ContainerHive/internal/file_resolver/templating"
+	"github.com/ContainerHive/ContainerHive/pkg/model"
+	"github.com/ContainerHive/ContainerHive/pkg/platform"
 )
 
 func renderReadmeContent(readmePath string, imageName string, versions model.Versions, buildArgs model.BuildArgs) string {

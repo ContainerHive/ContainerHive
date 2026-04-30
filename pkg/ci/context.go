@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"sort"
 
-	"github.com/timo-reymann/ContainerHive/internal/buildkit"
-	"github.com/timo-reymann/ContainerHive/internal/dependency"
-	"github.com/timo-reymann/ContainerHive/pkg/model"
+	"github.com/ContainerHive/ContainerHive/internal/buildkit"
+	"github.com/ContainerHive/ContainerHive/internal/dependency"
+	"github.com/ContainerHive/ContainerHive/pkg/model"
 )
 
 // CIImage represents an image in the CI context.

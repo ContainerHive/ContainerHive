@@ -8,13 +8,13 @@ import (
 	"path/filepath"
 	"time"
 
+	cst "github.com/ContainerHive/ContainerHive/internal/container_structure_test"
+	"github.com/ContainerHive/ContainerHive/pkg/build"
+	"github.com/ContainerHive/ContainerHive/pkg/logging"
+	"github.com/ContainerHive/ContainerHive/pkg/model"
+	"github.com/ContainerHive/ContainerHive/pkg/platform"
+	"github.com/ContainerHive/ContainerHive/pkg/utils"
 	"github.com/sirupsen/logrus"
-	cst "github.com/timo-reymann/ContainerHive/internal/container_structure_test"
-	"github.com/timo-reymann/ContainerHive/pkg/build"
-	"github.com/timo-reymann/ContainerHive/pkg/logging"
-	"github.com/timo-reymann/ContainerHive/pkg/model"
-	"github.com/timo-reymann/ContainerHive/pkg/platform"
-	"github.com/timo-reymann/ContainerHive/pkg/utils"
 )
 
 // Registry provides image references for pulling from a remote registry.

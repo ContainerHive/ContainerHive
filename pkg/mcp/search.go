@@ -140,8 +140,8 @@ func searchDocumentation(ctx context.Context, query string, limit int) ([]Search
 }
 
 const (
-	gitHubRawURL = "https://raw.githubusercontent.com/timo-reymann/ContainerHive/main/docs"
-	gitHubWebURL = "https://github.com/timo-reymann/ContainerHive/blob/main/docs"
+	gitHubRawURL = "https://raw.githubusercontent.com/ContainerHive/ContainerHive/main/docs"
+	gitHubWebURL = "https://github.com/ContainerHive/ContainerHive/blob/main/docs"
 )
 
 func getDocumentation(ctx context.Context, path string) (GetDocumentationOutput, error) {

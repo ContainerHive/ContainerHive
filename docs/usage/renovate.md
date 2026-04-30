@@ -11,7 +11,7 @@ Add the preset to your `renovate.json5`:
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
     // your other presets ...
-    "github>timo-reymann/ContainerHive//renovate/image-versions.json5"
+    "github>ContainerHive/ContainerHive//renovate/image-versions.json5"
   ]
 }
 ```

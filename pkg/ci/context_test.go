@@ -4,7 +4,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/timo-reymann/ContainerHive/pkg/model"
+	"github.com/ContainerHive/ContainerHive/pkg/model"
 )
 
 func TestBuildCIContext_NoDeps(t *testing.T) {
