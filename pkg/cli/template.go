@@ -83,7 +83,7 @@ func templateCICmd() *cli.Command {
 			if imageName != "" {
 				ciCtx.ImageName = imageName
 			} else {
-				ciCtx.ImageName = "timoreymann/containerhive"
+				ciCtx.ImageName = "containerhive/containerhive"
 			}
 
 			result, err := ci.Generate(cmd.String("provider"), ciCtx, cmd.String("template-dir"))

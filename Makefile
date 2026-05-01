@@ -50,8 +50,8 @@ build-darwin: create-dist generate ## Build binaries for macOS
 
 build-image-container-hive: ## Build the container hive image
 	@docker buildx build . \
-		-t timoreymann/container-hive:${VERSION} \
-		-t timoreymann/container-hive:latest \
+		-t containerhive/container-hive:${VERSION} \
+		-t containerhive/container-hive:latest \
 		-f Dockerfile \
 		--platform linux/amd64,linux/arm64 \
 		--push

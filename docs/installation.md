@@ -64,4 +64,4 @@ the [latest release page](https://github.com/ContainerHive/ContainerHive/release
 
 ### Docker
 
-For the Docker image, check [Docker Hub](https://hub.docker.com/r/timoreymann/containerhive).
+For the Docker image, check [Docker Hub](https://hub.docker.com/r/containerhive/containerhive).
