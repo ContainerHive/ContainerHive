@@ -1,11 +1,6 @@
-# ContainerHive Documentation Configuration v1.5.0
-# New note styling features:
-# - Light theme optimization for kroki diagrams
-# - Distinct color schemes for light/dark modes
-# - Improved readability and contrast
-
 site_name: ContainerHive
 repo_url: https://github.com/ContainerHive/ContainerHive
+edit_uri: edit/main/docs
 use_directory_urls: false
 
 theme:
