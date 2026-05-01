@@ -17,6 +17,22 @@ If you prefer to use containerized workflows, use the provided OCI image.
 docker run --rm -it -v $PWD:/workspace containerhive/containerhive
 ```
 
+## Pre-commit
+
+ContainerHive provides [pre-commit](https://pre-commit.com) hooks for generating CI pipelines, verifying project structure, and running arbitrary ContainerHive commands.
+
+```yaml
+# .pre-commit-config.yaml
+repos:
+  - repo: https://github.com/ContainerHive/pre-commit
+    rev: v0.13.2
+    hooks:
+      - id: template
+        args: [ci, --provider, github, --output, .github/workflows/main.yml]
+```
+
+See the [pre-commit usage guide](usage/pre-commit.md) for all available hooks and configuration options.
+
 ## Manual
 
 ### Linux (64-bit)
