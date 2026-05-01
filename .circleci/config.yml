@@ -382,8 +382,7 @@ workflows:
       - update_pre_commit_repo:
           <<: *only_tags
           requires:
-            - build
-            - attach-binaries-to-release
+            - publish_python_wheel
       - publish_python_wheel:
           <<: *only_tags
           requires:
