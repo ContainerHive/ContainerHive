@@ -91,6 +91,31 @@ func TestRetagAllAliases_FilterMatch(t *testing.T) {
 	}
 }
 
+func TestRetagAllAliases_VariantLatestAlias(t *testing.T) {
+	img := &model.Image{
+		Name: "app",
+		Tags: map[string]*model.Tag{
+			"8.0.100": {},
+			"8.0.300": {},
+		},
+		Variants: map[string]*model.ImageVariant{
+			"browsers": {TagSuffix: "-browsers"},
+		},
+		LatestAlias: &model.LatestAliasConfig{Tag: "latest", OnMissing: "error"},
+	}
+
+	project := &model.ContainerHiveProject{
+		ImagesByIdentifier: map[string]*model.Image{"app": img},
+	}
+
+	reg := &Registry{inner: &noopRegistry{}}
+
+	// Should not error: aliases are computed and retag errors are logged as warnings
+	if err := reg.RetagAllAliases(project, nil, ""); err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+}
+
 // noopRegistry implements internal/registry.Registry for testing.
 type noopRegistry struct{}
 
