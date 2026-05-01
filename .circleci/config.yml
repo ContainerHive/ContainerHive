@@ -301,6 +301,22 @@ jobs:
             git commit -m "chore: Update formula for version $CIRCLE_TAG" || true
             git push
 
+  update_pre_commit_repo:
+    executor: python
+    steps:
+      - checkout
+      - run:
+          name: Update containerhive-pre-commit dependency
+          command: |
+            VERSION="${CIRCLE_TAG#v}"
+            git clone "https://x-access-token:${GITHUB_TOKEN}@github.com/ContainerHive/pre-commit.git"
+            cd pre-commit
+            git config user.name "CircleCI"
+            git config user.email "no-reply@timo-reymann.de"
+            python scripts/bump-version.py "${VERSION}"
+            git remote set-url origin "https://x-access-token:${GITHUB_TOKEN}@github.com/ContainerHive/pre-commit.git"
+            git push origin main --follow-tags
+
 workflows:
   version: 2
   update-test-project:
@@ -359,6 +375,11 @@ workflows:
       - upload-schema:
           <<: *only_tags
       - update_homebrew_formula:
+          <<: *only_tags
+          requires:
+            - build
+            - attach-binaries-to-release
+      - update_pre_commit_repo:
           <<: *only_tags
           requires:
             - build
