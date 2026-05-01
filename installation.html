@@ -569,6 +569,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#pre-commit" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pre-commit
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#manual" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1076,6 +1087,34 @@
     
   
     Renovate integration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="usage/pre-commit.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pre-commit integration
   
 
     
@@ -1710,6 +1749,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#pre-commit" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pre-commit
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#manual" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1847,30 +1897,41 @@
 <p>If you prefer to use containerized workflows, use the provided OCI image.</p>
 <div class="language-sh highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>docker<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span>-it<span class="w"> </span>-v<span class="w"> </span><span class="nv">$PWD</span>:/workspace<span class="w"> </span>containerhive/containerhive
 </span></code></pre></div>
+<h2 id="pre-commit">Pre-commit</h2>
+<p>ContainerHive provides <a href="https://pre-commit.com">pre-commit</a> hooks for generating CI pipelines, verifying project structure, and running arbitrary ContainerHive commands.</p>
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># .pre-commit-config.yaml</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="nt">repos</span><span class="p">:</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">repo</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://github.com/ContainerHive/pre-commit</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">    </span><span class="nt">rev</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v0.13.2</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">    </span><span class="nt">hooks</span><span class="p">:</span>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">template</span>
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="w">        </span><span class="nt">args</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">ci</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">--provider</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">github</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">--output</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">.github/workflows/main.yml</span><span class="p p-Indicator">]</span>
+</span></code></pre></div>
+<p>See the <a href="usage/pre-commit.html">pre-commit usage guide</a> for all available hooks and configuration options.</p>
 <h2 id="manual">Manual</h2>
 <h3 id="linux-64-bit">Linux (64-bit)</h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>curl<span class="w"> </span>-LO<span class="w"> </span>https://github.com/ContainerHive/ContainerHive/releases/download/<span class="k">$(</span>curl<span class="w"> </span>-Lso<span class="w"> </span>/dev/null<span class="w"> </span>-w<span class="w"> </span>%<span class="o">{</span>url_effective<span class="o">}</span><span class="w"> </span>https://github.com/ContainerHive/ContainerHive/releases/latest<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-o<span class="w"> </span><span class="s1">&#39;[^/]*$&#39;</span><span class="k">)</span>/linux-amd64.tar.zst<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="se">\</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>tar<span class="w"> </span>--zstd<span class="w"> </span>-xf<span class="w"> </span>linux-amd64.tar.zst<span class="w"> </span>ch<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="se">\</span>
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>chmod<span class="w"> </span>+x<span class="w"> </span>ch<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="se">\</span>
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>sudo<span class="w"> </span>mv<span class="w"> </span>ch<span class="w"> </span>/usr/local/bin/ch
-</span></code></pre></div>
-<h3 id="linux-arm-64-bit">Linux (ARM 64-bit)</h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>curl<span class="w"> </span>-LO<span class="w"> </span>https://github.com/ContainerHive/ContainerHive/releases/download/<span class="k">$(</span>curl<span class="w"> </span>-Lso<span class="w"> </span>/dev/null<span class="w"> </span>-w<span class="w"> </span>%<span class="o">{</span>url_effective<span class="o">}</span><span class="w"> </span>https://github.com/ContainerHive/ContainerHive/releases/latest<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-o<span class="w"> </span><span class="s1">&#39;[^/]*$&#39;</span><span class="k">)</span>/linux-arm64.tar.zst<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="se">\</span>
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>tar<span class="w"> </span>--zstd<span class="w"> </span>-xf<span class="w"> </span>linux-arm64.tar.zst<span class="w"> </span>ch<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="se">\</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>curl<span class="w"> </span>-LO<span class="w"> </span>https://github.com/ContainerHive/ContainerHive/releases/download/<span class="k">$(</span>curl<span class="w"> </span>-Lso<span class="w"> </span>/dev/null<span class="w"> </span>-w<span class="w"> </span>%<span class="o">{</span>url_effective<span class="o">}</span><span class="w"> </span>https://github.com/ContainerHive/ContainerHive/releases/latest<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-o<span class="w"> </span><span class="s1">&#39;[^/]*$&#39;</span><span class="k">)</span>/linux-amd64.tar.zst<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>tar<span class="w"> </span>--zstd<span class="w"> </span>-xf<span class="w"> </span>linux-amd64.tar.zst<span class="w"> </span>ch<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="se">\</span>
 </span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>chmod<span class="w"> </span>+x<span class="w"> </span>ch<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="se">\</span>
 </span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>sudo<span class="w"> </span>mv<span class="w"> </span>ch<span class="w"> </span>/usr/local/bin/ch
 </span></code></pre></div>
-<h3 id="darwin-intel">Darwin (Intel)</h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>curl<span class="w"> </span>-LO<span class="w"> </span>https://github.com/ContainerHive/ContainerHive/releases/download/<span class="k">$(</span>curl<span class="w"> </span>-Lso<span class="w"> </span>/dev/null<span class="w"> </span>-w<span class="w"> </span>%<span class="o">{</span>url_effective<span class="o">}</span><span class="w"> </span>https://github.com/ContainerHive/ContainerHive/releases/latest<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-o<span class="w"> </span><span class="s1">&#39;[^/]*$&#39;</span><span class="k">)</span>/darwin-amd64.tar.zst<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="se">\</span>
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>tar<span class="w"> </span>--zstd<span class="w"> </span>-xf<span class="w"> </span>darwin-amd64.tar.zst<span class="w"> </span>ch<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="se">\</span>
+<h3 id="linux-arm-64-bit">Linux (ARM 64-bit)</h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>curl<span class="w"> </span>-LO<span class="w"> </span>https://github.com/ContainerHive/ContainerHive/releases/download/<span class="k">$(</span>curl<span class="w"> </span>-Lso<span class="w"> </span>/dev/null<span class="w"> </span>-w<span class="w"> </span>%<span class="o">{</span>url_effective<span class="o">}</span><span class="w"> </span>https://github.com/ContainerHive/ContainerHive/releases/latest<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-o<span class="w"> </span><span class="s1">&#39;[^/]*$&#39;</span><span class="k">)</span>/linux-arm64.tar.zst<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>tar<span class="w"> </span>--zstd<span class="w"> </span>-xf<span class="w"> </span>linux-arm64.tar.zst<span class="w"> </span>ch<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="se">\</span>
 </span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>chmod<span class="w"> </span>+x<span class="w"> </span>ch<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="se">\</span>
 </span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>sudo<span class="w"> </span>mv<span class="w"> </span>ch<span class="w"> </span>/usr/local/bin/ch
 </span></code></pre></div>
-<h3 id="darwin-apple-silicon">Darwin (Apple Silicon)</h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>curl<span class="w"> </span>-LO<span class="w"> </span>https://github.com/ContainerHive/ContainerHive/releases/download/<span class="k">$(</span>curl<span class="w"> </span>-Lso<span class="w"> </span>/dev/null<span class="w"> </span>-w<span class="w"> </span>%<span class="o">{</span>url_effective<span class="o">}</span><span class="w"> </span>https://github.com/ContainerHive/ContainerHive/releases/latest<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-o<span class="w"> </span><span class="s1">&#39;[^/]*$&#39;</span><span class="k">)</span>/darwin-arm64.tar.zst<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="se">\</span>
-</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>tar<span class="w"> </span>--zstd<span class="w"> </span>-xf<span class="w"> </span>darwin-arm64.tar.zst<span class="w"> </span>ch<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="se">\</span>
+<h3 id="darwin-intel">Darwin (Intel)</h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>curl<span class="w"> </span>-LO<span class="w"> </span>https://github.com/ContainerHive/ContainerHive/releases/download/<span class="k">$(</span>curl<span class="w"> </span>-Lso<span class="w"> </span>/dev/null<span class="w"> </span>-w<span class="w"> </span>%<span class="o">{</span>url_effective<span class="o">}</span><span class="w"> </span>https://github.com/ContainerHive/ContainerHive/releases/latest<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-o<span class="w"> </span><span class="s1">&#39;[^/]*$&#39;</span><span class="k">)</span>/darwin-amd64.tar.zst<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>tar<span class="w"> </span>--zstd<span class="w"> </span>-xf<span class="w"> </span>darwin-amd64.tar.zst<span class="w"> </span>ch<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="se">\</span>
 </span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>chmod<span class="w"> </span>+x<span class="w"> </span>ch<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="se">\</span>
 </span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>sudo<span class="w"> </span>mv<span class="w"> </span>ch<span class="w"> </span>/usr/local/bin/ch
+</span></code></pre></div>
+<h3 id="darwin-apple-silicon">Darwin (Apple Silicon)</h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>curl<span class="w"> </span>-LO<span class="w"> </span>https://github.com/ContainerHive/ContainerHive/releases/download/<span class="k">$(</span>curl<span class="w"> </span>-Lso<span class="w"> </span>/dev/null<span class="w"> </span>-w<span class="w"> </span>%<span class="o">{</span>url_effective<span class="o">}</span><span class="w"> </span>https://github.com/ContainerHive/ContainerHive/releases/latest<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-o<span class="w"> </span><span class="s1">&#39;[^/]*$&#39;</span><span class="k">)</span>/darwin-arm64.tar.zst<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>tar<span class="w"> </span>--zstd<span class="w"> </span>-xf<span class="w"> </span>darwin-arm64.tar.zst<span class="w"> </span>ch<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>chmod<span class="w"> </span>+x<span class="w"> </span>ch<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>sudo<span class="w"> </span>mv<span class="w"> </span>ch<span class="w"> </span>/usr/local/bin/ch
 </span></code></pre></div>
 <h2 id="where-to-find-the-latest-release">Where to find the latest release</h2>
 <h3 id="binaries">Binaries</h3>

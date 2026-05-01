@@ -9,10 +9,10 @@
       
       
       
-        <link rel="prev" href="001-buildkit-integration.html">
+        <link rel="prev" href="renovate.html">
       
       
-        <link rel="next" href="003-container-structure-tests.html">
+        <link rel="next" href="../configuration/hive.html">
       
       
         
@@ -23,7 +23,7 @@
     
     
       
-        <title>002 - SBOM generation - ContainerHive</title>
+        <title>Pre-commit integration - ContainerHive</title>
       
     
     
@@ -76,7 +76,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#002-sbom-generation" class="md-skip">
+        <a href="#pre-commit-integration" class="md-skip">
           Skip to content
         </a>
       
@@ -109,7 +109,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              002 - SBOM generation
+              Pre-commit integration
             
           </span>
         </div>
@@ -304,11 +304,13 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="../usage/cli.html" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="cli.html" class="md-tabs__link">
           
   
   
@@ -364,12 +366,10 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
+      <li class="md-tabs__item">
         <a href="../development/local.html" class="md-tabs__link">
           
   
@@ -538,24 +538,29 @@
       
   
   
+    
   
   
+  
     
     
     
     
-      
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
         
           
-          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="">
             
   
   
@@ -573,7 +578,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_5">
             <span class="md-nav__icon md-icon"></span>
             
@@ -591,7 +596,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../usage/cli.html" class="md-nav__link">
+      <a href="cli.html" class="md-nav__link">
         
   
   
@@ -619,7 +624,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../usage/mcp.html" class="md-nav__link">
+      <a href="mcp.html" class="md-nav__link">
         
   
   
@@ -647,7 +652,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../usage/build-ids.html" class="md-nav__link">
+      <a href="build-ids.html" class="md-nav__link">
         
   
   
@@ -675,7 +680,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../usage/caching.html" class="md-nav__link">
+      <a href="caching.html" class="md-nav__link">
         
   
   
@@ -703,7 +708,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../usage/dockerfiles.html" class="md-nav__link">
+      <a href="dockerfiles.html" class="md-nav__link">
         
   
   
@@ -731,7 +736,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../usage/multi-platform.html" class="md-nav__link">
+      <a href="multi-platform.html" class="md-nav__link">
         
   
   
@@ -759,7 +764,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../usage/secrets-and-versions.html" class="md-nav__link">
+      <a href="secrets-and-versions.html" class="md-nav__link">
         
   
   
@@ -787,7 +792,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../usage/filtering.html" class="md-nav__link">
+      <a href="filtering.html" class="md-nav__link">
         
   
   
@@ -815,7 +820,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../usage/testing.html" class="md-nav__link">
+      <a href="testing.html" class="md-nav__link">
         
   
   
@@ -843,7 +848,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../usage/ci-integration.html" class="md-nav__link">
+      <a href="ci-integration.html" class="md-nav__link">
         
   
   
@@ -871,7 +876,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../usage/local-development.html" class="md-nav__link">
+      <a href="local-development.html" class="md-nav__link">
         
   
   
@@ -899,7 +904,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../usage/renovate.html" class="md-nav__link">
+      <a href="renovate.html" class="md-nav__link">
         
   
   
@@ -924,10 +929,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../usage/pre-commit.html" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pre-commit integration
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="pre-commit.html" class="md-nav__link md-nav__link--active">
         
   
   
@@ -943,6 +975,76 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#setup" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Setup
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#available-hooks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Available hooks
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Available hooks">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#run" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        run
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#example-automated-ci-pipeline-generation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example: automated CI pipeline generation
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -1241,29 +1343,24 @@
       
   
   
-    
   
   
-  
     
     
     
     
       
-        
-        
-      
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
         
           
-          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="">
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
             
   
   
@@ -1281,7 +1378,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_8">
             <span class="md-nav__icon md-icon"></span>
             
@@ -1324,8 +1421,6 @@
                 
   
   
-    
-  
   
   
     
@@ -1336,11 +1431,11 @@
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8_2" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8_2" >
         
           
           <label class="md-nav__link" for="__nav_8_2" id="__nav_8_2_label" tabindex="0">
@@ -1361,7 +1456,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_8_2_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_8_2_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_8_2">
             <span class="md-nav__icon md-icon"></span>
             
@@ -1379,7 +1474,7 @@
   
   
     <li class="md-nav__item">
-      <a href="001-buildkit-integration.html" class="md-nav__link">
+      <a href="../adr/001-buildkit-integration.html" class="md-nav__link">
         
   
   
@@ -1411,19 +1506,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-      <a href="002-sbom-generation.html" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../adr/002-sbom-generation.html" class="md-nav__link">
         
   
   
@@ -1446,7 +1532,6 @@
   
 
       </a>
-      
     </li>
   
 
@@ -1459,7 +1544,7 @@
   
   
     <li class="md-nav__item">
-      <a href="003-container-structure-tests.html" class="md-nav__link">
+      <a href="../adr/003-container-structure-tests.html" class="md-nav__link">
         
   
   
@@ -1494,7 +1579,7 @@
   
   
     <li class="md-nav__item">
-      <a href="004-embedded-local-registry.html" class="md-nav__link">
+      <a href="../adr/004-embedded-local-registry.html" class="md-nav__link">
         
   
   
@@ -1557,6 +1642,64 @@
     
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#setup" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Setup
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#available-hooks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Available hooks
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Available hooks">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#run" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        run
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#example-automated-ci-pipeline-generation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example: automated CI pipeline generation
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -1598,28 +1741,10 @@
     
     
       <li class="md-path__item">
-        <a href="../development/local.html" class="md-path__link">
+        <a href="cli.html" class="md-path__link">
           
   <span class="md-ellipsis">
-    Development
-  </span>
-
-        </a>
-      </li>
-    
-  
-
-      
-        
-  
-  
-    
-    
-      <li class="md-path__item">
-        <a href="001-buildkit-integration.html" class="md-path__link">
-          
-  <span class="md-ellipsis">
-    Architecture Decision Records
+    Usage
   </span>
 
         </a>
@@ -1641,94 +1766,47 @@
   
 
 
-<h1 id="002-sbom-generation">002 - SBOM generation</h1>
-<table>
-<tr><td><strong>Status</strong></td><td><span style='color: white;background:#28a745;padding:.4em;border-radius:8px;font-size:100%;'>accepted</span></td></tr>
-<tr><td><strong>Date</strong></td><td>2025-06-02</td></tr>
-</table>
-<h1 id="sbom-generation">SBOM generation</h1>
-<h2 id="context-and-problem-statement">Context and Problem Statement</h2>
-<p>ContainerHive needs to generate Software Bills of Materials (SBOMs) for built container images. BuildKit has built-in
-SBOM attestation support, but it relies on running a Docker container (by default pulled from Docker Hub) to perform the
-scan. In enterprise environments with restricted network access - a primary target audience for ContainerHive - this
-creates friction. How should ContainerHive integrate SBOM generation in a way that works seamlessly across environments
-without external runtime dependencies?</p>
-<h2 id="decision-drivers">Decision Drivers</h2>
-<ul>
-<li>Must work in network-restricted enterprise environments potentially without access to Docker Hub</li>
-<li>Should not require Docker-in-Docker or access to a container runtime for SBOM generation</li>
-<li>Seamless, built-in experience - SBOM generation should feel like a native part of the tool</li>
-<li>Support for local image tar files to enable offline workflows without loading into a registry first</li>
-<li>Well-documented and maintainable integration</li>
-</ul>
-<h2 id="considered-options">Considered Options</h2>
-<ul>
-<li>Option 1: Use BuildKit's built-in SBOM attestation</li>
-<li>Option 2: Use Syft as a Go library</li>
-<li>Option 3: Use Syft as a Docker container</li>
-</ul>
-<h2 id="decision-outcome">Decision Outcome</h2>
-<p>Chosen option: "Option 2 - Use Syft as a Go library", because it provides a well-documented Go API that integrates
-directly into ContainerHive without any external runtime dependencies. It operates on local OCI tar files produced by
-BuildKit, avoiding the need for a container runtime or registry access during SBOM generation. This keeps the tool
-self-contained and works reliably in restricted environments.</p>
-<h2 id="pros-and-cons-of-the-options">Pros and Cons of the Options</h2>
-<h3 id="option-1-use-buildkits-built-in-sbom-attestation">Option 1: Use BuildKit's built-in SBOM attestation</h3>
-<p>BuildKit supports SBOM generation via the <code>attest:sbom</code> frontend option. It runs a scanner image (default:
-<code>docker/buildkit-syft-scanner</code> from Docker Hub) as a container during the build process.</p>
-<ul>
-<li>Good, because it is built into BuildKit with no additional integration effort</li>
-<li>Good, because the SBOM is attached as a build attestation, following emerging OCI standards</li>
-<li>Good, because the scanner image could be customized to point to an internal registry</li>
-<li>Bad, because it pulls a Docker Hub image by default, which fails in network-restricted enterprise environments</li>
-<li>Bad, because even with a custom scanner image, it effectively requires a Docker-in-Docker setup</li>
-<li>Bad, because Docker-in-Docker is difficult to configure in Kubernetes-based CI environments (security policies,
-  privileged containers)</li>
-<li>Bad, because the complexity is hidden - failures in the attestation step are harder to diagnose than explicit SBOM
-  generation</li>
-<li>Bad, because ties SBOM format and tooling choices to what BuildKit's attestation pipeline supports</li>
-</ul>
-<h3 id="option-2-use-syft-as-a-go-library">Option 2: Use Syft as a Go library</h3>
-<p>Import <code>github.com/anchore/syft</code> as a Go dependency and call its API directly to scan OCI tar files and produce SBOMs in
-multiple formats.</p>
-<ul>
-<li>Good, because Syft has a well-documented Go API</li>
-<li>Good, because it integrates as a library - no subprocess management, no container runtime needed</li>
-<li>Good, because it operates on local <code>image.tar</code> files, enabling fully offline SBOM generation</li>
-<li>Good, because it supports multiple output formats (syft-json, CycloneDX, SPDX, etc.) with a simple encoder API</li>
-<li>Good, because no network access required at SBOM generation time - works in air-gapped environments</li>
-<li>Good, because ContainerHive controls when and how the SBOM is generated, independent of the build step</li>
-<li>Bad, because it adds a significant dependency tree (Syft pulls in SQLite for rpmdb, multiple archive libraries, etc.)</li>
-<li>Bad, because SBOM results may differ slightly from BuildKit's attestation scanner since they are separate tools</li>
-</ul>
-<h3 id="option-3-use-syft-as-a-docker-container">Option 3: Use Syft as a Docker container</h3>
-<p>Run the official Syft Docker container image to scan images, with the user providing the container.</p>
-<ul>
-<li>Good, because uses the official Syft distribution without embedding anything</li>
-<li>Good, because version management is delegated to the user</li>
-<li>Bad, because it requires a container runtime available during SBOM generation</li>
-<li>Bad, because it reintroduces the same network-restriction problems as Option 1 (pulling images)</li>
-<li>Bad, because it contradicts the goal of a seamless, all-in-one solution</li>
-<li>Bad, because subprocess/container orchestration adds complexity for little benefit over the library approach</li>
-</ul>
-<h2 id="links">Links</h2>
-<ul>
-<li><a href="https://github.com/anchore/syft">Syft GitHub repository</a></li>
-<li><a href="https://pkg.go.dev/github.com/anchore/syft/syft">Syft Go library documentation</a></li>
-<li><a href="https://github.com/moby/buildkit/blob/master/docs/attestations/sbom.md">BuildKit SBOM attestation</a></li>
-<li>Relates to <a href="001-buildkit-integration.html">ADR-001: BuildKit Integration</a> - SBOM generation is explicitly separated from
-  the BuildKit build step</li>
-</ul>
-<!-- markdownlint-disable-file MD013 -->
+<h1 id="pre-commit-integration">Pre-commit integration</h1>
+<p>ContainerHive ships <a href="https://pre-commit.com">pre-commit</a> hooks that let you automate CI pipeline generation, project
+verification, and other ContainerHive commands directly in your development workflow.</p>
+<h2 id="setup">Setup</h2>
+<p>Add the ContainerHive hook repository to your <code>.pre-commit-config.yaml</code>:</p>
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nt">repos</span><span class="p">:</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">repo</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://github.com/ContainerHive/pre-commit</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">    </span><span class="nt">rev</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">main</span><span class="w"> </span><span class="c1"># use tag or commit hash for your projects</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">    </span><span class="nt">hooks</span><span class="p">:</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">template</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">verify</span>
+</span></code></pre></div>
+<h2 id="available-hooks">Available hooks</h2>
+<h3 id="run"><code>run</code></h3>
+<p>Run an arbitrary ContainerHive command. By default runs <code>ch</code> with no subcommand. Pass arguments via <code>args</code>.</p>
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">run</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">  </span><span class="nt">args</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="w"> </span><span class="nv">generate</span><span class="w"> </span><span class="p p-Indicator">]</span>
+</span></code></pre></div>
+<h2 id="example-automated-ci-pipeline-generation">Example: automated CI pipeline generation</h2>
+<p>The following example can be used to keep CI pipelines in
+sync with the project definition:</p>
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="nt">repos</span><span class="p">:</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">repo</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://github.com/ContainerHive/pre-commit</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">    </span><span class="nt">rev</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">main</span><span class="w"> </span><span class="c1"># use tag or commit hash for your projects</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">    </span><span class="nt">hooks</span><span class="p">:</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">template</span>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="w">        </span><span class="nt">args</span><span class="p">:</span>
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ci</span>
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">--provider</span>
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">github</span>
+</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">--output</span>
+</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a><span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">.github/workflows/main.yml</span>
+</span></code></pre></div>
+<p>Every time <code>hive.yml</code> or any <code>image.yml</code> changes, pre-commit re-generates the GitHub Actions workflow so it always
+reflects the current project state.</p>
 
 
 
 
 
 
-
-  
-  
 
 
 
