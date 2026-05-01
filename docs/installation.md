@@ -14,7 +14,7 @@ brew install containerhive
 If you prefer to use containerized workflows, use the provided OCI image.
 
 ```sh
-docker run --rm -it -v $PWD:/workspace timoreymann/containerhive
+docker run --rm -it -v $PWD:/workspace containerhive/containerhive
 ```
 
 ## Manual
