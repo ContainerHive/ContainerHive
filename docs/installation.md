@@ -25,7 +25,7 @@ ContainerHive provides [pre-commit](https://pre-commit.com) hooks for generating
 # .pre-commit-config.yaml
 repos:
   - repo: https://github.com/ContainerHive/pre-commit
-    rev: v0.13.2
+    rev: main # use tag or commit hash for your projects
     hooks:
       - id: template
         args: [ci, --provider, github, --output, .github/workflows/main.yml]
