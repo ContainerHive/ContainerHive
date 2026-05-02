@@ -821,6 +821,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#mcp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        mcp
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1935,6 +1946,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#mcp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        mcp
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -2030,6 +2052,14 @@
 <td style="text-align: left;"><code>--build-id</code></td>
 <td style="text-align: left;">Build ID appended to tags as <code>+&lt;id&gt;</code></td>
 </tr>
+<tr>
+<td style="text-align: left;"><code>--log-level</code></td>
+<td style="text-align: left;">Log level (<code>debug</code>, <code>info</code>, <code>warn</code>, <code>error</code>) — sourced from <code>LOG_LEVEL</code> env (default: <code>info</code>)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>--generate</code>, <code>-g</code></td>
+<td style="text-align: left;">Run <code>ch generate</code> before the command</td>
+</tr>
 </tbody>
 </table>
 <h2 id="commands">Commands</h2>
@@ -2052,11 +2082,11 @@
 <tbody>
 <tr>
 <td style="text-align: left;"><code>--registry</code></td>
-<td style="text-align: left;">Enable local registry</td>
+<td style="text-align: left;">Use registry from config (auto-enabled in CI)</td>
 </tr>
 <tr>
 <td style="text-align: left;"><code>--platform</code></td>
-<td style="text-align: left;">Override platforms</td>
+<td style="text-align: left;">Target platform(s) to build (e.g. <code>linux/amd64</code>), overrides <code>hive.yml</code></td>
 </tr>
 </tbody>
 </table>
@@ -2065,10 +2095,27 @@
 <p>Run container structure tests on built images.</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>ch<span class="w"> </span><span class="nb">test</span><span class="w"> </span><span class="o">[</span>image:tag<span class="w"> </span>patterns...<span class="o">]</span>
 </span></code></pre></div>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Flag</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>--build</code></td>
+<td style="text-align: left;">Run build before tests</td>
+</tr>
+</tbody>
+</table>
+<p>You can combine <code>--build</code> with <code>--generate</code> to run the full pipeline in one command:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>ch<span class="w"> </span><span class="nb">test</span><span class="w"> </span>--generate<span class="w"> </span>--build
+</span></code></pre></div>
 <p>Uses <a href="https://github.com/GoogleContainerTools/container-structure-test">container-structure-test</a> to validate built images against test definitions.</p>
 <h3 id="sbom"><code>sbom</code></h3>
 <p>Generate Software Bill of Materials for built images.</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>ch<span class="w"> </span>sbom<span class="w"> </span><span class="o">[</span>image:tag<span class="w"> </span>patterns...<span class="o">]</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>ch<span class="w"> </span>sbom<span class="w"> </span><span class="o">[</span>image:tag<span class="w"> </span>patterns...<span class="o">]</span>
 </span></code></pre></div>
 <table>
 <thead>
@@ -2080,24 +2127,28 @@
 <tbody>
 <tr>
 <td style="text-align: left;"><code>--platform</code></td>
-<td style="text-align: left;">Override platforms</td>
+<td style="text-align: left;">Target platform(s) to generate SBOMs for (e.g. <code>linux/amd64</code>), overrides <code>hive.yml</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>--workers</code></td>
+<td style="text-align: left;">Number of concurrent workers for SBOM generation (default: 4)</td>
 </tr>
 </tbody>
 </table>
 <p>Generates CycloneDX JSON format SBOMs using <a href="https://github.com/anchore/syft">Syft</a> as a Go library. No external tooling required.</p>
 <h3 id="finalize"><code>finalize</code></h3>
-<p>Create multi-arch manifests and semantic version alias tags.</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>ch<span class="w"> </span>finalize<span class="w"> </span><span class="o">[</span>image:tag<span class="w"> </span>patterns...<span class="o">]</span>
+<p>Create multi-arch manifests and semantic version alias tags in the registry.</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>ch<span class="w"> </span>finalize<span class="w"> </span><span class="o">[</span>image:tag<span class="w"> </span>patterns...<span class="o">]</span>
 </span></code></pre></div>
 <p>Creates manifests from platform-specific images and applies semantic version alias tagging. Requires a running registry.</p>
 <h3 id="verify"><code>verify</code></h3>
 <p>Verify project structure.</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>ch<span class="w"> </span>verify
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>ch<span class="w"> </span>verify
 </span></code></pre></div>
 <p>Validates <code>hive.yml</code> and image definitions. Useful as a quick check before building.</p>
 <h3 id="template-ci"><code>template ci</code></h3>
 <p>Generate CI pipeline configuration.</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>ch<span class="w"> </span>template<span class="w"> </span>ci<span class="w"> </span>--provider<span class="w"> </span>&lt;provider&gt;<span class="w"> </span>--output<span class="w"> </span>&lt;path&gt;
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>ch<span class="w"> </span>template<span class="w"> </span>ci<span class="w"> </span>--provider<span class="w"> </span>&lt;provider&gt;<span class="w"> </span>--output<span class="w"> </span>&lt;path&gt;
 </span></code></pre></div>
 <table>
 <thead>
@@ -2113,33 +2164,51 @@
 </tr>
 <tr>
 <td style="text-align: left;"><code>--output</code></td>
-<td style="text-align: left;">Output file path</td>
+<td style="text-align: left;">Output file (default: stdout)</td>
 </tr>
 <tr>
 <td style="text-align: left;"><code>--template-dir</code></td>
-<td style="text-align: left;">Custom template directory</td>
+<td style="text-align: left;">Custom template directory (overrides built-in templates)</td>
 </tr>
 <tr>
 <td style="text-align: left;"><code>--artifacts</code></td>
-<td style="text-align: left;">Enable artifact passing</td>
+<td style="text-align: left;">Upload/download build artifacts between jobs</td>
 </tr>
 <tr>
 <td style="text-align: left;"><code>--version</code></td>
-<td style="text-align: left;">ContainerHive version override</td>
+<td style="text-align: left;">CH CLI version to use in CI templates (default: current CLI version)</td>
 </tr>
 <tr>
 <td style="text-align: left;"><code>--image-name</code></td>
-<td style="text-align: left;">ContainerHive image name</td>
+<td style="text-align: left;">Container image name for the CH CLI (default: <code>containerhive/containerhive</code>)</td>
 </tr>
 </tbody>
 </table>
 <h3 id="template-custom"><code>template custom</code></h3>
 <p>Render custom Go templates with project context.</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>ch<span class="w"> </span>template<span class="w"> </span>custom<span class="w"> </span>--template<span class="w"> </span>&lt;path.gotpl&gt;<span class="w"> </span>--output<span class="w"> </span>&lt;path&gt;
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>ch<span class="w"> </span>template<span class="w"> </span>custom<span class="w"> </span>--template<span class="w"> </span>&lt;path.gotpl&gt;<span class="w"> </span>--output<span class="w"> </span>&lt;path&gt;
 </span></code></pre></div>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Flag</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>--template</code></td>
+<td style="text-align: left;">Path to Go template file (<code>.gotpl</code>)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>--output</code></td>
+<td style="text-align: left;">Output file (default: stdout)</td>
+</tr>
+</tbody>
+</table>
 <h3 id="wait"><code>wait</code></h3>
 <p>Wait for infrastructure dependencies to become available.</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>ch<span class="w"> </span><span class="nb">wait</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>ch<span class="w"> </span><span class="nb">wait</span>
 </span></code></pre></div>
 <table>
 <thead>
@@ -2151,21 +2220,21 @@
 <tbody>
 <tr>
 <td style="text-align: left;"><code>--buildkitd</code></td>
-<td style="text-align: left;">Wait for BuildKit daemon</td>
+<td style="text-align: left;">Wait for BuildKit daemon (uses <code>$BUILDKIT_HOST</code>, default <code>tcp://127.0.0.1:8372</code>)</td>
 </tr>
 <tr>
 <td style="text-align: left;"><code>--docker-socket</code></td>
-<td style="text-align: left;">Wait for Docker socket</td>
+<td style="text-align: left;">Wait for Docker daemon (uses <code>$DOCKER_HOST</code>, default <code>unix:///var/run/docker.sock</code>)</td>
 </tr>
 <tr>
 <td style="text-align: left;"><code>--timeout</code></td>
-<td style="text-align: left;">Timeout duration</td>
+<td style="text-align: left;">Maximum time to wait (default: 1m)</td>
 </tr>
 </tbody>
 </table>
 <h3 id="login"><code>login</code></h3>
 <p>Log in to a container registry.</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>ch<span class="w"> </span>login<span class="w"> </span>&lt;registry&gt;<span class="w"> </span>-u<span class="w"> </span>&lt;username&gt;<span class="w"> </span>-p<span class="w"> </span>&lt;password&gt;
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>ch<span class="w"> </span>login<span class="w"> </span>&lt;registry&gt;<span class="w"> </span>-u<span class="w"> </span>&lt;username&gt;<span class="w"> </span>-p<span class="w"> </span>&lt;password&gt;
 </span></code></pre></div>
 <table>
 <thead>
@@ -2177,28 +2246,81 @@
 <tbody>
 <tr>
 <td style="text-align: left;"><code>--username</code>, <code>-u</code></td>
-<td style="text-align: left;">Registry username</td>
+<td style="text-align: left;">Username</td>
 </tr>
 <tr>
 <td style="text-align: left;"><code>--password</code>, <code>-p</code></td>
-<td style="text-align: left;">Registry password</td>
+<td style="text-align: left;">Password</td>
 </tr>
 <tr>
 <td style="text-align: left;"><code>--password-stdin</code></td>
-<td style="text-align: left;">Read password from stdin</td>
+<td style="text-align: left;">Take the password from stdin</td>
 </tr>
 </tbody>
 </table>
 <h3 id="dev-buildkitd"><code>dev buildkitd</code></h3>
 <p>Manage a local BuildKit daemon container for development. See <a href="local-development.html">Local development</a> for full details.</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>ch<span class="w"> </span>dev<span class="w"> </span>buildkitd<span class="w"> </span>start
-</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>ch<span class="w"> </span>dev<span class="w"> </span>buildkitd<span class="w"> </span>stop
-</span><span id="__span-11-3"><a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a>ch<span class="w"> </span>dev<span class="w"> </span>buildkitd<span class="w"> </span>status
-</span><span id="__span-11-4"><a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a>ch<span class="w"> </span>dev<span class="w"> </span>buildkitd<span class="w"> </span>logs
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>ch<span class="w"> </span>dev<span class="w"> </span>buildkitd<span class="w"> </span>start
+</span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>ch<span class="w"> </span>dev<span class="w"> </span>buildkitd<span class="w"> </span>stop
+</span><span id="__span-12-3"><a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a>ch<span class="w"> </span>dev<span class="w"> </span>buildkitd<span class="w"> </span>status
+</span><span id="__span-12-4"><a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a>ch<span class="w"> </span>dev<span class="w"> </span>buildkitd<span class="w"> </span>logs
 </span></code></pre></div>
+<p><strong><code>start</code> flags:</strong></p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Flag</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>--image</code></td>
+<td style="text-align: left;">BuildKit image to use (<code>image:tag</code>). Defaults to the version configured in <code>hive.yml</code> <code>template_options</code> or the bundled version</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>--port</code></td>
+<td style="text-align: left;">Host port to bind</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>--timeout</code></td>
+<td style="text-align: left;">Maximum time to wait for buildkitd to become ready (default: 1m)</td>
+</tr>
+</tbody>
+</table>
+<p><strong><code>stop</code> flags:</strong></p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Flag</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>--remove</code></td>
+<td style="text-align: left;">Also remove the container after stopping</td>
+</tr>
+</tbody>
+</table>
+<p><strong><code>logs</code> flags:</strong></p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Flag</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>--follow</code>, <code>-f</code></td>
+<td style="text-align: left;">Follow log output</td>
+</tr>
+</tbody>
+</table>
 <h3 id="report"><code>report</code></h3>
 <p>Generate an HTML or JSON report of container images.</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>ch<span class="w"> </span>report
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>ch<span class="w"> </span>report
 </span></code></pre></div>
 <table>
 <thead>
@@ -2209,16 +2331,25 @@
 </thead>
 <tbody>
 <tr>
-<td style="text-align: left;"><code>--output</code>, <code>-o</code></td>
-<td style="text-align: left;">Output file path (default: dist/report.html or dist/report.json based on extension)</td>
+<td style="text-align: left;"><code>--output</code></td>
+<td style="text-align: left;">Output file path (default: <code>dist/report.html</code>)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>--json</code></td>
+<td style="text-align: left;">Output JSON instead of HTML</td>
 </tr>
 </tbody>
 </table>
 <p>Generates a report containing information about all configured images, including their build status, dependencies, and metadata.</p>
 <h3 id="license"><code>license</code></h3>
 <p>Show third-party license notices.</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>ch<span class="w"> </span>license
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>ch<span class="w"> </span>license
 </span></code></pre></div>
+<h3 id="mcp"><code>mcp</code></h3>
+<p>Start a Model Context Protocol (MCP) server for AI tool integration.</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-15-1"><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a>ch<span class="w"> </span>mcp
+</span></code></pre></div>
+<p>See <a href="mcp.html">MCP integration</a> for full details.</p>
 
 
 
