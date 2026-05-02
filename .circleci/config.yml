@@ -233,6 +233,15 @@ jobs:
               --version "$CIRCLE_TAG" \
               --path schemas/project.schema.json \
               --identifier containerhive-project
+      - run:
+          name: Upload structure test schema to SchemaNest
+          command: |
+            schema-nest-cli upload-json-schema \
+              --base-url https://schema-nest.timo-reymann.de \
+              --api-key "$SCHEMA_NEST_UPLOAD_KEY" \
+              --version "$CIRCLE_TAG" \
+              --path schemas/structure-test.schema.json \
+              --identifier containerhive-structure-test || true
   build-gh-pages:
     executor: node
     steps:
