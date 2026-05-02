@@ -14,6 +14,8 @@ ch --help
 |:-----|:------------|
 | `--project`, `-p` | Project root directory |
 | `--build-id` | Build ID appended to tags as `+<id>` |
+| `--log-level` | Log level (`debug`, `info`, `warn`, `error`) — sourced from `LOG_LEVEL` env (default: `info`) |
+| `--generate`, `-g` | Run `ch generate` before the command |
 
 ## Commands
 
@@ -37,8 +39,8 @@ ch build [image:tag patterns...]
 
 | Flag | Description |
 |:-----|:------------|
-| `--registry` | Enable local registry |
-| `--platform` | Override platforms |
+| `--registry` | Use registry from config (auto-enabled in CI) |
+| `--platform` | Target platform(s) to build (e.g. `linux/amd64`), overrides `hive.yml` |
 
 You can filter which images to build by passing image:tag patterns as arguments. In CI environments, the registry is auto-enabled.
 
@@ -48,6 +50,16 @@ Run container structure tests on built images.
 
 ```bash
 ch test [image:tag patterns...]
+```
+
+| Flag | Description |
+|:-----|:------------|
+| `--build` | Run build before tests |
+
+You can combine `--build` with `--generate` to run the full pipeline in one command:
+
+```bash
+ch test --generate --build
 ```
 
 Uses [container-structure-test](https://github.com/GoogleContainerTools/container-structure-test) to validate built images against test definitions.
@@ -62,13 +74,14 @@ ch sbom [image:tag patterns...]
 
 | Flag | Description |
 |:-----|:------------|
-| `--platform` | Override platforms |
+| `--platform` | Target platform(s) to generate SBOMs for (e.g. `linux/amd64`), overrides `hive.yml` |
+| `--workers` | Number of concurrent workers for SBOM generation (default: 4) |
 
 Generates CycloneDX JSON format SBOMs using [Syft](https://github.com/anchore/syft) as a Go library. No external tooling required.
 
 ### `finalize`
 
-Create multi-arch manifests and semantic version alias tags.
+Create multi-arch manifests and semantic version alias tags in the registry.
 
 ```bash
 ch finalize [image:tag patterns...]
@@ -97,11 +110,11 @@ ch template ci --provider <provider> --output <path>
 | Flag | Description |
 |:-----|:------------|
 | `--provider` | CI provider (`gitlab` or `github`) |
-| `--output` | Output file path |
-| `--template-dir` | Custom template directory |
-| `--artifacts` | Enable artifact passing |
-| `--version` | ContainerHive version override |
-| `--image-name` | ContainerHive image name |
+| `--output` | Output file (default: stdout) |
+| `--template-dir` | Custom template directory (overrides built-in templates) |
+| `--artifacts` | Upload/download build artifacts between jobs |
+| `--version` | CH CLI version to use in CI templates (default: current CLI version) |
+| `--image-name` | Container image name for the CH CLI (default: `containerhive/containerhive`) |
 
 ### `template custom`
 
@@ -110,6 +123,11 @@ Render custom Go templates with project context.
 ```bash
 ch template custom --template <path.gotpl> --output <path>
 ```
+
+| Flag | Description |
+|:-----|:------------|
+| `--template` | Path to Go template file (`.gotpl`) |
+| `--output` | Output file (default: stdout) |
 
 ### `wait`
 
@@ -121,9 +139,9 @@ ch wait
 
 | Flag | Description |
 |:-----|:------------|
-| `--buildkitd` | Wait for BuildKit daemon |
-| `--docker-socket` | Wait for Docker socket |
-| `--timeout` | Timeout duration |
+| `--buildkitd` | Wait for BuildKit daemon (uses `$BUILDKIT_HOST`, default `tcp://127.0.0.1:8372`) |
+| `--docker-socket` | Wait for Docker daemon (uses `$DOCKER_HOST`, default `unix:///var/run/docker.sock`) |
+| `--timeout` | Maximum time to wait (default: 1m) |
 
 ### `login`
 
@@ -135,9 +153,9 @@ ch login <registry> -u <username> -p <password>
 
 | Flag | Description |
 |:-----|:------------|
-| `--username`, `-u` | Registry username |
-| `--password`, `-p` | Registry password |
-| `--password-stdin` | Read password from stdin |
+| `--username`, `-u` | Username |
+| `--password`, `-p` | Password |
+| `--password-stdin` | Take the password from stdin |
 
 ### `dev buildkitd`
 
@@ -150,6 +168,26 @@ ch dev buildkitd status
 ch dev buildkitd logs
 ```
 
+**`start` flags:**
+
+| Flag | Description |
+|:-----|:------------|
+| `--image` | BuildKit image to use (`image:tag`). Defaults to the version configured in `hive.yml` `template_options` or the bundled version |
+| `--port` | Host port to bind |
+| `--timeout` | Maximum time to wait for buildkitd to become ready (default: 1m) |
+
+**`stop` flags:**
+
+| Flag | Description |
+|:-----|:------------|
+| `--remove` | Also remove the container after stopping |
+
+**`logs` flags:**
+
+| Flag | Description |
+|:-----|:------------|
+| `--follow`, `-f` | Follow log output |
+
 ### `report`
 
 Generate an HTML or JSON report of container images.
@@ -160,7 +198,8 @@ ch report
 
 | Flag | Description |
 |:-----|:------------|
-| `--output`, `-o` | Output file path (default: dist/report.html or dist/report.json based on extension) |
+| `--output` | Output file path (default: `dist/report.html`) |
+| `--json` | Output JSON instead of HTML |
 
 Generates a report containing information about all configured images, including their build status, dependencies, and metadata.
 
@@ -171,3 +210,13 @@ Show third-party license notices.
 ```bash
 ch license
 ```
+
+### `mcp`
+
+Start a Model Context Protocol (MCP) server for AI tool integration.
+
+```bash
+ch mcp
+```
+
+See [MCP integration](mcp.md) for full details.

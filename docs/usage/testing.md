@@ -76,6 +76,20 @@ This will:
 2. Load or pull the built image for each platform.
 3. Execute the tests and produce JUnit XML reports.
 
+### Building before tests
+
+Use `--build` to build images first, then run tests:
+
+```bash
+ch test --build
+```
+
+You can combine with `--generate` to render templates, build, and test in one step:
+
+```bash
+ch test --generate --build
+```
+
 ### Filtering
 
 You can run tests for specific images or tags:
@@ -84,6 +98,8 @@ You can run tests for specific images or tags:
 ch test my-image:latest
 ch test my-image:*
 ```
+
+When using `--build`, the same filters apply to both the build and test steps.
 
 ### CI behavior
 

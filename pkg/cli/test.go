@@ -16,6 +16,12 @@ func testCmd() *cli.Command {
 		Name:      "test",
 		Usage:     "Run container structure tests on built images",
 		ArgsUsage: "[image:tag ...]",
+		Flags: []cli.Flag{
+			&cli.BoolFlag{
+				Name:  "build",
+				Usage: "Run build before tests",
+			},
+		},
 		Action: func(ctx context.Context, cmd *cli.Command) error {
 			filters := utils.ParseFilters(cmd.Args().Slice())
 
@@ -26,13 +32,20 @@ func testCmd() *cli.Command {
 			}
 
 			distPath := getDistPath(cmd)
-			if _, err := os.Stat(distPath); err != nil {
-				return fmt.Errorf("dist/ not found — run 'ch generate' first: %w", err)
-			}
 
 			project, err := discoverProject(ctx, cmd)
 			if err != nil {
 				return err
+			}
+
+			if cmd.Bool("build") {
+				if err := buildProject(ctx, project, distPath, filters, cmd.String("build-id"), nil, false); err != nil {
+					return err
+				}
+			}
+
+			if _, err := os.Stat(distPath); err != nil {
+				return fmt.Errorf("dist/ not found — run 'ch generate' first: %w", err)
 			}
 
 			opts := &test.Opts{

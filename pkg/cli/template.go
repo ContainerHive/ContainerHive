@@ -51,7 +51,7 @@ func templateCICmd() *cli.Command {
 			},
 			&cli.StringFlag{
 				Name:  "image-name",
-				Usage: "Container image name for the CH CLI (default: timoreymann/ch)",
+				Usage: "Container image name for the CH CLI (default: containerhive/containerhive)",
 			},
 		},
 		Action: func(ctx context.Context, cmd *cli.Command) error {
