@@ -348,15 +348,13 @@ workflows:
       - publish-container-image-snapshot:
           requires:
             - build
-  #      - semantic-release/with_existing_config:
-  #          name: semantic-release
-  #          additional_packages: "@google/semantic-release-replace-plugin"
-  #          context:
-  #            - semantic-release
-  #          filters:
-  #            branches:
-  #              only:
-  #                - main
+      - semantic-release/with_existing_config:
+          name: semantic-release
+          additional_packages: "@google/semantic-release-replace-plugin"
+          filters:
+            branches:
+              only:
+                - main
   release:
     jobs:
       - build-web-report:
