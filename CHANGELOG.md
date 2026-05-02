@@ -1,3 +1,9 @@
+## [0.16.0](https://github.com/ContainerHive/ContainerHive/compare/v0.15.0...v0.16.0) (2026-05-02)
+
+### Features
+
+* Add container structure test schema ([5f2c1c3](https://github.com/ContainerHive/ContainerHive/commit/5f2c1c33dc04321f6dddecfaa032aa3d78896f90))
+
 ## [0.15.0](https://github.com/ContainerHive/ContainerHive/compare/v0.14.0...v0.15.0) (2026-05-02)
 
 ### Features
