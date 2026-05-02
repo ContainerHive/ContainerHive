@@ -34,6 +34,12 @@ func buildCmd() *cli.Command {
 			useRegistry := cmd.Bool("registry") || os.Getenv("CI") != ""
 			filters := utils.ParseFilters(cmd.Args().Slice())
 
+			if cmd.Bool("generate") {
+				if err := generateProject(ctx, cmd); err != nil {
+					return err
+				}
+			}
+
 			project, err := discoverProject(ctx, cmd)
 			if err != nil {
 				return err

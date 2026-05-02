@@ -12,6 +12,7 @@ import (
 	"github.com/ContainerHive/ContainerHive/pkg/logging"
 	"github.com/ContainerHive/ContainerHive/pkg/model"
 	"github.com/ContainerHive/ContainerHive/pkg/registry"
+	"github.com/ContainerHive/ContainerHive/pkg/rendering"
 	"github.com/ContainerHive/ContainerHive/pkg/version"
 	"github.com/urfave/cli/v3"
 )
@@ -45,6 +46,21 @@ func setupRegistry(ctx context.Context, distPath string, config *model.RegistryC
 	return reg, nil
 }
 
+func generateProject(ctx context.Context, cmd *cli.Command) error {
+	project, err := discoverProject(ctx, cmd)
+	if err != nil {
+		return err
+	}
+
+	distPath := getDistPath(cmd)
+	if err := rendering.RenderProject(ctx, project, distPath); err != nil {
+		return fmt.Errorf("rendering failed: %w", err)
+	}
+
+	slog.Info("Rendered images to dist/", "count", len(project.ImagesByIdentifier), "path", distPath)
+	return nil
+}
+
 func NewApp() *cli.Command {
 	app := &cli.Command{
 		Name:                  "ch",
@@ -68,6 +84,11 @@ func NewApp() *cli.Command {
 				Usage:   "Log level (debug, info, warn, error)",
 				Sources: cli.EnvVars("LOG_LEVEL"),
 				Value:   "info",
+			},
+			&cli.BoolFlag{
+				Name:    "generate",
+				Aliases: []string{"g"},
+				Usage:   "Run generate before the command",
 			},
 		},
 		Before: func(ctx context.Context, cmd *cli.Command) (context.Context, error) {
