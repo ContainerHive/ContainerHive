@@ -5,8 +5,8 @@ ContainerHive supports a variety of platforms.
 ## Homebrew
 
 ```sh
-brew tap ContainerHive/homebrew-ContainerHive
-brew install containerhive
+brew tap ContainerHive/ContainerHive
+brew install ContainerHive
 ```
 
 ## Containerized
