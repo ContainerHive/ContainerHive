@@ -1,8 +1,5 @@
 ContainerHive
 ===
-
-> This project is under active development. It is not yet in a stable state. Use at your own risk.
-
 [![LICENSE](https://img.shields.io/github/license/ContainerHive/ContainerHive)](https://github.com/ContainerHive/ContainerHive/blob/main/LICENSE)
 [![CircleCI](https://circleci.com/gh/ContainerHive/ContainerHive.svg?style=shield)](https://app.circleci.com/pipelines/github/ContainerHive/ContainerHive)
 [![codecov](https://codecov.io/gh/ContainerHive/ContainerHive/graph/badge.svg?token=5MGUHVhimo)](https://codecov.io/gh/ContainerHive/ContainerHive)
