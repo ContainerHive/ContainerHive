@@ -11,14 +11,14 @@
         with:
           lfs: true
       - name: Download generated files
-        uses: actions/download-artifact@v7
+        uses: actions/download-artifact@v8
         with:
           name: generated
           path: {{ .Ctx.Dist }}/
 {{- if $.Ctx.Artifacts }}
 {{- range .Image.Platforms }}
       - name: Download build artifacts for {{ . }}
-        uses: actions/download-artifact@v7
+        uses: actions/download-artifact@v8
         with:
           name: {{ $.Image.Name }}-{{ . }}
           path: {{ $.Ctx.Dist }}/

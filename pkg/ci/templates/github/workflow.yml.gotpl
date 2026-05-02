@@ -69,14 +69,14 @@ jobs:
         with:
           lfs: true
       - name: Download generated files
-        uses: actions/download-artifact@v7
+        uses: actions/download-artifact@v8
         with:
           name: generated
           path: {{ .Dist }}/
 {{- range $img := .Images }}
 {{- range $p := $img.Platforms }}
       - name: Download {{ $img.Name }}-{{ $p }} SBOM
-        uses: actions/download-artifact@v7
+        uses: actions/download-artifact@v8
         with:
 {{- if $.Artifacts }}
           name: {{ $img.Name }}-{{ $p }}
@@ -100,10 +100,10 @@ jobs:
       - name: Copy JSON report
         run: cp {{ .Dist }}/report.json public/report.json
       - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v5
         with:
           path: public/
       - name: Deploy to GitHub Pages
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
 {{- end }}
