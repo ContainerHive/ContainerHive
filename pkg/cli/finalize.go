@@ -19,6 +19,12 @@ func finalizeCmd() *cli.Command {
 			buildID := cmd.String("build-id")
 			filters := utils.ParseFilters(cmd.Args().Slice())
 
+			if cmd.Bool("generate") {
+				if err := generateProject(ctx, cmd); err != nil {
+					return err
+				}
+			}
+
 			project, err := discoverProject(ctx, cmd)
 			if err != nil {
 				return err

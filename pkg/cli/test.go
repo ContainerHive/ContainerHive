@@ -18,6 +18,13 @@ func testCmd() *cli.Command {
 		ArgsUsage: "[image:tag ...]",
 		Action: func(ctx context.Context, cmd *cli.Command) error {
 			filters := utils.ParseFilters(cmd.Args().Slice())
+
+			if cmd.Bool("generate") {
+				if err := generateProject(ctx, cmd); err != nil {
+					return err
+				}
+			}
+
 			distPath := getDistPath(cmd)
 			if _, err := os.Stat(distPath); err != nil {
 				return fmt.Errorf("dist/ not found — run 'ch generate' first: %w", err)
