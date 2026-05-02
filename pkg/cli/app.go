@@ -8,9 +8,13 @@ import (
 	"os/signal"
 	"path/filepath"
 
+	"github.com/ContainerHive/ContainerHive/pkg/build"
+	"github.com/ContainerHive/ContainerHive/pkg/cache"
+	"github.com/ContainerHive/ContainerHive/pkg/deps"
 	"github.com/ContainerHive/ContainerHive/pkg/discovery"
 	"github.com/ContainerHive/ContainerHive/pkg/logging"
 	"github.com/ContainerHive/ContainerHive/pkg/model"
+	"github.com/ContainerHive/ContainerHive/pkg/progress"
 	"github.com/ContainerHive/ContainerHive/pkg/registry"
 	"github.com/ContainerHive/ContainerHive/pkg/rendering"
 	"github.com/ContainerHive/ContainerHive/pkg/version"
@@ -58,6 +62,86 @@ func generateProject(ctx context.Context, cmd *cli.Command) error {
 	}
 
 	slog.Info("Rendered images to dist/", "count", len(project.ImagesByIdentifier), "path", distPath)
+	return nil
+}
+
+func buildProject(ctx context.Context, project *model.ContainerHiveProject, distPath string, filters []build.Filter, buildID string, platforms []string, useRegistry bool) error {
+	if len(platforms) > 0 {
+		project.Config.Platforms = platforms
+	}
+
+	if len(project.Config.Platforms) == 0 {
+		return fmt.Errorf("no platforms configured — set platforms in hive.yml or pass --platform")
+	}
+
+	if _, err := os.Stat(distPath); err != nil {
+		return fmt.Errorf("dist/ not found — run 'ch generate' first: %w", err)
+	}
+
+	buildOrder, err := deps.ResolveOrder(distPath, project)
+	if err != nil {
+		return fmt.Errorf("dependency resolution failed: %w", err)
+	}
+	slog.Info("Build order resolved", "order", buildOrder.Order())
+
+	buildkitAddr := ""
+	if project.Config.BuildKit != nil && project.Config.BuildKit.Address != "" {
+		buildkitAddr = project.Config.BuildKit.Address
+	}
+	bkClient, err := build.NewClient(ctx, buildkitAddr)
+	if err != nil {
+		return fmt.Errorf("failed to connect to BuildKit at %s: %w", buildkitAddr, err)
+	}
+	defer bkClient.Close()
+
+	buildCache, err := cache.BuildCacheFromConfig(project.Config.Cache, "ch-build")
+	if err != nil {
+		return fmt.Errorf("cache configuration failed: %w", err)
+	}
+
+	progressMode := progress.AutoMode
+	if os.Getenv("CI") != "" {
+		progressMode = progress.LinearMode
+	}
+
+	if os.Getenv("CI") != "" {
+		useRegistry = true
+	}
+
+	buildOpts := &build.ProjectBuildOpts{
+		Project:     project,
+		BuildOrder:  buildOrder,
+		DistPath:    distPath,
+		Cache:       buildCache,
+		ProgressOut: os.Stdout,
+		ProgressConfig: progress.Config{
+			Mode:    progressMode,
+			Writer:  os.Stdout,
+			Colors:  progress.DefaultColors(),
+			NoColor: os.Getenv("NO_COLOR") != "",
+		},
+		Filters: filters,
+		BuildID: buildID,
+	}
+
+	if buildOrder.HasDependencies() {
+		slog.Info("Inter-image dependencies detected, using OCI layout named contexts")
+	}
+
+	if useRegistry {
+		reg, err := setupRegistry(ctx, distPath, project.Config.Registry)
+		if err != nil {
+			return err
+		}
+		defer reg.Stop(ctx)
+
+		buildOpts.Registry = reg
+	}
+
+	if err := build.BuildProject(ctx, bkClient, buildOpts); err != nil {
+		return fmt.Errorf("build failed: %w", err)
+	}
+
 	return nil
 }
 
