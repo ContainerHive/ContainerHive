@@ -1,5 +1,5 @@
 properdocs==1.6.7
 mkdocs-material==9.7.6
 mkdocs-awesome-nav==3.3.0
-mkdocs-decision-records==2.3.0
+mkdocs-decision-records==2.3.1
 mkdocs-kroki-plugin==1.6.0
