@@ -2,6 +2,7 @@ import type {ProjectReport} from './types'
 
 export const mockData: ProjectReport = {
     generatedAt: new Date().toISOString(),
+    registry: { address: 'registry.example.com' },
     source: 'tar',
     images: [
         {

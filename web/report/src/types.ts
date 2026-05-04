@@ -34,8 +34,13 @@ export interface ImageReport {
   variants?: VariantReport[];
 }
 
+export interface RegistryInfo {
+  address: string;
+}
+
 export interface ProjectReport {
   generatedAt: string;
+  registry?: RegistryInfo;
   source: string;
   images: ImageReport[];
 }

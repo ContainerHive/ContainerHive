@@ -2,8 +2,13 @@ package report
 
 import "encoding/json"
 
+type RegistryInfo struct {
+	Address string `json:"address"`
+}
+
 type ProjectReport struct {
 	GeneratedAt string        `json:"generatedAt"`
+	Registry    *RegistryInfo `json:"registry,omitempty"`
 	Images      []ImageReport `json:"images"`
 }
 

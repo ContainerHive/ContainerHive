@@ -579,7 +579,6 @@
 
       /* About page */
       .section ul {
-        margin: 12px 0 12px 24px;
         display: flex;
         flex-direction: column;
         gap: 8px;
@@ -688,6 +687,50 @@
         background: var(--surface-container-low);
         padding: 4px 8px;
         border-radius: 2px;
+      }
+      .docker-pull-section {
+        margin-bottom: 20px;
+        padding: 16px;
+        background: var(--surface-container);
+        border-radius: 2px;
+      }
+      .code-block {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 12px;
+        border-radius: 2px;
+        cursor: pointer;
+        user-select: all;
+        background: var(--surface-container-low);
+      }
+      .code-block code {
+        font-family: 'Space Grotesk', monospace;
+        font-size: 13px;
+        color: var(--on-surface-variant);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        background: none;
+        padding: 0;
+        border-radius: 0;
+      }
+      .copy-indicator {
+        font-size: 11px;
+        font-weight: 500;
+        color: var(--on-surface-variant);
+        flex-shrink: 0;
+        padding: 4px 10px;
+        border-radius: 100px;
+        transition: all 0.15s;
+      }
+      .code-block:hover .copy-indicator {
+        background: var(--surface-container);
+      }
+      .code-block.copied .copy-indicator {
+        background: var(--primary);
+        color: var(--on-primary);
       }
       .platform-label { color: var(--on-surface-variant); font-size: 10px; }
       .platform-config { margin-bottom: 12px; }

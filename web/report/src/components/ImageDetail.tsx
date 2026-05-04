@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
 import { Link } from 'react-router-dom'
 import 'devicon/devicon-base.css'
 import Markdown from 'react-markdown'
@@ -34,6 +34,9 @@ function ImageDetail({ data, imageName, kind }: Readonly<ImageDetailProps>) {
 
   const [activeTag, setActiveTag] = useState<string>('')
   const [sbomSearch, setSbomSearch] = useState<string>('')
+  const [copied, setCopied] = useState(false)
+
+  const registryAddress = data.registry?.address
 
   const firstTag = tags[0]?.name || ''
   const currentTag = activeTag || firstTag
@@ -41,6 +44,14 @@ function ImageDetail({ data, imageName, kind }: Readonly<ImageDetailProps>) {
 
   const buildArgs = currentTagData?.buildArgs || {}
   const versions = currentTagData?.versions || {}
+
+  const handleCopyPull = useCallback(() => {
+    const cmd = `docker pull ${registryAddress}/${displayName}:${currentTag}`
+    navigator.clipboard.writeText(cmd).then(() => {
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    })
+  }, [registryAddress, displayName, currentTag])
 
   if (!image) {
     return (
@@ -116,6 +127,20 @@ function ImageDetail({ data, imageName, kind }: Readonly<ImageDetailProps>) {
         </div>
 
         <div className="section">
+          {registryAddress && (
+            <div className="docker-pull-section">
+              <h2>Pull Command</h2>
+              <div
+                className={`code-block ${copied ? 'copied' : ''}`}
+                onClick={handleCopyPull}
+                title="Click to copy"
+              >
+                <code>docker pull {registryAddress}/{displayName}:{currentTag}</code>
+                <span className="copy-indicator">{copied ? 'Copied!' : 'Copy'}</span>
+              </div>
+            </div>
+          )}
+
           {Object.keys(versions).length > 0 && (
             <div className="versions-section">
               <h2>Versions</h2>

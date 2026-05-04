@@ -41,10 +41,18 @@ func NewGenerator() *Generator {
 }
 
 func (g *Generator) Generate(project *model.ContainerHiveProject) (*ProjectReport, error) {
-	return &ProjectReport{
+	report := &ProjectReport{
 		GeneratedAt: time.Now().UTC().Format(time.RFC3339),
 		Images:      scanProject(project),
-	}, nil
+	}
+
+	if project.Config.Registry != nil && project.Config.Registry.Address != "" {
+		report.Registry = &RegistryInfo{
+			Address: project.Config.Registry.Address,
+		}
+	}
+
+	return report, nil
 }
 
 func scanProject(project *model.ContainerHiveProject) []ImageReport {
