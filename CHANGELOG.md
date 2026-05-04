@@ -1,3 +1,10 @@
+## [0.16.1](https://github.com/ContainerHive/ContainerHive/compare/v0.16.0...v0.16.1) (2026-05-04)
+
+### Bug Fixes
+
+* **deps:** update module github.com/docker/cli to v29.4.2+incompatible ([#95](https://github.com/ContainerHive/ContainerHive/issues/95)) ([10cd8be](https://github.com/ContainerHive/ContainerHive/commit/10cd8be951bc5dc255458dd65db3ade08ea125de))
+* **deps:** update module modernc.org/sqlite to v1.50.0 ([#97](https://github.com/ContainerHive/ContainerHive/issues/97)) ([56a0396](https://github.com/ContainerHive/ContainerHive/commit/56a0396d119043c337df6733d966fb3027037928))
+
 ## [0.16.0](https://github.com/ContainerHive/ContainerHive/compare/v0.15.0...v0.16.0) (2026-05-02)
 
 ### Features
