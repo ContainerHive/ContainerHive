@@ -1,3 +1,9 @@
+## [0.17.0](https://github.com/ContainerHive/ContainerHive/compare/v0.16.1...v0.17.0) (2026-05-04)
+
+### Features
+
+* add docker pull command to report ([264d98c](https://github.com/ContainerHive/ContainerHive/commit/264d98cecfd1439a8294a9cf11d4a510f538cf93))
+
 ## [0.16.1](https://github.com/ContainerHive/ContainerHive/compare/v0.16.0...v0.16.1) (2026-05-04)
 
 ### Bug Fixes
