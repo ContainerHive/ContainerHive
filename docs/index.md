@@ -7,10 +7,6 @@ Home
 
 Swarm it. Build it. Run it. — Managing container base and library images has never been easier.
 
-!!! warning
-
-    This project is under active development. It is not yet in any usable state. Use at your own risk.
-
 ## Motivation
 
 Managing container base images and library images at scale is surprisingly painful. Teams end up with scattered Dockerfiles, manual build scripts, inconsistent tagging, and no dependency tracking between images. CI pipelines are hand-rolled per project, caching is an afterthought, and reproducibility is a dream.
