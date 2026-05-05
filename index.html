@@ -1734,10 +1734,6 @@
 <img alt="Logo" src="images/logo_with_text_line.png" width="512" />
 </figure>
 <p>Swarm it. Build it. Run it. — Managing container base and library images has never been easier.</p>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>This project is under active development. It is not yet in any usable state. Use at your own risk.</p>
-</div>
 <h2 id="motivation">Motivation</h2>
 <p>Managing container base images and library images at scale is surprisingly painful. Teams end up with scattered Dockerfiles, manual build scripts, inconsistent tagging, and no dependency tracking between images. CI pipelines are hand-rolled per project, caching is an afterthought, and reproducibility is a dream.</p>
 <p>ContainerHive grew out of <a href="https://github.com/timo-reymann/poc-container-image-manager">poc-container-image-manager</a>, a Python-based proof of concept that validated the core idea: declarative, YAML-driven image management with dependency resolution, templating, and CI generation. The PoC proved the concept works — but being Python-based, it required a runtime, bundled platform-specific binaries, and wasn't practical to distribute as a single portable tool.</p>
