@@ -42,8 +42,8 @@ func TestRegistryCache_WithScope(t *testing.T) {
 		t.Fatalf("expected *RegistryCache, got %T", scoped)
 	}
 
-	if reg.CacheRef != "registry.example.com/my-cache:latest.ubuntu.22.04.linux_amd64" {
-		t.Errorf("CacheRef = %q, want %q", reg.CacheRef, "registry.example.com/my-cache:latest.ubuntu.22.04.linux_amd64")
+	if reg.CacheRef != "registry.example.com/my-cache:ubuntu.22.04.linux_amd64" {
+		t.Errorf("CacheRef = %q, want %q", reg.CacheRef, "registry.example.com/my-cache:ubuntu.22.04.linux_amd64")
 	}
 	if reg.Insecure {
 		t.Error("expected Insecure to remain false")
