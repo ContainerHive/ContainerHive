@@ -12,7 +12,7 @@ func (r RegistryCache) Name() string {
 
 func (r RegistryCache) WithScope(scope string) BuildkitCache {
 	return &RegistryCache{
-		CacheRef: r.CacheRef + "." + sanitizeTagSuffix(scope),
+		CacheRef: r.CacheRef + ":" + sanitizeTagSuffix(scope),
 		Insecure: r.Insecure,
 	}
 }
