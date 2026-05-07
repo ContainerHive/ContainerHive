@@ -9,6 +9,46 @@ func TestS3BuildKitCache_Name(t *testing.T) {
 	}
 }
 
+func TestS3BuildKitCache_WithScope(t *testing.T) {
+	s := &S3BuildKitCache{
+		EndpointUrl:     "http://localhost:9000",
+		Bucket:          "my-bucket",
+		Region:          "us-east-1",
+		AccessKeyId:     "test-key",
+		SecretAccessKey: "test-secret",
+		UsePathStyle:    true,
+		CacheKey:        "my-cache",
+	}
+
+	scoped := s.WithScope("ubuntu.22.04.linux/amd64")
+	s3scoped, ok := scoped.(*S3BuildKitCache)
+	if !ok {
+		t.Fatalf("expected *S3BuildKitCache, got %T", scoped)
+	}
+
+	if s3scoped.CacheKey != "my-cache-ubuntu.22.04.linux/amd64" {
+		t.Errorf("CacheKey = %q, want %q", s3scoped.CacheKey, "my-cache-ubuntu.22.04.linux/amd64")
+	}
+	if s3scoped.EndpointUrl != s.EndpointUrl {
+		t.Error("WithScope should preserve EndpointUrl")
+	}
+	if s3scoped.Bucket != s.Bucket {
+		t.Error("WithScope should preserve Bucket")
+	}
+}
+
+func TestS3BuildKitCache_WithScope_PreservesOriginal(t *testing.T) {
+	s := &S3BuildKitCache{
+		CacheKey: "my-cache",
+	}
+
+	_ = s.WithScope("some.scope")
+
+	if s.CacheKey != "my-cache" {
+		t.Error("WithScope should not mutate the original cache")
+	}
+}
+
 func TestS3BuildKitCache_ToAttributes(t *testing.T) {
 	s := &S3BuildKitCache{
 		EndpointUrl:     "http://localhost:9000",

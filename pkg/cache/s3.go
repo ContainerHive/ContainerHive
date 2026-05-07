@@ -17,6 +17,12 @@ func (s *S3BuildKitCache) Name() string {
 	return "s3"
 }
 
+func (s *S3BuildKitCache) WithScope(scope string) BuildkitCache {
+	ns := *s
+	ns.CacheKey = s.CacheKey + "-" + scope
+	return &ns
+}
+
 func (s *S3BuildKitCache) ToAttributes() map[string]string {
 	return map[string]string{
 		"endpoint_url":      s.EndpointUrl,

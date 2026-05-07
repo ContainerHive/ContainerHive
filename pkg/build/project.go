@@ -222,11 +222,17 @@ func buildTag(ctx context.Context, client *Client, opts *ProjectBuildOpts, image
 		return fmt.Errorf("failed to resolve build args for %s:%s: %w", imageDef.Name, tagName, err)
 	}
 
+	scope := fmt.Sprintf("%s.%s.%s", imageDef.Name, tagName, platformStr)
+	scopedCache := opts.Cache
+	if opts.Cache != nil {
+		scopedCache = opts.Cache.WithScope(scope)
+	}
+
 	buildOpts := &BuildOpts{
 		ImageName:  imageTag,
 		Platform:   platformStr,
 		TarFile:    tf,
-		Cache:      opts.Cache,
+		Cache:      scopedCache,
 		ContextDir: root,
 		BuildArgs:  config.BuildArgs,
 		Secrets:    config.Secrets,
@@ -297,11 +303,17 @@ func buildVariant(ctx context.Context, client *Client, opts *ProjectBuildOpts, i
 		return fmt.Errorf("failed to resolve build args for variant %s:%s:%s: %w", imageDef.Name, tagName, variantName, err)
 	}
 
+	variantScope := fmt.Sprintf("%s.%s.%s", imageDef.Name, variantTagName, platformStr)
+	scopedCache := opts.Cache
+	if opts.Cache != nil {
+		scopedCache = opts.Cache.WithScope(variantScope)
+	}
+
 	buildOpts := &BuildOpts{
 		ImageName:  variantTag,
 		Platform:   platformStr,
 		TarFile:    tf,
-		Cache:      opts.Cache,
+		Cache:      scopedCache,
 		ContextDir: root,
 		BuildArgs:  config.BuildArgs,
 		Secrets:    config.Secrets,
