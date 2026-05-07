@@ -33,7 +33,7 @@ func TestRegistryCacheAttributes(t *testing.T) {
 
 func TestRegistryCache_WithScope(t *testing.T) {
 	cache := &RegistryCache{
-		CacheRef: "registry.example.com/my-cache:latest",
+		CacheRef: "registry.example.com/my-cache",
 	}
 
 	scoped := cache.WithScope("ubuntu.22.04.linux/amd64")
