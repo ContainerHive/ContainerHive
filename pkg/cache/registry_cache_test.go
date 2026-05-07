@@ -62,8 +62,8 @@ func TestRegistryCache_WithScope_Insecure(t *testing.T) {
 		t.Fatalf("expected *RegistryCache, got %T", scoped)
 	}
 
-	if reg.CacheRef != "localhost:5000/my-cache.python.3.11-slim.linux_arm64" {
-		t.Errorf("CacheRef = %q, want %q", reg.CacheRef, "localhost:5000/my-cache.python.3.11-slim.linux_arm64")
+	if reg.CacheRef != "localhost:5000/my-cache:python.3.11-slim.linux_arm64" {
+		t.Errorf("CacheRef = %q, want %q", reg.CacheRef, "localhost:5000/my-cache:python.3.11-slim.linux_arm64")
 	}
 	if !reg.Insecure {
 		t.Error("expected Insecure to remain true")
