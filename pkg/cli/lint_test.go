@@ -3,6 +3,7 @@ package cli
 import (
 	"bytes"
 	"context"
+	"encoding/json"
 	"io"
 	"log/slog"
 	"os"
@@ -155,6 +156,55 @@ func TestLintCmd_FailureThresholdOverride(t *testing.T) {
 	err, stdout := runLint(t, root, "--failure-threshold", "warning")
 	if err == nil {
 		t.Fatalf("expected failure with --failure-threshold warning, got nil; stdout=%s", stdout)
+	}
+}
+
+func TestLintCmd_CodeClimateReport(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping hadolint integration test in short mode")
+	}
+	root := t.TempDir()
+	writeProject(t, root, "Dockerfile", "FROM nginx:1.27\nMAINTAINER me@example.com\n", "")
+
+	reportPath := filepath.Join(root, "gl-code-quality-report.json")
+	err, _ := runLint(t, root, "--codeclimate-report", reportPath)
+	// The Dockerfile has a DL4000 error → command should fail, but report
+	// must still be written before the action returns the error.
+	if err == nil {
+		t.Fatalf("expected lint failure on DL4000")
+	}
+
+	data, readErr := os.ReadFile(reportPath)
+	if readErr != nil {
+		t.Fatalf("expected report at %s, got %v", reportPath, readErr)
+	}
+
+	var entries []map[string]any
+	if err := json.Unmarshal(data, &entries); err != nil {
+		t.Fatalf("invalid JSON: %v\n%s", err, data)
+	}
+	if len(entries) == 0 {
+		t.Fatalf("expected at least one entry in report")
+	}
+
+	got := entries[0]
+	if got["check_name"] != "DL4000" {
+		t.Errorf("check_name = %v, want DL4000", got["check_name"])
+	}
+	if got["severity"] != "blocker" {
+		t.Errorf("severity = %v, want blocker (error→blocker mapping)", got["severity"])
+	}
+	loc, ok := got["location"].(map[string]any)
+	if !ok {
+		t.Fatalf("location missing: %v", got)
+	}
+	path, _ := loc["path"].(string)
+	// Path must be repo-relative — not the absolute temp-dir path.
+	if filepath.IsAbs(path) {
+		t.Errorf("report path is absolute (%s); expected repo-relative", path)
+	}
+	if !strings.HasSuffix(path, "Dockerfile") {
+		t.Errorf("report path does not end in Dockerfile: %s", path)
 	}
 }
 
