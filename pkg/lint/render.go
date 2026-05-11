@@ -91,7 +91,12 @@ func FormatLevel(level string, color bool) string {
 // StdoutSupportsColor reports whether ANSI color escapes are appropriate on
 // the current stdout: stdout must be a terminal and the NO_COLOR convention
 // (https://no-color.org) must not be set.
+// On CI it always shows colors
 func StdoutSupportsColor() bool {
+	if os.Getenv("CI") != "" {
+		return true
+	}
+
 	if os.Getenv("NO_COLOR") != "" {
 		return false
 	}
