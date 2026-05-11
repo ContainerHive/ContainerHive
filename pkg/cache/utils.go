@@ -2,9 +2,32 @@ package cache
 
 import (
 	"fmt"
+	"strings"
+	"unicode"
 
 	"github.com/ContainerHive/ContainerHive/pkg/model"
 )
+
+// sanitizeTagSuffix prepares a scope string for use as an OCI tag suffix.
+// It replaces invalid characters with underscores and ensures the result
+// conforms to [a-zA-Z0-9_][a-zA-Z0-9._-]{0,127}.
+func sanitizeTagSuffix(s string) string {
+	sanitized := strings.Map(func(r rune) rune {
+		if unicode.IsLetter(r) || unicode.IsDigit(r) || r == '_' || r == '-' || r == '.' {
+			return r
+		}
+		return '_'
+	}, s)
+	sanitized = strings.TrimLeft(sanitized, ".-")
+	sanitized = strings.TrimRight(sanitized, ".-")
+	if len(sanitized) > 120 {
+		sanitized = sanitized[:120]
+	}
+	if sanitized == "" {
+		return "unnamed"
+	}
+	return sanitized
+}
 
 // BuildCacheFromConfig creates a BuildkitCache from the hive.yml cache config,
 // using the type field to discriminate between s3 and registry backends.

@@ -10,6 +10,13 @@ func (r RegistryCache) Name() string {
 	return "registry"
 }
 
+func (r RegistryCache) WithScope(scope string) BuildkitCache {
+	return &RegistryCache{
+		CacheRef: r.CacheRef + ":" + sanitizeTagSuffix(scope),
+		Insecure: r.Insecure,
+	}
+}
+
 func (r RegistryCache) ToAttributes() map[string]string {
 	attrs := map[string]string{
 		"mode":           "max",
