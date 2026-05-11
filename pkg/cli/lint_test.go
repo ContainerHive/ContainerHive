@@ -12,8 +12,20 @@ import (
 	"testing"
 
 	"github.com/ContainerHive/ContainerHive/pkg/model"
+	gohadolint "github.com/timo-reymann/go-hadolint"
 	"github.com/urfave/cli/v3"
 )
+
+func gohadolintFinding(code, level string, line, column int, message string) gohadolint.Finding {
+	return gohadolint.Finding{
+		Code:    code,
+		Level:   level,
+		Line:    line,
+		Column:  column,
+		Message: message,
+		File:    "Dockerfile",
+	}
+}
 
 // writeProject lays down a minimal hive project at root containing one image
 // named "test" with the supplied Dockerfile contents under the requested
@@ -205,6 +217,92 @@ func TestLintCmd_CodeClimateReport(t *testing.T) {
 	}
 	if !strings.HasSuffix(path, "Dockerfile") {
 		t.Errorf("report path does not end in Dockerfile: %s", path)
+	}
+}
+
+func TestRenderFindingsTable(t *testing.T) {
+	rows := []tableFinding{
+		{
+			path:     "images/test/Dockerfile",
+			fullPath: "/abs/repo/images/test/Dockerfile",
+			finding:  gohadolintFinding("DL4000", "error", 2, 1, "MAINTAINER is deprecated"),
+		},
+		{
+			path:     "images/test/Dockerfile",
+			fullPath: "/abs/repo/images/test/Dockerfile",
+			finding:  gohadolintFinding("DL3006", "warning", 1, 1, "Always tag the version of an image explicitly"),
+		},
+	}
+
+	t.Run("plain", func(t *testing.T) {
+		var buf bytes.Buffer
+		if err := renderFindingsTable(&buf, rows, false); err != nil {
+			t.Fatalf("render: %v", err)
+		}
+		out := buf.String()
+		for _, want := range []string{
+			"Code", "Severity", "Location", "Link", "Description",
+			"DL4000", "DL3006",
+			"ERROR", "WARNING",
+			"https://github.com/hadolint/hadolint/wiki/DL4000",
+			"/abs/repo/images/test/Dockerfile:2:1",
+			"MAINTAINER is deprecated",
+		} {
+			if !strings.Contains(out, want) {
+				t.Errorf("output missing %q\n%s", want, out)
+			}
+		}
+		if strings.Contains(out, "\x1b[") {
+			t.Errorf("output must not contain ANSI escapes when color is disabled:\n%s", out)
+		}
+	})
+
+	t.Run("colored", func(t *testing.T) {
+		var buf bytes.Buffer
+		if err := renderFindingsTable(&buf, rows, true); err != nil {
+			t.Fatalf("render: %v", err)
+		}
+		out := buf.String()
+		if !strings.Contains(out, ansiBold+"Code"+ansiReset) {
+			t.Errorf("label missing bold escape:\n%s", out)
+		}
+		if !strings.Contains(out, ansiBrightRed+"ERROR"+ansiReset) {
+			t.Errorf("ERROR severity missing red escape:\n%s", out)
+		}
+		if !strings.Contains(out, ansiBrightYellow+"WARNING"+ansiReset) {
+			t.Errorf("WARNING severity missing yellow escape:\n%s", out)
+		}
+	})
+}
+
+func TestFormatLevel(t *testing.T) {
+	cases := []struct {
+		level    string
+		color    bool
+		want     string
+		wantTags bool // whether result must include ANSI escapes
+	}{
+		{level: "error", color: false, want: "ERROR"},
+		{level: "warning", color: false, want: "WARNING"},
+		{level: "error", color: true, want: ansiBrightRed + "ERROR" + ansiReset, wantTags: true},
+		{level: "warning", color: true, want: ansiBrightYellow + "WARNING" + ansiReset, wantTags: true},
+		{level: "info", color: true, want: ansiBrightCyan + "INFO" + ansiReset, wantTags: true},
+		{level: "style", color: true, want: ansiFaint + "STYLE" + ansiReset, wantTags: true},
+		// Unknown levels stay plain even with color enabled so we don't emit
+		// a stray escape sequence for a future hadolint severity.
+		{level: "wat", color: true, want: "WAT"},
+	}
+	for _, tc := range cases {
+		t.Run(tc.level, func(t *testing.T) {
+			got := formatLevel(tc.level, tc.color)
+			if got != tc.want {
+				t.Errorf("formatLevel(%q, %v) = %q, want %q", tc.level, tc.color, got, tc.want)
+			}
+			hasEsc := strings.Contains(got, "\x1b[")
+			if hasEsc != tc.wantTags {
+				t.Errorf("formatLevel(%q, %v): escape presence = %v, want %v", tc.level, tc.color, hasEsc, tc.wantTags)
+			}
+		})
 	}
 }
 

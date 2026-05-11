@@ -6,6 +6,7 @@ tool go.elastic.co/go-licence-detector
 
 require (
 	github.com/GoogleContainerTools/container-structure-test v1.22.1
+	github.com/Ladicle/tabwriter v1.0.0
 	github.com/Masterminds/sprig/v3 v3.3.0
 	github.com/anchore/syft v1.44.0
 	github.com/containerd/containerd/v2 v2.3.0
@@ -29,6 +30,7 @@ require (
 	github.com/tonistiigi/fsutil v0.0.0-20251211185533-a2aa163d723f
 	github.com/urfave/cli/v3 v3.7.0
 	golang.org/x/sync v0.20.0
+	golang.org/x/term v0.42.0
 	gopkg.in/yaml.v3 v3.0.1
 	modernc.org/sqlite v1.50.0
 	zotregistry.dev/zot/v2 v2.1.14
@@ -581,7 +583,6 @@ require (
 	golang.org/x/net v0.53.0 // indirect
 	golang.org/x/oauth2 v0.36.0 // indirect
 	golang.org/x/sys v0.43.0 // indirect
-	golang.org/x/term v0.42.0 // indirect
 	golang.org/x/text v0.36.0 // indirect
 	golang.org/x/time v0.15.0 // indirect
 	golang.org/x/tools v0.44.0 // indirect
