@@ -25,6 +25,7 @@ require (
 	github.com/opencontainers/image-spec v1.1.1
 	github.com/sirupsen/logrus v1.9.4
 	github.com/testcontainers/testcontainers-go v0.41.0
+	github.com/timo-reymann/go-hadolint v0.1.0
 	github.com/tonistiigi/fsutil v0.0.0-20251211185533-a2aa163d723f
 	github.com/urfave/cli/v3 v3.7.0
 	golang.org/x/sync v0.20.0
@@ -79,6 +80,7 @@ require (
 	github.com/agext/levenshtein v1.2.3 // indirect
 	github.com/agnivade/levenshtein v1.2.1 // indirect
 	github.com/alecthomas/chroma v0.10.0 // indirect
+	github.com/amenzhinsky/go-memexec v0.7.1 // indirect
 	github.com/anchore/clio v0.1.0 // indirect
 	github.com/anchore/fangs v0.1.0 // indirect
 	github.com/anchore/go-collections v0.1.0 // indirect

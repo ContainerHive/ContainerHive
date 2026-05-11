@@ -99,6 +99,22 @@ ch verify
 
 Validates `hive.yml` and image definitions. Useful as a quick check before building.
 
+### `lint`
+
+Lint Dockerfiles in the project with [hadolint](https://github.com/hadolint/hadolint). The hadolint binary is embedded in `ch` — no separate install required.
+
+```bash
+ch lint
+```
+
+| Flag | Description |
+|:-----|:------------|
+| `--failure-threshold` | Lowest severity that causes a non-zero exit (`error`, `warning`, `info`, `style`, `ignore`). Overrides `lint.failure_threshold` from `hive.yml`. Defaults to `error`. |
+
+Findings are printed to stdout in `path:line:column level code: message` format. Templated Dockerfiles (files with a templating extension such as `Dockerfile.gotpl`) are **skipped** — hadolint cannot parse Go template syntax — and a warning is logged for each skipped file. Per-variant Dockerfiles are linted alongside the parent image.
+
+Configure hadolint behaviour with a `lint:` block in `hive.yml`. See [Hive configuration](../configuration/hive.md#lint).
+
 ### `template ci`
 
 Generate CI pipeline configuration.

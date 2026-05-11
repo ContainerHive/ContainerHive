@@ -103,6 +103,17 @@ type LabelsConfig struct {
 	Custom        map[string]string `yaml:"custom,omitempty" json:"custom,omitempty" jsonschema:"Arbitrary custom labels applied to every built image. Standard OCI keys are reserved and override these."`
 }
 
+// LintConfig configures Dockerfile linting via hadolint. Only plain Dockerfiles
+// are linted; Dockerfiles with a templating extension (e.g. Dockerfile.gotpl)
+// are skipped because hadolint cannot parse Go-template syntax.
+type LintConfig struct {
+	Ignored           []string          `yaml:"ignored,omitempty" json:"ignored,omitempty" jsonschema:"Rule IDs to ignore (e.g. DL3000)"`
+	TrustedRegistries []string          `yaml:"trusted_registries,omitempty" json:"trusted_registries,omitempty" jsonschema:"Registries hadolint treats as trusted (suppresses DL3026)"`
+	LabelSchema       map[string]string `yaml:"label_schema,omitempty" json:"label_schema,omitempty" jsonschema:"Expected LABEL keys and their validation types"`
+	StrictLabels      *bool             `yaml:"strict_labels,omitempty" json:"strict_labels,omitempty" jsonschema:"Fail on labels missing from label_schema"`
+	FailureThreshold  string            `yaml:"failure_threshold,omitempty" json:"failure_threshold,omitempty" jsonschema:"Lowest severity that causes a non-zero exit (error, warning, info, style, ignore). Defaults to error."`
+}
+
 // HiveProjectConfig is the top-level project configuration from hive.yml.
 type HiveProjectConfig struct {
 	BuildKit        *BuildKitConfig   `yaml:"buildkit,omitempty" json:"buildkit,omitempty" jsonschema:"BuildKit daemon configuration"`
@@ -111,4 +122,5 @@ type HiveProjectConfig struct {
 	Platforms       []string          `yaml:"platforms,omitempty" json:"platforms,omitempty" jsonschema:"Default target platforms for all images (e.g. linux/amd64)"`
 	TemplateOptions map[string]string `yaml:"template_options,omitempty" json:"template_options,omitempty" jsonschema:"Custom template variables available via the option function in CI and custom templates"`
 	Labels          *LabelsConfig     `yaml:"labels,omitempty" json:"labels,omitempty" jsonschema:"Project-level OCI image labels applied to every built image"`
+	Lint            *LintConfig       `yaml:"lint,omitempty" json:"lint,omitempty" jsonschema:"Dockerfile linting configuration (hadolint)"`
 }
