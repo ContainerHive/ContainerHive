@@ -1,3 +1,9 @@
+## [0.18.0](https://github.com/ContainerHive/ContainerHive/compare/v0.17.2...v0.18.0) (2026-05-11)
+
+### Features
+
+* scope registry cache ref per image/tag/platform ([#100](https://github.com/ContainerHive/ContainerHive/issues/100)) ([8587bef](https://github.com/ContainerHive/ContainerHive/commit/8587beff0303fe22bec55bdb7959f82aee87d3cd))
+
 ## [0.17.2](https://github.com/ContainerHive/ContainerHive/compare/v0.17.1...v0.17.2) (2026-05-11)
 
 ### Bug Fixes
