@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"bytes"
 	"context"
 	"fmt"
 	"io"
@@ -17,6 +18,13 @@ import (
 	"github.com/urfave/cli/v3"
 	"golang.org/x/term"
 )
+
+// hiveParentPlaceholder is the source-Dockerfile token that pkg/rendering
+// substitutes with a concrete __hive__/<image>:<tag> reference at generate
+// time. Linting needs to perform the same substitution in memory so hadolint
+// doesn't trip DL3006 ("Always tag the version of an image explicitly") on
+// the bare placeholder, which has no tag syntax.
+const hiveParentPlaceholder = "__hive_parent__"
 
 // ANSI codes matching the palette already used by pkg/logging and
 // pkg/progress so lint findings blend in with the rest of ch's output.
@@ -86,9 +94,10 @@ func lintCmd() *cli.Command {
 				rows     []tableFinding
 			)
 			for _, img := range project.ImagesByIdentifier {
-				failures += lintEntrypoint(linter, img.Name, "", img.BuildEntryPointPath, projectRoot, &linted, &report, &rows)
+				parentRef := buildHiveParentRef(img)
+				failures += lintEntrypoint(linter, img.Name, "", img.BuildEntryPointPath, projectRoot, parentRef, &linted, &report, &rows)
 				for _, variant := range img.Variants {
-					failures += lintEntrypoint(linter, img.Name, variant.Name, variant.BuildEntryPointPath, projectRoot, &linted, &report, &rows)
+					failures += lintEntrypoint(linter, img.Name, variant.Name, variant.BuildEntryPointPath, projectRoot, parentRef, &linted, &report, &rows)
 				}
 			}
 
@@ -148,7 +157,7 @@ func resolveLintConfig(projectCfg *model.LintConfig, cliThreshold string) *model
 // appends every parsed finding (regardless of failure) to *report and *rows so
 // the resulting artifact and table reflect what hadolint actually saw, even
 // for findings below the failure threshold.
-func lintEntrypoint(linter *hadolint.Linter, imageName, variantName, path, projectRoot string, linted *int, report *[]hadolint.CodeQualityEntry, rows *[]tableFinding) int {
+func lintEntrypoint(linter *hadolint.Linter, imageName, variantName, path, projectRoot, parentRef string, linted *int, report *[]hadolint.CodeQualityEntry, rows *[]tableFinding) int {
 	logger := slog.With("image", imageName)
 	if variantName != "" {
 		logger = logger.With("variant", variantName)
@@ -165,10 +174,17 @@ func lintEntrypoint(linter *hadolint.Linter, imageName, variantName, path, proje
 		return 0
 	}
 
-	res, err := linter.Lint(path)
+	content, err := os.ReadFile(path)
 	if err != nil {
-		// AnalyzeFile returns an error only on infrastructure failures (binary
-		// missing, JSON parse errors). Surface them so the user can act.
+		logger.Error("failed to read Dockerfile", "error", err)
+		return 1
+	}
+	content = substituteHiveParent(content, parentRef)
+
+	res, err := linter.LintSnippet(content)
+	if err != nil {
+		// AnalyzeSnippet returns an error only on infrastructure failures
+		// (binary missing, JSON parse errors). Surface them so the user can act.
 		logger.Error("hadolint invocation failed", "error", err)
 		return 1
 	}
@@ -189,6 +205,42 @@ func lintEntrypoint(linter *hadolint.Linter, imageName, variantName, path, proje
 		return 1
 	}
 	return 0
+}
+
+// substituteHiveParent replaces every __hive_parent__ token in content with
+// parentRef. Returns content unchanged when the placeholder is absent or
+// parentRef is empty.
+func substituteHiveParent(content []byte, parentRef string) []byte {
+	if parentRef == "" || !bytes.Contains(content, []byte(hiveParentPlaceholder)) {
+		return content
+	}
+	return bytes.ReplaceAll(content, []byte(hiveParentPlaceholder), []byte(parentRef))
+}
+
+// buildHiveParentRef returns the __hive__/<image>:<tag> reference that
+// rendering would substitute for __hive_parent__ in this image's variants.
+// It mirrors pkg/rendering.replaceHiveParent's format so source linting sees
+// the same FROM as a built image would.
+func buildHiveParentRef(img *model.Image) string {
+	tag := pickReferenceTag(img.Tags)
+	return fmt.Sprintf("__hive__/%s:%s", img.Name, tag)
+}
+
+// pickReferenceTag returns a deterministic tag name from the image's tag set.
+// Any tag suffices for hadolint (it only checks that FROM has *a* tag), but
+// picking the lexicographically first one keeps lint output stable across
+// runs.
+func pickReferenceTag(tags map[string]*model.Tag) string {
+	if len(tags) == 0 {
+		return "hive-parent"
+	}
+	first := ""
+	for name := range tags {
+		if first == "" || name < first {
+			first = name
+		}
+	}
+	return first
 }
 
 // renderFindingsTable writes findings to w in the text/key-value layout used

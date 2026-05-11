@@ -57,6 +57,13 @@ func (l *Linter) Lint(path string) (*gohadolint.Result, error) {
 	return l.h.AnalyzeFile(path, "")
 }
 
+// LintSnippet analyses an in-memory Dockerfile snippet. Useful when the
+// caller wants to preprocess the file (e.g. substitute ContainerHive
+// placeholders that hadolint cannot parse) before running the linter.
+func (l *Linter) LintSnippet(content []byte) (*gohadolint.Result, error) {
+	return l.h.AnalyzeSnippet(content, "")
+}
+
 func toHadolintConfig(cfg *model.LintConfig) *gohadolint.Config {
 	return &gohadolint.Config{
 		Ignored:           cfg.Ignored,

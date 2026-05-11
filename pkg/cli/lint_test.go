@@ -275,6 +275,58 @@ func TestRenderFindingsTable(t *testing.T) {
 	})
 }
 
+func TestSubstituteHiveParent(t *testing.T) {
+	in := []byte("FROM __hive_parent__\nCOPY --from=__hive_parent__ /a /a\n")
+	out := substituteHiveParent(in, "__hive__/myimg:1.0")
+	want := "FROM __hive__/myimg:1.0\nCOPY --from=__hive__/myimg:1.0 /a /a\n"
+	if string(out) != want {
+		t.Errorf("got %q, want %q", out, want)
+	}
+
+	unchanged := []byte("FROM ubuntu:24.04\n")
+	if got := substituteHiveParent(unchanged, "__hive__/x:1"); string(got) != string(unchanged) {
+		t.Errorf("content without placeholder must be unchanged, got %q", got)
+	}
+
+	// Empty ref → no substitution even if the placeholder is present.
+	if got := substituteHiveParent(in, ""); string(got) != string(in) {
+		t.Errorf("empty parentRef must leave content unchanged, got %q", got)
+	}
+}
+
+func TestPickReferenceTag(t *testing.T) {
+	if got := pickReferenceTag(nil); got != "hive-parent" {
+		t.Errorf("empty tags: got %q, want hive-parent", got)
+	}
+	tags := map[string]*model.Tag{
+		"1.27": {Name: "1.27"},
+		"1.25": {Name: "1.25"},
+		"1.26": {Name: "1.26"},
+	}
+	if got := pickReferenceTag(tags); got != "1.25" {
+		t.Errorf("lexicographically first tag: got %q, want 1.25", got)
+	}
+}
+
+func TestLintCmd_HiveParentSubstituted(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping hadolint integration test in short mode")
+	}
+	root := t.TempDir()
+	// Variant Dockerfile that uses the placeholder. Without substitution
+	// hadolint would flag DL3006 (untagged FROM); with it, the FROM line
+	// is the synthetic __hive__/test:1 reference that passes the rule.
+	writeProject(t, root, "Dockerfile", "FROM __hive_parent__\nRUN echo ok\n", "")
+
+	err, stdout := runLint(t, root)
+	if err != nil {
+		t.Fatalf("expected lint to pass after __hive_parent__ substitution, got %v\n%s", err, stdout)
+	}
+	if strings.Contains(stdout, "DL3006") {
+		t.Errorf("DL3006 must not fire for substituted __hive_parent__; output:\n%s", stdout)
+	}
+}
+
 func TestFormatLevel(t *testing.T) {
 	cases := []struct {
 		level    string
