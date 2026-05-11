@@ -3,6 +3,9 @@
 
 stages:
   - generate
+{{- if ne (option "ci_lint") "false" }}
+  - lint
+{{- end }}
 {{- range .Stages }}
   - {{ . }}
 {{- end }}
@@ -73,6 +76,9 @@ generate:
     paths:
       - {{ .Dist }}/
     expire_in: 1 week
+{{- if ne (option "ci_lint") "false" }}
+{{ template "lint-job.yml.gotpl" . }}
+{{- end }}
 {{ range .Images }}
 # === {{ .Name | upper }} ===
 {{ template "build-job.yml.gotpl" (dict "Image" . "Ctx" $) }}
@@ -102,7 +108,7 @@ report:
   artifacts:
     paths:
       - public/
-    expose_as: "ContainerHive Report"
+    expose_as: "CH Report"
     expire_in: 1 week
 
 pages:
