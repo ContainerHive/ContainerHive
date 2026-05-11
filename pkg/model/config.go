@@ -2,6 +2,12 @@ package model
 
 const DistDirName = "dist"
 
+// HiveParentPlaceholder is the source-Dockerfile token that pkg/rendering
+// substitutes with a concrete __hive__/<image>:<tag> reference at generate
+// time. Lint and rendering both depend on it, so it lives here to avoid
+// divergence between consumers.
+const HiveParentPlaceholder = "__hive_parent__"
+
 // Secrets represents a collection of named secrets
 // This is a type alias to the secrets.Secrets type
 type Secrets map[string]Secret

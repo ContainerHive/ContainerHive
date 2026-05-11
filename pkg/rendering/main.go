@@ -222,10 +222,8 @@ func setupVariantDir(variantPath string, image *model.Image, tagName string, tag
 	return nil
 }
 
-const hiveParentPlaceholder = "__hive_parent__"
-
-// replaceHiveParent replaces __hive_parent__ in a rendered file with the
-// concrete __hive__/imageName:tagName reference.
+// replaceHiveParent replaces model.HiveParentPlaceholder in a rendered file
+// with the concrete __hive__/imageName:tagName reference.
 func replaceHiveParent(filePath, imageName, tagName string) error {
 	data, err := os.ReadFile(filePath)
 	if err != nil {
@@ -233,12 +231,12 @@ func replaceHiveParent(filePath, imageName, tagName string) error {
 	}
 
 	content := string(data)
-	if !strings.Contains(content, hiveParentPlaceholder) {
+	if !strings.Contains(content, model.HiveParentPlaceholder) {
 		return nil
 	}
 
 	parentRef := fmt.Sprintf("__hive__/%s:%s", imageName, tagName)
-	replaced := strings.ReplaceAll(content, hiveParentPlaceholder, parentRef)
+	replaced := strings.ReplaceAll(content, model.HiveParentPlaceholder, parentRef)
 	return os.WriteFile(filePath, []byte(replaced), 0644)
 }
 

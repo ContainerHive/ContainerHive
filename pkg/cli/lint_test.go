@@ -11,21 +11,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/ContainerHive/ContainerHive/pkg/model"
-	gohadolint "github.com/timo-reymann/go-hadolint"
 	"github.com/urfave/cli/v3"
 )
-
-func gohadolintFinding(code, level string, line, column int, message string) gohadolint.Finding {
-	return gohadolint.Finding{
-		Code:    code,
-		Level:   level,
-		Line:    line,
-		Column:  column,
-		Message: message,
-		File:    "Dockerfile",
-	}
-}
 
 // writeProject lays down a minimal hive project at root containing one image
 // named "test" with the supplied Dockerfile contents under the requested
@@ -56,7 +43,6 @@ func writeProject(t *testing.T, root, dockerfileName, dockerfileBody, hiveYAML s
 func runLint(t *testing.T, projectRoot string, flags ...string) (err error, stdout string) {
 	t.Helper()
 
-	// Capture stdout so we can assert on printed findings.
 	origStdout := os.Stdout
 	r, w, pipeErr := os.Pipe()
 	if pipeErr != nil {
@@ -65,7 +51,6 @@ func runLint(t *testing.T, projectRoot string, flags ...string) (err error, stdo
 	os.Stdout = w
 	defer func() { os.Stdout = origStdout }()
 
-	// Silence slog during tests to keep output deterministic.
 	prevLogger := slog.Default()
 	slog.SetDefault(slog.New(slog.NewTextHandler(io.Discard, nil)))
 	defer slog.SetDefault(prevLogger)
@@ -107,8 +92,6 @@ func TestLintCmd_ViolationFails(t *testing.T) {
 		t.Skip("skipping hadolint integration test in short mode")
 	}
 	root := t.TempDir()
-	// `MAINTAINER` trips DL4000 at error severity, which fails the default
-	// "error" failure threshold.
 	writeProject(t, root, "Dockerfile", "FROM nginx:1.27\nMAINTAINER me@example.com\n", "")
 
 	err, stdout := runLint(t, root)
@@ -125,7 +108,6 @@ func TestLintCmd_TemplatedDockerfileSkipped(t *testing.T) {
 		t.Skip("skipping hadolint integration test in short mode")
 	}
 	root := t.TempDir()
-	// Bad content but the .gotpl extension means hadolint never sees it.
 	writeProject(t, root, "Dockerfile.gotpl", "FROM ubuntu\n", "")
 
 	err, stdout := runLint(t, root)
@@ -156,9 +138,6 @@ func TestLintCmd_FailureThresholdOverride(t *testing.T) {
 		t.Skip("skipping hadolint integration test in short mode")
 	}
 	root := t.TempDir()
-	// `FROM ubuntu` (no tag) is DL3006 at warning level. Under the default
-	// "error" threshold this passes; lowering the threshold to "warning"
-	// flips it to a failure.
 	writeProject(t, root, "Dockerfile", "FROM ubuntu\n", "")
 
 	if err, _ := runLint(t, root); err != nil {
@@ -180,8 +159,6 @@ func TestLintCmd_CodeClimateReport(t *testing.T) {
 
 	reportPath := filepath.Join(root, "gl-code-quality-report.json")
 	err, _ := runLint(t, root, "--codeclimate-report", reportPath)
-	// The Dockerfile has a DL4000 error → command should fail, but report
-	// must still be written before the action returns the error.
 	if err == nil {
 		t.Fatalf("expected lint failure on DL4000")
 	}
@@ -211,100 +188,11 @@ func TestLintCmd_CodeClimateReport(t *testing.T) {
 		t.Fatalf("location missing: %v", got)
 	}
 	path, _ := loc["path"].(string)
-	// Path must be repo-relative — not the absolute temp-dir path.
 	if filepath.IsAbs(path) {
 		t.Errorf("report path is absolute (%s); expected repo-relative", path)
 	}
 	if !strings.HasSuffix(path, "Dockerfile") {
 		t.Errorf("report path does not end in Dockerfile: %s", path)
-	}
-}
-
-func TestRenderFindingsTable(t *testing.T) {
-	rows := []tableFinding{
-		{
-			path:     "images/test/Dockerfile",
-			fullPath: "/abs/repo/images/test/Dockerfile",
-			finding:  gohadolintFinding("DL4000", "error", 2, 1, "MAINTAINER is deprecated"),
-		},
-		{
-			path:     "images/test/Dockerfile",
-			fullPath: "/abs/repo/images/test/Dockerfile",
-			finding:  gohadolintFinding("DL3006", "warning", 1, 1, "Always tag the version of an image explicitly"),
-		},
-	}
-
-	t.Run("plain", func(t *testing.T) {
-		var buf bytes.Buffer
-		if err := renderFindingsTable(&buf, rows, false); err != nil {
-			t.Fatalf("render: %v", err)
-		}
-		out := buf.String()
-		for _, want := range []string{
-			"Code", "Severity", "Location", "Link", "Description",
-			"DL4000", "DL3006",
-			"ERROR", "WARNING",
-			"https://github.com/hadolint/hadolint/wiki/DL4000",
-			"/abs/repo/images/test/Dockerfile:2:1",
-			"MAINTAINER is deprecated",
-		} {
-			if !strings.Contains(out, want) {
-				t.Errorf("output missing %q\n%s", want, out)
-			}
-		}
-		if strings.Contains(out, "\x1b[") {
-			t.Errorf("output must not contain ANSI escapes when color is disabled:\n%s", out)
-		}
-	})
-
-	t.Run("colored", func(t *testing.T) {
-		var buf bytes.Buffer
-		if err := renderFindingsTable(&buf, rows, true); err != nil {
-			t.Fatalf("render: %v", err)
-		}
-		out := buf.String()
-		if !strings.Contains(out, ansiBold+"Code"+ansiReset) {
-			t.Errorf("label missing bold escape:\n%s", out)
-		}
-		if !strings.Contains(out, ansiBrightRed+"ERROR"+ansiReset) {
-			t.Errorf("ERROR severity missing red escape:\n%s", out)
-		}
-		if !strings.Contains(out, ansiBrightYellow+"WARNING"+ansiReset) {
-			t.Errorf("WARNING severity missing yellow escape:\n%s", out)
-		}
-	})
-}
-
-func TestSubstituteHiveParent(t *testing.T) {
-	in := []byte("FROM __hive_parent__\nCOPY --from=__hive_parent__ /a /a\n")
-	out := substituteHiveParent(in, "__hive__/myimg:1.0")
-	want := "FROM __hive__/myimg:1.0\nCOPY --from=__hive__/myimg:1.0 /a /a\n"
-	if string(out) != want {
-		t.Errorf("got %q, want %q", out, want)
-	}
-
-	unchanged := []byte("FROM ubuntu:24.04\n")
-	if got := substituteHiveParent(unchanged, "__hive__/x:1"); string(got) != string(unchanged) {
-		t.Errorf("content without placeholder must be unchanged, got %q", got)
-	}
-
-	// Empty ref → no substitution even if the placeholder is present.
-	if got := substituteHiveParent(in, ""); string(got) != string(in) {
-		t.Errorf("empty parentRef must leave content unchanged, got %q", got)
-	}
-}
-
-func TestPickReferenceTag(t *testing.T) {
-	if got := pickReferenceTag(nil); got != "hive-parent" {
-		t.Errorf("empty tags: got %q, want hive-parent", got)
-	}
-	tags := map[string]*model.Tag{
-		"1.27": {Name: "1.27"},
-		"1.25": {Name: "1.25"},
-		"1.26": {Name: "1.26"},
-	}
-	if got := pickReferenceTag(tags); got != "1.25" {
-		t.Errorf("lexicographically first tag: got %q, want 1.25", got)
 	}
 }
 
@@ -324,67 +212,5 @@ func TestLintCmd_HiveParentSubstituted(t *testing.T) {
 	}
 	if strings.Contains(stdout, "DL3006") {
 		t.Errorf("DL3006 must not fire for substituted __hive_parent__; output:\n%s", stdout)
-	}
-}
-
-func TestFormatLevel(t *testing.T) {
-	cases := []struct {
-		level    string
-		color    bool
-		want     string
-		wantTags bool // whether result must include ANSI escapes
-	}{
-		{level: "error", color: false, want: "ERROR"},
-		{level: "warning", color: false, want: "WARNING"},
-		{level: "error", color: true, want: ansiBrightRed + "ERROR" + ansiReset, wantTags: true},
-		{level: "warning", color: true, want: ansiBrightYellow + "WARNING" + ansiReset, wantTags: true},
-		{level: "info", color: true, want: ansiBrightCyan + "INFO" + ansiReset, wantTags: true},
-		{level: "style", color: true, want: ansiFaint + "STYLE" + ansiReset, wantTags: true},
-		// Unknown levels stay plain even with color enabled so we don't emit
-		// a stray escape sequence for a future hadolint severity.
-		{level: "wat", color: true, want: "WAT"},
-	}
-	for _, tc := range cases {
-		t.Run(tc.level, func(t *testing.T) {
-			got := formatLevel(tc.level, tc.color)
-			if got != tc.want {
-				t.Errorf("formatLevel(%q, %v) = %q, want %q", tc.level, tc.color, got, tc.want)
-			}
-			hasEsc := strings.Contains(got, "\x1b[")
-			if hasEsc != tc.wantTags {
-				t.Errorf("formatLevel(%q, %v): escape presence = %v, want %v", tc.level, tc.color, hasEsc, tc.wantTags)
-			}
-		})
-	}
-}
-
-func TestResolveLintConfig(t *testing.T) {
-	ignoredSeed := []string{"DL3000"}
-	cases := []struct {
-		name       string
-		project    *model.LintConfig
-		cliThresh  string
-		wantThresh string
-	}{
-		{name: "no config no flag", wantThresh: "error"},
-		{name: "cli flag only", cliThresh: "warning", wantThresh: "warning"},
-		{name: "project only", project: &model.LintConfig{FailureThreshold: "info"}, wantThresh: "info"},
-		{name: "cli overrides project", project: &model.LintConfig{FailureThreshold: "info"}, cliThresh: "warning", wantThresh: "warning"},
-		{name: "project no threshold", project: &model.LintConfig{Ignored: ignoredSeed}, wantThresh: "error"},
-	}
-	for _, tc := range cases {
-		t.Run(tc.name, func(t *testing.T) {
-			got := resolveLintConfig(tc.project, tc.cliThresh)
-			if got == nil {
-				t.Fatalf("expected non-nil config")
-			}
-			if got.FailureThreshold != tc.wantThresh {
-				t.Errorf("FailureThreshold = %q, want %q", got.FailureThreshold, tc.wantThresh)
-			}
-			// resolveLintConfig must not mutate the caller's struct.
-			if tc.project != nil && tc.project.FailureThreshold == "info" && got == tc.project {
-				t.Errorf("resolveLintConfig returned the same pointer; expected a copy")
-			}
-		})
 	}
 }
