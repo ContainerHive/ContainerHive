@@ -142,6 +142,7 @@ All values must be strings. Keys prefixed with `ci_` have built-in defaults:
 |:----------------------|:------------------------------|:---------------------------------------------------------------------|
 | `ci_buildkit_image`   | `moby/buildkit`               | BuildKit container image                                             |
 | `ci_buildkit_version` | *(matches go.mod dependency)* | BuildKit image tag                                                   |
+| `ci_lint`             | `true`                        | Run hadolint linting in CI pipeline before builds                   |
 | `ci_report`           | `true`                        | Generate and publish HTML/JSON report to GitHub Pages / GitLab Pages |
 
 User-provided values override built-in defaults.
