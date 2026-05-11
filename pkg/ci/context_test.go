@@ -185,6 +185,9 @@ func TestBuildCIContext_DefaultTemplateOptions(t *testing.T) {
 	if ctx.TemplateOptions["ci_buildkit_version"] == "" {
 		t.Error("expected ci_buildkit_version to have a default value")
 	}
+	if ctx.TemplateOptions["ci_lint"] != "true" {
+		t.Errorf("expected default ci_lint 'true', got %q", ctx.TemplateOptions["ci_lint"])
+	}
 	if ctx.TemplateOptions["ci_report"] != "true" {
 		t.Errorf("expected default ci_report 'true', got %q", ctx.TemplateOptions["ci_report"])
 	}
