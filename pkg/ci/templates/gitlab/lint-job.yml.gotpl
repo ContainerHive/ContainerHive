@@ -1,0 +1,15 @@
+{{ define "lint-job.yml.gotpl" }}
+lint:
+  stage: lint
+  needs:
+    - generate
+  image:
+    name: {{ .ImageName }}:{{ .Version }}
+    entrypoint: [""]
+  script:
+    - {{ .ChCmd }} lint --codeclimate-report gl-code-quality-report.json
+  artifacts:
+    when: always
+    reports:
+      codequality: gl-code-quality-report.json
+{{- end }}
