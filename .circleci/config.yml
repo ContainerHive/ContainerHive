@@ -33,7 +33,7 @@ executors:
       - image: cimg/python:3.14-node
   schema-nest-cli:
     docker:
-      - image: timoreymann/schemanest-cli:v0.7.83
+      - image: timoreymann/schemanest-cli:v0.7.84
 
 jobs:
   test:
