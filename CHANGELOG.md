@@ -1,3 +1,9 @@
+## [0.18.2](https://github.com/ContainerHive/ContainerHive/compare/v0.18.1...v0.18.2) (2026-05-14)
+
+### Bug Fixes
+
+* Fix schema upload ([5b3538d](https://github.com/ContainerHive/ContainerHive/commit/5b3538d1849461572001738a065830b5fb2a5d57))
+
 ## [0.18.1](https://github.com/ContainerHive/ContainerHive/compare/v0.18.0...v0.18.1) (2026-05-14)
 
 ### Bug Fixes
