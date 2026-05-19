@@ -28,7 +28,8 @@ ch template ci --provider github --output .github/workflows/build.yml
 4. If an image has a `latest_alias` configured, the highest semantic version tag is automatically retagged as the
    specified alias (e.g., `latest`, `stable`).
 5. The generated pipeline references the ContainerHive container image to run all commands.
-6. After successful builds, an HTML and JSON report is generated and published to GitHub Pages or GitLab Pages.
+6. Before builds, Dockerfiles are linted with hadolint (enabled by default). Lint failures gate the build stage.
+7. After successful builds, an HTML and JSON report is generated and published to GitHub Pages or GitLab Pages.
 
 ### Options
 
@@ -119,6 +120,7 @@ directory take precedence over the built-in ones.
 templates/<provider>/
 ├── pipeline.yml.gotpl   (or workflow.yml.gotpl for GitHub)
 ├── build-job.yml.gotpl
+├── lint-job.yml.gotpl
 ├── manifest-job.yml.gotpl
 └── test-job.yml.gotpl
 ```
@@ -155,11 +157,28 @@ source set to "GitHub Actions".
 The report is uploaded as a GitLab Pages artifact and exposed as "ContainerHive Report" in the merge request widget. The
 JSON report is also available as an artifact.
 
-### Disabling report generation
+## Lint job
 
-To disable report generation, set `ci_report` to `false` in your `hive.yml`:
+By default, the generated CI pipeline includes a `lint` job that runs after the `generate` stage and before any build
+stages. This job lints all plain Dockerfiles in the project using [hadolint](https://github.com/hadolint/hadolint)
+via `ch lint`.
+
+### GitLab Code Quality report
+
+For GitLab CI, the lint job produces a [Code Quality report](https://docs.gitlab.com/ee/ci/testing/code_quality.html)
+artifact that GitLab renders inline on merge requests. The report uses the Code Climate format with the
+`--codeclimate-report` flag.
+
+### GitHub Actions
+
+For GitHub Actions, the lint job runs `ch lint` directly. Lint failures cause the job to fail and gate subsequent build
+jobs.
+
+### Disabling linting
+
+To disable the lint job entirely, set `ci_lint` to `false` in your `hive.yml`:
 
 ```yaml
 template_options:
-  ci_report: false
+  ci_lint: false
 ```

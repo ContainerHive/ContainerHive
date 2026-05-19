@@ -6,6 +6,7 @@ tool go.elastic.co/go-licence-detector
 
 require (
 	github.com/GoogleContainerTools/container-structure-test v1.22.1
+	github.com/Ladicle/tabwriter v1.0.0
 	github.com/Masterminds/sprig/v3 v3.3.0
 	github.com/anchore/syft v1.44.0
 	github.com/containerd/containerd/v2 v2.3.0
@@ -25,9 +26,11 @@ require (
 	github.com/opencontainers/image-spec v1.1.1
 	github.com/sirupsen/logrus v1.9.4
 	github.com/testcontainers/testcontainers-go v0.41.0
+	github.com/timo-reymann/go-hadolint v0.1.0
 	github.com/tonistiigi/fsutil v0.0.0-20251211185533-a2aa163d723f
 	github.com/urfave/cli/v3 v3.9.0
 	golang.org/x/sync v0.20.0
+	golang.org/x/term v0.42.0
 	gopkg.in/yaml.v3 v3.0.1
 	modernc.org/sqlite v1.50.1
 	zotregistry.dev/zot/v2 v2.1.14
@@ -79,6 +82,7 @@ require (
 	github.com/agext/levenshtein v1.2.3 // indirect
 	github.com/agnivade/levenshtein v1.2.1 // indirect
 	github.com/alecthomas/chroma v0.10.0 // indirect
+	github.com/amenzhinsky/go-memexec v0.7.1 // indirect
 	github.com/anchore/clio v0.1.0 // indirect
 	github.com/anchore/fangs v0.1.0 // indirect
 	github.com/anchore/go-collections v0.1.0 // indirect
@@ -580,7 +584,6 @@ require (
 	golang.org/x/net v0.53.0 // indirect
 	golang.org/x/oauth2 v0.36.0 // indirect
 	golang.org/x/sys v0.43.0 // indirect
-	golang.org/x/term v0.42.0 // indirect
 	golang.org/x/text v0.36.0 // indirect
 	golang.org/x/time v0.15.0 // indirect
 	golang.org/x/tools v0.44.0 // indirect

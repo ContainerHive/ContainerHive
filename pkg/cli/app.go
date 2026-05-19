@@ -186,6 +186,7 @@ func NewApp() *cli.Command {
 			testCmd(),
 			sbomCmd(),
 			verifyCmd(),
+			lintCmd(),
 			templateCmd(),
 			waitCmd(),
 			loginCmd(),

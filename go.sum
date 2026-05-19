@@ -168,6 +168,8 @@ github.com/Intevation/jsonpath v0.2.1 h1:rINNQJ0Pts5XTFEG+zamtdL7l9uuE1z0FBA+r55
 github.com/Intevation/jsonpath v0.2.1/go.mod h1:WnZ8weMmwAx/fAO3SutjYFU+v7DFreNYnibV7CiaYIw=
 github.com/KyleBanks/depth v1.2.1 h1:5h8fQADFrWtarTdtDudMmGsC7GPbOAu6RVB3ffsVFHc=
 github.com/KyleBanks/depth v1.2.1/go.mod h1:jzSb9d0L43HxTQfT+oSA1EEp2q+ne2uh6XgeJcm8brE=
+github.com/Ladicle/tabwriter v1.0.0 h1:DZQqPvMumBDwVNElso13afjYLNp0Z7pHqHnu0r4t9Dg=
+github.com/Ladicle/tabwriter v1.0.0/go.mod h1:c4MdCjxQyTbGuQO/gvqJ+IA/89UEwrsD6hUCW98dyp4=
 github.com/MakeNowJust/heredoc v1.0.0 h1:cXCdzVdstXyiTqTvfqk9SDHpKNjxuom+DOlyEeQ4pzQ=
 github.com/MakeNowJust/heredoc v1.0.0/go.mod h1:mG5amYoWBHf8vpLOuehzbGGw0EHxpZZ6lCpQ4fNJ8LE=
 github.com/Masterminds/goutils v1.1.1 h1:5nUrii3FMTL5diU80unEVvNevw1nH4+ZV4DSLVJLSYI=
@@ -242,6 +244,8 @@ github.com/alicebob/miniredis/v2 v2.35.0 h1:QwLphYqCEAo1eu1TqPRN2jgVMPBweeQcR21j
 github.com/alicebob/miniredis/v2 v2.35.0/go.mod h1:TcL7YfarKPGDAthEtl5NBeHZfeUQj6OXMm/+iu5cLMM=
 github.com/aliyun/credentials-go v1.3.6 h1:K5STbhaWjoj5Ht0juOj9mWE2lGelShHLzu5QR3cQ5X8=
 github.com/aliyun/credentials-go v1.3.6/go.mod h1:1LxUuX7L5YrZUWzBrRyk0SwSdH4OmPrib8NVePL3fxM=
+github.com/amenzhinsky/go-memexec v0.7.1 h1:DVm4cXzklaNWZoTJgZUi/dlXtelhC7QBtX4luKjl1qk=
+github.com/amenzhinsky/go-memexec v0.7.1/go.mod h1:ApTO9/i2bcii7kvIXi74gum+/zYDzkiOXtuBZoYOKVE=
 github.com/anchore/clio v0.0.0-20250319180342-2cfe4b0cb716 h1:2sIdYJlQESEnyk3Y0WD2vXWW5eD2iMz9Ev8fj1Z8LNA=
 github.com/anchore/clio v0.0.0-20250319180342-2cfe4b0cb716/go.mod h1:Utb9i4kwiCWvqAIxZaJeMIXFO9uOgQXlvH2BfbfO/zI=
 github.com/anchore/clio v0.1.0 h1:lrlSgD38V0T6TLjOG5Kn3miEXCQyYr6ZlwTSnW1WIJg=
@@ -1874,6 +1878,8 @@ github.com/tidwall/sjson v1.2.5 h1:kLy8mja+1c9jlljvWTlSazM7cKDRfJuR/bOJhcY5NcY=
 github.com/tidwall/sjson v1.2.5/go.mod h1:Fvgq9kS/6ociJEDnK0Fk1cpYF4FIW6ZF7LAe+6jwd28=
 github.com/tiendc/go-deepcopy v1.7.2 h1:Ut2yYR7W9tWjTQitganoIue4UGxZwCcJy3orjrrIj44=
 github.com/tiendc/go-deepcopy v1.7.2/go.mod h1:4bKjNC2r7boYOkD2IOuZpYjmlDdzjbpTRyCx+goBCJQ=
+github.com/timo-reymann/go-hadolint v0.1.0 h1:b6YxXypXgZlbL6cCRhXrG7kNe5UQrkBRtHqpD5VH7Jw=
+github.com/timo-reymann/go-hadolint v0.1.0/go.mod h1:4PED0W9LC31d2cBsD2K7Mu7kjSGL8IpUoiNig+x9AVM=
 github.com/tink-crypto/tink-go-awskms/v2 v2.1.0 h1:N9UxlsOzu5mttdjhxkDLbzwtEecuXmlxZVo/ds7JKJI=
 github.com/tink-crypto/tink-go-awskms/v2 v2.1.0/go.mod h1:PxSp9GlOkKL9rlybW804uspnHuO9nbD98V/fDX4uSis=
 github.com/tink-crypto/tink-go-gcpkms/v2 v2.2.0 h1:3B9i6XBXNTRspfkTC0asN5W0K6GhOSgcujNiECNRNb0=

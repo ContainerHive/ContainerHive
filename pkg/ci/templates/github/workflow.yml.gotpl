@@ -48,6 +48,9 @@ jobs:
           name: generated
           path: {{ .Dist }}/
           retention-days: 7
+{{- if ne (option "ci_lint") "false" }}
+{{ template "lint-job.yml.gotpl" . }}
+{{- end }}
 {{ range .Images }}
   # === {{ .Name | upper }} ===
 {{ template "build-job.yml.gotpl" (dict "Image" . "Ctx" $) }}

@@ -235,7 +235,7 @@ func addImageVariant(ctx context.Context, projectRoot, imageName, variantName, t
 	}
 
 	dockerfilePath := filepath.Join(variantDir, "Dockerfile")
-	dockerfileContent := "FROM __hive_parent__\n\n# Add your layers here\n"
+	dockerfileContent := "FROM " + model.HiveParentPlaceholder + "\n\n# Add your layers here\n"
 	if err := os.WriteFile(dockerfilePath, []byte(dockerfileContent), 0644); err != nil {
 		return fmt.Errorf("failed to write variant Dockerfile: %w", err)
 	}

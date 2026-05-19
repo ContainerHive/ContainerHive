@@ -99,6 +99,48 @@ ch verify
 
 Validates `hive.yml` and image definitions. Useful as a quick check before building.
 
+### `lint`
+
+Lint Dockerfiles in the project with [hadolint](https://github.com/hadolint/hadolint). The hadolint binary is embedded in `ch` — no separate install required.
+
+```bash
+ch lint
+```
+
+| Flag | Description |
+|:-----|:------------|
+| `--failure-threshold` | Lowest severity that causes a non-zero exit (`error`, `warning`, `info`, `style`, `ignore`). Overrides `lint.failure_threshold` from `hive.yml`. Defaults to `error`. |
+| `--codeclimate-report` | Path to write a [GitLab Code Quality](https://docs.gitlab.com/ee/ci/testing/code_quality.html) JSON report (Code Climate format). Written even when the command exits non-zero. |
+
+Findings are printed to stdout in `path:line:column level code: message` format. Templated Dockerfiles (files with a templating extension such as `Dockerfile.gotpl`) are **skipped** — hadolint cannot parse Go template syntax — and a warning is logged for each skipped file. Per-variant Dockerfiles are linted alongside the parent image.
+
+Configure hadolint behaviour with a `lint:` block in `hive.yml`. See [Hive configuration](../configuration/hive.md#lint).
+
+#### GitLab Code Quality integration
+
+`--codeclimate-report gl-code-quality-report.json` writes a Code Climate–compatible JSON report that GitLab CI can render inline on merge requests. Severities are mapped from hadolint to Code Climate as follows:
+
+| hadolint  | Code Climate |
+|:----------|:-------------|
+| `error`   | `blocker`    |
+| `warning` | `major`      |
+| `info`    | `minor`      |
+| `style`   | `info`       |
+
+Wire it into `.gitlab-ci.yml` like any other code-quality artifact:
+
+```yaml
+lint:
+  script:
+    - ch lint --codeclimate-report gl-code-quality-report.json
+  artifacts:
+    when: always
+    reports:
+      codequality: gl-code-quality-report.json
+```
+
+Every parsed finding lands in the report — even ones below the failure threshold — so GitLab surfaces the full picture while the command's exit code still reflects the threshold.
+
 ### `template ci`
 
 Generate CI pipeline configuration.

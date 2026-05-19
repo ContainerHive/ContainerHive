@@ -140,6 +140,54 @@
       },
       "description": "Project-level OCI image labels applied to every built image",
       "additionalProperties": false
+    },
+    "lint": {
+      "type": [
+        "null",
+        "object"
+      ],
+      "properties": {
+        "ignored": {
+          "type": [
+            "null",
+            "array"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "description": "Rule IDs to ignore (e.g. DL3000)"
+        },
+        "trusted_registries": {
+          "type": [
+            "null",
+            "array"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "description": "Registries hadolint treats as trusted (suppresses DL3026)"
+        },
+        "label_schema": {
+          "type": "object",
+          "description": "Expected LABEL keys and their validation types",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "strict_labels": {
+          "type": [
+            "null",
+            "boolean"
+          ],
+          "description": "Fail on labels missing from label_schema"
+        },
+        "failure_threshold": {
+          "type": "string",
+          "description": "Lowest severity that causes a non-zero exit (error, warning, info, style, ignore). Defaults to error."
+        }
+      },
+      "description": "Dockerfile linting configuration (hadolint)",
+      "additionalProperties": false
     }
   },
   "$id": "https://schema-nest.timo-reymann.de/api/schema/json-schema/containerhive-project/latest",

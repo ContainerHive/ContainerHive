@@ -142,6 +142,31 @@ All values must be strings. Keys prefixed with `ci_` have built-in defaults:
 |:----------------------|:------------------------------|:---------------------------------------------------------------------|
 | `ci_buildkit_image`   | `moby/buildkit`               | BuildKit container image                                             |
 | `ci_buildkit_version` | *(matches go.mod dependency)* | BuildKit image tag                                                   |
+| `ci_lint`             | `true`                        | Run hadolint linting in CI pipeline before builds                   |
 | `ci_report`           | `true`                        | Generate and publish HTML/JSON report to GitHub Pages / GitLab Pages |
 
 User-provided values override built-in defaults.
+
+### `lint`
+
+Configuration for [`ch lint`](../usage/cli.md#lint), which runs [hadolint](https://github.com/hadolint/hadolint) against plain Dockerfiles in the project. Templated Dockerfiles (e.g. `Dockerfile.gotpl`) are skipped — hadolint cannot parse Go template syntax.
+
+```yaml
+lint:
+  failure_threshold: warning
+  ignored:
+    - DL3008
+  trusted_registries:
+    - my-company.com:5000
+  label_schema:
+    com.acme.team: text
+  strict_labels: true
+```
+
+| Field                | Type        | Description                                                                                              |
+|:---------------------|:------------|:---------------------------------------------------------------------------------------------------------|
+| `failure_threshold`  | string      | Lowest severity that causes a non-zero exit: `error`, `warning`, `info`, `style`, `ignore`. Default: `error` |
+| `ignored`            | string list | Rule IDs to ignore (e.g. `DL3000`)                                                                       |
+| `trusted_registries` | string list | Registries hadolint treats as trusted (suppresses `DL3026`)                                              |
+| `label_schema`       | map         | Expected LABEL keys and their validation types (see [hadolint docs](https://github.com/hadolint/hadolint#configure)) |
+| `strict_labels`      | bool        | Fail on labels missing from `label_schema`                                                               |

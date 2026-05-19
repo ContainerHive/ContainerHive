@@ -4,6 +4,9 @@
     runs-on: {{ if eq . "arm64" }}ubuntu-24.04-arm{{ else }}ubuntu-24.04{{ end }}
     needs:
       - generate
+{{- if ne (option "ci_lint") "false" }}
+      - lint
+{{- end }}
 {{- range $.Image.Dependencies }}
       - manifest-{{ . }}
 {{- end }}
