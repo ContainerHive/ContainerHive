@@ -1221,6 +1221,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#lint" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        lint
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1893,6 +1904,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#lint" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        lint
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -2227,6 +2249,11 @@
 <td style="text-align: left;">BuildKit image tag</td>
 </tr>
 <tr>
+<td style="text-align: left;"><code>ci_lint</code></td>
+<td style="text-align: left;"><code>true</code></td>
+<td style="text-align: left;">Run hadolint linting in CI pipeline before builds</td>
+</tr>
+<tr>
 <td style="text-align: left;"><code>ci_report</code></td>
 <td style="text-align: left;"><code>true</code></td>
 <td style="text-align: left;">Generate and publish HTML/JSON report to GitHub Pages / GitLab Pages</td>
@@ -2234,6 +2261,54 @@
 </tbody>
 </table>
 <p>User-provided values override built-in defaults.</p>
+<h3 id="lint"><code>lint</code></h3>
+<p>Configuration for <a href="../usage/cli.html#lint"><code>ch lint</code></a>, which runs <a href="https://github.com/hadolint/hadolint">hadolint</a> against plain Dockerfiles in the project. Templated Dockerfiles (e.g. <code>Dockerfile.gotpl</code>) are skipped — hadolint cannot parse Go template syntax.</p>
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="nt">lint</span><span class="p">:</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="w">  </span><span class="nt">failure_threshold</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">warning</span>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="w">  </span><span class="nt">ignored</span><span class="p">:</span>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">DL3008</span>
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="w">  </span><span class="nt">trusted_registries</span><span class="p">:</span>
+</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-company.com:5000</span>
+</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="w">  </span><span class="nt">label_schema</span><span class="p">:</span>
+</span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a><span class="w">    </span><span class="nt">com.acme.team</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">text</span>
+</span><span id="__span-5-9"><a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a><span class="w">  </span><span class="nt">strict_labels</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+</span></code></pre></div>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Field</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>failure_threshold</code></td>
+<td style="text-align: left;">string</td>
+<td style="text-align: left;">Lowest severity that causes a non-zero exit: <code>error</code>, <code>warning</code>, <code>info</code>, <code>style</code>, <code>ignore</code>. Default: <code>error</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>ignored</code></td>
+<td style="text-align: left;">string list</td>
+<td style="text-align: left;">Rule IDs to ignore (e.g. <code>DL3000</code>)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>trusted_registries</code></td>
+<td style="text-align: left;">string list</td>
+<td style="text-align: left;">Registries hadolint treats as trusted (suppresses <code>DL3026</code>)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>label_schema</code></td>
+<td style="text-align: left;">map</td>
+<td style="text-align: left;">Expected LABEL keys and their validation types (see <a href="https://github.com/hadolint/hadolint#configure">hadolint docs</a>)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>strict_labels</code></td>
+<td style="text-align: left;">bool</td>
+<td style="text-align: left;">Fail on labels missing from <code>label_schema</code></td>
+</tr>
+</tbody>
+</table>
 
 
 

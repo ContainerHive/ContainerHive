@@ -745,6 +745,34 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#lint" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        lint
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="lint">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#gitlab-code-quality-integration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GitLab Code Quality integration
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#template-ci" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1870,6 +1898,34 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#lint" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        lint
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="lint">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#gitlab-code-quality-integration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GitLab Code Quality integration
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#template-ci" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2146,9 +2202,71 @@
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>ch<span class="w"> </span>verify
 </span></code></pre></div>
 <p>Validates <code>hive.yml</code> and image definitions. Useful as a quick check before building.</p>
+<h3 id="lint"><code>lint</code></h3>
+<p>Lint Dockerfiles in the project with <a href="https://github.com/hadolint/hadolint">hadolint</a>. The hadolint binary is embedded in <code>ch</code> — no separate install required.</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>ch<span class="w"> </span>lint
+</span></code></pre></div>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Flag</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>--failure-threshold</code></td>
+<td style="text-align: left;">Lowest severity that causes a non-zero exit (<code>error</code>, <code>warning</code>, <code>info</code>, <code>style</code>, <code>ignore</code>). Overrides <code>lint.failure_threshold</code> from <code>hive.yml</code>. Defaults to <code>error</code>.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>--codeclimate-report</code></td>
+<td style="text-align: left;">Path to write a <a href="https://docs.gitlab.com/ee/ci/testing/code_quality.html">GitLab Code Quality</a> JSON report (Code Climate format). Written even when the command exits non-zero.</td>
+</tr>
+</tbody>
+</table>
+<p>Findings are printed to stdout in <code>path:line:column level code: message</code> format. Templated Dockerfiles (files with a templating extension such as <code>Dockerfile.gotpl</code>) are <strong>skipped</strong> — hadolint cannot parse Go template syntax — and a warning is logged for each skipped file. Per-variant Dockerfiles are linted alongside the parent image.</p>
+<p>Configure hadolint behaviour with a <code>lint:</code> block in <code>hive.yml</code>. See <a href="../configuration/hive.html#lint">Hive configuration</a>.</p>
+<h4 id="gitlab-code-quality-integration">GitLab Code Quality integration</h4>
+<p><code>--codeclimate-report gl-code-quality-report.json</code> writes a Code Climate–compatible JSON report that GitLab CI can render inline on merge requests. Severities are mapped from hadolint to Code Climate as follows:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">hadolint</th>
+<th style="text-align: left;">Code Climate</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>error</code></td>
+<td style="text-align: left;"><code>blocker</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>warning</code></td>
+<td style="text-align: left;"><code>major</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>info</code></td>
+<td style="text-align: left;"><code>minor</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>style</code></td>
+<td style="text-align: left;"><code>info</code></td>
+</tr>
+</tbody>
+</table>
+<p>Wire it into <code>.gitlab-ci.yml</code> like any other code-quality artifact:</p>
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="nt">lint</span><span class="p">:</span>
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="w">  </span><span class="nt">script</span><span class="p">:</span>
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ch lint --codeclimate-report gl-code-quality-report.json</span>
+</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="w">  </span><span class="nt">artifacts</span><span class="p">:</span>
+</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a><span class="w">    </span><span class="nt">when</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">always</span>
+</span><span id="__span-9-6"><a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a><span class="w">    </span><span class="nt">reports</span><span class="p">:</span>
+</span><span id="__span-9-7"><a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a><span class="w">      </span><span class="nt">codequality</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">gl-code-quality-report.json</span>
+</span></code></pre></div>
+<p>Every parsed finding lands in the report — even ones below the failure threshold — so GitLab surfaces the full picture while the command's exit code still reflects the threshold.</p>
 <h3 id="template-ci"><code>template ci</code></h3>
 <p>Generate CI pipeline configuration.</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>ch<span class="w"> </span>template<span class="w"> </span>ci<span class="w"> </span>--provider<span class="w"> </span>&lt;provider&gt;<span class="w"> </span>--output<span class="w"> </span>&lt;path&gt;
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>ch<span class="w"> </span>template<span class="w"> </span>ci<span class="w"> </span>--provider<span class="w"> </span>&lt;provider&gt;<span class="w"> </span>--output<span class="w"> </span>&lt;path&gt;
 </span></code></pre></div>
 <table>
 <thead>
@@ -2186,7 +2304,7 @@
 </table>
 <h3 id="template-custom"><code>template custom</code></h3>
 <p>Render custom Go templates with project context.</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>ch<span class="w"> </span>template<span class="w"> </span>custom<span class="w"> </span>--template<span class="w"> </span>&lt;path.gotpl&gt;<span class="w"> </span>--output<span class="w"> </span>&lt;path&gt;
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>ch<span class="w"> </span>template<span class="w"> </span>custom<span class="w"> </span>--template<span class="w"> </span>&lt;path.gotpl&gt;<span class="w"> </span>--output<span class="w"> </span>&lt;path&gt;
 </span></code></pre></div>
 <table>
 <thead>
@@ -2208,7 +2326,7 @@
 </table>
 <h3 id="wait"><code>wait</code></h3>
 <p>Wait for infrastructure dependencies to become available.</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>ch<span class="w"> </span><span class="nb">wait</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>ch<span class="w"> </span><span class="nb">wait</span>
 </span></code></pre></div>
 <table>
 <thead>
@@ -2234,7 +2352,7 @@
 </table>
 <h3 id="login"><code>login</code></h3>
 <p>Log in to a container registry.</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>ch<span class="w"> </span>login<span class="w"> </span>&lt;registry&gt;<span class="w"> </span>-u<span class="w"> </span>&lt;username&gt;<span class="w"> </span>-p<span class="w"> </span>&lt;password&gt;
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>ch<span class="w"> </span>login<span class="w"> </span>&lt;registry&gt;<span class="w"> </span>-u<span class="w"> </span>&lt;username&gt;<span class="w"> </span>-p<span class="w"> </span>&lt;password&gt;
 </span></code></pre></div>
 <table>
 <thead>
@@ -2260,10 +2378,10 @@
 </table>
 <h3 id="dev-buildkitd"><code>dev buildkitd</code></h3>
 <p>Manage a local BuildKit daemon container for development. See <a href="local-development.html">Local development</a> for full details.</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>ch<span class="w"> </span>dev<span class="w"> </span>buildkitd<span class="w"> </span>start
-</span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>ch<span class="w"> </span>dev<span class="w"> </span>buildkitd<span class="w"> </span>stop
-</span><span id="__span-12-3"><a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a>ch<span class="w"> </span>dev<span class="w"> </span>buildkitd<span class="w"> </span>status
-</span><span id="__span-12-4"><a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a>ch<span class="w"> </span>dev<span class="w"> </span>buildkitd<span class="w"> </span>logs
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>ch<span class="w"> </span>dev<span class="w"> </span>buildkitd<span class="w"> </span>start
+</span><span id="__span-14-2"><a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a>ch<span class="w"> </span>dev<span class="w"> </span>buildkitd<span class="w"> </span>stop
+</span><span id="__span-14-3"><a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a>ch<span class="w"> </span>dev<span class="w"> </span>buildkitd<span class="w"> </span>status
+</span><span id="__span-14-4"><a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a>ch<span class="w"> </span>dev<span class="w"> </span>buildkitd<span class="w"> </span>logs
 </span></code></pre></div>
 <p><strong><code>start</code> flags:</strong></p>
 <table>
@@ -2320,7 +2438,7 @@
 </table>
 <h3 id="report"><code>report</code></h3>
 <p>Generate an HTML or JSON report of container images.</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>ch<span class="w"> </span>report
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-15-1"><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a>ch<span class="w"> </span>report
 </span></code></pre></div>
 <table>
 <thead>
@@ -2343,11 +2461,11 @@
 <p>Generates a report containing information about all configured images, including their build status, dependencies, and metadata.</p>
 <h3 id="license"><code>license</code></h3>
 <p>Show third-party license notices.</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>ch<span class="w"> </span>license
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-16-1"><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a>ch<span class="w"> </span>license
 </span></code></pre></div>
 <h3 id="mcp"><code>mcp</code></h3>
 <p>Start a Model Context Protocol (MCP) server for AI tool integration.</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-15-1"><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a>ch<span class="w"> </span>mcp
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-17-1"><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a>ch<span class="w"> </span>mcp
 </span></code></pre></div>
 <p>See <a href="mcp.html">MCP integration</a> for full details.</p>
 

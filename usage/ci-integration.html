@@ -1091,11 +1091,50 @@
   
 </li>
         
-          <li class="md-nav__item">
-  <a href="#disabling-report-generation" class="md-nav__link">
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#lint-job" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Disabling report generation
+        Lint job
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Lint job">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#gitlab-code-quality-report" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GitLab Code Quality report
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#github-actions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GitHub Actions
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#disabling-linting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Disabling linting
       
     </span>
   </a>
@@ -1982,11 +2021,50 @@
   
 </li>
         
-          <li class="md-nav__item">
-  <a href="#disabling-report-generation" class="md-nav__link">
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#lint-job" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Disabling report generation
+        Lint job
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Lint job">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#gitlab-code-quality-report" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GitLab Code Quality report
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#github-actions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GitHub Actions
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#disabling-linting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Disabling linting
       
     </span>
   </a>
@@ -2105,6 +2183,7 @@ YAML by hand.</p>
 <li>If an image has a <code>latest_alias</code> configured, the highest semantic version tag is automatically retagged as the
    specified alias (e.g., <code>latest</code>, <code>stable</code>).</li>
 <li>The generated pipeline references the ContainerHive container image to run all commands.</li>
+<li>Before builds, Dockerfiles are linted with hadolint (enabled by default). Lint failures gate the build stage.</li>
 <li>After successful builds, an HTML and JSON report is generated and published to GitHub Pages or GitLab Pages.</li>
 </ol>
 <h3 id="options">Options</h3>
@@ -2263,8 +2342,9 @@ directory take precedence over the built-in ones.</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>templates/&lt;provider&gt;/
 </span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>├── pipeline.yml.gotpl   (or workflow.yml.gotpl for GitHub)
 </span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>├── build-job.yml.gotpl
-</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>├── manifest-job.yml.gotpl
-</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>└── test-job.yml.gotpl
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>├── lint-job.yml.gotpl
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>├── manifest-job.yml.gotpl
+</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>└── test-job.yml.gotpl
 </span></code></pre></div>
 <p>The entrypoint template includes the job templates as partials using <code>{{ template "build-job.yml.gotpl" . }}</code>.</p>
 <h2 id="the-generate-command">The <code>generate</code> command</h2>
@@ -2287,10 +2367,21 @@ source set to "GitHub Actions".</p>
 <h3 id="gitlab-pages">GitLab Pages</h3>
 <p>The report is uploaded as a GitLab Pages artifact and exposed as "ContainerHive Report" in the merge request widget. The
 JSON report is also available as an artifact.</p>
-<h3 id="disabling-report-generation">Disabling report generation</h3>
-<p>To disable report generation, set <code>ci_report</code> to <code>false</code> in your <code>hive.yml</code>:</p>
+<h2 id="lint-job">Lint job</h2>
+<p>By default, the generated CI pipeline includes a <code>lint</code> job that runs after the <code>generate</code> stage and before any build
+stages. This job lints all plain Dockerfiles in the project using <a href="https://github.com/hadolint/hadolint">hadolint</a>
+via <code>ch lint</code>.</p>
+<h3 id="gitlab-code-quality-report">GitLab Code Quality report</h3>
+<p>For GitLab CI, the lint job produces a <a href="https://docs.gitlab.com/ee/ci/testing/code_quality.html">Code Quality report</a>
+artifact that GitLab renders inline on merge requests. The report uses the Code Climate format with the
+<code>--codeclimate-report</code> flag.</p>
+<h3 id="github-actions">GitHub Actions</h3>
+<p>For GitHub Actions, the lint job runs <code>ch lint</code> directly. Lint failures cause the job to fail and gate subsequent build
+jobs.</p>
+<h3 id="disabling-linting">Disabling linting</h3>
+<p>To disable the lint job entirely, set <code>ci_lint</code> to <code>false</code> in your <code>hive.yml</code>:</p>
 <div class="language-yaml highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="nt">template_options</span><span class="p">:</span>
-</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="w">  </span><span class="nt">ci_report</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="w">  </span><span class="nt">ci_lint</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
 </span></code></pre></div>
 
 
