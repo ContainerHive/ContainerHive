@@ -1,3 +1,9 @@
+## [0.19.0](https://github.com/ContainerHive/ContainerHive/compare/v0.18.3...v0.19.0) (2026-05-19)
+
+### Features
+
+* **lint:** add ch lint command with hadolint, GitLab Code Quality, and text output ([#104](https://github.com/ContainerHive/ContainerHive/issues/104)) ([23995c9](https://github.com/ContainerHive/ContainerHive/commit/23995c94ca8b202cce33e5f899175a6f513c09d2))
+
 ## [0.18.3](https://github.com/ContainerHive/ContainerHive/compare/v0.18.2...v0.18.3) (2026-05-19)
 
 ### Bug Fixes
