@@ -1,3 +1,10 @@
+## [0.18.3](https://github.com/ContainerHive/ContainerHive/compare/v0.18.2...v0.18.3) (2026-05-19)
+
+### Bug Fixes
+
+* **deps:** update module github.com/urfave/cli/v3 to v3.9.0 ([#110](https://github.com/ContainerHive/ContainerHive/issues/110)) ([0ec59d2](https://github.com/ContainerHive/ContainerHive/commit/0ec59d266b99b880f17ef70d32d3f615185c5c71))
+* **deps:** update module modernc.org/sqlite to v1.50.1 ([#109](https://github.com/ContainerHive/ContainerHive/issues/109)) ([fc72da0](https://github.com/ContainerHive/ContainerHive/commit/fc72da07f68aedb5b3c580a8f3ea83e7a2ae4139))
+
 ## [0.18.2](https://github.com/ContainerHive/ContainerHive/compare/v0.18.1...v0.18.2) (2026-05-14)
 
 ### Bug Fixes
