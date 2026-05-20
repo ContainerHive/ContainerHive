@@ -1,3 +1,9 @@
+## [0.19.1](https://github.com/ContainerHive/ContainerHive/compare/v0.19.0...v0.19.1) (2026-05-20)
+
+### Bug Fixes
+
+* **deps:** update module golang.org/x/term to v0.43.0 ([#111](https://github.com/ContainerHive/ContainerHive/issues/111)) ([8589ebd](https://github.com/ContainerHive/ContainerHive/commit/8589ebd4c9640c1cab3f1de0788f72d1a2cb63ce))
+
 ## [0.19.0](https://github.com/ContainerHive/ContainerHive/compare/v0.18.3...v0.19.0) (2026-05-19)
 
 ### Features
