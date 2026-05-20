@@ -4579,10 +4579,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ================================================================================
 
 Module:  golang.org/x/term
-Version: v0.42.0
+Version: v0.43.0
 Licence: BSD-3-Clause
 
-Contents of probable licence file $GOMODCACHE/golang.org/x/term@v0.42.0/LICENSE:
+Contents of probable licence file $GOMODCACHE/golang.org/x/term@v0.43.0/LICENSE:
 
 Copyright 2009 The Go Authors.
 
@@ -69655,10 +69655,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ================================================================================
 
 Module:  golang.org/x/sys
-Version: v0.43.0
+Version: v0.44.0
 Licence: BSD-3-Clause
 
-Contents of probable licence file $GOMODCACHE/golang.org/x/sys@v0.43.0/LICENSE:
+Contents of probable licence file $GOMODCACHE/golang.org/x/sys@v0.44.0/LICENSE:
 
 Copyright 2009 The Go Authors.
 
