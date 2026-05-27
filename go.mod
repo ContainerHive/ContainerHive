@@ -1,6 +1,6 @@
 module github.com/ContainerHive/ContainerHive
 
-go 1.26.2
+go 1.26.3
 
 tool go.elastic.co/go-licence-detector
 
@@ -9,7 +9,7 @@ require (
 	github.com/Ladicle/tabwriter v1.0.0
 	github.com/Masterminds/sprig/v3 v3.3.0
 	github.com/anchore/syft v1.44.0
-	github.com/containerd/containerd/v2 v2.3.0
+	github.com/containerd/containerd/v2 v2.3.1
 	github.com/containerd/errdefs v1.0.0
 	github.com/docker/cli v29.4.2+incompatible
 	github.com/docker/docker v28.5.2+incompatible
@@ -174,7 +174,7 @@ require (
 	github.com/containerd/cgroups/v3 v3.1.3 // indirect
 	github.com/containerd/console v1.0.5 // indirect
 	github.com/containerd/containerd v1.7.29 // indirect
-	github.com/containerd/containerd/api v1.11.0 // indirect
+	github.com/containerd/containerd/api v1.11.1 // indirect
 	github.com/containerd/continuity v0.5.0 // indirect
 	github.com/containerd/errdefs/pkg v0.3.0 // indirect
 	github.com/containerd/fifo v1.1.0 // indirect
