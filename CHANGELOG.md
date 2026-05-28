@@ -1,3 +1,9 @@
+## [0.19.2](https://github.com/ContainerHive/ContainerHive/compare/v0.19.1...v0.19.2) (2026-05-28)
+
+### Bug Fixes
+
+* **deps:** update module github.com/containerd/containerd/v2 to v2.3.1 ([#118](https://github.com/ContainerHive/ContainerHive/issues/118)) ([1fda2e5](https://github.com/ContainerHive/ContainerHive/commit/1fda2e53bcbe93d2770cf37a230bf3dcf8a36955))
+
 ## [0.19.1](https://github.com/ContainerHive/ContainerHive/compare/v0.19.0...v0.19.1) (2026-05-20)
 
 ### Bug Fixes
