@@ -1,3 +1,9 @@
+## [0.19.4](https://github.com/ContainerHive/ContainerHive/compare/v0.19.3...v0.19.4) (2026-05-28)
+
+### Bug Fixes
+
+* **deps:** update module github.com/moby/buildkit to v0.30.0 ([#112](https://github.com/ContainerHive/ContainerHive/issues/112)) ([0cd9dde](https://github.com/ContainerHive/ContainerHive/commit/0cd9dde2341f6abb434f75593a194bf91e10b917))
+
 ## [0.19.3](https://github.com/ContainerHive/ContainerHive/compare/v0.19.2...v0.19.3) (2026-05-28)
 
 ### Bug Fixes
