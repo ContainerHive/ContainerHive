@@ -3105,10 +3105,10 @@ Contents of probable licence file $GOMODCACHE/github.com/moby/buildkit@v0.30.0/L
 ================================================================================
 
 Module:  github.com/modelcontextprotocol/go-sdk
-Version: v1.5.0
+Version: v1.6.1
 Licence: Apache-2.0
 
-Contents of probable licence file $GOMODCACHE/github.com/modelcontextprotocol/go-sdk@v1.5.0/LICENSE:
+Contents of probable licence file $GOMODCACHE/github.com/modelcontextprotocol/go-sdk@v1.6.1/LICENSE:
 
 The MCP project is undergoing a licensing transition from the MIT License to the Apache License, Version 2.0 ("Apache-2.0"). All new code and specification contributions to the project are licensed under Apache-2.0. Documentation contributions (excluding specifications) are licensed under CC-BY-4.0.
 
@@ -35498,10 +35498,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ================================================================================
 
 Module:  github.com/google/jsonschema-go
-Version: v0.4.2
+Version: v0.4.3
 Licence: MIT
 
-Contents of probable licence file $GOMODCACHE/github.com/google/jsonschema-go@v0.4.2/LICENSE:
+Contents of probable licence file $GOMODCACHE/github.com/google/jsonschema-go@v0.4.3/LICENSE:
 
 MIT License
 
