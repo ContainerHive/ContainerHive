@@ -1559,10 +1559,10 @@ Contents of probable licence file $GOMODCACHE/github.com/containerd/errdefs@v1.0
 ================================================================================
 
 Module:  github.com/docker/cli
-Version: v29.4.3+incompatible
+Version: v29.5.2+incompatible
 Licence: Apache-2.0
 
-Contents of probable licence file $GOMODCACHE/github.com/docker/cli@v29.4.3+incompatible/LICENSE:
+Contents of probable licence file $GOMODCACHE/github.com/docker/cli@v29.5.2+incompatible/LICENSE:
 
 
                                  Apache License
