@@ -114,3 +114,4 @@ Without these libraries this project would not be possible:
 - [syft](https://github.com/anchore/syft) by Anchore
 - [buildkit](https://github.com/moby/buildkit) by the Moby Project
 - [container-structure-test](https://github.com/GoogleContainerTools/container-structure-test) by Google
+- [hadolint](https://github.com/hadolint/hadolint)
