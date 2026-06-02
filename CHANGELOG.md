@@ -1,3 +1,9 @@
+## [0.19.6](https://github.com/ContainerHive/ContainerHive/compare/v0.19.5...v0.19.6) (2026-06-02)
+
+### Bug Fixes
+
+* **deps:** update module github.com/modelcontextprotocol/go-sdk to v1.6.1 ([#120](https://github.com/ContainerHive/ContainerHive/issues/120)) ([601ab2e](https://github.com/ContainerHive/ContainerHive/commit/601ab2e15e9c9ba7de0adc5401e088d38c740892))
+
 ## [0.19.5](https://github.com/ContainerHive/ContainerHive/compare/v0.19.4...v0.19.5) (2026-05-29)
 
 ### Bug Fixes
