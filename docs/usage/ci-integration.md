@@ -166,13 +166,22 @@ via `ch lint`.
 ### GitLab Code Quality report
 
 For GitLab CI, the lint job produces a [Code Quality report](https://docs.gitlab.com/ee/ci/testing/code_quality.html)
-artifact that GitLab renders inline on merge requests. The report uses the Code Climate format with the
-`--codeclimate-report` flag.
+artifact that GitLab renders inline on merge requests. The report uses the `codeclimate` output format:
 
-### GitHub Actions
+```bash
+ch lint --format codeclimate=gl-code-quality-report.json
+```
 
-For GitHub Actions, the lint job runs `ch lint` directly. Lint failures cause the job to fail and gate subsequent build
-jobs.
+### GitHub Actions annotations
+
+For GitHub Actions, use the `github-actions` output format to emit annotations inline on pull request diffs:
+
+```bash
+ch lint --format github-actions
+```
+
+Lint failures still cause the job to fail and gate subsequent build jobs. Without the `--format` flag, findings only
+appear in the workflow log — using `--format github-actions` makes them visible on the changed lines in the PR.
 
 ### Disabling linting
 
