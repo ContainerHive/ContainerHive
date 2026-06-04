@@ -7,7 +7,7 @@ lint:
     name: {{ .ImageName }}:{{ .Version }}
     entrypoint: [""]
   script:
-    - {{ .ChCmd }} lint --codeclimate-report gl-code-quality-report.json
+    - {{ .ChCmd }} lint --format codeclimate=gl-code-quality-report.json
   artifacts:
     when: always
     reports:

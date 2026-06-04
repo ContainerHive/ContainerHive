@@ -20,9 +20,9 @@ func lintCmd() *cli.Command {
 				Name:  "failure-threshold",
 				Usage: "Override lint.failure_threshold from hive.yml (error, warning, info, style, ignore)",
 			},
-			&cli.StringFlag{
-				Name:  "codeclimate-report",
-				Usage: "Write findings to a Code Climate / GitLab Code Quality JSON report at this path",
+			&cli.StringSliceFlag{
+				Name:  "format",
+				Usage: "Output format (terminal, github-actions, codeclimate=<path>). Can be repeated. Default: terminal",
 			},
 		},
 		Action: func(ctx context.Context, cmd *cli.Command) error {
@@ -39,11 +39,14 @@ func lintCmd() *cli.Command {
 			}
 			defer linter.Close()
 
-			// Resolve symlinks so report paths match what hadolint sees
-			// (discovery resolves the root via filepath.EvalSymlinks).
 			projectRoot := project.RootDir
 			if resolved, evalErr := filepath.EvalSymlinks(projectRoot); evalErr == nil {
 				projectRoot = resolved
+			}
+
+			opts, err := lint.ParseFormats(cmd.StringSlice("format"))
+			if err != nil {
+				return fmt.Errorf("invalid --format: %w", err)
 			}
 
 			result, err := linter.Lint(project, projectRoot)
@@ -52,16 +55,20 @@ func lintCmd() *cli.Command {
 			}
 
 			if len(result.Findings) > 0 {
-				if err := lint.RenderFindings(os.Stdout, result.Findings, lint.StdoutSupportsColor()); err != nil {
-					return fmt.Errorf("failed to render findings: %w", err)
+				for _, opt := range opts {
+					var f lint.Format
+					switch opt.Name {
+					case "terminal":
+						f = &lint.TerminalFormat{Color: lint.StdoutSupportsColor()}
+					case "github-actions":
+						f = &lint.GitHubActionsFormat{}
+					case "codeclimate":
+						f = lint.NewCodeClimateFormat(opt.Path)
+					}
+					if err := f.Render(os.Stdout, result.Findings); err != nil {
+						return fmt.Errorf("failed to render %s output: %w", f.Name(), err)
+					}
 				}
-			}
-
-			if reportPath := cmd.String("codeclimate-report"); reportPath != "" {
-				if err := lint.WriteCodeQualityReport(reportPath, result.CodeQuality); err != nil {
-					return fmt.Errorf("failed to write code quality report: %w", err)
-				}
-				slog.Info("Wrote code quality report", "path", reportPath, "entries", len(result.CodeQuality))
 			}
 
 			if result.LintedCount == 0 {

@@ -157,8 +157,8 @@ func TestLintCmd_CodeClimateReport(t *testing.T) {
 	root := t.TempDir()
 	writeProject(t, root, "Dockerfile", "FROM nginx:1.27\nMAINTAINER me@example.com\n", "")
 
-	reportPath := filepath.Join(root, "gl-code-quality-report.json")
-	err, _ := runLint(t, root, "--codeclimate-report", reportPath)
+		reportPath := filepath.Join(root, "gl-code-quality-report.json")
+	err, _ := runLint(t, root, "--format", "codeclimate="+reportPath)
 	if err == nil {
 		t.Fatalf("expected lint failure on DL4000")
 	}
@@ -193,6 +193,58 @@ func TestLintCmd_CodeClimateReport(t *testing.T) {
 	}
 	if !strings.HasSuffix(path, "Dockerfile") {
 		t.Errorf("report path does not end in Dockerfile: %s", path)
+	}
+}
+
+func TestLintCmd_MultipleFormats(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping hadolint integration test in short mode")
+	}
+	root := t.TempDir()
+	writeProject(t, root, "Dockerfile", "FROM nginx:1.27\nMAINTAINER me@example.com\n", "")
+
+	reportPath := filepath.Join(root, "gl-code-quality-report.json")
+	err, stdout := runLint(t, root, "--format", "terminal", "--format", "codeclimate="+reportPath, "--format", "github-actions")
+	if err == nil {
+		t.Fatalf("expected lint failure on DL4000")
+	}
+
+	if !strings.Contains(stdout, "DL4000") {
+		t.Errorf("terminal output missing DL4000:\n%s", stdout)
+	}
+	if !strings.Contains(stdout, "::error ") {
+		t.Errorf("GitHub Actions annotations missing:\n%s", stdout)
+	}
+
+	data, readErr := os.ReadFile(reportPath)
+	if readErr != nil {
+		t.Fatalf("expected report at %s, got %v", reportPath, readErr)
+	}
+	var entries []map[string]any
+	if err := json.Unmarshal(data, &entries); err != nil {
+		t.Fatalf("invalid JSON: %v\n%s", err, data)
+	}
+	if len(entries) == 0 {
+		t.Fatalf("expected entries in code quality report")
+	}
+}
+
+func TestLintCmd_FormatDefaultsToTerminal(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping hadolint integration test in short mode")
+	}
+	root := t.TempDir()
+	writeProject(t, root, "Dockerfile", "FROM nginx:1.27\nMAINTAINER me@example.com\n", "")
+
+	err, stdout := runLint(t, root)
+	if err == nil {
+		t.Fatalf("expected lint failure on DL4000")
+	}
+	if !strings.Contains(stdout, "DL4000") {
+		t.Errorf("expected terminal output with DL4000, got:\n%s", stdout)
+	}
+	if strings.Contains(stdout, "::error ") {
+		t.Errorf("expected no GitHub Actions annotations by default, got:\n%s", stdout)
 	}
 }
 

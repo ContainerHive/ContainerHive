@@ -110,15 +110,50 @@ ch lint
 | Flag | Description |
 |:-----|:------------|
 | `--failure-threshold` | Lowest severity that causes a non-zero exit (`error`, `warning`, `info`, `style`, `ignore`). Overrides `lint.failure_threshold` from `hive.yml`. Defaults to `error`. |
-| `--codeclimate-report` | Path to write a [GitLab Code Quality](https://docs.gitlab.com/ee/ci/testing/code_quality.html) JSON report (Code Climate format). Written even when the command exits non-zero. |
+| `--format` | Output format(s). Repeatable flag. Supported values: `terminal`, `github-actions`, `codeclimate=<path>`. Default: `terminal`. |
 
-Findings are printed to stdout in `path:line:column level code: message` format. Templated Dockerfiles (files with a templating extension such as `Dockerfile.gotpl`) are **skipped** — hadolint cannot parse Go template syntax — and a warning is logged for each skipped file. Per-variant Dockerfiles are linted alongside the parent image.
+Findings are printed to stdout in `path:line:column level code: message` format by default. Templated Dockerfiles (files with a templating extension such as `Dockerfile.gotpl`) are **skipped** — hadolint cannot parse Go template syntax — and a warning is logged for each skipped file. Per-variant Dockerfiles are linted alongside the parent image.
 
 Configure hadolint behaviour with a `lint:` block in `hive.yml`. See [Hive configuration](../configuration/hive.md#lint).
 
-#### GitLab Code Quality integration
+#### Output formats
 
-`--codeclimate-report gl-code-quality-report.json` writes a Code Climate–compatible JSON report that GitLab CI can render inline on merge requests. Severities are mapped from hadolint to Code Climate as follows:
+One or more `--format` flags can be specified:
+
+```bash
+ch lint --format terminal
+ch lint --format github-actions
+ch lint --format codeclimate=gl-code-quality-report.json
+ch lint --format terminal --format github-actions --format codeclimate=gl-code-quality-report.json
+```
+
+##### `terminal`
+
+Colored text output to stdout. Used by default when no `--format` is given.
+
+##### `github-actions`
+
+Emits [GitHub Actions workflow command annotations](https://docs.github.com/en/actions/writing-workflows/workflow-commands-for-github-actions#setting-a-notice-message) to stdout, making findings appear inline on the diff in pull requests. Severities are mapped from hadolint to workflow commands as follows:
+
+| hadolint  | GitHub Actions command |
+|:----------|:-----------------------|
+| `error`   | `::error`              |
+| `warning` | `::warning`            |
+| `info`    | `::notice`             |
+| `style`   | `::notice`             |
+
+The annotation includes the repo-relative file path, line and column numbers, the rule code as the title, and the finding message as the body. Messages are sanitized to prevent injection of false workflow commands.
+
+Wire it into a GitHub Actions workflow step:
+
+```yaml
+- name: Lint Dockerfiles
+  run: ch lint --format github-actions
+```
+
+##### `codeclimate=<path>`
+
+Writes a [Code Climate](https://docs.gitlab.com/ee/ci/testing/code_quality.html)–compatible JSON report that GitLab CI can render inline on merge requests. Requires a file path suffix (e.g., `codeclimate=gl-code-quality-report.json`). Severities are mapped from hadolint to Code Climate as follows:
 
 | hadolint  | Code Climate |
 |:----------|:-------------|
@@ -132,7 +167,7 @@ Wire it into `.gitlab-ci.yml` like any other code-quality artifact:
 ```yaml
 lint:
   script:
-    - ch lint --codeclimate-report gl-code-quality-report.json
+    - ch lint --format codeclimate=gl-code-quality-report.json
   artifacts:
     when: always
     reports:
