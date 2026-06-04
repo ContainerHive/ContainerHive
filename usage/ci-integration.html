@@ -1120,10 +1120,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#github-actions" class="md-nav__link">
+  <a href="#github-actions-annotations" class="md-nav__link">
     <span class="md-ellipsis">
       
-        GitHub Actions
+        GitHub Actions annotations
       
     </span>
   </a>
@@ -2050,10 +2050,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#github-actions" class="md-nav__link">
+  <a href="#github-actions-annotations" class="md-nav__link">
     <span class="md-ellipsis">
       
-        GitHub Actions
+        GitHub Actions annotations
       
     </span>
   </a>
@@ -2373,15 +2373,19 @@ stages. This job lints all plain Dockerfiles in the project using <a href="https
 via <code>ch lint</code>.</p>
 <h3 id="gitlab-code-quality-report">GitLab Code Quality report</h3>
 <p>For GitLab CI, the lint job produces a <a href="https://docs.gitlab.com/ee/ci/testing/code_quality.html">Code Quality report</a>
-artifact that GitLab renders inline on merge requests. The report uses the Code Climate format with the
-<code>--codeclimate-report</code> flag.</p>
-<h3 id="github-actions">GitHub Actions</h3>
-<p>For GitHub Actions, the lint job runs <code>ch lint</code> directly. Lint failures cause the job to fail and gate subsequent build
-jobs.</p>
+artifact that GitLab renders inline on merge requests. The report uses the <code>codeclimate</code> output format:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>ch<span class="w"> </span>lint<span class="w"> </span>--format<span class="w"> </span><span class="nv">codeclimate</span><span class="o">=</span>gl-code-quality-report.json
+</span></code></pre></div>
+<h3 id="github-actions-annotations">GitHub Actions annotations</h3>
+<p>For GitHub Actions, use the <code>github-actions</code> output format to emit annotations inline on pull request diffs:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>ch<span class="w"> </span>lint<span class="w"> </span>--format<span class="w"> </span>github-actions
+</span></code></pre></div>
+<p>Lint failures still cause the job to fail and gate subsequent build jobs. Without the <code>--format</code> flag, findings only
+appear in the workflow log — using <code>--format github-actions</code> makes them visible on the changed lines in the PR.</p>
 <h3 id="disabling-linting">Disabling linting</h3>
 <p>To disable the lint job entirely, set <code>ci_lint</code> to <code>false</code> in your <code>hive.yml</code>:</p>
-<div class="language-yaml highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="nt">template_options</span><span class="p">:</span>
-</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="w">  </span><span class="nt">ci_lint</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="nt">template_options</span><span class="p">:</span>
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="w">  </span><span class="nt">ci_lint</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
 </span></code></pre></div>
 
 
