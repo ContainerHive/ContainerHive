@@ -160,3 +160,15 @@ func ResolveConfig(projectCfg *model.LintConfig, cliThreshold string) *model.Lin
 	}
 	return out
 }
+
+func relativeReportPath(projectRoot, path string) string {
+	abs, err := filepath.Abs(projectRoot)
+	if err != nil {
+		return path
+	}
+	rel, err := filepath.Rel(abs, path)
+	if err != nil {
+		return path
+	}
+	return filepath.ToSlash(rel)
+}
