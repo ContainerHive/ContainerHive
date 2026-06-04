@@ -138,12 +138,18 @@ template_options:
 
 All values must be strings. Keys prefixed with `ci_` have built-in defaults:
 
-| Key                   | Default                       | Description                                                          |
-|:----------------------|:------------------------------|:---------------------------------------------------------------------|
-| `ci_buildkit_image`   | `moby/buildkit`               | BuildKit container image                                             |
-| `ci_buildkit_version` | *(matches go.mod dependency)* | BuildKit image tag                                                   |
-| `ci_lint`             | `true`                        | Run hadolint linting in CI pipeline before builds                   |
-| `ci_report`           | `true`                        | Generate and publish HTML/JSON report to GitHub Pages / GitLab Pages |
+| Key                                | Default                       | Description                                                                |
+|:-----------------------------------|:------------------------------|:---------------------------------------------------------------------------|
+| `ci_buildkit_image`                | `moby/buildkit`               | BuildKit container image                                                   |
+| `ci_buildkit_version`              | *(matches go.mod dependency)* | BuildKit image tag                                                         |
+| `ci_lint`                          | `true`                        | Run hadolint linting in CI pipeline before builds                         |
+| `ci_report`                        | `true`                        | Generate and publish HTML/JSON report to GitHub Pages / GitLab Pages       |
+| `actions_checkout_version`         | `v6`                          | Version of `actions/checkout`                                              |
+| `actions_upload_artifact_version`  | `v7`                          | Version of `actions/upload-artifact`                                       |
+| `actions_download_artifact_version` | `v7`                         | Version of `actions/download-artifact`                                     |
+| `actions_upload_pages_artifact_version` | `v3`                     | Version of `actions/upload-pages-artifact`                                 |
+| `actions_deploy_pages_version`     | `v4`                          | Version of `actions/deploy-pages`                                          |
+| `actions_junit_report_version`     | `v6`                          | Version of `mikepenz/action-junit-report`                                  |
 
 User-provided values override built-in defaults.
 

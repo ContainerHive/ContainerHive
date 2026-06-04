@@ -12,11 +12,11 @@
 {{- end }}
     steps:
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@{{ option "actions_checkout_version" }}
         with:
           lfs: true
       - name: Download generated files
-        uses: actions/download-artifact@v7
+        uses: actions/download-artifact@{{ option "actions_download_artifact_version" }}
         with:
           name: generated
           path: {{ $.Ctx.Dist }}/
@@ -40,14 +40,14 @@
         run: docker run --rm --entrypoint="" -u "$(id -u):$(id -g)" -e CI=1 -e HOME="$RUNNER_TEMP/ch" -v "$RUNNER_TEMP/ch:$RUNNER_TEMP/ch" -v "$GITHUB_WORKSPACE:$GITHUB_WORKSPACE" -w "$GITHUB_WORKSPACE" --network ch-net -e BUILDKIT_HOST=tcp://buildkitd:8372 $CH_IMAGE {{ $.Ctx.ChCmd }} sbom {{ $.Image.Name }} --platform {{ . }} --build-id "$SNAPSHOT_ID"
 {{- if $.Ctx.Artifacts }}
       - name: Upload artifacts
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@{{ option "actions_upload_artifact_version" }}
         with:
           name: {{ $.Image.Name }}-{{ . }}
           path: {{ $.Ctx.Dist }}/{{ $.Image.Name }}/*/linux-{{ . }}/
           retention-days: 7
 {{- else }}
       - name: Upload SBOM
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@{{ option "actions_upload_artifact_version" }}
         with:
           name: {{ $.Image.Name }}-{{ . }}-sbom
           path: {{ $.Ctx.Dist }}/*/*/*/cyclonedx.json

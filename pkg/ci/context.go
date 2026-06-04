@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"sort"
 
+	"github.com/ContainerHive/ContainerHive/internal/actions"
 	"github.com/ContainerHive/ContainerHive/internal/buildkit"
 	"github.com/ContainerHive/ContainerHive/internal/dependency"
 	"github.com/ContainerHive/ContainerHive/pkg/model"
@@ -72,10 +73,16 @@ func (c *CIConfigContext) RegistryHost() string {
 // defaultTemplateOptions returns the built-in template option defaults.
 func defaultTemplateOptions() map[string]string {
 	return map[string]string{
-		"ci_buildkit_image":   buildkit.DefaultImage,
-		"ci_buildkit_version": buildkit.Version,
-		"ci_lint":             "true",
-		"ci_report":           "true",
+		"ci_buildkit_image":                buildkit.DefaultImage,
+		"ci_buildkit_version":              buildkit.Version,
+		"ci_lint":                          "true",
+		"ci_report":                        "true",
+		"actions_checkout_version":         actions.CheckoutVersion,
+		"actions_upload_artifact_version":  actions.UploadArtifactVersion,
+		"actions_download_artifact_version": actions.DownloadArtifactVersion,
+		"actions_upload_pages_artifact_version": actions.UploadPagesArtifactVersion,
+		"actions_deploy_pages_version":     actions.DeployPagesVersion,
+		"actions_junit_report_version":     actions.JunitReportVersion,
 	}
 }
 

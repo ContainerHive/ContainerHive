@@ -29,7 +29,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@{{ option "actions_checkout_version" }}
         with:
           lfs: true
       - name: Prepare temp directory
@@ -43,7 +43,7 @@ jobs:
       - name: Generate build files
         run: docker run --rm --entrypoint="" -u "$(id -u):$(id -g)" -e CI=1 -e HOME="$RUNNER_TEMP/ch" -v "$RUNNER_TEMP/ch:$RUNNER_TEMP/ch" -v "$GITHUB_WORKSPACE:$GITHUB_WORKSPACE" -w "$GITHUB_WORKSPACE" $CH_IMAGE {{ .ChCmd }} generate --build-id "$SNAPSHOT_ID"
       - name: Upload generated files
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@{{ option "actions_upload_artifact_version" }}
         with:
           name: generated
           path: {{ .Dist }}/
@@ -68,18 +68,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@{{ option "actions_checkout_version" }}
         with:
           lfs: true
       - name: Download generated files
-        uses: actions/download-artifact@v7
+        uses: actions/download-artifact@{{ option "actions_download_artifact_version" }}
         with:
           name: generated
           path: {{ .Dist }}/
 {{- range $img := .Images }}
 {{- range $p := $img.Platforms }}
       - name: Download {{ $img.Name }}-{{ $p }} SBOM
-        uses: actions/download-artifact@v7
+        uses: actions/download-artifact@{{ option "actions_download_artifact_version" }}
         with:
 {{- if $.Artifacts }}
           name: {{ $img.Name }}-{{ $p }}
@@ -103,10 +103,10 @@ jobs:
       - name: Copy JSON report
         run: cp {{ .Dist }}/report.json public/report.json
       - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@{{ option "actions_upload_pages_artifact_version" }}
         with:
           path: public/
       - name: Deploy to GitHub Pages
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@{{ option "actions_deploy_pages_version" }}
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
 {{- end }}

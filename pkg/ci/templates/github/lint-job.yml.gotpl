@@ -3,7 +3,7 @@
     needs: generate
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@{{ option "actions_checkout_version" }}
         with:
           lfs: true
       - name: Lint Dockerfiles
