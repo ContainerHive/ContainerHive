@@ -1,3 +1,9 @@
+## [0.21.0](https://github.com/ContainerHive/ContainerHive/compare/v0.20.1...v0.21.0) (2026-06-04)
+
+### Features
+
+* **lint:** add --format flag with GitHub Actions annotation support ([#131](https://github.com/ContainerHive/ContainerHive/issues/131)) ([d977fd7](https://github.com/ContainerHive/ContainerHive/commit/d977fd7509cdab7eb765a956359f7a2a3ff56920))
+
 ## [0.20.1](https://github.com/ContainerHive/ContainerHive/compare/v0.20.0...v0.20.1) (2026-06-04)
 
 ### Bug Fixes
