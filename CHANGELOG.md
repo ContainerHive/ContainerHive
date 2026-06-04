@@ -1,3 +1,9 @@
+## [0.20.0](https://github.com/ContainerHive/ContainerHive/compare/v0.19.6...v0.20.0) (2026-06-04)
+
+### Features
+
+* centralize GitHub Actions versions in Go constants ([e277b6a](https://github.com/ContainerHive/ContainerHive/commit/e277b6a9501fb2a7d62ae4ff6c8e3bd2ba7d77f9))
+
 ## [0.19.6](https://github.com/ContainerHive/ContainerHive/compare/v0.19.5...v0.19.6) (2026-06-02)
 
 ### Bug Fixes
