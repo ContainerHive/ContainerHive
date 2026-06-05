@@ -1,3 +1,9 @@
+## [0.21.1](https://github.com/ContainerHive/ContainerHive/compare/v0.21.0...v0.21.1) (2026-06-05)
+
+### Bug Fixes
+
+* **docker:** propagate context to image pull and load operations ([#132](https://github.com/ContainerHive/ContainerHive/issues/132)) ([7754dea](https://github.com/ContainerHive/ContainerHive/commit/7754deab83e959fc5076481aaf7b94c786264f9f))
+
 ## [0.21.0](https://github.com/ContainerHive/ContainerHive/compare/v0.20.1...v0.21.0) (2026-06-04)
 
 ### Features
