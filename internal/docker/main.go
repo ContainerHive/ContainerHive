@@ -41,13 +41,13 @@ func (c *Client) HasImage(ctx context.Context, imageRef string) bool {
 }
 
 // PullImage pulls an image from a remote registry into the local Docker daemon.
-func (c *Client) PullImage(_ context.Context, imageRef string) (string, error) {
+func (c *Client) PullImage(ctx context.Context, imageRef string) (string, error) {
 	ref, err := name.ParseReference(imageRef)
 	if err != nil {
 		return "", errors.Join(errors.New("invalid image reference"), err)
 	}
 
-	img, err := remote.Image(ref, remote.WithAuthFromKeychain(authn.DefaultKeychain))
+	img, err := remote.Image(ref, remote.WithAuthFromKeychain(authn.DefaultKeychain), remote.WithContext(ctx))
 	if err != nil {
 		return "", errors.Join(errors.New("failed to pull image from registry"), err)
 	}
@@ -57,7 +57,7 @@ func (c *Client) PullImage(_ context.Context, imageRef string) (string, error) {
 		return "", errors.Join(errors.New("invalid image tag"), err)
 	}
 
-	if _, err := daemon.Write(tag, img); err != nil {
+	if _, err := daemon.Write(tag, img, daemon.WithContext(ctx)); err != nil {
 		return "", errors.Join(errors.New("failed to load pulled image into Docker"), err)
 	}
 
@@ -65,7 +65,7 @@ func (c *Client) PullImage(_ context.Context, imageRef string) (string, error) {
 }
 
 // LoadImageFromTar loads an OCI image from a tar archive into the local Docker daemon.
-func (c *Client) LoadImageFromTar(_ context.Context, tarPath string) (string, error) {
+func (c *Client) LoadImageFromTar(ctx context.Context, tarPath string) (string, error) {
 	ociImage, err := ocistore.ImageFromTar(tarPath)
 	if err != nil {
 		return "", err
@@ -82,7 +82,7 @@ func (c *Client) LoadImageFromTar(_ context.Context, tarPath string) (string, er
 		return "", errors.Join(errors.New("invalid image name"), err)
 	}
 
-	if _, err := daemon.Write(tag, ociImage.Image); err != nil {
+	if _, err := daemon.Write(tag, ociImage.Image, daemon.WithContext(ctx)); err != nil {
 		return "", errors.Join(errors.New("failed to load image into Docker"), err)
 	}
 
