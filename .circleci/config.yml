@@ -112,11 +112,6 @@ jobs:
       - checkout
       - attach_workspace:
           at: ./
-      - run:
-          name: Install zstd
-          command: |
-            sudo apt-get update -y
-            sudo apt-get install -y --no-install-recommends zstd
       - go/with-cache:
           key: build
           steps:
