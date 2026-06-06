@@ -3,13 +3,13 @@ package docker
 import (
 	"context"
 	"errors"
+	"io"
 
 	"github.com/ContainerHive/ContainerHive/internal/ocistore"
 	dockerClient "github.com/docker/docker/client"
-	"github.com/google/go-containerregistry/pkg/authn"
+	"github.com/docker/docker/api/types/image"
 	"github.com/google/go-containerregistry/pkg/name"
 	"github.com/google/go-containerregistry/pkg/v1/daemon"
-	"github.com/google/go-containerregistry/pkg/v1/remote"
 )
 
 // Client wraps the Docker client library for image operations.
@@ -42,25 +42,14 @@ func (c *Client) HasImage(ctx context.Context, imageRef string) bool {
 
 // PullImage pulls an image from a remote registry into the local Docker daemon.
 func (c *Client) PullImage(ctx context.Context, imageRef string) (string, error) {
-	ref, err := name.ParseReference(imageRef)
+	rc, err := c.docker.ImagePull(ctx, imageRef, image.PullOptions{})
 	if err != nil {
-		return "", errors.Join(errors.New("invalid image reference"), err)
+		return "", errors.Join(errors.New("failed to pull image"), err)
 	}
-
-	img, err := remote.Image(ref, remote.WithAuthFromKeychain(authn.DefaultKeychain), remote.WithContext(ctx))
-	if err != nil {
-		return "", errors.Join(errors.New("failed to pull image from registry"), err)
+	defer rc.Close()
+	if _, err := io.Copy(io.Discard, rc); err != nil {
+		return "", errors.Join(errors.New("failed to complete image pull"), err)
 	}
-
-	tag, err := name.NewTag(imageRef)
-	if err != nil {
-		return "", errors.Join(errors.New("invalid image tag"), err)
-	}
-
-	if _, err := daemon.Write(tag, img, daemon.WithContext(ctx)); err != nil {
-		return "", errors.Join(errors.New("failed to load pulled image into Docker"), err)
-	}
-
 	return imageRef, nil
 }
 
