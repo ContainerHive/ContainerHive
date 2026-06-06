@@ -1,3 +1,9 @@
+## [0.21.2](https://github.com/ContainerHive/ContainerHive/compare/v0.21.1...v0.21.2) (2026-06-06)
+
+### Bug Fixes
+
+* **docker:** use daemon ImagePull for PullImage to fix silent hang ([#133](https://github.com/ContainerHive/ContainerHive/issues/133)) ([9a728f2](https://github.com/ContainerHive/ContainerHive/commit/9a728f2df0776b784335c46c1f38b90bcba8877f))
+
 ## [0.21.1](https://github.com/ContainerHive/ContainerHive/compare/v0.21.0...v0.21.1) (2026-06-05)
 
 ### Bug Fixes
