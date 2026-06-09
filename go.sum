@@ -294,10 +294,14 @@ github.com/anchore/stereoscope v0.1.22 h1:L807G/kk0WZzOCGuRGF7knxMKzwW2PGdbPVRys
 github.com/anchore/stereoscope v0.1.22/go.mod h1:FikPtAb/WnbqwgLHAvQA9O+fWez0K4pbjxzghz++iy4=
 github.com/anchore/stereoscope v0.1.23 h1:q9i3CtbicTuSlcCnA+5pfoT9WDCEoSqvXDfHMH1hyWo=
 github.com/anchore/stereoscope v0.1.23/go.mod h1:JLnun49fkLkuv3ebU0ROvFl/0JiRmNmUtCzc6y4ollo=
+github.com/anchore/stereoscope v0.2.0 h1:8haOu2ugLymmxvyfrZR7OTBFiRFRBh5LlNUtRrSRoxI=
+github.com/anchore/stereoscope v0.2.0/go.mod h1:PYx3fD4lvBVsYoQ/fBdauhZ5hmkRrJgw1B73svKx7/U=
 github.com/anchore/syft v1.42.4 h1:+atKDW8sNzGF4E1cG1fcWV4WO7TrAGJmfckxDuY5fT4=
 github.com/anchore/syft v1.42.4/go.mod h1:KZqrhA8moG2hXMXs1eE0w2FPp54hmTmDOAhsWr6nw2Q=
 github.com/anchore/syft v1.44.0 h1:Wi1AFnz9R2jFgyFvRKZdONwEfh5dhPy8cAUINguFrrc=
 github.com/anchore/syft v1.44.0/go.mod h1:T+EhVIFTUSw8ECKIl29Dx6ChYX4n/aLe4yC70fRxByo=
+github.com/anchore/syft v1.45.0 h1:8z0NVoGJiAYfQONQX4jId0eyz0L63+5oLAb/fvSsvnU=
+github.com/anchore/syft v1.45.0/go.mod h1:lacdM9Ff/XLxKgN6R1xeVlwnLDu3u2Vy/lyFHpYI0Ek=
 github.com/andreyvit/diff v0.0.0-20170406064948-c7f18ee00883 h1:bvNMNQO63//z+xNgfBlViaCIJKLlCJ6/fmUseuG0wVQ=
 github.com/andreyvit/diff v0.0.0-20170406064948-c7f18ee00883/go.mod h1:rCTlJbsFo29Kk6CurOXKm700vrz8f0KW0JNfpkRJY/8=
 github.com/andybalholm/brotli v1.2.0 h1:ukwgCxwYrmACq68yiUqwIWnGY0cTPox/M94sVwToPjQ=
@@ -1695,6 +1699,8 @@ github.com/pelletier/go-toml/v2 v2.2.4 h1:mye9XuhQ6gvn5h28+VilKrrPoQVanw5PMw/TB0
 github.com/pelletier/go-toml/v2 v2.2.4/go.mod h1:2gIqNv+qfxSVS7cM2xJQKtLSTLUE9V8t9Stt+h56mCY=
 github.com/pelletier/go-toml/v2 v2.3.0 h1:k59bC/lIZREW0/iVaQR8nDHxVq8OVlIzYCOJf421CaM=
 github.com/pelletier/go-toml/v2 v2.3.0/go.mod h1:2gIqNv+qfxSVS7cM2xJQKtLSTLUE9V8t9Stt+h56mCY=
+github.com/pelletier/go-toml/v2 v2.3.1 h1:MYEvvGnQjeNkRF1qUuGolNtNExTDwct51yp7olPtrEc=
+github.com/pelletier/go-toml/v2 v2.3.1/go.mod h1:2gIqNv+qfxSVS7cM2xJQKtLSTLUE9V8t9Stt+h56mCY=
 github.com/peterbourgon/diskv v2.0.1+incompatible h1:UBdAOUP5p4RWqPBg048CAvpKN+vxiaj6gdUUzhl4XmI=
 github.com/peterbourgon/diskv v2.0.1+incompatible/go.mod h1:uqqh8zWWbv1HBMNONnaR/tNboyR3/BZd58JJSHlUSCU=
 github.com/phayes/freeport v0.0.0-20220201140144-74d24b5ae9f5 h1:Ii+DKncOVM8Cu1Hc+ETb5K+23HdAMvESYE3ZJ5b5cMI=
