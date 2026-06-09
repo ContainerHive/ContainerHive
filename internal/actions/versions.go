@@ -1,7 +1,7 @@
 package actions
 
 const (
-	CheckoutVersion            = "v6"  // renovate: datasource=github-tags depName=actions/checkout
+	CheckoutVersion            = "v6.0.3"  // renovate: datasource=github-tags depName=actions/checkout
 	UploadArtifactVersion      = "v7.0.1"  // renovate: datasource=github-tags depName=actions/upload-artifact
 	DownloadArtifactVersion    = "v8.0.1"  // renovate: datasource=github-tags depName=actions/download-artifact
 	UploadPagesArtifactVersion = "v3"  // renovate: datasource=github-tags depName=actions/upload-pages-artifact
