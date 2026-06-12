@@ -4542,10 +4542,10 @@ SOFTWARE.
 ================================================================================
 
 Module:  golang.org/x/sync
-Version: v0.20.0
+Version: v0.21.0
 Licence: BSD-3-Clause
 
-Contents of probable licence file $GOMODCACHE/golang.org/x/sync@v0.20.0/LICENSE:
+Contents of probable licence file $GOMODCACHE/golang.org/x/sync@v0.21.0/LICENSE:
 
 Copyright 2009 The Go Authors.
 
