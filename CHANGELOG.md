@@ -1,3 +1,9 @@
+## [0.21.3](https://github.com/ContainerHive/ContainerHive/compare/v0.21.2...v0.21.3) (2026-06-12)
+
+### Bug Fixes
+
+* **deps:** update module golang.org/x/sync to v0.21.0 ([#138](https://github.com/ContainerHive/ContainerHive/issues/138)) ([09f215d](https://github.com/ContainerHive/ContainerHive/commit/09f215df26239479f3f7abb7be79c3a1c2a982f6))
+
 ## [0.21.2](https://github.com/ContainerHive/ContainerHive/compare/v0.21.1...v0.21.2) (2026-06-06)
 
 ### Bug Fixes
