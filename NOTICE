@@ -946,10 +946,10 @@ THE SOFTWARE.
 ================================================================================
 
 Module:  github.com/anchore/syft
-Version: v1.44.0
+Version: v1.45.1
 Licence: Apache-2.0
 
-Contents of probable licence file $GOMODCACHE/github.com/anchore/syft@v1.44.0/LICENSE:
+Contents of probable licence file $GOMODCACHE/github.com/anchore/syft@v1.45.1/LICENSE:
 
                                  Apache License
                            Version 2.0, January 2004
@@ -7319,10 +7319,10 @@ THE SOFTWARE.
 ================================================================================
 
 Module:  github.com/CycloneDX/cyclonedx-go
-Version: v0.10.0
+Version: v0.11.0
 Licence: Apache-2.0
 
-Contents of probable licence file $GOMODCACHE/github.com/!cyclone!d!x/cyclonedx-go@v0.10.0/LICENSE:
+Contents of probable licence file $GOMODCACHE/github.com/!cyclone!d!x/cyclonedx-go@v0.11.0/LICENSE:
 
                                  Apache License
                            Version 2.0, January 2004
@@ -8759,10 +8759,10 @@ THE SOFTWARE.
 ================================================================================
 
 Module:  github.com/Masterminds/semver/v3
-Version: v3.4.0
+Version: v3.5.0
 Licence: MIT
 
-Contents of probable licence file $GOMODCACHE/github.com/!masterminds/semver/v3@v3.4.0/LICENSE.txt:
+Contents of probable licence file $GOMODCACHE/github.com/!masterminds/semver/v3@v3.5.0/LICENSE.txt:
 
 Copyright (C) 2014-2019, Matt Butcher and Matt Farina
 
@@ -11714,10 +11714,10 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ================================================================================
 
 Module:  github.com/anchore/stereoscope
-Version: v0.1.23
+Version: v0.2.1
 Licence: Apache-2.0
 
-Contents of probable licence file $GOMODCACHE/github.com/anchore/stereoscope@v0.1.23/LICENSE:
+Contents of probable licence file $GOMODCACHE/github.com/anchore/stereoscope@v0.2.1/LICENSE:
 
                                  Apache License
                            Version 2.0, January 2004
@@ -25639,10 +25639,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ================================================================================
 
 Module:  github.com/diskfs/go-diskfs
-Version: v1.7.0
+Version: v1.9.3
 Licence: MIT
 
-Contents of probable licence file $GOMODCACHE/github.com/diskfs/go-diskfs@v1.7.0/LICENSE:
+Contents of probable licence file $GOMODCACHE/github.com/diskfs/go-diskfs@v1.9.3/LICENSE:
 
 MIT License
 
@@ -28080,10 +28080,10 @@ SOFTWARE.
 ================================================================================
 
 Module:  github.com/github/go-spdx/v2
-Version: v2.4.0
+Version: v2.7.0
 Licence: MIT
 
-Contents of probable licence file $GOMODCACHE/github.com/github/go-spdx/v2@v2.4.0/LICENSE:
+Contents of probable licence file $GOMODCACHE/github.com/github/go-spdx/v2@v2.7.0/LICENSE:
 
 MIT License
 
@@ -36912,10 +36912,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ================================================================================
 
 Module:  github.com/gookit/color
-Version: v1.6.0
+Version: v1.6.1
 Licence: MIT
 
-Contents of probable licence file $GOMODCACHE/github.com/gookit/color@v1.6.0/LICENSE:
+Contents of probable licence file $GOMODCACHE/github.com/gookit/color@v1.6.1/LICENSE:
 
 The MIT License (MIT)
 
@@ -37104,10 +37104,10 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 ================================================================================
 
 Module:  github.com/gpustack/gguf-parser-go
-Version: v0.24.0
+Version: v0.24.1
 Licence: MIT
 
-Contents of probable licence file $GOMODCACHE/github.com/gpustack/gguf-parser-go@v0.24.0/LICENSE:
+Contents of probable licence file $GOMODCACHE/github.com/gpustack/gguf-parser-go@v0.24.1/LICENSE:
 
 MIT License
 
@@ -52629,10 +52629,10 @@ License:
 ================================================================================
 
 Module:  github.com/pelletier/go-toml/v2
-Version: v2.3.0
+Version: v2.3.1
 Licence: MIT
 
-Contents of probable licence file $GOMODCACHE/github.com/pelletier/go-toml/v2@v2.3.0/LICENSE:
+Contents of probable licence file $GOMODCACHE/github.com/pelletier/go-toml/v2@v2.3.1/LICENSE:
 
 The MIT License (MIT)
 
@@ -52690,10 +52690,10 @@ THE SOFTWARE.
 ================================================================================
 
 Module:  github.com/pierrec/lz4/v4
-Version: v4.1.22
+Version: v4.1.26
 Licence: BSD-3-Clause
 
-Contents of probable licence file $GOMODCACHE/github.com/pierrec/lz4/v4@v4.1.22/LICENSE:
+Contents of probable licence file $GOMODCACHE/github.com/pierrec/lz4/v4@v4.1.26/LICENSE:
 
 Copyright (c) 2015, Pierre Curto
 All rights reserved.
@@ -53039,10 +53039,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ================================================================================
 
 Module:  github.com/pkg/xattr
-Version: v0.4.9
+Version: v0.4.12
 Licence: BSD-2-Clause
 
-Contents of probable licence file $GOMODCACHE/github.com/pkg/xattr@v0.4.9/LICENSE:
+Contents of probable licence file $GOMODCACHE/github.com/pkg/xattr@v0.4.12/LICENSE:
 
 Copyright (c) 2012 Dave Cheney. All rights reserved.
 Copyright (c) 2014 Kuba Podgórski. All rights reserved.
@@ -69470,10 +69470,10 @@ Contents of probable licence file $GOMODCACHE/go4.org@v0.0.0-20230225012048-2148
 ================================================================================
 
 Module:  golang.org/x/crypto
-Version: v0.51.0
+Version: v0.52.0
 Licence: BSD-3-Clause
 
-Contents of probable licence file $GOMODCACHE/golang.org/x/crypto@v0.51.0/LICENSE:
+Contents of probable licence file $GOMODCACHE/golang.org/x/crypto@v0.52.0/LICENSE:
 
 Copyright 2009 The Go Authors.
 
@@ -69581,10 +69581,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ================================================================================
 
 Module:  golang.org/x/net
-Version: v0.54.0
+Version: v0.55.0
 Licence: BSD-3-Clause
 
-Contents of probable licence file $GOMODCACHE/golang.org/x/net@v0.54.0/LICENSE:
+Contents of probable licence file $GOMODCACHE/golang.org/x/net@v0.55.0/LICENSE:
 
 Copyright 2009 The Go Authors.
 
@@ -69655,10 +69655,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ================================================================================
 
 Module:  golang.org/x/sys
-Version: v0.44.0
+Version: v0.45.0
 Licence: BSD-3-Clause
 
-Contents of probable licence file $GOMODCACHE/golang.org/x/sys@v0.44.0/LICENSE:
+Contents of probable licence file $GOMODCACHE/golang.org/x/sys@v0.45.0/LICENSE:
 
 Copyright 2009 The Go Authors.
 
