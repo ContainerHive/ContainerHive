@@ -24,7 +24,7 @@
     "react-router-dom": "^7.14.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.29.0",
+    "@babel/core": "^8.0.0",
     "@playwright/test": "^1.49.0",
     "@preact/preset-vite": "^2.8.2",
     "@types/babel__core": "^7",
