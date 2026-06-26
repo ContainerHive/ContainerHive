@@ -1157,10 +1157,10 @@ Contents of probable licence file $GOMODCACHE/github.com/anchore/syft@v1.44.0/LI
 ================================================================================
 
 Module:  github.com/containerd/containerd/v2
-Version: v2.3.1
+Version: v2.3.2
 Licence: Apache-2.0
 
-Contents of probable licence file $GOMODCACHE/github.com/containerd/containerd/v2@v2.3.1/LICENSE:
+Contents of probable licence file $GOMODCACHE/github.com/containerd/containerd/v2@v2.3.2/LICENSE:
 
 
                                  Apache License
@@ -69530,10 +69530,10 @@ Contents of probable licence file $GOMODCACHE/go4.org@v0.0.0-20230225012048-2148
 ================================================================================
 
 Module:  golang.org/x/crypto
-Version: v0.52.0
+Version: v0.53.0
 Licence: BSD-3-Clause
 
-Contents of probable licence file $GOMODCACHE/golang.org/x/crypto@v0.52.0/LICENSE:
+Contents of probable licence file $GOMODCACHE/golang.org/x/crypto@v0.53.0/LICENSE:
 
 Copyright 2009 The Go Authors.
 
@@ -69752,10 +69752,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ================================================================================
 
 Module:  golang.org/x/text
-Version: v0.37.0
+Version: v0.38.0
 Licence: BSD-3-Clause
 
-Contents of probable licence file $GOMODCACHE/golang.org/x/text@v0.37.0/LICENSE:
+Contents of probable licence file $GOMODCACHE/golang.org/x/text@v0.38.0/LICENSE:
 
 Copyright 2009 The Go Authors.
 
