@@ -3765,10 +3765,10 @@ THE SOFTWARE.
 ================================================================================
 
 Module:  github.com/testcontainers/testcontainers-go
-Version: v0.41.0
+Version: v0.43.0
 Licence: MIT
 
-Contents of probable licence file $GOMODCACHE/github.com/testcontainers/testcontainers-go@v0.41.0/LICENSE:
+Contents of probable licence file $GOMODCACHE/github.com/testcontainers/testcontainers-go@v0.43.0/LICENSE:
 
 The MIT License (MIT)
 
@@ -56149,10 +56149,10 @@ Apache License
 ================================================================================
 
 Module:  github.com/shirou/gopsutil/v4
-Version: v4.26.2
+Version: v4.26.5
 Licence: BSD-3-Clause
 
-Contents of probable licence file $GOMODCACHE/github.com/shirou/gopsutil/v4@v4.26.2/LICENSE:
+Contents of probable licence file $GOMODCACHE/github.com/shirou/gopsutil/v4@v4.26.5/LICENSE:
 
 gopsutil is distributed under BSD license reproduced below.
 
@@ -57748,10 +57748,10 @@ SOFTWARE.
 ================================================================================
 
 Module:  github.com/stretchr/objx
-Version: v0.5.2
+Version: v0.5.3
 Licence: MIT
 
-Contents of probable licence file $GOMODCACHE/github.com/stretchr/objx@v0.5.2/LICENSE:
+Contents of probable licence file $GOMODCACHE/github.com/stretchr/objx@v0.5.3/LICENSE:
 
 The MIT License
 
