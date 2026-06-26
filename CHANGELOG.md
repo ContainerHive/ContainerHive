@@ -1,3 +1,9 @@
+## [0.21.9](https://github.com/ContainerHive/ContainerHive/compare/v0.21.8...v0.21.9) (2026-06-26)
+
+### Bug Fixes
+
+* **deps:** update module github.com/docker/cli to v29.6.0+incompatible ([#155](https://github.com/ContainerHive/ContainerHive/issues/155)) ([edf0b84](https://github.com/ContainerHive/ContainerHive/commit/edf0b84730af421d4f8153732edc33bde9fcdbec))
+
 ## [0.21.8](https://github.com/ContainerHive/ContainerHive/compare/v0.21.7...v0.21.8) (2026-06-24)
 
 ### Bug Fixes
