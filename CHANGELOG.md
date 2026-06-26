@@ -1,3 +1,9 @@
+## [0.21.10](https://github.com/ContainerHive/ContainerHive/compare/v0.21.9...v0.21.10) (2026-06-26)
+
+### Bug Fixes
+
+* **deps:** update module github.com/google/go-containerregistry to v0.21.7 ([#152](https://github.com/ContainerHive/ContainerHive/issues/152)) ([a9b14a9](https://github.com/ContainerHive/ContainerHive/commit/a9b14a95876eb7fe540d8c5c12495d62b1af56b4))
+
 ## [0.21.9](https://github.com/ContainerHive/ContainerHive/compare/v0.21.8...v0.21.9) (2026-06-26)
 
 ### Bug Fixes
