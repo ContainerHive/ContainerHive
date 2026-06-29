@@ -4676,10 +4676,10 @@ limitations under the License.
 ================================================================================
 
 Module:  modernc.org/sqlite
-Version: v1.51.0
+Version: v1.53.0
 Licence: BSD-3-Clause
 
-Contents of probable licence file $GOMODCACHE/modernc.org/sqlite@v1.51.0/LICENSE:
+Contents of probable licence file $GOMODCACHE/modernc.org/sqlite@v1.53.0/LICENSE:
 
 Copyright (c) 2017 The Sqlite Authors. All rights reserved.
 
@@ -73937,10 +73937,10 @@ Contents of probable licence file $GOMODCACHE/k8s.io/utils@v0.0.0-20260319190234
 ================================================================================
 
 Module:  modernc.org/libc
-Version: v1.72.3
+Version: v1.73.4
 Licence: BSD-2-Clause
 
-Contents of probable licence file $GOMODCACHE/modernc.org/libc@v1.72.3/LICENSE:
+Contents of probable licence file $GOMODCACHE/modernc.org/libc@v1.73.4/LICENSE:
 
 Copyright (c) 2017 The Libc Authors. All rights reserved.
 
