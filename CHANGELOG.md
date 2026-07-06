@@ -1,3 +1,9 @@
+## [0.21.12](https://github.com/ContainerHive/ContainerHive/compare/v0.21.11...v0.21.12) (2026-07-06)
+
+### Bug Fixes
+
+* **deps:** update module github.com/anchore/syft to v1.46.0 ([#165](https://github.com/ContainerHive/ContainerHive/issues/165)) ([06b10a5](https://github.com/ContainerHive/ContainerHive/commit/06b10a54fdd6f77c20ae14e3c2fb86197ca70288))
+
 ## [0.21.11](https://github.com/ContainerHive/ContainerHive/compare/v0.21.10...v0.21.11) (2026-06-29)
 
 ### Bug Fixes
