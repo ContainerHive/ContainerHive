@@ -1,3 +1,9 @@
+## [0.21.13](https://github.com/ContainerHive/ContainerHive/compare/v0.21.12...v0.21.13) (2026-07-06)
+
+### Bug Fixes
+
+* **deps:** update module zotregistry.dev/zot/v2 to v2.1.18 ([#163](https://github.com/ContainerHive/ContainerHive/issues/163)) ([83ab229](https://github.com/ContainerHive/ContainerHive/commit/83ab229fdc8ab9ffc51deb423fba64fe97d4e19c))
+
 ## [0.21.12](https://github.com/ContainerHive/ContainerHive/compare/v0.21.11...v0.21.12) (2026-07-06)
 
 ### Bug Fixes
