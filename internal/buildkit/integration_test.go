@@ -8,10 +8,10 @@ import (
 	"testing"
 
 	"github.com/ContainerHive/ContainerHive/internal/buildkit/build_context"
-	"github.com/docker/docker/api/types/container"
 	"github.com/google/go-containerregistry/pkg/name"
 	"github.com/google/go-containerregistry/pkg/v1/remote"
 	"github.com/moby/buildkit/client"
+	moby_container "github.com/moby/moby/api/types/container"
 	"github.com/testcontainers/testcontainers-go"
 	"github.com/testcontainers/testcontainers-go/network"
 	"github.com/testcontainers/testcontainers-go/wait"
@@ -32,7 +32,7 @@ func startBuildKit(t *testing.T, networks ...string) *Client {
 			Image:        "moby/buildkit:" + Version,
 			ExposedPorts: []string{"1234/tcp"},
 			Cmd:          []string{"--addr", "tcp://0.0.0.0:1234"},
-			HostConfigModifier: func(hc *container.HostConfig) {
+			HostConfigModifier: func(hc *moby_container.HostConfig) {
 				hc.Privileged = true
 			},
 			Networks:   networks,
