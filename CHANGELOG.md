@@ -1,3 +1,9 @@
+## [0.21.14](https://github.com/ContainerHive/ContainerHive/compare/v0.21.13...v0.21.14) (2026-07-11)
+
+### Bug Fixes
+
+* Fix testcontainer usage of host container config ([cddafe2](https://github.com/ContainerHive/ContainerHive/commit/cddafe26ac0df8f124203b324ffa13e89e8d0b87))
+
 ## [0.21.13](https://github.com/ContainerHive/ContainerHive/compare/v0.21.12...v0.21.13) (2026-07-06)
 
 ### Bug Fixes
