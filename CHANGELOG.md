@@ -1,3 +1,9 @@
+## [0.21.15](https://github.com/ContainerHive/ContainerHive/compare/v0.21.14...v0.21.15) (2026-07-11)
+
+### Bug Fixes
+
+* Shorten wheel summary to single line for PyPI ([9f96bbd](https://github.com/ContainerHive/ContainerHive/commit/9f96bbd693fdbafd37fcba1d9fcca39d2fe56ab5))
+
 ## [0.21.14](https://github.com/ContainerHive/ContainerHive/compare/v0.21.13...v0.21.14) (2026-07-11)
 
 ### Bug Fixes
