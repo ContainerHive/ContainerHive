@@ -2,7 +2,7 @@ package: containerhive
 executable: ch
 name: containerhive
 version: !Env CIRCLE_TAG
-summary: Swarm it. Build it. Run it. — Managing container base and library images has never been easier.
+summary: Swarm it. Build it. Run it. — container image builds made easy.
 description: !FileContent README.md
 license: AGPLv3
 requires_python: ">=3.12"
