@@ -1,3 +1,9 @@
+## [0.21.16](https://github.com/ContainerHive/ContainerHive/compare/v0.21.15...v0.21.16) (2026-07-16)
+
+### Bug Fixes
+
+* Use moby HostConfig type in testcontainers integration tests ([#173](https://github.com/ContainerHive/ContainerHive/issues/173)) ([723ad3e](https://github.com/ContainerHive/ContainerHive/commit/723ad3ed16aeed14f93376100b06cf541f42b280))
+
 ## [0.21.15](https://github.com/ContainerHive/ContainerHive/compare/v0.21.14...v0.21.15) (2026-07-11)
 
 ### Bug Fixes
