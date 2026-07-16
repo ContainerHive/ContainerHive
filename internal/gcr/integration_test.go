@@ -12,12 +12,12 @@ import (
 	"github.com/ContainerHive/ContainerHive/internal/buildkit/build_context"
 	"github.com/ContainerHive/ContainerHive/internal/ocistore"
 	"github.com/ContainerHive/ContainerHive/internal/testutil"
-	"github.com/docker/docker/api/types/container"
 	"github.com/google/go-containerregistry/pkg/name"
 	v1 "github.com/google/go-containerregistry/pkg/v1"
 	"github.com/google/go-containerregistry/pkg/v1/remote"
 	"github.com/google/go-containerregistry/pkg/v1/types"
 	"github.com/moby/buildkit/client"
+	"github.com/moby/moby/api/types/container"
 	"github.com/testcontainers/testcontainers-go"
 	"github.com/testcontainers/testcontainers-go/wait"
 )

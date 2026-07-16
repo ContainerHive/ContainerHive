@@ -8,9 +8,9 @@ import (
 	"testing"
 
 	"github.com/ContainerHive/ContainerHive/internal/testutil"
-	"github.com/docker/docker/api/types/container"
 	"github.com/google/go-containerregistry/pkg/name"
 	"github.com/google/go-containerregistry/pkg/v1/remote"
+	"github.com/moby/moby/api/types/container"
 	"github.com/testcontainers/testcontainers-go"
 	"github.com/testcontainers/testcontainers-go/wait"
 )

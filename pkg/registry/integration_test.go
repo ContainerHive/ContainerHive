@@ -14,10 +14,10 @@ import (
 	"github.com/ContainerHive/ContainerHive/pkg/build"
 	"github.com/ContainerHive/ContainerHive/pkg/model"
 	"github.com/ContainerHive/ContainerHive/pkg/platform"
-	"github.com/docker/docker/api/types/container"
 	"github.com/google/go-containerregistry/pkg/name"
 	"github.com/google/go-containerregistry/pkg/v1/remote"
 	"github.com/moby/buildkit/client"
+	"github.com/moby/moby/api/types/container"
 	"github.com/testcontainers/testcontainers-go"
 	"github.com/testcontainers/testcontainers-go/wait"
 )
