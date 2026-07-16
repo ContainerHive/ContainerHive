@@ -65,7 +65,7 @@ func (r *Registry) Push(ctx context.Context, imageName, tag, ociTarPath string) 
 }
 
 // ImageRef returns the full registry reference for a platform-specific image.
-// Format: address/imageName:tag.sanitized-platform[.buildID]
+// Format: address/imageName:tag.sanitized-platform[-build.<buildID>]
 func (r *Registry) ImageRef(imageName, tag, platformStr, buildID string) string {
 	return fmt.Sprintf("%s/%s:%s", r.Address(), imageName, pushTag(tag, platformStr, buildID))
 }
@@ -90,7 +90,7 @@ func loadImageFromTar(ociTarPath string) (*ocistore.OCIImage, error) {
 }
 
 // pushTag returns the platform-specific tag as used by ch build when pushing.
-// Format: tag.sanitized-platform[.buildID]
+// Format: tag.sanitized-platform[-build.<buildID>]
 func pushTag(tag, platformStr, buildID string) string {
 	return build.PushTag(tag, platformStr, buildID)
 }
@@ -247,7 +247,7 @@ func (r *Registry) retagAliases(imageDef *model.Image, filters []build.Filter, b
 // to multi-arch manifests (created by CreateAllManifests), not to
 // platform-specific images. If filters is non-empty, only images matching at
 // least one filter are processed. If buildID is set, tags are suffixed with
-// .<buildID> to match pushed tags.
+// -build.<buildID> to match pushed tags.
 func (r *Registry) RetagAllAliases(project *model.ContainerHiveProject, filters []build.Filter, buildID string) error {
 	for _, img := range project.ImagesByIdentifier {
 		if !matchesImageFilter(filters, img.Name) {

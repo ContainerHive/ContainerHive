@@ -120,7 +120,7 @@ func TestPushTag(t *testing.T) {
 		want     string
 	}{
 		{"without build ID", "", "latest", "linux/amd64", "latest.linux-amd64"},
-		{"with build ID", "42", "v1.0", "linux/arm64", "v1.0.linux-arm64.42"},
+		{"with build ID", "42", "v1.0", "linux/arm64", "v1.0.linux-arm64-build.42"},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -159,7 +159,7 @@ func TestRegistryRef(t *testing.T) {
 			BuildID:  "99",
 		}
 		got := opts.registryRef("myimg", "v2", "linux/arm64")
-		want := "localhost:5000/myimg:v2.linux-arm64.99"
+		want := "localhost:5000/myimg:v2.linux-arm64-build.99"
 		if got != want {
 			t.Errorf("registryRef() = %q, want %q", got, want)
 		}

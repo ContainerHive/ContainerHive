@@ -13,7 +13,7 @@ ch --help
 | Flag | Description |
 |:-----|:------------|
 | `--project`, `-p` | Project root directory |
-| `--build-id` | Build ID appended to tags as `+<id>` |
+| `--build-id` | Build ID appended to tags as `-build.<id>` |
 | `--log-level` | Log level (`debug`, `info`, `warn`, `error`) — sourced from `LOG_LEVEL` env (default: `info`) |
 | `--generate`, `-g` | Run `ch generate` before the command |
 

@@ -140,7 +140,7 @@ func TestPushTag_WithoutBuildID(t *testing.T) {
 
 func TestPushTag_WithBuildID(t *testing.T) {
 	got := pushTag("1.0", "linux/amd64", "abc123")
-	want := "1.0.linux-amd64.abc123"
+	want := "1.0.linux-amd64-build.abc123"
 	if got != want {
 		t.Errorf("pushTag(%q, %q, %q) = %q, want %q", "1.0", "linux/amd64", "abc123", got, want)
 	}
@@ -238,7 +238,7 @@ func TestImageRef_FormatWithoutBuildID(t *testing.T) {
 func TestImageRef_FormatWithBuildID(t *testing.T) {
 	reg := &Registry{inner: &noopRegistry{}}
 	got := reg.ImageRef("myapp", "1.0", "linux/amd64", "abc123")
-	want := "127.0.0.1:0/myapp:1.0.linux-amd64.abc123"
+	want := "127.0.0.1:0/myapp:1.0.linux-amd64-build.abc123"
 	if got != want {
 		t.Errorf("ImageRef() = %q, want %q", got, want)
 	}
