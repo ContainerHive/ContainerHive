@@ -1,3 +1,22 @@
+## [1.0.0](https://github.com/ContainerHive/ContainerHive/compare/v0.21.16...v1.0.0) (2026-07-17)
+
+### ⚠ BREAKING CHANGES
+
+* Snapshot tags pushed with --build-id change format
+from <tag>.<id> to <tag>-build.<id>. External consumers pinned to
+old-format tags (e.g. preview environments pulling 1.0.0.mr-42) must
+switch to the new format. Mixed-version pipeline runs (old ch build +
+new ch finalize) will not find each other's tags; use one version per
+pipeline run.
+
+🤖 Generated with [Claude Code](https://claude.com/claude-code)
+
+Co-authored-by: Claude <noreply@anthropic.com>
+
+### Features
+
+* Append build IDs to tags as -build.<id> instead of .<id> ([#172](https://github.com/ContainerHive/ContainerHive/issues/172)) ([ab3762b](https://github.com/ContainerHive/ContainerHive/commit/ab3762b2f7f337aa2bd1ad5aff0954e8dac1fabd))
+
 ## [0.21.16](https://github.com/ContainerHive/ContainerHive/compare/v0.21.15...v0.21.16) (2026-07-16)
 
 ### Bug Fixes
