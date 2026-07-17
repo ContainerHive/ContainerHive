@@ -1857,7 +1857,7 @@
 <h1 id="use-build-ids-for-merge-requests">Use build IDs for merge requests</h1>
 <p>The <code>--build-id</code> flag appends a unique identifier to all image tags, allowing multiple builds to coexist in the same registry without overwriting each other. This is essential for merge request (MR) / pull request (PR) workflows where you want to build, test, and preview images before merging.</p>
 <h2 id="how-it-works">How it works</h2>
-<p>When you pass <code>--build-id</code>, all tags get a <code>.buildID</code> suffix:</p>
+<p>When you pass <code>--build-id</code>, all tags get a <code>-build.&lt;id&gt;</code> suffix:</p>
 <table>
 <thead>
 <tr>
@@ -1870,20 +1870,21 @@
 <tr>
 <td style="text-align: left;"><code>1.0.0</code></td>
 <td style="text-align: left;"><code>mr-42</code></td>
-<td style="text-align: left;"><code>1.0.0.mr-42</code></td>
+<td style="text-align: left;"><code>1.0.0-build.mr-42</code></td>
 </tr>
 <tr>
 <td style="text-align: left;"><code>1.0.0</code></td>
 <td style="text-align: left;"><code>build-1234</code></td>
-<td style="text-align: left;"><code>1.0.0.build-1234</code></td>
+<td style="text-align: left;"><code>1.0.0-build.build-1234</code></td>
 </tr>
 </tbody>
 </table>
+<p>The <code>-build.</code> infix keeps suffixed tags unambiguous — <code>26.06-build.22</code> cannot be mistaken for a patch release <code>26.06.22</code>.</p>
 <p>This applies to:</p>
 <ul>
-<li>Platform-specific push tags (e.g. <code>1.0.0.linux-amd64.mr-42</code>)</li>
-<li>Multi-arch manifest tags created by <code>finalize</code> (e.g. <code>1.0.0.mr-42</code>)</li>
-<li>Semantic version aliases created by <code>finalize</code> (e.g. <code>1.mr-42</code>, <code>1.0.mr-42</code>)</li>
+<li>Platform-specific push tags (e.g. <code>1.0.0.linux-amd64-build.mr-42</code>)</li>
+<li>Multi-arch manifest tags created by <code>finalize</code> (e.g. <code>1.0.0-build.mr-42</code>)</li>
+<li>Semantic version aliases created by <code>finalize</code> (e.g. <code>1-build.mr-42</code>, <code>1.0-build.mr-42</code>)</li>
 </ul>
 <h2 id="recommended-mrpr-workflow">Recommended MR/PR workflow</h2>
 <h3 id="1-build-with-a-build-id">1. Build with a build ID</h3>
@@ -1897,7 +1898,7 @@
 <h3 id="2-finalize-with-the-same-build-id">2. Finalize with the same build ID</h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>ch<span class="w"> </span>--build-id<span class="w"> </span><span class="s2">&quot;mr-</span><span class="si">${</span><span class="nv">CI_MERGE_REQUEST_IID</span><span class="si">}</span><span class="s2">&quot;</span><span class="w"> </span>finalize
 </span></code></pre></div>
-<p>This creates manifests like <code>my-image:1.0.0.mr-42</code> and aliases like <code>my-image:1.mr-42</code>.</p>
+<p>This creates manifests like <code>my-image:1.0.0-build.mr-42</code> and aliases like <code>my-image:1-build.mr-42</code>.</p>
 <h3 id="3-test-with-the-same-build-id">3. Test with the same build ID</h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>ch<span class="w"> </span>--build-id<span class="w"> </span><span class="s2">&quot;mr-</span><span class="si">${</span><span class="nv">CI_MERGE_REQUEST_IID</span><span class="si">}</span><span class="s2">&quot;</span><span class="w"> </span><span class="nb">test</span>
 </span></code></pre></div>
@@ -1910,8 +1911,8 @@
 <h2 id="why-use-build-ids">Why use build IDs</h2>
 <p>Without build IDs, concurrent MR builds would overwrite each other's tags in the registry. Build IDs solve this by namespacing tags per MR:</p>
 <ul>
-<li><strong>MR 42</strong> pushes <code>1.0.0.mr-42</code> — safe to test and preview</li>
-<li><strong>MR 43</strong> pushes <code>1.0.0.mr-43</code> — doesn't conflict with MR 42</li>
+<li><strong>MR 42</strong> pushes <code>1.0.0-build.mr-42</code> — safe to test and preview</li>
+<li><strong>MR 43</strong> pushes <code>1.0.0-build.mr-43</code> — doesn't conflict with MR 42</li>
 <li><strong>Main branch</strong> pushes <code>1.0.0</code> — the final, clean tag after merge</li>
 </ul>
 <h2 id="flag-placement">Flag placement</h2>
