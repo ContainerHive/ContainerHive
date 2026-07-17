@@ -41,7 +41,7 @@ type ProjectBuildOpts struct {
 	// When zero-valued, AutoMode with DefaultColors is used.
 	ProgressConfig progress.Config
 	Filters        []Filter // empty = build everything
-	BuildID        string   // if set, registry push/retag uses tags suffixed with .<BuildID>
+	BuildID        string   // if set, registry push/retag uses tags suffixed with -build.<BuildID>
 
 	// OnBuild is called after each successful build with the image tag and tar path.
 	OnBuild func(imageTag, tarFile string)

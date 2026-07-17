@@ -161,7 +161,7 @@ func NewApp() *cli.Command {
 			},
 			&cli.StringFlag{
 				Name:  "build-id",
-				Usage: "Build ID to append to tags as +<id>",
+				Usage: "Build ID to append to tags as -build.<id>",
 			},
 			&cli.StringFlag{
 				Name:    "log-level",

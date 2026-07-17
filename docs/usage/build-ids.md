@@ -4,18 +4,20 @@ The `--build-id` flag appends a unique identifier to all image tags, allowing mu
 
 ## How it works
 
-When you pass `--build-id`, all tags get a `.buildID` suffix:
+When you pass `--build-id`, all tags get a `-build.<id>` suffix:
 
 | Tag | Build ID | Result |
 |:----|:---------|:-------|
-| `1.0.0` | `mr-42` | `1.0.0.mr-42` |
-| `1.0.0` | `build-1234` | `1.0.0.build-1234` |
+| `1.0.0` | `mr-42` | `1.0.0-build.mr-42` |
+| `1.0.0` | `build-1234` | `1.0.0-build.build-1234` |
+
+The `-build.` infix keeps suffixed tags unambiguous — `26.06-build.22` cannot be mistaken for a patch release `26.06.22`.
 
 This applies to:
 
-- Platform-specific push tags (e.g. `1.0.0.linux-amd64.mr-42`)
-- Multi-arch manifest tags created by `finalize` (e.g. `1.0.0.mr-42`)
-- Semantic version aliases created by `finalize` (e.g. `1.mr-42`, `1.0.mr-42`)
+- Platform-specific push tags (e.g. `1.0.0.linux-amd64-build.mr-42`)
+- Multi-arch manifest tags created by `finalize` (e.g. `1.0.0-build.mr-42`)
+- Semantic version aliases created by `finalize` (e.g. `1-build.mr-42`, `1.0-build.mr-42`)
 
 ## Recommended MR/PR workflow
 
@@ -37,7 +39,7 @@ ch --build-id "pr-${GITHUB_EVENT_NUMBER}" build
 ch --build-id "mr-${CI_MERGE_REQUEST_IID}" finalize
 ```
 
-This creates manifests like `my-image:1.0.0.mr-42` and aliases like `my-image:1.mr-42`.
+This creates manifests like `my-image:1.0.0-build.mr-42` and aliases like `my-image:1-build.mr-42`.
 
 ### 3. Test with the same build ID
 
@@ -60,8 +62,8 @@ This creates the clean `my-image:1.0.0` tag and aliases `my-image:1.0`, `my-imag
 
 Without build IDs, concurrent MR builds would overwrite each other's tags in the registry. Build IDs solve this by namespacing tags per MR:
 
-- **MR 42** pushes `1.0.0.mr-42` — safe to test and preview
-- **MR 43** pushes `1.0.0.mr-43` — doesn't conflict with MR 42
+- **MR 42** pushes `1.0.0-build.mr-42` — safe to test and preview
+- **MR 43** pushes `1.0.0-build.mr-43` — doesn't conflict with MR 42
 - **Main branch** pushes `1.0.0` — the final, clean tag after merge
 
 ## Flag placement

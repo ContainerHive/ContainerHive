@@ -25,7 +25,7 @@ func TestPushTagFunc(t *testing.T) {
 			tagName:  "latest",
 			platform: "linux/amd64",
 			buildID:  "abc123",
-			want:     "latest.linux-amd64.abc123",
+			want:     "latest.linux-amd64-build.abc123",
 		},
 		{
 			name:     "platform sanitization linux/amd64 becomes linux-amd64",
@@ -46,7 +46,7 @@ func TestPushTagFunc(t *testing.T) {
 			tagName:  "main",
 			platform: "linux/arm64",
 			buildID:  "build-42",
-			want:     "main.linux-arm64.build-42",
+			want:     "main.linux-arm64-build.build-42",
 		},
 	}
 
@@ -68,8 +68,9 @@ func TestWithBuildID(t *testing.T) {
 		want    string
 	}{
 		{"empty buildID returns tag unchanged", "1.0", "", "1.0"},
-		{"appends buildID with dot separator", "1.0", "abc123", "1.0.abc123"},
-		{"works with complex tags", "latest.linux-amd64", "build-42", "latest.linux-amd64.build-42"},
+		{"appends buildID with -build. separator", "1.0", "abc123", "1.0-build.abc123"},
+		{"works with complex tags", "latest.linux-amd64", "build-42", "latest.linux-amd64-build.build-42"},
+		{"disambiguates from patch version", "26.06", "22", "26.06-build.22"},
 	}
 
 	for _, tt := range tests {

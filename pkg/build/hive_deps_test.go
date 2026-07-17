@@ -134,8 +134,8 @@ RUN echo hello
 		if !ok {
 			t.Error("expected NamedContexts to contain key 'context:hive-dep/base:latest'")
 		}
-		if contextVal != "docker-image://ghcr.io/myorg/base:latest.42" {
-			t.Errorf("expected context value 'docker-image://ghcr.io/myorg/base:latest.42', got %q", contextVal)
+		if contextVal != "docker-image://ghcr.io/myorg/base:latest-build.42" {
+			t.Errorf("expected context value 'docker-image://ghcr.io/myorg/base:latest-build.42', got %q", contextVal)
 		}
 		if len(result.OCIStores) != 0 {
 			t.Errorf("expected empty OCIStores, got %d entries", len(result.OCIStores))

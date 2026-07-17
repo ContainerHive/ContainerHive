@@ -87,10 +87,7 @@ func ResolveHiveDeps(opts HiveDepsOpts) (*HiveDeps, error) {
 				return nil, fmt.Errorf("dependency %s:%s not built yet (expected %s) and no registry configured: %w", ref.ImageName, ref.Tag, tarPath, err)
 			}
 
-			registryTag := ref.Tag
-			if opts.BuildID != "" {
-				registryTag += "." + opts.BuildID
-			}
+			registryTag := WithBuildID(ref.Tag, opts.BuildID)
 			contextValue := fmt.Sprintf("docker-image://%s/%s:%s", opts.RegistryAddress, ref.ImageName, registryTag)
 			d.NamedContexts[contextKey] = contextValue
 			slog.Info("Resolved hive dep via registry", "image", ref.ImageName, "tag", ref.Tag, "ref", contextValue)
