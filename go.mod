@@ -8,7 +8,7 @@ require (
 	github.com/GoogleContainerTools/container-structure-test v1.22.1
 	github.com/Ladicle/tabwriter v1.0.0
 	github.com/Masterminds/sprig/v3 v3.3.0
-	github.com/anchore/syft v1.46.0
+	github.com/anchore/syft v1.47.0
 	github.com/containerd/containerd/v2 v2.3.2
 	github.com/containerd/errdefs v1.0.0
 	github.com/docker/cli v29.6.0+incompatible
@@ -21,6 +21,7 @@ require (
 	github.com/kcmvp/archunit v0.1.2
 	github.com/lmittmann/tint v1.1.3
 	github.com/moby/buildkit v0.31.0
+	github.com/moby/moby/api v1.54.2
 	github.com/modelcontextprotocol/go-sdk v1.6.1
 	github.com/opencontainers/go-digest v1.0.0
 	github.com/opencontainers/image-spec v1.1.1
@@ -337,7 +338,7 @@ require (
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/kastenhq/goversion v0.0.0-20230811215019-93b2f8823953 // indirect
 	github.com/kevinburke/ssh_config v1.6.0 // indirect
-	github.com/klauspost/compress v1.18.6 // indirect
+	github.com/klauspost/compress v1.19.0 // indirect
 	github.com/klauspost/cpuid/v2 v2.3.0 // indirect
 	github.com/klauspost/pgzip v1.2.6 // indirect
 	github.com/knqyf263/go-apk-version v0.0.0-20200609155635-041fdbb8563f // indirect
@@ -387,7 +388,6 @@ require (
 	github.com/moby/docker-image-spec v1.3.1 // indirect
 	github.com/moby/go-archive v0.2.0 // indirect
 	github.com/moby/locker v1.0.1 // indirect
-	github.com/moby/moby/api v1.54.2 // indirect
 	github.com/moby/moby/client v0.4.1 // indirect
 	github.com/moby/patternmatcher v0.6.1 // indirect
 	github.com/moby/spdystream v0.5.1 // indirect
@@ -606,7 +606,7 @@ require (
 	golang.org/x/sys v0.46.0 // indirect
 	golang.org/x/text v0.38.0 // indirect
 	golang.org/x/time v0.15.0 // indirect
-	golang.org/x/tools v0.46.0 // indirect
+	golang.org/x/tools v0.47.0 // indirect
 	golang.org/x/xerrors v0.0.0-20240903120638-7835f813f4da // indirect
 	gonum.org/v1/gonum v0.17.0 // indirect
 	google.golang.org/api v0.283.0 // indirect
@@ -623,6 +623,7 @@ require (
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	helm.sh/helm/v3 v3.19.2 // indirect
 	helm.sh/helm/v4 v4.2.0 // indirect
+	howett.net/plist v1.0.1 // indirect
 	k8s.io/api v0.36.1 // indirect
 	k8s.io/apiextensions-apiserver v0.36.0 // indirect
 	k8s.io/apimachinery v0.36.2 // indirect
