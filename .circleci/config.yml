@@ -197,6 +197,13 @@ jobs:
               --identifier containerhive-structure-test || true
   build-gh-pages:
     executor: node
+    environment:
+      # github-utils/publish_github_pages runs `npx gh-pages`, whose find-cache-dir
+      # walks up for a package.json to anchor node_modules/.cache. This repo has no
+      # root package.json, so it returns undefined and gh-pages crashes with
+      # "The path argument must be of type string. Received undefined".
+      # CACHE_DIR is find-cache-dir's escape hatch and skips that lookup entirely.
+      CACHE_DIR: /tmp/gh-pages-cache
     steps:
       - checkout
       - restore_cache:
