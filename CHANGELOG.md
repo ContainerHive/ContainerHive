@@ -1,3 +1,9 @@
+## [1.0.1](https://github.com/ContainerHive/ContainerHive/compare/v1.0.0...v1.0.1) (2026-07-28)
+
+### Bug Fixes
+
+* **ci:** Set CACHE_DIR so gh-pages publish stops crashing ([#189](https://github.com/ContainerHive/ContainerHive/issues/189)) ([d6d79c9](https://github.com/ContainerHive/ContainerHive/commit/d6d79c9a170c0e3e45cf5a6bb71521cba9107175)), closes [#177](https://github.com/ContainerHive/ContainerHive/issues/177)
+
 ## [1.0.0](https://github.com/ContainerHive/ContainerHive/compare/v0.21.16...v1.0.0) (2026-07-17)
 
 ### ⚠ BREAKING CHANGES
