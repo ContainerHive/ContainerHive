@@ -65,13 +65,15 @@ jobs:
       - name: Detect licences
         id: detect
         run: |
+          # pipefail so a detector failure fails this step directly instead of
+          # surfacing later as a confusing "missing /tmp/NOTICE_DEPS" error.
+          set -o pipefail
           go list -m -json all | go tool go-licence-detector \
             -includeIndirect \
             -rules .github/licence-rules.json \
             -overrides .github/licence-overrides.json \
             -noticeOut /tmp/NOTICE_DEPS \
             -noticeTemplate .github/NOTICE.tmpl 2>&1 | tee /tmp/licence-output.txt
-          echo "exit_code=${PIPESTATUS[1]}" >> "$GITHUB_OUTPUT"
 
           # Prepend project license to generated NOTICE
           {
