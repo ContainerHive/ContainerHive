@@ -1,3 +1,9 @@
+## [1.0.3](https://github.com/ContainerHive/ContainerHive/compare/v1.0.2...v1.0.3) (2026-08-04)
+
+### Bug Fixes
+
+* **deps:** update module github.com/moby/moby/api to v1.55.0 ([#196](https://github.com/ContainerHive/ContainerHive/issues/196)) ([b9219a8](https://github.com/ContainerHive/ContainerHive/commit/b9219a831508e5d0b329f6db76b61fcc2912d194))
+
 ## [1.0.2](https://github.com/ContainerHive/ContainerHive/compare/v1.0.1...v1.0.2) (2026-08-03)
 
 ### Bug Fixes
