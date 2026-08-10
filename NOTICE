@@ -1559,10 +1559,10 @@ Contents of probable licence file $GOMODCACHE/github.com/containerd/errdefs@v1.0
 ================================================================================
 
 Module:  github.com/docker/cli
-Version: v29.6.0+incompatible
+Version: v29.6.2+incompatible
 Licence: Apache-2.0
 
-Contents of probable licence file $GOMODCACHE/github.com/docker/cli@v29.6.0+incompatible/LICENSE:
+Contents of probable licence file $GOMODCACHE/github.com/docker/cli@v29.6.2+incompatible/LICENSE:
 
 
                                  Apache License
@@ -2441,10 +2441,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ================================================================================
 
 Module:  github.com/google/go-containerregistry
-Version: v0.21.7
+Version: v0.21.8
 Licence: Apache-2.0
 
-Contents of probable licence file $GOMODCACHE/github.com/google/go-containerregistry@v0.21.7/LICENSE:
+Contents of probable licence file $GOMODCACHE/github.com/google/go-containerregistry@v0.21.8/LICENSE:
 
 
                                  Apache License
@@ -4754,10 +4754,10 @@ SOFTWARE.
 ================================================================================
 
 Module:  golang.org/x/sync
-Version: v0.21.0
+Version: v0.22.0
 Licence: BSD-3-Clause
 
-Contents of probable licence file $GOMODCACHE/golang.org/x/sync@v0.21.0/LICENSE:
+Contents of probable licence file $GOMODCACHE/golang.org/x/sync@v0.22.0/LICENSE:
 
 Copyright 2009 The Go Authors.
 
@@ -4791,10 +4791,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ================================================================================
 
 Module:  golang.org/x/term
-Version: v0.44.0
+Version: v0.45.0
 Licence: BSD-3-Clause
 
-Contents of probable licence file $GOMODCACHE/golang.org/x/term@v0.44.0/LICENSE:
+Contents of probable licence file $GOMODCACHE/golang.org/x/term@v0.45.0/LICENSE:
 
 Copyright 2009 The Go Authors.
 
@@ -42855,10 +42855,10 @@ SOFTWARE.
 ================================================================================
 
 Module:  github.com/klauspost/compress
-Version: v1.18.6
+Version: v1.19.1
 Licence: Apache-2.0
 
-Contents of probable licence file $GOMODCACHE/github.com/klauspost/compress@v1.18.6/LICENSE:
+Contents of probable licence file $GOMODCACHE/github.com/klauspost/compress@v1.19.1/LICENSE:
 
 Copyright (c) 2012 The Go Authors. All rights reserved.
 Copyright (c) 2019 Klaus Post. All rights reserved.
@@ -46769,10 +46769,10 @@ Contents of probable licence file $GOMODCACHE/github.com/moby/locker@v1.0.1/LICE
 ================================================================================
 
 Module:  github.com/moby/moby/client
-Version: v0.4.1
+Version: v0.5.1
 Licence: Apache-2.0
 
-Contents of probable licence file $GOMODCACHE/github.com/moby/moby/client@v0.4.1/LICENSE:
+Contents of probable licence file $GOMODCACHE/github.com/moby/moby/client@v0.5.1/LICENSE:
 
 
                                  Apache License
@@ -71784,10 +71784,10 @@ Contents of probable licence file $GOMODCACHE/go4.org@v0.0.0-20230225012048-2148
 ================================================================================
 
 Module:  golang.org/x/crypto
-Version: v0.53.0
+Version: v0.54.0
 Licence: BSD-3-Clause
 
-Contents of probable licence file $GOMODCACHE/golang.org/x/crypto@v0.53.0/LICENSE:
+Contents of probable licence file $GOMODCACHE/golang.org/x/crypto@v0.54.0/LICENSE:
 
 Copyright 2009 The Go Authors.
 
@@ -71858,10 +71858,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ================================================================================
 
 Module:  golang.org/x/mod
-Version: v0.37.0
+Version: v0.38.0
 Licence: BSD-3-Clause
 
-Contents of probable licence file $GOMODCACHE/golang.org/x/mod@v0.37.0/LICENSE:
+Contents of probable licence file $GOMODCACHE/golang.org/x/mod@v0.38.0/LICENSE:
 
 Copyright 2009 The Go Authors.
 
@@ -71895,10 +71895,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ================================================================================
 
 Module:  golang.org/x/net
-Version: v0.56.0
+Version: v0.57.0
 Licence: BSD-3-Clause
 
-Contents of probable licence file $GOMODCACHE/golang.org/x/net@v0.56.0/LICENSE:
+Contents of probable licence file $GOMODCACHE/golang.org/x/net@v0.57.0/LICENSE:
 
 Copyright 2009 The Go Authors.
 
@@ -71969,10 +71969,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ================================================================================
 
 Module:  golang.org/x/sys
-Version: v0.46.0
+Version: v0.47.0
 Licence: BSD-3-Clause
 
-Contents of probable licence file $GOMODCACHE/golang.org/x/sys@v0.46.0/LICENSE:
+Contents of probable licence file $GOMODCACHE/golang.org/x/sys@v0.47.0/LICENSE:
 
 Copyright 2009 The Go Authors.
 
@@ -72006,10 +72006,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ================================================================================
 
 Module:  golang.org/x/text
-Version: v0.38.0
+Version: v0.40.0
 Licence: BSD-3-Clause
 
-Contents of probable licence file $GOMODCACHE/golang.org/x/text@v0.38.0/LICENSE:
+Contents of probable licence file $GOMODCACHE/golang.org/x/text@v0.40.0/LICENSE:
 
 Copyright 2009 The Go Authors.
 
@@ -72080,10 +72080,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ================================================================================
 
 Module:  golang.org/x/tools
-Version: v0.46.0
+Version: v0.48.0
 Licence: BSD-3-Clause
 
-Contents of probable licence file $GOMODCACHE/golang.org/x/tools@v0.46.0/LICENSE:
+Contents of probable licence file $GOMODCACHE/golang.org/x/tools@v0.48.0/LICENSE:
 
 Copyright 2009 The Go Authors.
 
