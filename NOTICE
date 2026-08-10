@@ -4888,10 +4888,10 @@ limitations under the License.
 ================================================================================
 
 Module:  modernc.org/sqlite
-Version: v1.53.0
+Version: v1.56.0
 Licence: BSD-3-Clause
 
-Contents of probable licence file $GOMODCACHE/modernc.org/sqlite@v1.53.0/LICENSE:
+Contents of probable licence file $GOMODCACHE/modernc.org/sqlite@v1.56.0/LICENSE:
 
 Copyright (c) 2017 The Sqlite Authors. All rights reserved.
 
@@ -36998,10 +36998,10 @@ Contents of probable licence file $GOMODCACHE/github.com/google/licenseclassifie
 ================================================================================
 
 Module:  github.com/google/pprof
-Version: v0.0.0-20260402051712-545e8a4df936
+Version: v0.0.0-20260802141513-ef3492d7dac3
 Licence: Apache-2.0
 
-Contents of probable licence file $GOMODCACHE/github.com/google/pprof@v0.0.0-20260402051712-545e8a4df936/LICENSE:
+Contents of probable licence file $GOMODCACHE/github.com/google/pprof@v0.0.0-20260802141513-ef3492d7dac3/LICENSE:
 
 
                                  Apache License
@@ -45585,10 +45585,10 @@ SOFTWARE.
 ================================================================================
 
 Module:  github.com/mattn/go-isatty
-Version: v0.0.22
+Version: v0.0.24
 Licence: MIT
 
-Contents of probable licence file $GOMODCACHE/github.com/mattn/go-isatty@v0.0.22/LICENSE:
+Contents of probable licence file $GOMODCACHE/github.com/mattn/go-isatty@v0.0.24/LICENSE:
 
 Copyright (c) Yasuhiro MATSUMOTO <mattn.jp@gmail.com>
 
@@ -71969,10 +71969,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ================================================================================
 
 Module:  golang.org/x/sys
-Version: v0.46.0
+Version: v0.47.0
 Licence: BSD-3-Clause
 
-Contents of probable licence file $GOMODCACHE/golang.org/x/sys@v0.46.0/LICENSE:
+Contents of probable licence file $GOMODCACHE/golang.org/x/sys@v0.47.0/LICENSE:
 
 Copyright 2009 The Go Authors.
 
@@ -72080,10 +72080,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ================================================================================
 
 Module:  golang.org/x/tools
-Version: v0.46.0
+Version: v0.47.0
 Licence: BSD-3-Clause
 
-Contents of probable licence file $GOMODCACHE/golang.org/x/tools@v0.46.0/LICENSE:
+Contents of probable licence file $GOMODCACHE/golang.org/x/tools@v0.47.0/LICENSE:
 
 Copyright 2009 The Go Authors.
 
@@ -76392,10 +76392,10 @@ Contents of probable licence file $GOMODCACHE/k8s.io/utils@v0.0.0-20260319190234
 ================================================================================
 
 Module:  modernc.org/libc
-Version: v1.73.4
+Version: v1.74.4
 Licence: BSD-2-Clause
 
-Contents of probable licence file $GOMODCACHE/modernc.org/libc@v1.73.4/LICENSE:
+Contents of probable licence file $GOMODCACHE/modernc.org/libc@v1.74.4/LICENSE:
 
 Copyright (c) 2017 The Libc Authors. All rights reserved.
 
