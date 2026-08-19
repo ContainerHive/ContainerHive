@@ -1961,15 +1961,15 @@
 <p>Versions defined in <code>image.yml</code> are automatically converted to Docker build arguments with an uppercase <code>_VERSION</code> suffix. Hyphens in the key name are replaced with underscores.</p>
 <p>Given this <code>image.yml</code>:</p>
 <div class="language-yaml highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nt">versions</span><span class="p">:</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">  </span><span class="nt">dotnet-sdk-channel</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;8.0&quot;</span>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">  </span><span class="nt">nodejs</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;24&quot;</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">  </span><span class="nt">dotnet-sdk-channel</span><span class="p">:</span><span class="w"> </span><span class="s">"8.0"</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">  </span><span class="nt">nodejs</span><span class="p">:</span><span class="w"> </span><span class="s">"24"</span>
 </span></code></pre></div>
 <p>The following build arguments are available in your Dockerfile:</p>
 <div class="language-dockerfile highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="k">ARG</span><span class="w"> </span>DOTNET_SDK_CHANNEL_VERSION
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="k">ARG</span><span class="w"> </span>NODEJS_VERSION
 </span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="k">RUN</span><span class="w"> </span>install-dotnet<span class="w"> </span>--channel<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">DOTNET_SDK_CHANNEL_VERSION</span><span class="si">}</span><span class="s2">&quot;</span>
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="k">RUN</span><span class="w"> </span>setup-node<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">NODEJS_VERSION</span><span class="si">}</span><span class="s2">&quot;</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="k">RUN</span><span class="w"> </span>install-dotnet<span class="w"> </span>--channel<span class="w"> </span><span class="s2">"</span><span class="si">${</span><span class="nv">DOTNET_SDK_CHANNEL_VERSION</span><span class="si">}</span><span class="s2">"</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="k">RUN</span><span class="w"> </span>setup-node<span class="w"> </span><span class="s2">"</span><span class="si">${</span><span class="nv">NODEJS_VERSION</span><span class="si">}</span><span class="s2">"</span>
 </span></code></pre></div>
 <p>Tag-level versions override image-level versions:</p>
 <div class="language-yaml highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="nt">versions</span><span class="p">:</span>
@@ -1978,7 +1978,7 @@
 </span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="nt">tags</span><span class="p">:</span>
 </span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1.0.0</span>
 </span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="w">    </span><span class="nt">versions</span><span class="p">:</span>
-</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="w">      </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1.0.0</span><span class="w">   </span><span class="c1"># overrides &quot;latest&quot; for this tag</span>
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="w">      </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1.0.0</span><span class="w">   </span><span class="c1"># overrides "latest" for this tag</span>
 </span></code></pre></div>
 <h2 id="using-build-arguments">Using build arguments</h2>
 <p>Build arguments from <code>image.yml</code> are passed directly to Docker without any name transformation:</p>
@@ -1986,7 +1986,7 @@
 </span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">  </span><span class="nt">foo</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">bar</span>
 </span></code></pre></div>
 <div class="language-dockerfile highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="k">ARG</span><span class="w"> </span>foo
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="k">RUN</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">foo</span><span class="si">}</span><span class="s2">&quot;</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="k">RUN</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">"</span><span class="si">${</span><span class="nv">foo</span><span class="si">}</span><span class="s2">"</span>
 </span></code></pre></div>
 <h2 id="using-secrets">Using secrets</h2>
 <p>Secrets defined in <code>image.yml</code> are mounted via BuildKit's secret mount mechanism:</p>
@@ -2032,7 +2032,7 @@
 <p>Variants that build on top of their base image can use <code>__hive_parent__</code>:</p>
 <div class="language-dockerfile highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="k">FROM</span><span class="w"> </span><span class="s">__hive_parent__</span>
 </span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="k">ARG</span><span class="w"> </span>NODEJS_VERSION
-</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="k">RUN</span><span class="w"> </span>setup-node<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">NODEJS_VERSION</span><span class="si">}</span><span class="s2">&quot;</span>
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="k">RUN</span><span class="w"> </span>setup-node<span class="w"> </span><span class="s2">"</span><span class="si">${</span><span class="nv">NODEJS_VERSION</span><span class="si">}</span><span class="s2">"</span>
 </span></code></pre></div>
 <p>This is automatically replaced with the correct <code>__hive__/&lt;image&gt;:&lt;tag&gt;</code> reference for the current tag during <code>ch generate</code>.</p>
 <h2 id="go-template-dockerfiles">Go template Dockerfiles</h2>
@@ -2076,8 +2076,8 @@
 </tbody>
 </table>
 <h3 id="example">Example</h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>FROM {{ resolve_base &quot;ubuntu&quot; .Versions.ubuntu_tag }}
-</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>RUN echo &quot;Building {{ .ImageName }}&quot;
+<div class="language-text highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>FROM {{ resolve_base "ubuntu" .Versions.ubuntu_tag }}
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>RUN echo "Building {{ .ImageName }}"
 </span></code></pre></div>
 <h2 id="complete-example">Complete example</h2>
 <p><code>image.yml</code>:</p>
@@ -2093,7 +2093,7 @@
 </span><span id="__span-10-10"><a id="__codelineno-10-10" name="__codelineno-10-10" href="#__codelineno-10-10"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">node</span>
 </span><span id="__span-10-11"><a id="__codelineno-10-11" name="__codelineno-10-11" href="#__codelineno-10-11"></a><span class="w">    </span><span class="nt">tag_suffix</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">-node</span>
 </span><span id="__span-10-12"><a id="__codelineno-10-12" name="__codelineno-10-12" href="#__codelineno-10-12"></a><span class="w">    </span><span class="nt">versions</span><span class="p">:</span>
-</span><span id="__span-10-13"><a id="__codelineno-10-13" name="__codelineno-10-13" href="#__codelineno-10-13"></a><span class="w">      </span><span class="nt">nodejs</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;24&quot;</span>
+</span><span id="__span-10-13"><a id="__codelineno-10-13" name="__codelineno-10-13" href="#__codelineno-10-13"></a><span class="w">      </span><span class="nt">nodejs</span><span class="p">:</span><span class="w"> </span><span class="s">"24"</span>
 </span><span id="__span-10-14"><a id="__codelineno-10-14" name="__codelineno-10-14" href="#__codelineno-10-14"></a>
 </span><span id="__span-10-15"><a id="__codelineno-10-15" name="__codelineno-10-15" href="#__codelineno-10-15"></a><span class="nt">secrets</span><span class="p">:</span>
 </span><span id="__span-10-16"><a id="__codelineno-10-16" name="__codelineno-10-16" href="#__codelineno-10-16"></a><span class="w">  </span><span class="nt">foo</span><span class="p">:</span>
@@ -2110,7 +2110,7 @@
 </span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="k">ARG</span><span class="w"> </span>DOTNET_SDK_CHANNEL_VERSION
 </span><span id="__span-11-3"><a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a><span class="k">RUN</span><span class="w"> </span>curl<span class="w"> </span>-L<span class="w"> </span>https://dot.net/v1/dotnet-install.sh<span class="w"> </span>-o<span class="w"> </span>/usr/bin/install-dotnet<span class="w"> </span><span class="se">\</span>
 </span><span id="__span-11-4"><a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a><span class="w">    </span><span class="o">&amp;&amp;</span><span class="w"> </span>chmod<span class="w"> </span>+x<span class="w"> </span>/usr/bin/install-dotnet<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-11-5"><a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a><span class="w">    </span><span class="o">&amp;&amp;</span><span class="w"> </span>install-dotnet<span class="w"> </span>--channel<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">DOTNET_SDK_CHANNEL_VERSION</span><span class="si">}</span><span class="s2">&quot;</span><span class="w"> </span>--install-dir<span class="w"> </span>/usr/share/dotnet
+</span><span id="__span-11-5"><a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a><span class="w">    </span><span class="o">&amp;&amp;</span><span class="w"> </span>install-dotnet<span class="w"> </span>--channel<span class="w"> </span><span class="s2">"</span><span class="si">${</span><span class="nv">DOTNET_SDK_CHANNEL_VERSION</span><span class="si">}</span><span class="s2">"</span><span class="w"> </span>--install-dir<span class="w"> </span>/usr/share/dotnet
 </span><span id="__span-11-6"><a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a>
 </span><span id="__span-11-7"><a id="__codelineno-11-7" name="__codelineno-11-7" href="#__codelineno-11-7"></a><span class="k">RUN</span><span class="w"> </span>--mount<span class="o">=</span><span class="nv">type</span><span class="o">=</span>secret,id<span class="o">=</span>foo<span class="w"> </span><span class="se">\</span>
 </span><span id="__span-11-8"><a id="__codelineno-11-8" name="__codelineno-11-8" href="#__codelineno-11-8"></a><span class="w">    </span>cat<span class="w"> </span>/run/secrets/foo

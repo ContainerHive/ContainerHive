@@ -1890,17 +1890,17 @@
 <h3 id="1-build-with-a-build-id">1. Build with a build ID</h3>
 <p>Use the MR/PR number or CI job ID as the build ID:</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># GitLab CI</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>ch<span class="w"> </span>--build-id<span class="w"> </span><span class="s2">&quot;mr-</span><span class="si">${</span><span class="nv">CI_MERGE_REQUEST_IID</span><span class="si">}</span><span class="s2">&quot;</span><span class="w"> </span>build
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>ch<span class="w"> </span>--build-id<span class="w"> </span><span class="s2">"mr-</span><span class="si">${</span><span class="nv">CI_MERGE_REQUEST_IID</span><span class="si">}</span><span class="s2">"</span><span class="w"> </span>build
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>
 </span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="c1"># GitHub Actions</span>
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>ch<span class="w"> </span>--build-id<span class="w"> </span><span class="s2">&quot;pr-</span><span class="si">${</span><span class="nv">GITHUB_EVENT_NUMBER</span><span class="si">}</span><span class="s2">&quot;</span><span class="w"> </span>build
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>ch<span class="w"> </span>--build-id<span class="w"> </span><span class="s2">"pr-</span><span class="si">${</span><span class="nv">GITHUB_EVENT_NUMBER</span><span class="si">}</span><span class="s2">"</span><span class="w"> </span>build
 </span></code></pre></div>
 <h3 id="2-finalize-with-the-same-build-id">2. Finalize with the same build ID</h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>ch<span class="w"> </span>--build-id<span class="w"> </span><span class="s2">&quot;mr-</span><span class="si">${</span><span class="nv">CI_MERGE_REQUEST_IID</span><span class="si">}</span><span class="s2">&quot;</span><span class="w"> </span>finalize
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>ch<span class="w"> </span>--build-id<span class="w"> </span><span class="s2">"mr-</span><span class="si">${</span><span class="nv">CI_MERGE_REQUEST_IID</span><span class="si">}</span><span class="s2">"</span><span class="w"> </span>finalize
 </span></code></pre></div>
 <p>This creates manifests like <code>my-image:1.0.0-build.mr-42</code> and aliases like <code>my-image:1-build.mr-42</code>.</p>
 <h3 id="3-test-with-the-same-build-id">3. Test with the same build ID</h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>ch<span class="w"> </span>--build-id<span class="w"> </span><span class="s2">&quot;mr-</span><span class="si">${</span><span class="nv">CI_MERGE_REQUEST_IID</span><span class="si">}</span><span class="s2">&quot;</span><span class="w"> </span><span class="nb">test</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>ch<span class="w"> </span>--build-id<span class="w"> </span><span class="s2">"mr-</span><span class="si">${</span><span class="nv">CI_MERGE_REQUEST_IID</span><span class="si">}</span><span class="s2">"</span><span class="w"> </span><span class="nb">test</span>
 </span></code></pre></div>
 <h3 id="4-merge-and-build-without-build-id">4. Merge and build without build ID</h3>
 <p>On the main branch, build without <code>--build-id</code> to produce the final tags:</p>
@@ -1917,10 +1917,10 @@
 </ul>
 <h2 id="flag-placement">Flag placement</h2>
 <p><code>--build-id</code> is a global flag, placed before the subcommand:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>ch<span class="w"> </span>--build-id<span class="w"> </span><span class="s2">&quot;mr-42&quot;</span><span class="w"> </span>build
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>ch<span class="w"> </span>--build-id<span class="w"> </span><span class="s2">&quot;mr-42&quot;</span><span class="w"> </span>finalize
-</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>ch<span class="w"> </span>--build-id<span class="w"> </span><span class="s2">&quot;mr-42&quot;</span><span class="w"> </span><span class="nb">test</span>
-</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>ch<span class="w"> </span>--build-id<span class="w"> </span><span class="s2">&quot;mr-42&quot;</span><span class="w"> </span>sbom
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>ch<span class="w"> </span>--build-id<span class="w"> </span><span class="s2">"mr-42"</span><span class="w"> </span>build
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>ch<span class="w"> </span>--build-id<span class="w"> </span><span class="s2">"mr-42"</span><span class="w"> </span>finalize
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>ch<span class="w"> </span>--build-id<span class="w"> </span><span class="s2">"mr-42"</span><span class="w"> </span><span class="nb">test</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>ch<span class="w"> </span>--build-id<span class="w"> </span><span class="s2">"mr-42"</span><span class="w"> </span>sbom
 </span></code></pre></div>
 <p>Use the same build ID across all commands in a single pipeline run to keep tags consistent.</p>
 
