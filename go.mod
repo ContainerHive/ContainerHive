@@ -11,7 +11,7 @@ require (
 	github.com/anchore/syft v1.46.0
 	github.com/containerd/containerd/v2 v2.3.2
 	github.com/containerd/errdefs v1.0.0
-	github.com/docker/cli v29.6.0+incompatible
+	github.com/docker/cli v29.7.2+incompatible
 	github.com/docker/docker v28.5.2+incompatible
 	github.com/docker/go-connections v0.8.0
 	github.com/go-git/go-git/v5 v5.19.1
