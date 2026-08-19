@@ -42855,10 +42855,10 @@ SOFTWARE.
 ================================================================================
 
 Module:  github.com/klauspost/compress
-Version: v1.18.6
+Version: v1.18.7
 Licence: Apache-2.0
 
-Contents of probable licence file $GOMODCACHE/github.com/klauspost/compress@v1.18.6/LICENSE:
+Contents of probable licence file $GOMODCACHE/github.com/klauspost/compress@v1.18.7/LICENSE:
 
 Copyright (c) 2012 The Go Authors. All rights reserved.
 Copyright (c) 2019 Klaus Post. All rights reserved.
@@ -46357,10 +46357,10 @@ Contents of probable licence file $GOMODCACHE/github.com/moby/docker-image-spec@
 ================================================================================
 
 Module:  github.com/moby/go-archive
-Version: v0.1.0
+Version: v0.3.3
 Licence: Apache-2.0
 
-Contents of probable licence file $GOMODCACHE/github.com/moby/go-archive@v0.1.0/LICENSE:
+Contents of probable licence file $GOMODCACHE/github.com/moby/go-archive@v0.3.3/LICENSE:
 
 
                                  Apache License
@@ -48242,10 +48242,10 @@ Contents of probable licence file $GOMODCACHE/github.com/moby/sys/signal@v0.7.1/
 ================================================================================
 
 Module:  github.com/moby/sys/user
-Version: v0.4.0
+Version: v0.4.1
 Licence: Apache-2.0
 
-Contents of probable licence file $GOMODCACHE/github.com/moby/sys/user@v0.4.0/LICENSE:
+Contents of probable licence file $GOMODCACHE/github.com/moby/sys/user@v0.4.1/LICENSE:
 
 
                                  Apache License
