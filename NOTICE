@@ -1157,10 +1157,10 @@ Contents of probable licence file $GOMODCACHE/github.com/anchore/syft@v1.46.0/LI
 ================================================================================
 
 Module:  github.com/containerd/containerd/v2
-Version: v2.3.2
+Version: v2.3.4
 Licence: Apache-2.0
 
-Contents of probable licence file $GOMODCACHE/github.com/containerd/containerd/v2@v2.3.2/LICENSE:
+Contents of probable licence file $GOMODCACHE/github.com/containerd/containerd/v2@v2.3.4/LICENSE:
 
 
                                  Apache License
@@ -74072,10 +74072,10 @@ Contents of probable licence file $GOMODCACHE/helm.sh/helm/v4@v4.2.0/LICENSE:
 ================================================================================
 
 Module:  k8s.io/api
-Version: v0.36.1
+Version: v0.36.3
 Licence: Apache-2.0
 
-Contents of probable licence file $GOMODCACHE/k8s.io/api@v0.36.1/LICENSE:
+Contents of probable licence file $GOMODCACHE/k8s.io/api@v0.36.3/LICENSE:
 
 
                                  Apache License
@@ -74496,10 +74496,10 @@ Contents of probable licence file $GOMODCACHE/k8s.io/apiextensions-apiserver@v0.
 ================================================================================
 
 Module:  k8s.io/apimachinery
-Version: v0.36.2
+Version: v0.36.3
 Licence: Apache-2.0
 
-Contents of probable licence file $GOMODCACHE/k8s.io/apimachinery@v0.36.2/LICENSE:
+Contents of probable licence file $GOMODCACHE/k8s.io/apimachinery@v0.36.3/LICENSE:
 
 
                                  Apache License
@@ -75132,10 +75132,10 @@ Contents of probable licence file $GOMODCACHE/k8s.io/cli-runtime@v0.36.0/LICENSE
 ================================================================================
 
 Module:  k8s.io/client-go
-Version: v0.36.1
+Version: v0.36.3
 Licence: Apache-2.0
 
-Contents of probable licence file $GOMODCACHE/k8s.io/client-go@v0.36.1/LICENSE:
+Contents of probable licence file $GOMODCACHE/k8s.io/client-go@v0.36.3/LICENSE:
 
 
                                  Apache License
@@ -75344,10 +75344,10 @@ Contents of probable licence file $GOMODCACHE/k8s.io/client-go@v0.36.1/LICENSE:
 ================================================================================
 
 Module:  k8s.io/component-base
-Version: v0.36.0
+Version: v0.36.3
 Licence: Apache-2.0
 
-Contents of probable licence file $GOMODCACHE/k8s.io/component-base@v0.36.0/LICENSE:
+Contents of probable licence file $GOMODCACHE/k8s.io/component-base@v0.36.3/LICENSE:
 
 
                                  Apache License
@@ -77844,10 +77844,10 @@ Contents of probable licence file $GOMODCACHE/sigs.k8s.io/randfill@v1.0.0/LICENS
 ================================================================================
 
 Module:  sigs.k8s.io/structured-merge-diff/v6
-Version: v6.3.2
+Version: v6.3.3
 Licence: Apache-2.0
 
-Contents of probable licence file $GOMODCACHE/sigs.k8s.io/structured-merge-diff/v6@v6.3.2/LICENSE:
+Contents of probable licence file $GOMODCACHE/sigs.k8s.io/structured-merge-diff/v6@v6.3.3/LICENSE:
 
                                  Apache License
                            Version 2.0, January 2004
