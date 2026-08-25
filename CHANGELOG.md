@@ -1,3 +1,9 @@
+## [1.0.5](https://github.com/ContainerHive/ContainerHive/compare/v1.0.4...v1.0.5) (2026-08-25)
+
+### Bug Fixes
+
+* **report:** Fix about link ([ee5b776](https://github.com/ContainerHive/ContainerHive/commit/ee5b7768dc8d05962f7b5836323e8776bdaa21be))
+
 ## [1.0.4](https://github.com/ContainerHive/ContainerHive/compare/v1.0.3...v1.0.4) (2026-08-15)
 
 ### Bug Fixes
