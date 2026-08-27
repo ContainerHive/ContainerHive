@@ -1,3 +1,11 @@
+## [1.0.6](https://github.com/ContainerHive/ContainerHive/compare/v1.0.5...v1.0.6) (2026-08-27)
+
+### Bug Fixes
+
+* **deps:** update github.com/tonistiigi/fsutil digest to 83cac42 ([#223](https://github.com/ContainerHive/ContainerHive/issues/223)) ([6ed75aa](https://github.com/ContainerHive/ContainerHive/commit/6ed75aaaf5ed362a534321b5e3c4401639f7edd6))
+* **deps:** update module github.com/sirupsen/logrus to v1.10.1 ([#224](https://github.com/ContainerHive/ContainerHive/issues/224)) ([dca5716](https://github.com/ContainerHive/ContainerHive/commit/dca5716a960a92d127d07eae9ae1040e274890f8))
+* **deps:** update module modernc.org/sqlite to v1.57.0 ([#225](https://github.com/ContainerHive/ContainerHive/issues/225)) ([e94b405](https://github.com/ContainerHive/ContainerHive/commit/e94b405b2f323a2b450e4d3dcb33d4545bc1a639))
+
 ## [1.0.5](https://github.com/ContainerHive/ContainerHive/compare/v1.0.4...v1.0.5) (2026-08-25)
 
 ### Bug Fixes
