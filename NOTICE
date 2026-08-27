@@ -4692,10 +4692,10 @@ Public License instead of this License.  But first, please read
 ================================================================================
 
 Module:  github.com/tonistiigi/fsutil
-Version: v0.0.0-20260609091201-0257b3308df4
+Version: v0.0.0-20260819142231-83cac42c1c52
 Licence: MIT
 
-Contents of probable licence file $GOMODCACHE/github.com/tonistiigi/fsutil@v0.0.0-20260609091201-0257b3308df4/LICENSE:
+Contents of probable licence file $GOMODCACHE/github.com/tonistiigi/fsutil@v0.0.0-20260819142231-83cac42c1c52/LICENSE:
 
 MIT
 
@@ -59455,10 +59455,10 @@ SOFTWARE.
 ================================================================================
 
 Module:  github.com/stretchr/testify
-Version: v1.11.1
+Version: v1.12.0
 Licence: MIT
 
-Contents of probable licence file $GOMODCACHE/github.com/stretchr/testify@v1.11.1/LICENSE:
+Contents of probable licence file $GOMODCACHE/github.com/stretchr/testify@v1.12.0/LICENSE:
 
 MIT License
 
