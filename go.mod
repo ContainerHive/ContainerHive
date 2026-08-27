@@ -25,7 +25,7 @@ require (
 	github.com/modelcontextprotocol/go-sdk v1.6.1
 	github.com/opencontainers/go-digest v1.0.0
 	github.com/opencontainers/image-spec v1.1.1
-	github.com/sirupsen/logrus v1.9.4
+	github.com/sirupsen/logrus v1.10.1
 	github.com/testcontainers/testcontainers-go v0.42.0
 	github.com/timo-reymann/go-hadolint v0.1.0
 	github.com/tonistiigi/fsutil v0.0.0-20260609091201-0257b3308df4
@@ -504,7 +504,7 @@ require (
 	github.com/spiffe/go-spiffe/v2 v2.7.0 // indirect
 	github.com/stoewer/go-strcase v1.3.1 // indirect
 	github.com/stretchr/objx v0.5.3 // indirect
-	github.com/stretchr/testify v1.11.1 // indirect
+	github.com/stretchr/testify v1.12.0 // indirect
 	github.com/subosito/gotenv v1.6.0 // indirect
 	github.com/swaggo/files v1.0.1 // indirect
 	github.com/swaggo/http-swagger v1.3.4 // indirect
