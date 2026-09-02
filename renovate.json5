@@ -5,6 +5,12 @@
   ],
   "packageRules": [
     {
+      "description": "Pinned via a go.mod replace: docker/docker@v28.x references deprecated type aliases (archive.Compression) that go-archive removed in v0.2.0. Bumping this pin breaks the build.",
+      "matchManagers": ["gomod"],
+      "matchDepNames": ["github.com/moby/go-archive"],
+      "enabled": false
+    },
+    {
       "matchManagers": ["npm"],
       "matchUpdateTypes": ["minor", "patch"],
       "groupName": "frontend non-major updates"
