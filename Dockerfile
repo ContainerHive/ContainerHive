@@ -23,8 +23,11 @@ RUN if [[ "$(arch)" == "x86_64" ]]; then \
 FROM ubuntu:24.04
 ENV DEBIAN_FRONTEND="noninteractive"
 RUN apt update \
-    && apt-get install -y --upgrade ca-certificates \
-    && rm -rf /var/lib/apt/lists/*
+    && apt-get install -y --upgrade \
+      curl \
+      ca-certificates \
+    && rm -rf /var/lib/apt/lists/* \
+    && curl -fsSL https://awscli.amazonaws.com/v2/install.sh | bash
 
 # Add metadata labels
 ARG BUILD_TIME \ 
