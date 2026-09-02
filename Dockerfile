@@ -28,7 +28,12 @@ RUN apt update \
       ca-certificates \
       unzip \
     && rm -rf /var/lib/apt/lists/* \
-    && curl -fsSL https://awscli.amazonaws.com/v2/install.sh | bash -s -- --system
+    # AWS CLI v2 only ships x86_64 and aarch64 binaries, skip it everywhere else
+    && if [ "$(arch)" = "x86_64" ] || [ "$(arch)" = "aarch64" ]; then \
+         curl -fsSL https://awscli.amazonaws.com/v2/install.sh | bash -s -- --system; \
+       else \
+         echo "Skipping AWS CLI install: unsupported architecture $(arch)"; \
+       fi
 
 # Add metadata labels
 ARG BUILD_TIME \ 
