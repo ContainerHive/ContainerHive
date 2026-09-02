@@ -108,6 +108,7 @@ jobs:
           destination: playwright-report
   build:
     executor: go
+    no_output_timeout: 30m
     steps:
       - checkout
       - attach_workspace:
