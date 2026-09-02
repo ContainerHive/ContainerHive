@@ -2,6 +2,7 @@ package build
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"io"
 	"log/slog"
@@ -100,6 +101,20 @@ func matchesFilters(filters []Filter, imageName, tagName string) bool {
 	return false
 }
 
+// buildPlatforms builds every platform for a single image tag. A failing
+// platform does not stop the remaining ones, so a single broken or unsupported
+// platform cannot silently skip the others. All failures are joined.
+func buildPlatforms(platforms []string, build func(platformStr string) error) error {
+	var errs []error
+	for _, platformStr := range platforms {
+		if err := build(platformStr); err != nil {
+			slog.Error("Build failed", "platform", platformStr, "error", err)
+			errs = append(errs, err)
+		}
+	}
+	return errors.Join(errs...)
+}
+
 // BuildProject builds all images in the project according to the dependency
 // order, applying filters and pushing to the registry when dependents exist.
 func BuildProject(ctx context.Context, client *Client, opts *ProjectBuildOpts) error {
@@ -132,10 +147,10 @@ func buildWithDeps(ctx context.Context, client *Client, opts *ProjectBuildOpts) 
 
 			if buildBase {
 				platforms := platform.Resolve(opts.Project.Config.Platforms, imageDef.Platforms, nil)
-				for _, platformStr := range platforms {
-					if err := buildTag(ctx, client, opts, imageDef, tagName, platformStr); err != nil {
-						return err
-					}
+				if err := buildPlatforms(platforms, func(platformStr string) error {
+					return buildTag(ctx, client, opts, imageDef, tagName, platformStr)
+				}); err != nil {
+					return err
 				}
 			}
 
@@ -147,10 +162,10 @@ func buildWithDeps(ctx context.Context, client *Client, opts *ProjectBuildOpts) 
 				}
 
 				platforms := platform.Resolve(opts.Project.Config.Platforms, imageDef.Platforms, variantDef.Platforms)
-				for _, platformStr := range platforms {
-					if err := buildVariant(ctx, client, opts, imageDef, tagName, variantName, variantDef, platformStr); err != nil {
-						return err
-					}
+				if err := buildPlatforms(platforms, func(platformStr string) error {
+					return buildVariant(ctx, client, opts, imageDef, tagName, variantName, variantDef, platformStr)
+				}); err != nil {
+					return err
 				}
 			}
 		}
@@ -164,10 +179,10 @@ func buildWithoutDeps(ctx context.Context, client *Client, opts *ProjectBuildOpt
 			for tagName := range imageDef.Tags {
 				if matchesFilters(opts.Filters, imageDef.Name, tagName) {
 					platforms := platform.Resolve(opts.Project.Config.Platforms, imageDef.Platforms, nil)
-					for _, platformStr := range platforms {
-						if err := buildTag(ctx, client, opts, imageDef, tagName, platformStr); err != nil {
-							return err
-						}
+					if err := buildPlatforms(platforms, func(platformStr string) error {
+						return buildTag(ctx, client, opts, imageDef, tagName, platformStr)
+					}); err != nil {
+						return err
 					}
 				}
 
@@ -177,10 +192,10 @@ func buildWithoutDeps(ctx context.Context, client *Client, opts *ProjectBuildOpt
 						continue
 					}
 					platforms := platform.Resolve(opts.Project.Config.Platforms, imageDef.Platforms, variantDef.Platforms)
-					for _, platformStr := range platforms {
-						if err := buildVariant(ctx, client, opts, imageDef, tagName, variantName, variantDef, platformStr); err != nil {
-							return err
-						}
+					if err := buildPlatforms(platforms, func(platformStr string) error {
+						return buildVariant(ctx, client, opts, imageDef, tagName, variantName, variantDef, platformStr)
+					}); err != nil {
+						return err
 					}
 				}
 			}

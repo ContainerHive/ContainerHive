@@ -4,6 +4,8 @@ import (
 	"os"
 	"path/filepath"
 	"testing"
+
+	"github.com/ContainerHive/ContainerHive/pkg/cache"
 )
 
 func TestBuildExports_NoRegistryRef(t *testing.T) {
@@ -148,5 +150,60 @@ func TestBuildExports_OCITarOutputCreatesFile(t *testing.T) {
 
 	if _, err := os.Stat(tarPath); os.IsNotExist(err) {
 		t.Errorf("expected file to be created at %q, but it does not exist", tarPath)
+	}
+}
+
+type fakeCache struct {
+	name  string
+	attrs map[string]string
+}
+
+func (f fakeCache) Name() string { return f.name }
+
+func (f fakeCache) ToAttributes() map[string]string { return f.attrs }
+
+func (f fakeCache) WithScope(string) cache.BuildkitCache { return f }
+
+func TestCacheOptions_NilCache(t *testing.T) {
+	if got := cacheOptions(nil); got != nil {
+		t.Errorf("expected nil cache options, got %v", got)
+	}
+}
+
+func TestCacheOptions_DefaultsToIgnoreError(t *testing.T) {
+	opts := cacheOptions(fakeCache{name: "registry", attrs: map[string]string{"ref": "example.com/cache"}})
+
+	if len(opts) != 1 {
+		t.Fatalf("expected 1 cache entry, got %d", len(opts))
+	}
+	if opts[0].Type != "registry" {
+		t.Errorf("expected type %q, got %q", "registry", opts[0].Type)
+	}
+	// BuildKit only honours the singular "ignore-error" key; the plural is a no-op
+	// and would make cache export failures fail the whole build.
+	if got := opts[0].Attrs["ignore-error"]; got != "true" {
+		t.Errorf("expected ignore-error=true, got %q", got)
+	}
+	if _, ok := opts[0].Attrs["ignore-errors"]; ok {
+		t.Error("unexpected plural ignore-errors attribute, BuildKit does not recognise it")
+	}
+	if got := opts[0].Attrs["ref"]; got != "example.com/cache" {
+		t.Errorf("backend attributes should be preserved, got ref %q", got)
+	}
+}
+
+func TestCacheOptions_BackendCanOptOut(t *testing.T) {
+	opts := cacheOptions(fakeCache{name: "s3", attrs: map[string]string{"ignore-error": "false"}})
+
+	if got := opts[0].Attrs["ignore-error"]; got != "false" {
+		t.Errorf("expected explicit ignore-error to be kept, got %q", got)
+	}
+}
+
+func TestCacheOptions_NilAttributes(t *testing.T) {
+	opts := cacheOptions(fakeCache{name: "registry"})
+
+	if got := opts[0].Attrs["ignore-error"]; got != "true" {
+		t.Errorf("expected ignore-error=true, got %q", got)
 	}
 }
