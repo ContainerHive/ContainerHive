@@ -1,3 +1,9 @@
+## [1.1.5](https://github.com/ContainerHive/ContainerHive/compare/v1.1.4...v1.1.5) (2026-09-02)
+
+### Bug Fixes
+
+* **docker:** pass registry credentials to the daemon on pull ([d36c246](https://github.com/ContainerHive/ContainerHive/commit/d36c246ee8324c088c328497afc7b9c6318a1517))
+
 ## [1.1.4](https://github.com/ContainerHive/ContainerHive/compare/v1.1.3...v1.1.4) (2026-09-02)
 
 ### Bug Fixes
