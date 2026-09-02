@@ -1,3 +1,13 @@
+## [1.1.0](https://github.com/ContainerHive/ContainerHive/compare/v1.0.6...v1.1.0) (2026-09-02)
+
+### Features
+
+* **container:** Add aws cli and curl ([32aea0a](https://github.com/ContainerHive/ContainerHive/commit/32aea0a8ce67736e8e50e186167b8d61232f924c))
+
+### Bug Fixes
+
+* **container:** Use system install for AWS cli ([aff77d2](https://github.com/ContainerHive/ContainerHive/commit/aff77d25a0e4fa4742daed19a882846efd82be24))
+
 ## [1.0.6](https://github.com/ContainerHive/ContainerHive/compare/v1.0.5...v1.0.6) (2026-08-27)
 
 ### Bug Fixes
