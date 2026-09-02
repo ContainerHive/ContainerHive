@@ -1,3 +1,9 @@
+## [1.1.3](https://github.com/ContainerHive/ContainerHive/compare/v1.1.2...v1.1.3) (2026-09-02)
+
+### Bug Fixes
+
+* **container:** Add unzip needed for aws cli install ([90c2d33](https://github.com/ContainerHive/ContainerHive/commit/90c2d33e09e8dbb0d2b57bc42784076abf1bf8e7))
+
 ## [1.1.2](https://github.com/ContainerHive/ContainerHive/compare/v1.1.1...v1.1.2) (2026-09-02)
 
 ### Bug Fixes
