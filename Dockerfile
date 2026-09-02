@@ -27,7 +27,7 @@ RUN apt update \
       curl \
       ca-certificates \
     && rm -rf /var/lib/apt/lists/* \
-    && curl -fsSL https://awscli.amazonaws.com/v2/install.sh | bash
+    && curl -fsSL https://awscli.amazonaws.com/v2/install.sh | bash -s -- --system
 
 # Add metadata labels
 ARG BUILD_TIME \ 
