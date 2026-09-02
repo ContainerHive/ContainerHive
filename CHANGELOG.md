@@ -1,3 +1,9 @@
+## [1.1.2](https://github.com/ContainerHive/ContainerHive/compare/v1.1.1...v1.1.2) (2026-09-02)
+
+### Bug Fixes
+
+* **ci:** Stop output timeout ([4c28503](https://github.com/ContainerHive/ContainerHive/commit/4c285036f48e6a33c40c4256dcdf64f09d152513))
+
 ## [1.1.1](https://github.com/ContainerHive/ContainerHive/compare/v1.1.0...v1.1.1) (2026-09-02)
 
 ### Bug Fixes
