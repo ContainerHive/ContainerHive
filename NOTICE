@@ -3946,10 +3946,10 @@ Contents of probable licence file $GOMODCACHE/github.com/opencontainers/image-sp
 ================================================================================
 
 Module:  github.com/sirupsen/logrus
-Version: v1.10.1
+Version: v1.10.2
 Licence: MIT
 
-Contents of probable licence file $GOMODCACHE/github.com/sirupsen/logrus@v1.10.1/LICENSE:
+Contents of probable licence file $GOMODCACHE/github.com/sirupsen/logrus@v1.10.2/LICENSE:
 
 The MIT License (MIT)
 
@@ -59455,10 +59455,10 @@ SOFTWARE.
 ================================================================================
 
 Module:  github.com/stretchr/testify
-Version: v1.12.0
+Version: v1.12.1
 Licence: MIT
 
-Contents of probable licence file $GOMODCACHE/github.com/stretchr/testify@v1.12.0/LICENSE:
+Contents of probable licence file $GOMODCACHE/github.com/stretchr/testify@v1.12.1/LICENSE:
 
 MIT License
 
@@ -71300,10 +71300,10 @@ Contents of probable licence file $GOMODCACHE/go.yaml.in/yaml/v2@v2.4.4/LICENSE:
 ================================================================================
 
 Module:  go.yaml.in/yaml/v3
-Version: v3.0.4
+Version: v3.0.5
 Licence: MIT
 
-Contents of probable licence file $GOMODCACHE/go.yaml.in/yaml/v3@v3.0.4/LICENSE:
+Contents of probable licence file $GOMODCACHE/go.yaml.in/yaml/v3@v3.0.5/LICENSE:
 
 
 This project is covered by two different licenses: MIT and Apache.
