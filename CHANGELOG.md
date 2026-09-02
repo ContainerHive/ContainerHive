@@ -1,3 +1,9 @@
+## [1.1.4](https://github.com/ContainerHive/ContainerHive/compare/v1.1.3...v1.1.4) (2026-09-02)
+
+### Bug Fixes
+
+* **container:** Only install aws cli on supported architectures ([fd6d570](https://github.com/ContainerHive/ContainerHive/commit/fd6d5708353467d7c0f23c06c8c62797b3233cae))
+
 ## [1.1.3](https://github.com/ContainerHive/ContainerHive/compare/v1.1.2...v1.1.3) (2026-09-02)
 
 ### Bug Fixes
