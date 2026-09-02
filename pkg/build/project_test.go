@@ -2,6 +2,7 @@ package build
 
 import (
 	"context"
+	"errors"
 	"os"
 	"path/filepath"
 	"strings"
@@ -864,5 +865,73 @@ func TestBuildWithDeps_FilterMatchesBaseNotVariant(t *testing.T) {
 	}
 	if !strings.Contains(err.Error(), "failed to create platform dir") {
 		t.Errorf("expected MkdirAll error, got: %v", err)
+	}
+}
+
+func TestBuildPlatforms_AllSucceed(t *testing.T) {
+	var built []string
+	err := buildPlatforms([]string{"linux/amd64", "linux/arm64"}, func(platformStr string) error {
+		built = append(built, platformStr)
+		return nil
+	})
+
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if len(built) != 2 || built[0] != "linux/amd64" || built[1] != "linux/arm64" {
+		t.Errorf("expected both platforms built in order, got %v", built)
+	}
+}
+
+func TestBuildPlatforms_ContinuesAfterFailure(t *testing.T) {
+	var built []string
+	amdErr := errors.New("amd64 boom")
+
+	err := buildPlatforms([]string{"linux/amd64", "linux/arm64"}, func(platformStr string) error {
+		built = append(built, platformStr)
+		if platformStr == "linux/amd64" {
+			return amdErr
+		}
+		return nil
+	})
+
+	// The remaining platforms must still be attempted, otherwise a failure on the
+	// first platform silently skips the rest.
+	if len(built) != 2 || built[1] != "linux/arm64" {
+		t.Errorf("expected all platforms attempted, got %v", built)
+	}
+	if !errors.Is(err, amdErr) {
+		t.Errorf("expected the failure to be reported, got %v", err)
+	}
+}
+
+func TestBuildPlatforms_JoinsAllFailures(t *testing.T) {
+	amdErr := errors.New("amd64 boom")
+	armErr := errors.New("arm64 boom")
+
+	err := buildPlatforms([]string{"linux/amd64", "linux/arm64"}, func(platformStr string) error {
+		if platformStr == "linux/amd64" {
+			return amdErr
+		}
+		return armErr
+	})
+
+	if !errors.Is(err, amdErr) || !errors.Is(err, armErr) {
+		t.Errorf("expected both failures to be reported, got %v", err)
+	}
+}
+
+func TestBuildPlatforms_NoPlatforms(t *testing.T) {
+	called := false
+	err := buildPlatforms(nil, func(string) error {
+		called = true
+		return nil
+	})
+
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if called {
+		t.Error("build should not be called without platforms")
 	}
 }

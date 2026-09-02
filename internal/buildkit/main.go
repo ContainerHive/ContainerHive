@@ -71,22 +71,38 @@ func (c *Client) Version(ctx context.Context) (string, error) {
 	return info.BuildkitVersion.Version, nil
 }
 
-func (c *Client) Build(ctx context.Context, opts *BuildOpts, statusUpdateHandler func(chan *client.SolveStatus) error) error {
-	var buildCache []client.CacheOptionsEntry
-	if opts.Cache != nil {
-		cacheOpt := opts.Cache
-		attributes := cacheOpt.ToAttributes()
-		_, hasExplicitIgnoreErr := attributes["ignore-errors"]
-		if !hasExplicitIgnoreErr {
-			attributes["ignore-errors"] = "true"
-		}
-		buildCache = []client.CacheOptionsEntry{
-			{
-				Type:  cacheOpt.Name(),
-				Attrs: attributes,
-			},
-		}
+// cacheExportIgnoreErrorAttr is the BuildKit attribute that makes a failing
+// cache export non-fatal for the build. Note the singular "error": BuildKit
+// only recognises this exact key (see moby/buildkit control.go).
+const cacheExportIgnoreErrorAttr = "ignore-error"
+
+// cacheOptions turns a cache backend into BuildKit cache options. Cache export
+// errors are made non-fatal by default so an unreachable or unauthorized cache
+// registry cannot fail an otherwise successful build. A backend can opt out by
+// setting the attribute itself.
+func cacheOptions(buildCache cache.BuildkitCache) []client.CacheOptionsEntry {
+	if buildCache == nil {
+		return nil
 	}
+
+	attributes := buildCache.ToAttributes()
+	if attributes == nil {
+		attributes = map[string]string{}
+	}
+	if _, ok := attributes[cacheExportIgnoreErrorAttr]; !ok {
+		attributes[cacheExportIgnoreErrorAttr] = "true"
+	}
+
+	return []client.CacheOptionsEntry{
+		{
+			Type:  buildCache.Name(),
+			Attrs: attributes,
+		},
+	}
+}
+
+func (c *Client) Build(ctx context.Context, opts *BuildOpts, statusUpdateHandler func(chan *client.SolveStatus) error) error {
+	buildCache := cacheOptions(opts.Cache)
 
 	localMounts, err := opts.BuildContext.ToLocalMounts()
 	if err != nil {

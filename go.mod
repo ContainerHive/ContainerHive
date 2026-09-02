@@ -649,6 +649,9 @@ require (
 	sigs.k8s.io/yaml v1.6.0 // indirect
 )
 
-// go-archive v0.2.0 removed deprecated type aliases that docker/docker@v28.x still references,
-// v0.1.0 is a strict API superset so this is safe for all consumers
-replace github.com/moby/go-archive => github.com/moby/go-archive v0.3.3
+// go-archive v0.2.0 removed deprecated type aliases (e.g. archive.Compression) that
+// docker/docker@v28.x still references from pkg/archive, pulled in transitively via
+// container-structure-test -> fsouza/go-dockerclient. v0.1.0 is a strict API superset, so this is
+// safe for all consumers. Do NOT bump this pin: any version >= v0.2.0 breaks the build.
+// Renovate is disabled for this dependency in renovate.json5.
+replace github.com/moby/go-archive => github.com/moby/go-archive v0.1.0
