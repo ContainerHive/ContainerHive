@@ -1,3 +1,9 @@
+## [1.1.1](https://github.com/ContainerHive/ContainerHive/compare/v1.1.0...v1.1.1) (2026-09-02)
+
+### Bug Fixes
+
+* **deps:** pin go-archive replace back to v0.1.0 ([#229](https://github.com/ContainerHive/ContainerHive/issues/229)) ([8142107](https://github.com/ContainerHive/ContainerHive/commit/814210765894cebffbcea96b1bc4a5ea4b268fe7)), closes [#211](https://github.com/ContainerHive/ContainerHive/issues/211)
+
 ## [1.1.0](https://github.com/ContainerHive/ContainerHive/compare/v1.0.6...v1.1.0) (2026-09-02)
 
 ### Features
