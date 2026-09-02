@@ -42,7 +42,11 @@ func (c *Client) HasImage(ctx context.Context, imageRef string) bool {
 
 // PullImage pulls an image from a remote registry into the local Docker daemon.
 func (c *Client) PullImage(ctx context.Context, imageRef string) (string, error) {
-	rc, err := c.docker.ImagePull(ctx, imageRef, image.PullOptions{})
+	auth, err := registryAuthFor(imageRef)
+	if err != nil {
+		return "", errors.Join(errors.New("failed to resolve registry credentials"), err)
+	}
+	rc, err := c.docker.ImagePull(ctx, imageRef, image.PullOptions{RegistryAuth: auth})
 	if err != nil {
 		return "", errors.Join(errors.New("failed to pull image"), err)
 	}

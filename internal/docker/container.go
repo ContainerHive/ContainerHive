@@ -29,7 +29,11 @@ func (c *Client) ContainerRun(ctx context.Context, name, imageRef string, hostPo
 		if !errdefs.IsNotFound(err) {
 			return fmt.Errorf("inspect image %s: %w", imageRef, err)
 		}
-		rc, err := c.docker.ImagePull(ctx, imageRef, image.PullOptions{})
+		auth, err := registryAuthFor(imageRef)
+		if err != nil {
+			return fmt.Errorf("resolve registry credentials for %s: %w", imageRef, err)
+		}
+		rc, err := c.docker.ImagePull(ctx, imageRef, image.PullOptions{RegistryAuth: auth})
 		if err != nil {
 			return fmt.Errorf("pull image %s: %w", imageRef, err)
 		}
