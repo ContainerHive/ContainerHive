@@ -26,6 +26,7 @@ RUN apt update \
     && apt-get install -y --upgrade \
       curl \
       ca-certificates \
+      unzip \
     && rm -rf /var/lib/apt/lists/* \
     && curl -fsSL https://awscli.amazonaws.com/v2/install.sh | bash -s -- --system
 
