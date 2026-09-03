@@ -1,3 +1,9 @@
+## [1.1.6](https://github.com/ContainerHive/ContainerHive/compare/v1.1.5...v1.1.6) (2026-09-03)
+
+### Bug Fixes
+
+* **ci:** skip already-uploaded wheels on PyPI publish retry ([c4c5327](https://github.com/ContainerHive/ContainerHive/commit/c4c532731ef563208a2e07e555cca26e3aba4f14))
+
 ## [1.1.5](https://github.com/ContainerHive/ContainerHive/compare/v1.1.4...v1.1.5) (2026-09-02)
 
 ### Bug Fixes
