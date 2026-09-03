@@ -188,10 +188,22 @@
       },
       "description": "Dockerfile linting configuration (hadolint)",
       "additionalProperties": false
+    },
+    "report": {
+      "type": "object",
+      "properties": {
+        "styleSheet": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
     }
   },
   "$id": "https://schema-nest.timo-reymann.de/api/schema/json-schema/containerhive-project/latest",
   "title": "Project configuration",
   "description": "Project-level configuration schema for ContainerHive.",
+  "required": [
+    "report"
+  ],
   "additionalProperties": false
 }

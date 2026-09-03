@@ -44,6 +44,7 @@ func (g *Generator) Generate(project *model.ContainerHiveProject) (*ProjectRepor
 	report := &ProjectReport{
 		GeneratedAt: time.Now().UTC().Format(time.RFC3339),
 		Images:      scanProject(project),
+		StyleSheet:  project.Config.Report.StyleSheet,
 	}
 
 	if project.Config.Registry != nil && project.Config.Registry.Address != "" {
@@ -195,6 +196,15 @@ func parseSBOMFile(path string) ([]SBOMPackage, error) {
 	return packages, nil
 }
 
+func (g *Generator) ReadStyleSheet(report *ProjectReport) (string, error) {
+	if report.StyleSheet == "" {
+		return "", nil
+	}
+
+	content, err := os.ReadFile(report.StyleSheet)
+	return string(content), err
+}
+
 func (g *Generator) GenerateJSON(report *ProjectReport) ([]byte, error) {
 	return json.MarshalIndent(report, "", "  ")
 }
@@ -205,10 +215,15 @@ func (g *Generator) GenerateHTMLFromAssets(report *ProjectReport) ([]byte, error
 		return nil, err
 	}
 
+	stylesheet, err := g.ReadStyleSheet(report)
+	if err != nil {
+		return nil, err
+	}
+
 	html := string(embeddedHTML)
 	html = replaceFirstPlaceholder(html, "/*INJECT_JSON_DATA*/", string(reportJSON))
 	html = strings.ReplaceAll(html, "/*INJECT_GENERATED_AT*/", report.GeneratedAt)
-	html = strings.ReplaceAll(html, "/*INJECT_REGISTRY*/", "")
+	html = strings.ReplaceAll(html, "/*INJECT_STYLE*/", stylesheet)
 
 	return []byte(html), nil
 }

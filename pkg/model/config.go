@@ -120,13 +120,19 @@ type LintConfig struct {
 	FailureThreshold  string            `yaml:"failure_threshold,omitempty" json:"failure_threshold,omitempty" jsonschema:"Lowest severity that causes a non-zero exit (error, warning, info, style, ignore). Defaults to error."`
 }
 
+// ProjectReportConfig represents the report configuration for a project.
+type ProjectReportConfig struct {
+	StyleSheet string `yaml:"styleSheet,omitempty" json:"styleSheet,omitempty"`
+}
+
 // HiveProjectConfig is the top-level project configuration from hive.yml.
 type HiveProjectConfig struct {
-	BuildKit        *BuildKitConfig   `yaml:"buildkit,omitempty" json:"buildkit,omitempty" jsonschema:"BuildKit daemon configuration"`
-	Cache           *CacheConfig      `yaml:"cache,omitempty" json:"cache,omitempty" jsonschema:"Build cache configuration"`
-	Registry        *RegistryConfig   `yaml:"registry,omitempty" json:"registry,omitempty" jsonschema:"Container registry configuration"`
-	Platforms       []string          `yaml:"platforms,omitempty" json:"platforms,omitempty" jsonschema:"Default target platforms for all images (e.g. linux/amd64)"`
-	TemplateOptions map[string]string `yaml:"template_options,omitempty" json:"template_options,omitempty" jsonschema:"Custom template variables available via the option function in CI and custom templates"`
-	Labels          *LabelsConfig     `yaml:"labels,omitempty" json:"labels,omitempty" jsonschema:"Project-level OCI image labels applied to every built image"`
-	Lint            *LintConfig       `yaml:"lint,omitempty" json:"lint,omitempty" jsonschema:"Dockerfile linting configuration (hadolint)"`
+	BuildKit        *BuildKitConfig     `yaml:"buildkit,omitempty" json:"buildkit,omitempty" jsonschema:"BuildKit daemon configuration"`
+	Cache           *CacheConfig        `yaml:"cache,omitempty" json:"cache,omitempty" jsonschema:"Build cache configuration"`
+	Registry        *RegistryConfig     `yaml:"registry,omitempty" json:"registry,omitempty" jsonschema:"Container registry configuration"`
+	Platforms       []string            `yaml:"platforms,omitempty" json:"platforms,omitempty" jsonschema:"Default target platforms for all images (e.g. linux/amd64)"`
+	TemplateOptions map[string]string   `yaml:"template_options,omitempty" json:"template_options,omitempty" jsonschema:"Custom template variables available via the option function in CI and custom templates"`
+	Labels          *LabelsConfig       `yaml:"labels,omitempty" json:"labels,omitempty" jsonschema:"Project-level OCI image labels applied to every built image"`
+	Lint            *LintConfig         `yaml:"lint,omitempty" json:"lint,omitempty" jsonschema:"Dockerfile linting configuration (hadolint)"`
+	Report          ProjectReportConfig `yaml:"report,omitempty" json:"report" jsonSchema:"Report customization"`
 }
