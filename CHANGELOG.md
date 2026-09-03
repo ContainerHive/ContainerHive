@@ -1,3 +1,9 @@
+## [1.1.10](https://github.com/ContainerHive/ContainerHive/compare/v1.1.9...v1.1.10) (2026-09-03)
+
+### Bug Fixes
+
+* **build:** buildWithDeps must look up images by name, not by identifier ([#231](https://github.com/ContainerHive/ContainerHive/issues/231)) ([fcf8b59](https://github.com/ContainerHive/ContainerHive/commit/fcf8b595b32b92732d4c3083bfcaedd4e72b4d7c))
+
 ## [1.1.9](https://github.com/ContainerHive/ContainerHive/compare/v1.1.8...v1.1.9) (2026-09-03)
 
 ### Bug Fixes
