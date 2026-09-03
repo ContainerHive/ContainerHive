@@ -1,3 +1,9 @@
+## [1.1.8](https://github.com/ContainerHive/ContainerHive/compare/v1.1.7...v1.1.8) (2026-09-03)
+
+### Bug Fixes
+
+* **wheel:** shorten Project-URL label to avoid RFC 2822 header folding ([50b1658](https://github.com/ContainerHive/ContainerHive/commit/50b1658f503b6bc82e2eed6447f74495169cf37f))
+
 ## [1.1.7](https://github.com/ContainerHive/ContainerHive/compare/v1.1.6...v1.1.7) (2026-09-03)
 
 ### Bug Fixes
