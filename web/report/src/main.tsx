@@ -7,7 +7,7 @@ import App from './App.tsx'
 import ImageDetail from './components/ImageDetail.tsx'
 import License from './components/License.tsx'
 import About from './components/About.tsx'
-import { ThemeProvider } from './ThemeContext.tsx'
+import {ThemeProvider, useTheme} from './ThemeContext.tsx'
 import { getReportData } from './mockData.ts'
 
 declare global {
@@ -30,6 +30,11 @@ function WrapApp() {
 function AppTitle() {
   const location = useLocation()
   const path = location.pathname
+  const {hideHeader} = useTheme()
+
+  if(hideHeader) {
+    return <div style={{paddingTop: "30px"}}></div>
+  }
   
   if (path.startsWith('/image/')) {
     return <Header title="Image Details" />
