@@ -868,6 +868,84 @@ func TestBuildWithDeps_FilterMatchesBaseNotVariant(t *testing.T) {
 	}
 }
 
+// TestBuildWithDeps_MultiVariantSameName mirrors an image split across
+// multiple variant subfolders that share a name (e.g. dotnet/8 and
+// dotnet/10, both discovered as separate *model.Image with Name "dotnet").
+// ImagesByIdentifier deliberately doesn't carry a "dotnet"-named entry, so
+// the old identifier-scan lookup would find nothing and silently skip the
+// image (nil error); only a lookup through ImagesByName reaches the blocked
+// MkdirAll and surfaces the build error.
+func TestBuildWithDeps_MultiVariantSameName(t *testing.T) {
+	distPath := t.TempDir()
+
+	baseDir := filepath.Join(distPath, "base", "1.0")
+	dotnet8Dir := filepath.Join(distPath, "dotnet", "8.0")
+	dotnet10Dir := filepath.Join(distPath, "dotnet", "10.0")
+	for _, dir := range []string{baseDir, dotnet8Dir, dotnet10Dir} {
+		if err := os.MkdirAll(dir, 0755); err != nil {
+			t.Fatal(err)
+		}
+		if err := os.WriteFile(filepath.Join(dir, "Dockerfile"), []byte("FROM scratch\n"), 0644); err != nil {
+			t.Fatal(err)
+		}
+	}
+
+	// Block MkdirAll for dotnet:8.0's platform dir so buildTag fails fast,
+	// without ever reaching the (nil in this test) BuildKit client.
+	if err := os.WriteFile(filepath.Join(dotnet8Dir, "linux-amd64"), []byte("blocker"), 0644); err != nil {
+		t.Fatal(err)
+	}
+
+	baseImg := &model.Image{
+		Name: "base",
+		Tags: map[string]*model.Tag{"1.0": {Name: "1.0"}},
+	}
+	dotnet8Img := &model.Image{
+		Name:      "dotnet",
+		Tags:      map[string]*model.Tag{"8.0": {Name: "8.0"}},
+		DependsOn: []string{"base"},
+	}
+	dotnet10Img := &model.Image{
+		Name:      "dotnet",
+		Tags:      map[string]*model.Tag{"10.0": {Name: "10.0"}},
+		DependsOn: []string{"base"},
+	}
+
+	project := &model.ContainerHiveProject{
+		Config: model.HiveProjectConfig{Platforms: []string{"linux/amd64"}},
+		ImagesByIdentifier: map[string]*model.Image{
+			// Deliberately no "dotnet"-named entry here: a lookup that scans
+			// ImagesByIdentifier for a matching Name (the old behavior) must
+			// come up empty, while ImagesByName still has both variants.
+			"base": baseImg,
+		},
+		ImagesByName: map[string][]*model.Image{
+			"base":   {baseImg},
+			"dotnet": {dotnet8Img, dotnet10Img},
+		},
+	}
+
+	bo := buildOrderWithDeps(t, distPath, project)
+	opts := &ProjectBuildOpts{
+		Project:     project,
+		BuildOrder:  bo,
+		DistPath:    distPath,
+		ProgressOut: os.Stdout,
+		// "base" itself must build successfully before "dotnet" is attempted;
+		// since this test has no real BuildKit client to build it with,
+		// filter it out and only exercise the dotnet lookup/build path.
+		Filters: []Filter{{ImageName: "dotnet"}},
+	}
+
+	err := buildWithDeps(context.Background(), &Client{inner: nil}, opts)
+	if err == nil {
+		t.Fatal("expected error from dotnet:8.0's blocked MkdirAll, got nil (image was silently skipped)")
+	}
+	if !strings.Contains(err.Error(), "failed to create platform dir") {
+		t.Errorf("expected 'failed to create platform dir' error, got: %v", err)
+	}
+}
+
 func TestBuildPlatforms_AllSucceed(t *testing.T) {
 	var built []string
 	err := buildPlatforms([]string{"linux/amd64", "linux/arm64"}, func(platformStr string) error {
