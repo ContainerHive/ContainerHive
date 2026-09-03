@@ -2,6 +2,8 @@ package report
 
 import (
 	"os"
+	"path/filepath"
+	"strings"
 	"testing"
 
 	"github.com/ContainerHive/ContainerHive/pkg/model"
@@ -299,5 +301,143 @@ func TestNewGenerator(t *testing.T) {
 	g := NewGenerator()
 	if g == nil {
 		t.Fatal("NewGenerator() returned nil")
+	}
+}
+
+func TestGenerator_ReadStyleSheet(t *testing.T) {
+	tests := []struct {
+		name        string
+		stylesheet  string
+		wantContent string
+		wantErr     bool
+	}{
+		{
+			name:        "empty stylesheet path",
+			stylesheet:  "",
+			wantContent: "",
+			wantErr:     false,
+		},
+		{
+			name:        "valid css file",
+			stylesheet:  "", // set in body via temp dir
+			wantContent: "body { color: red; }",
+			wantErr:     false,
+		},
+		{
+			name:        "missing file",
+			stylesheet:  "", // set in body to nonexistent path
+			wantContent: "",
+			wantErr:     true,
+		},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			g := NewGenerator()
+			report := &ProjectReport{StyleSheet: tc.stylesheet}
+
+			switch tc.name {
+			case "valid css file":
+				path := filepath.Join(t.TempDir(), "extra.css")
+				if err := os.WriteFile(path, []byte(tc.wantContent), 0644); err != nil {
+					t.Fatalf("setup: %v", err)
+				}
+				report.StyleSheet = path
+			case "missing file":
+				report.StyleSheet = filepath.Join(t.TempDir(), "nonexistent.css")
+			}
+
+			got, err := g.ReadStyleSheet(report)
+			if tc.wantErr && err == nil {
+				t.Fatal("ReadStyleSheet() expected error, got nil")
+			}
+			if !tc.wantErr && err != nil {
+				t.Fatalf("ReadStyleSheet() unexpected error: %v", err)
+			}
+			if got != tc.wantContent {
+				t.Errorf("ReadStyleSheet() = %q, want %q", got, tc.wantContent)
+			}
+		})
+	}
+}
+
+func TestGenerator_GenerateHTMLFromAssets_StyleSheet(t *testing.T) {
+	tests := []struct {
+		name         string
+		stylesheet   string // value for ProjectReport.StyleSheet
+		wantContains string // expected content in the output HTML
+		wantErr      bool
+	}{
+		{
+			name:         "stylesheet content injected",
+			stylesheet:   "", // set in body
+			wantContains: ".custom { background: blue; }",
+			wantErr:      false,
+		},
+		{
+			name:         "no stylesheet configured",
+			stylesheet:   "",
+			wantContains: "",
+			wantErr:      false,
+		},
+		{
+			name:         "stylesheet file missing",
+			stylesheet:   "", // set in body
+			wantContains: "",
+			wantErr:      true,
+		},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			g := NewGenerator()
+			report := &ProjectReport{
+				GeneratedAt: "2024-01-01T00:00:00Z",
+				StyleSheet:  tc.stylesheet,
+			}
+
+			switch tc.name {
+			case "stylesheet content injected":
+				path := filepath.Join(t.TempDir(), "style.css")
+				if err := os.WriteFile(path, []byte(tc.wantContains), 0644); err != nil {
+					t.Fatalf("setup: %v", err)
+				}
+				report.StyleSheet = path
+			case "stylesheet file missing":
+				report.StyleSheet = filepath.Join(t.TempDir(), "missing.css")
+			}
+
+			got, err := g.GenerateHTMLFromAssets(report)
+			if tc.wantErr {
+				if err == nil {
+					t.Fatal("GenerateHTMLFromAssets() expected error, got nil")
+				}
+				return
+			}
+			if err != nil {
+				t.Fatalf("GenerateHTMLFromAssets() unexpected error: %v", err)
+			}
+
+			html := string(got)
+
+			if tc.wantContains != "" {
+				if !strings.Contains(html, tc.wantContains) {
+					t.Errorf("output missing expected stylesheet content %q", tc.wantContains)
+				}
+			}
+
+			if strings.Contains(html, "/*INJECT_STYLE*/") {
+				t.Error("output still contains /*INJECT_STYLE*/ placeholder")
+			}
+			if strings.Contains(html, "/*INJECT_JSON_DATA*/") {
+				t.Error("output still contains /*INJECT_JSON_DATA*/ placeholder")
+			}
+			if strings.Contains(html, "/*INJECT_GENERATED_AT*/") {
+				t.Error("output still contains /*INJECT_GENERATED_AT*/ placeholder")
+			}
+			if !strings.Contains(html, "2024-01-01T00:00:00Z") {
+				t.Error("output does not contain injected generatedAt value")
+			}
+		})
 	}
 }
