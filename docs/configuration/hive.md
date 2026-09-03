@@ -189,3 +189,125 @@ report:
 | Field        | Type   | Description                                                                 |
 |:-------------|:-------|:----------------------------------------------------------------------------|
 | `styleSheet` | string | Path to a CSS file to embed in the generated HTML report for custom styling |
+
+#### Theme CSS variables
+
+The report uses CSS custom properties for theming. Override any of these in your custom stylesheet to restyle the report. All variables are scoped to `[data-theme="light"]` or `[data-theme="dark"]`.
+
+=== "Light — The Precision Architect"
+
+    ```css
+    [data-theme="light"], :root {
+      /* Surfaces */
+      --surface: #f7f9fb;
+      --surface-container-lowest: #ffffff;
+      --surface-container-low: #f2f4f6;
+      --surface-container: #edf0f2;
+      --surface-container-high: #e6e8ea;
+      --surface-container-highest: #e0e3e5;
+
+      /* Brand */
+      --primary: #006591;
+      --primary-container: #0ea5e9;
+      --on-primary: #ffffff;
+      --on-primary-container: #ffffff;
+
+      /* Surfaces (content) */
+      --on-surface: #191c1e;
+      --on-surface-variant: #40484f;
+
+      /* Chips / tags */
+      --secondary-container: #b8dffe;
+      --on-secondary-container: #dde2e8;
+
+      /* Status */
+      --tertiary: #3cddc7;
+      --error: #ba1a1a;
+
+      /* Search highlight */
+      --highlight-bg: #fef08a;
+      --highlight-color: var(--on-surface);
+    }
+    ```
+
+    | Variable | Hex | Role |
+    |:---------|:----|:-----|
+    | `--surface` | `#f7f9fb` | Base canvas |
+    | `--surface-container-lowest` | `#ffffff` | Cards, code blocks (pop layer) |
+    | `--surface-container-low` | `#f2f4f6` | Sidebars, secondary navigation |
+    | `--surface-container` | `#edf0f2` | Mid-tier grouping containers |
+    | `--surface-container-high` | `#e6e8ea` | Hover states, active selection |
+    | `--surface-container-highest` | `#e0e3e5` | Code blocks, high-contrast zones |
+    | `--primary` | `#006591` | Primary brand, CTAs |
+    | `--primary-container` | `#0ea5e9` | Gradient endpoint, highlights |
+    | `--on-primary` | `#ffffff` | Text on primary backgrounds |
+    | `--on-primary-container` | `#ffffff` | Text on primary-container |
+    | `--on-surface` | `#191c1e` | All body text |
+    | `--on-surface-variant` | `#40484f` | Metadata, secondary labels |
+    | `--secondary-container` | `#b8dffe` | Chip backgrounds |
+    | `--on-secondary-container` | `#dde2e8` | Chip text |
+    | `--tertiary` | `#3cddc7` | Healthy/Running status |
+    | `--error` | `#ba1a1a` | Vulnerability alerts, destructive actions |
+    | `--highlight-bg` | `#fef08a` | Search highlight background |
+    | `--highlight-color` | `var(--on-surface)` | Search highlight text |
+
+=== "Dark — The Observability Monolith"
+
+    ```css
+    [data-theme="dark"] {
+      /* Surfaces */
+      --surface: #0b1326;
+      --surface-container-lowest: #0d1520;
+      --surface-container-low: #131b2e;
+      --surface-container: #1a2236;
+      --surface-container-high: #222c42;
+      --surface-container-highest: #2d3449;
+      --surface-variant: #1e2a40;
+      --surface-bright: #2a3552;
+
+      /* Brand */
+      --primary: #7bd0ff;
+      --primary-container: #4db8ff;
+      --on-primary: #003751;
+      --on-primary-container: #0086b5;
+
+      /* Surfaces (content) */
+      --on-surface: #e2e8f0;
+      --on-surface-variant: #8899b0;
+
+      /* Chips / tags */
+      --secondary-container: #1e3a50;
+      --on-secondary-container: #7bd0ff;
+
+      /* Status */
+      --tertiary: #3cddc7;
+      --error: #ffb4ab;
+
+      /* Search highlight */
+      --highlight-bg: #854d0e;
+      --highlight-color: #fef08a;
+    }
+    ```
+
+    | Variable | Hex | Role |
+    |:---------|:----|:-----|
+    | `--surface` | `#0b1326` | Base canvas (bedrock) |
+    | `--surface-container-lowest` | `#0d1520` | Recessed cards, terminal blocks |
+    | `--surface-container-low` | `#131b2e` | Main workspace background |
+    | `--surface-container` | `#1a2236` | Secondary navigation, panels |
+    | `--surface-container-high` | `#222c42` | Interactive modules, hover states |
+    | `--surface-container-highest` | `#2d3449` | Critical active data, selected |
+    | `--surface-variant` | `#1e2a40` | Glassmorphism base (60% opacity) |
+    | `--surface-bright` | `#2a3552` | Tertiary hover lift |
+    | `--primary` | `#7bd0ff` | Primary brand, CTAs |
+    | `--primary-container` | `#4db8ff` | Row indicator lines on hover |
+    | `--on-primary` | `#003751` | Text on primary backgrounds |
+    | `--on-primary-container` | `#0086b5` | CTA gradient endpoint |
+    | `--on-surface` | `#e2e8f0` | All body text |
+    | `--on-surface-variant` | `#8899b0` | Metadata, secondary labels |
+    | `--secondary-container` | `#1e3a50` | Chip backgrounds |
+    | `--on-secondary-container` | `#7bd0ff` | Chip text |
+    | `--tertiary` | `#3cddc7` | Healthy/Running status, terminal text |
+    | `--error` | `#ffb4ab` | Vulnerability alerts, destructive actions |
+    | `--highlight-bg` | `#854d0e` | Search highlight background |
+    | `--highlight-color` | `#fef08a` | Search highlight text |
