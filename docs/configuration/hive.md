@@ -194,7 +194,7 @@ report:
 
 The report uses CSS custom properties for theming. Override any of these in your custom stylesheet to restyle the report. All variables are scoped to `[data-theme="light"]` or `[data-theme="dark"]`.
 
-=== "Light — The Precision Architect"
+=== "☀️ Light — The Precision Architect"
 
     ```css
     [data-theme="light"], :root {
@@ -251,7 +251,7 @@ The report uses CSS custom properties for theming. Override any of these in your
     | `--highlight-bg` | `#fef08a` | Search highlight background |
     | `--highlight-color` | `var(--on-surface)` | Search highlight text |
 
-=== "Dark — The Observability Monolith"
+=== "🌙 Dark — The Observability Monolith"
 
     ```css
     [data-theme="dark"] {
