@@ -130,42 +130,38 @@ func BuildProject(ctx context.Context, client *Client, opts *ProjectBuildOpts) e
 
 func buildWithDeps(ctx context.Context, client *Client, opts *ProjectBuildOpts) error {
 	for _, imgName := range opts.BuildOrder.Order() {
-		var imageDef *model.Image
-		for _, img := range opts.Project.ImagesByIdentifier {
-			if img.Name == imgName {
-				imageDef = img
-				break
-			}
-		}
-		if imageDef == nil {
+		images := opts.Project.ImagesByName[imgName]
+		if len(images) == 0 {
 			slog.Warn("Image not found in project", "image", imgName)
 			continue
 		}
 
-		for tagName := range imageDef.Tags {
-			buildBase := matchesFilters(opts.Filters, imgName, tagName)
+		for _, imageDef := range images {
+			for tagName := range imageDef.Tags {
+				buildBase := matchesFilters(opts.Filters, imgName, tagName)
 
-			if buildBase {
-				platforms := platform.Resolve(opts.Project.Config.Platforms, imageDef.Platforms, nil)
-				if err := buildPlatforms(platforms, func(platformStr string) error {
-					return buildTag(ctx, client, opts, imageDef, tagName, platformStr)
-				}); err != nil {
-					return err
-				}
-			}
-
-			// Build variants
-			for variantName, variantDef := range imageDef.Variants {
-				variantTagName := tagName + variantDef.TagSuffix
-				if !matchesFilters(opts.Filters, imgName, variantTagName) {
-					continue
+				if buildBase {
+					platforms := platform.Resolve(opts.Project.Config.Platforms, imageDef.Platforms, nil)
+					if err := buildPlatforms(platforms, func(platformStr string) error {
+						return buildTag(ctx, client, opts, imageDef, tagName, platformStr)
+					}); err != nil {
+						return err
+					}
 				}
 
-				platforms := platform.Resolve(opts.Project.Config.Platforms, imageDef.Platforms, variantDef.Platforms)
-				if err := buildPlatforms(platforms, func(platformStr string) error {
-					return buildVariant(ctx, client, opts, imageDef, tagName, variantName, variantDef, platformStr)
-				}); err != nil {
-					return err
+				// Build variants
+				for variantName, variantDef := range imageDef.Variants {
+					variantTagName := tagName + variantDef.TagSuffix
+					if !matchesFilters(opts.Filters, imgName, variantTagName) {
+						continue
+					}
+
+					platforms := platform.Resolve(opts.Project.Config.Platforms, imageDef.Platforms, variantDef.Platforms)
+					if err := buildPlatforms(platforms, func(platformStr string) error {
+						return buildVariant(ctx, client, opts, imageDef, tagName, variantName, variantDef, platformStr)
+					}); err != nil {
+						return err
+					}
 				}
 			}
 		}
