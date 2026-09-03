@@ -1,3 +1,10 @@
+## [1.2.0](https://github.com/ContainerHive/ContainerHive/compare/v1.1.12...v1.2.0) (2026-09-03)
+
+### Features
+
+* **report:** add custom stylesheet injection for HTML report ([8285325](https://github.com/ContainerHive/ContainerHive/commit/82853259071a121873a212ec50de490478326733))
+* **web-report:** hide header via query param ([ffbb116](https://github.com/ContainerHive/ContainerHive/commit/ffbb11666479e70d8112152bbc69bb3c47003c08))
+
 ## [1.1.12](https://github.com/ContainerHive/ContainerHive/compare/v1.1.11...v1.1.12) (2026-09-03)
 
 ### Bug Fixes
