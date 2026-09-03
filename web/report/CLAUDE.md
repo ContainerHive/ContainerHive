@@ -37,7 +37,7 @@ At runtime the Go generator injects report JSON into `window.__REPORT_DATA__`. `
 
 Injection placeholders in `index.html`:
 - `/*INJECT_JSON_DATA*/` — the full `ProjectReport` JSON
-- `/*INJECT_GENERATED_AT*/`, `/*INJECT_SOURCE*/`, `/*INJECT_REGISTRY*/` — metadata strings
+- `/*INJECT_GENERATED_AT*/`, `/*INJECT_SOURCE*/`, `/*INJECT_STYLE*/` — metadata strings
 
 ## Design system
 

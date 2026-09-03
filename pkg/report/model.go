@@ -10,6 +10,7 @@ type ProjectReport struct {
 	GeneratedAt string        `json:"generatedAt"`
 	Registry    *RegistryInfo `json:"registry,omitempty"`
 	Images      []ImageReport `json:"images"`
+	StyleSheet  string        `json:"styleSheet,omitempty"`
 }
 
 type Report struct {
