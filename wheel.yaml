@@ -7,7 +7,7 @@ description: !FileContent README.md
 license: AGPLv3
 requires_python: ">=3.12"
 classifier:
-  - "Development Status :: 4 - Beta"
+  - "5 - Production/Stable"
   - "Intended Audience :: Developers"
   - "Environment :: Console"
   - "Environment :: MacOS X"
