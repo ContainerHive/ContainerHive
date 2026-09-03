@@ -1,11 +1,10 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react'
 
-type ComponentChildren = any
-
 type Theme = 'light' | 'dark'
 
 interface ThemeContextType {
   theme: Theme
+  hideHeader: boolean
   toggleTheme: () => void
 }
 
@@ -26,16 +25,18 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     localStorage.setItem('theme', theme)
   }, [theme])
 
+  const query = new URLSearchParams( window.location.search)
   const toggleTheme = () => setTheme(t => t === 'light' ? 'dark' : 'light')
+  const hideHeader = query.get('hide-header') != undefined
 
   return (
-    <ThemeContext.Provider value={{ theme, toggleTheme }}>
+    <ThemeContext.Provider value={{ theme, hideHeader, toggleTheme }}>
       {children}
     </ThemeContext.Provider>
   )
 }
 
-export function useTheme() {
+export function useTheme(): ThemeContextType {
   const context = useContext(ThemeContext)
   if (!context) throw new Error('useTheme must be used within ThemeProvider')
   return context
