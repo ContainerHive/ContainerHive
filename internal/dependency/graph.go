@@ -28,7 +28,11 @@ func (g *Graph) AddImage(name string) {
 
 // AddDependency records that "from" depends on "to",
 // meaning "to" must be built before "from".
+// Deduped: multi-variant images can call this with the same pair more than once.
 func (g *Graph) AddDependency(from, to string) {
+	if slices.Contains(g.edges[from], to) {
+		return
+	}
 	g.edges[from] = append(g.edges[from], to)
 }
 

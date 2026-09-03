@@ -168,3 +168,17 @@ func TestGraph_HasDependencies(t *testing.T) {
 		}
 	})
 }
+
+func TestGraph_AddDependency_Dedup(t *testing.T) {
+	g := NewGraph()
+	g.AddImage("A")
+	g.AddImage("B")
+
+	g.AddDependency("B", "A")
+	g.AddDependency("B", "A")
+
+	deps := g.Dependencies("B")
+	if len(deps) != 1 {
+		t.Fatalf("expected 1 dependency, got %d: %v", len(deps), deps)
+	}
+}
