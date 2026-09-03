@@ -875,6 +875,34 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="report">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#customizing-the-report" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Customizing the report
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#url-parameters" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        URL parameters
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
         
           <li class="md-nav__item">
@@ -2067,6 +2095,34 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="report">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#customizing-the-report" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Customizing the report
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#url-parameters" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        URL parameters
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
         
           <li class="md-nav__item">
@@ -2579,6 +2635,24 @@
 </tbody>
 </table>
 <p>Generates a report containing information about all configured images, including their build status, dependencies, and metadata.</p>
+<h4 id="customizing-the-report">Customizing the report</h4>
+<p>To customize the look of the HTML report, set <code>report.styleSheet</code> in your <code>hive.yml</code> to a path pointing at a CSS file. The contents of that file are embedded verbatim into the generated HTML via a <code>&lt;style&gt;</code> block. See <a href="../configuration/hive.html#theme-css-variables">Theme CSS variables</a> for the full list of overridable variables.</p>
+<h4 id="url-parameters">URL parameters</h4>
+<p>The HTML report supports the following query parameters:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Parameter</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>?hide-header</code></td>
+<td style="text-align: left;">Hides the top header bar. Useful when embedding the report in an iframe or dashboard.</td>
+</tr>
+</tbody>
+</table>
 <h3 id="license"><code>license</code></h3>
 <p>Show third-party license notices.</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-18-1"><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a>ch<span class="w"> </span>license
