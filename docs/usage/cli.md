@@ -280,6 +280,8 @@ ch report
 
 Generates a report containing information about all configured images, including their build status, dependencies, and metadata.
 
+To customize the look of the HTML report, set `report.styleSheet` in your `hive.yml` to a path pointing at a CSS file. The contents of that file are embedded verbatim into the generated HTML via a `<style>` block.
+
 ### `license`
 
 Show third-party license notices.
