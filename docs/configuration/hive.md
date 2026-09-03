@@ -176,3 +176,16 @@ lint:
 | `trusted_registries` | string list | Registries hadolint treats as trusted (suppresses `DL3026`)                                              |
 | `label_schema`       | map         | Expected LABEL keys and their validation types (see [hadolint docs](https://github.com/hadolint/hadolint#configure)) |
 | `strict_labels`      | bool        | Fail on labels missing from `label_schema`                                                               |
+
+### `report`
+
+Report generation settings.
+
+```yaml
+report:
+  styleSheet: styles/custom.css
+```
+
+| Field        | Type   | Description                                                                 |
+|:-------------|:-------|:----------------------------------------------------------------------------|
+| `styleSheet` | string | Path to a CSS file to embed in the generated HTML report for custom styling |
