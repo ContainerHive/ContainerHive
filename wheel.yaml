@@ -19,7 +19,7 @@ classifier:
 project_urls:
   "Homepage": "https://github.com/ContainerHive/ContainerHive"
   "Source Code": "https://github.com/ContainerHive/ContainerHive.git"
-  "Bug Tracker": "https://github.com/ContainerHive/ContainerHive/issues"
+  "Issues": "https://github.com/ContainerHive/ContainerHive/issues"
 source: !WheelSource
   implementation: binary_wheel_builder.api.wheel_sources.platform_based_file.PlatformBasedFileSource
   executable_path: ch
