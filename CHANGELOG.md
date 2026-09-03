@@ -1,3 +1,9 @@
+## [1.1.11](https://github.com/ContainerHive/ContainerHive/compare/v1.1.10...v1.1.11) (2026-09-03)
+
+### Bug Fixes
+
+* **wheel:** Set to production ([d1dc57f](https://github.com/ContainerHive/ContainerHive/commit/d1dc57fd90381cbcc171b4f78bd122d46432820b))
+
 ## [1.1.10](https://github.com/ContainerHive/ContainerHive/compare/v1.1.9...v1.1.10) (2026-09-03)
 
 ### Bug Fixes
