@@ -248,7 +248,7 @@ jobs:
       - run:
           name: Upload wheel
           command: |
-            twine upload -r pypi --skip-existing dist/wheel/*
+            twine upload -r pypi --skip-existing --verbose dist/wheel/*
 
   update_homebrew_formula:
     executor: python
