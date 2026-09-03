@@ -229,8 +229,8 @@ func (g *Generator) GenerateHTMLFromAssets(report *ProjectReport) ([]byte, error
 }
 
 func replaceFirstPlaceholder(html, placeholder, data string) string {
-	if idx := strings.Index(html, placeholder); idx >= 0 {
-		return html[:idx] + data + html[idx+len(placeholder):]
+	if before, after, ok := strings.Cut(html, placeholder); ok {
+		return before + data + after
 	}
 	return html
 }
