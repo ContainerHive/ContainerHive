@@ -1,3 +1,9 @@
+## [1.1.12](https://github.com/ContainerHive/ContainerHive/compare/v1.1.11...v1.1.12) (2026-09-03)
+
+### Bug Fixes
+
+* **wheel:** Fix development status ([5f040f1](https://github.com/ContainerHive/ContainerHive/commit/5f040f1b530feeeecae5a5fae26484b11e22a50a))
+
 ## [1.1.11](https://github.com/ContainerHive/ContainerHive/compare/v1.1.10...v1.1.11) (2026-09-03)
 
 ### Bug Fixes
