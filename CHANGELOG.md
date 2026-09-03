@@ -1,3 +1,9 @@
+## [1.1.9](https://github.com/ContainerHive/ContainerHive/compare/v1.1.8...v1.1.9) (2026-09-03)
+
+### Bug Fixes
+
+* **ci:** add --verbose to twine upload to surface real PyPI rejection reason ([197d465](https://github.com/ContainerHive/ContainerHive/commit/197d4659b7e51d5db064d6b206269fee94297ff2))
+
 ## [1.1.8](https://github.com/ContainerHive/ContainerHive/compare/v1.1.7...v1.1.8) (2026-09-03)
 
 ### Bug Fixes
