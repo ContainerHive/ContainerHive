@@ -1,3 +1,9 @@
+## [1.1.7](https://github.com/ContainerHive/ContainerHive/compare/v1.1.6...v1.1.7) (2026-09-03)
+
+### Bug Fixes
+
+* **dependency:** dedup edges in AddDependency ([#230](https://github.com/ContainerHive/ContainerHive/issues/230)) ([a0f6aea](https://github.com/ContainerHive/ContainerHive/commit/a0f6aeaf4eadb424a5284e0721e28a258d54e2cb))
+
 ## [1.1.6](https://github.com/ContainerHive/ContainerHive/compare/v1.1.5...v1.1.6) (2026-09-03)
 
 ### Bug Fixes
