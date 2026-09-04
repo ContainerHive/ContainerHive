@@ -12,9 +12,17 @@ type Generator struct {
 	tool *syft.SBOMImageTool
 }
 
+// Option configures a Generator.
+type Option = syft.Option
+
+// WithGenerateCPEs controls whether CPEs are generated for each component.
+// Defaults to true; disabling it trims SBOM size at the cost of CPE-based
+// vulnerability matching for scanners that need it.
+var WithGenerateCPEs = syft.WithGenerateCPEs
+
 // NewGenerator creates a new SBOM generator.
-func NewGenerator() (*Generator, error) {
-	tool, err := syft.NewSBOMImageTool()
+func NewGenerator(opts ...Option) (*Generator, error) {
+	tool, err := syft.NewSBOMImageTool(opts...)
 	if err != nil {
 		return nil, err
 	}
