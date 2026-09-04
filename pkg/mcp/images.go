@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"slices"
 	"strings"
 
 	"github.com/ContainerHive/ContainerHive/pkg/deps"
@@ -82,27 +83,54 @@ func getImage(ctx context.Context, projectRoot, name string) (*imageDetail, erro
 		return nil, fmt.Errorf("image not found: %s", name)
 	}
 
-	img := images[0]
+	first := images[0]
 
 	variants := make(map[string]string)
-	for n, v := range img.Variants {
-		variants[n] = v.TagSuffix
+	versions := make(map[string]string)
+	buildArgs := make(map[string]string)
+	tagsMap := make(map[string]*model.Tag)
+	var dependsOn []string
+	var platforms []string
+
+	for _, img := range images {
+		for n, v := range img.Variants {
+			variants[n] = v.TagSuffix
+		}
+		for n, v := range img.Versions {
+			versions[n] = v
+		}
+		for n, v := range img.BuildArgs {
+			buildArgs[n] = v
+		}
+		for tagName, tag := range img.Tags {
+			tagsMap[tagName] = tag
+		}
+		for _, dep := range img.DependsOn {
+			if !slices.Contains(dependsOn, dep) {
+				dependsOn = append(dependsOn, dep)
+			}
+		}
+		for _, p := range img.Platforms {
+			if !slices.Contains(platforms, p) {
+				platforms = append(platforms, p)
+			}
+		}
 	}
 
-	tagsSlice := make([]*model.Tag, 0, len(img.Tags))
-	for _, tag := range img.Tags {
+	tagsSlice := make([]*model.Tag, 0, len(tagsMap))
+	for _, tag := range tagsMap {
 		tagsSlice = append(tagsSlice, tag)
 	}
 
 	return &imageDetail{
-		Name:        img.Name,
-		Description: img.Description,
+		Name:        first.Name,
+		Description: first.Description,
 		Tags:        tagsSlice,
 		Variants:    variants,
-		Versions:    img.Versions,
-		BuildArgs:   img.BuildArgs,
-		DependsOn:   img.DependsOn,
-		Platforms:   img.Platforms,
+		Versions:    versions,
+		BuildArgs:   buildArgs,
+		DependsOn:   dependsOn,
+		Platforms:   platforms,
 	}, nil
 }
 
