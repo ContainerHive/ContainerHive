@@ -13,6 +13,7 @@ import (
 	"github.com/ContainerHive/ContainerHive/pkg/logging"
 	"github.com/ContainerHive/ContainerHive/pkg/model"
 	"github.com/ContainerHive/ContainerHive/pkg/platform"
+	"github.com/ContainerHive/ContainerHive/pkg/shard"
 	"github.com/ContainerHive/ContainerHive/pkg/utils"
 	"github.com/sirupsen/logrus"
 )
@@ -29,6 +30,7 @@ type Opts struct {
 	Filters  []build.Filter
 	Registry Registry // if set, use registry refs when no local tar exists
 	BuildID  string
+	Shard    shard.Shard
 }
 
 // RunProjectTests executes container structure tests for all images in a project
@@ -39,9 +41,19 @@ func RunProjectTests(ctx context.Context, opts *Opts) (tested, failed int, err e
 	logrus.SetFormatter(&logging.TintFormatter{TimeFormat: time.DateTime})
 	logrus.SetOutput(os.Stderr)
 
+	if opts.Shard.Enabled() {
+		owned := shard.OwnedUnits(opts.Project, opts.Shard)
+		if len(owned) == 0 {
+			slog.Warn("Nothing to do for this shard", "shard", opts.Shard.Current, "of", opts.Shard.Max)
+			return 0, 0, nil
+		}
+		slog.Info("Shard selected units", "shard", opts.Shard.Current, "of", opts.Shard.Max, "units", len(owned))
+	}
+	owns := shard.NewTagSharder(opts.Project, opts.Shard)
+
 	for _, img := range opts.Project.ImagesByIdentifier {
 		for tagName := range img.Tags {
-			if utils.MatchesFilter(opts.Filters, img.Name, tagName) {
+			if utils.MatchesFilter(opts.Filters, img.Name, tagName) && owns(img.Identifier, tagName) {
 				t, f, err := runTestsForTag(ctx, opts, img.Name, tagName,
 					platform.Resolve(opts.Project.Config.Platforms, img.Platforms, nil))
 				if err != nil {
@@ -54,6 +66,9 @@ func RunProjectTests(ctx context.Context, opts *Opts) (tested, failed int, err e
 			for _, variantDef := range img.Variants {
 				variantTag := tagName + variantDef.TagSuffix
 				if !utils.MatchesFilter(opts.Filters, img.Name, variantTag) {
+					continue
+				}
+				if !owns(img.Identifier, variantTag) {
 					continue
 				}
 				t, f, err := runTestsForTag(ctx, opts, img.Name, variantTag,

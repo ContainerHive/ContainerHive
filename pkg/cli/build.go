@@ -12,7 +12,7 @@ func buildCmd() *cli.Command {
 		Name:      "build",
 		Usage:     "Build container images",
 		ArgsUsage: "[image:tag ...]",
-		Flags: []cli.Flag{
+		Flags: append(shardFlags(),
 			&cli.BoolFlag{
 				Name:  "registry",
 				Usage: "Use registry from config (auto-enabled in CI)",
@@ -21,10 +21,15 @@ func buildCmd() *cli.Command {
 				Name:  "platform",
 				Usage: "Target platform(s) to build (e.g. linux/amd64), overrides hive.yml",
 			},
-		},
+		),
 		Action: func(ctx context.Context, cmd *cli.Command) error {
 			buildID := cmd.String("build-id")
 			filters := utils.ParseFilters(cmd.Args().Slice())
+
+			s, err := resolveShard(cmd)
+			if err != nil {
+				return err
+			}
 
 			if cmd.Bool("generate") {
 				if err := generateProject(ctx, cmd); err != nil {
@@ -40,7 +45,7 @@ func buildCmd() *cli.Command {
 			distPath := getDistPath(cmd)
 
 			return buildProject(ctx, project, distPath, filters, buildID,
-				cmd.StringSlice("platform"), cmd.Bool("registry"))
+				cmd.StringSlice("platform"), cmd.Bool("registry"), s)
 		},
 	}
 }
