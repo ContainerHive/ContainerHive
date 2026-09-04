@@ -143,7 +143,10 @@ All values must be strings. Keys prefixed with `ci_` have built-in defaults:
 | `ci_buildkit_image`                | `moby/buildkit`               | BuildKit container image                                                   |
 | `ci_buildkit_version`              | *(matches go.mod dependency)* | BuildKit image tag                                                         |
 | `ci_lint`                          | `true`                        | Run hadolint linting in CI pipeline before builds                         |
+| `ci_build_shards`                  | `1`                           | Upper bound on parallel build instances per image (capped to shard unit count) |
+| `ci_test_shards`                   | `1`                           | Upper bound on parallel test instances per image (capped to shard unit count)  |
 | `ci_report`                        | `true`                        | Generate and publish HTML/JSON report to GitHub Pages / GitLab Pages       |
+| `ci_sbom_generate_cpes`            | `true`                        | Generate CPEs in SBOMs (set to `false` to stay under GitLab artifact limits) |
 | `actions_checkout_version`         | `v6`                          | Version of `actions/checkout`                                              |
 | `actions_upload_artifact_version`  | `v7`                          | Version of `actions/upload-artifact`                                       |
 | `actions_download_artifact_version` | `v7`                         | Version of `actions/download-artifact`                                     |

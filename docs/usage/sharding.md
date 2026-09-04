@@ -25,8 +25,8 @@ The generated GitLab pipeline exposes two [template options](ci-integration.md) 
 
 | Option | Description |
 |:-------|:------------|
-| `ci_build_shards` | Number of parallel instances for each build job (default: `1`) |
-| `ci_test_shards` | Number of parallel instances for each test job (default: `1`) |
+| `ci_build_shards` | Upper bound on parallel instances for each build job (default: `1`). Capped per image to the number of shard units the image actually has. |
+| `ci_test_shards` | Upper bound on parallel instances for each test job (default: `1`). Capped per image to the number of shard units the image actually has. |
 
 ```yaml
 # hive.yml
@@ -50,7 +50,9 @@ A project with `__hive__/` references between *different* images (not the same-i
 
 ## Zero-unit shards
 
-More shards than units is a normal, supported configuration — for example `ci_build_shards: 10` on a project with a single image. Assignment is modulo round-robin over a canonically sorted unit list, so a single unit always lands in shard 1 and shards 2 through 10 simply own nothing. A shard that owns nothing logs `"Nothing to do for this shard"` and exits `0`, so an over-provisioned shard count never fails the pipeline.
+More shards than units is a normal, supported configuration — for example `ci_build_shards: 10` on a project with a single image. When using the generated GitLab pipeline, `ci_build_shards` / `ci_test_shards` are capped per image to the number of shard units that image has, so over-provisioned shards only arise in hand-rolled pipelines.
+
+In a hand-rolled pipeline (or any pipeline setting `CI_NODE_TOTAL` directly), assignment is modulo round-robin over a canonically sorted unit list, so a single unit always lands in shard 1 and shards 2 through 10 simply own nothing. A shard that owns nothing logs `"Nothing to do for this shard"` and exits `0`, so an over-provisioned shard count never fails the pipeline.
 
 ## Cross-command alignment
 

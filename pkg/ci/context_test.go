@@ -288,3 +288,98 @@ func TestBuildCIContext_UserOverridesTemplateOptions(t *testing.T) {
 		t.Errorf("expected user override ci_report 'false', got %q", ctx.TemplateOptions["ci_report"])
 	}
 }
+
+func TestBuildCIContext_ShardCountCapping(t *testing.T) {
+	tests := []struct {
+		name             string
+		requestedBuild   string
+		requestedTest    string
+		tags             map[string]*model.Tag
+		variants         map[string]*model.ImageVariant
+		wantBuildShards  int
+		wantTestShards   int
+		wantShardUnits   int
+	}{
+		{
+			name:           "capped at unit count",
+			requestedBuild: "6",
+			requestedTest:  "6",
+			tags:           map[string]*model.Tag{"a": {Name: "a"}, "b": {Name: "b"}},
+			variants:       map[string]*model.ImageVariant{"node": {Name: "node", TagSuffix: "-node"}},
+			// 2 tags × (1+1 variant) = 4 units
+			wantBuildShards: 4,
+			wantTestShards:  4,
+			wantShardUnits:  4,
+		},
+		{
+			name:           "requested below units unchanged",
+			requestedBuild: "2",
+			requestedTest:  "3",
+			tags:           map[string]*model.Tag{"a": {Name: "a"}, "b": {Name: "b"}, "c": {Name: "c"}},
+			variants:       map[string]*model.ImageVariant{"node": {Name: "node", TagSuffix: "-node"}},
+			// 3 tags × (1+1) = 6 units
+			wantBuildShards: 2,
+			wantTestShards:  3,
+			wantShardUnits:  6,
+		},
+		{
+			name:           "single unit always floor 1",
+			requestedBuild: "4",
+			requestedTest:  "4",
+			tags:           map[string]*model.Tag{"1.0": {Name: "1.0"}},
+			// 1 tag × 1 = 1 unit
+			wantBuildShards: 1,
+			wantTestShards:  1,
+			wantShardUnits:  1,
+		},
+		{
+			name:           "defaults produce 1",
+			requestedBuild: "1",
+			requestedTest:  "1",
+			tags:           map[string]*model.Tag{"1.0": {Name: "1.0"}},
+			wantBuildShards: 1,
+			wantTestShards:  1,
+			wantShardUnits:  1,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			project := &model.ContainerHiveProject{
+				Config: model.HiveProjectConfig{
+					Platforms: []string{"linux/amd64"},
+					TemplateOptions: map[string]string{
+						"ci_build_shards": tt.requestedBuild,
+						"ci_test_shards":  tt.requestedTest,
+					},
+				},
+				ImagesByName: map[string][]*model.Image{
+					"app": {{
+						Name:     "app",
+						Tags:     tt.tags,
+						Variants: tt.variants,
+					}},
+				},
+			}
+
+			ctx, err := BuildCIContext(project, false)
+			if err != nil {
+				t.Fatal(err)
+			}
+			if len(ctx.Images) != 1 {
+				t.Fatalf("expected 1 image, got %d", len(ctx.Images))
+			}
+
+			img := ctx.Images[0]
+			if img.ShardUnits != tt.wantShardUnits {
+				t.Errorf("ShardUnits: got %d, want %d", img.ShardUnits, tt.wantShardUnits)
+			}
+			if img.BuildShards != tt.wantBuildShards {
+				t.Errorf("BuildShards: got %d, want %d", img.BuildShards, tt.wantBuildShards)
+			}
+			if img.TestShards != tt.wantTestShards {
+				t.Errorf("TestShards: got %d, want %d", img.TestShards, tt.wantTestShards)
+			}
+		})
+	}
+}

@@ -152,6 +152,20 @@ func NewBaseTagSharder(project *model.ContainerHiveProject, s Shard) func(identi
 	}
 }
 
+// UnitCountByName returns the number of shard units per image name. A unit is
+// one (identifier, tag) pair including variant-suffixed tags, matching
+// TagIndex. This function iterates ImagesByName so it works even when
+// ImagesByIdentifier is not populated (e.g. test fixtures).
+func UnitCountByName(project *model.ContainerHiveProject) map[string]int {
+	counts := make(map[string]int, len(project.ImagesByName))
+	for name, images := range project.ImagesByName {
+		for _, img := range images {
+			counts[name] += len(img.Tags) * (1 + len(img.Variants))
+		}
+	}
+	return counts
+}
+
 // OwnedUnits returns the shard units this shard owns. Used by callers to
 // detect an empty slice (e.g. more shards configured than units exist) so
 // they can log and exit cleanly rather than silently doing nothing.
