@@ -192,6 +192,18 @@ template_options:
   ci_lint: false
 ```
 
+## Reducing SBOM size
+
+syft attaches CPEs to every component by default, which is a meaningful contributor to SBOM size on images with
+many packages. Set `ci_sbom_generate_cpes` to `false` to pass `--no-cpe` to `ch sbom` in the generated GitLab CI
+pipeline, trading CPE-based vulnerability matching for a smaller artifact — useful if you're running into GitLab's
+SBOM artifact size limits:
+
+```yaml
+template_options:
+  ci_sbom_generate_cpes: "false"
+```
+
 ## Sharding build and test jobs
 
 For GitLab CI, `ci_build_shards` and `ci_test_shards` split each build/test job into `parallel: N` instances, so
