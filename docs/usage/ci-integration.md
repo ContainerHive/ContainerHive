@@ -191,3 +191,16 @@ To disable the lint job entirely, set `ci_lint` to `false` in your `hive.yml`:
 template_options:
   ci_lint: false
 ```
+
+## Sharding build and test jobs
+
+For GitLab CI, `ci_build_shards` and `ci_test_shards` split each build/test job into `parallel: N` instances, so
+a project with many tags and variants can build, generate SBOMs, and test faster — and stay under GitLab.com's
+SBOM artifact size limits. See [Split work across shards](sharding.md) for the full picture; the template option
+is set the same way as `ci_lint` above:
+
+```yaml
+template_options:
+  ci_build_shards: "5"
+  ci_test_shards: "5"
+```
