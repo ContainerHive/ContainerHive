@@ -1,3 +1,16 @@
+## [1.3.0](https://github.com/ContainerHive/ContainerHive/compare/v1.2.1...v1.3.0) (2026-09-04)
+
+### Features
+
+* apply shard filters to build, sbom, and test ([ed18913](https://github.com/ContainerHive/ContainerHive/commit/ed18913b04b6b3ada35abded45168a7184c00aee))
+* **ci:** parallel shard support in the GitLab template ([3252320](https://github.com/ContainerHive/ContainerHive/commit/32523201b5d3e90d0e40215a1c4a0ba430bf8d45))
+* **cli:** shard flags sourced from CI_NODE_* env ([c97ad1a](https://github.com/ContainerHive/ContainerHive/commit/c97ad1a3077c733a74ed167ffe11db1206c06269))
+* **shard:** canonical tag enumeration and modulo shard assignment ([476fac8](https://github.com/ContainerHive/ContainerHive/commit/476fac821eeee72e051aa5ea3c2c1d2c495d6c61))
+
+### Bug Fixes
+
+* **sbom:** allow empty per-image shard jobs ([d05ed7c](https://github.com/ContainerHive/ContainerHive/commit/d05ed7c4f1516797d0f6b3930e528e87023b905e))
+
 ## [1.2.1](https://github.com/ContainerHive/ContainerHive/compare/v1.2.0...v1.2.1) (2026-09-04)
 
 ### Bug Fixes
