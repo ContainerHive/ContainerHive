@@ -1,3 +1,9 @@
+## [1.3.2](https://github.com/ContainerHive/ContainerHive/compare/v1.3.1...v1.3.2) (2026-09-04)
+
+### Bug Fixes
+
+* **cache:** scope registry build cache by content hash, not just tag ([8ed18fa](https://github.com/ContainerHive/ContainerHive/commit/8ed18fa51b9c5f5815f7b698dcd143e7bbcac984))
+
 ## [1.3.1](https://github.com/ContainerHive/ContainerHive/compare/v1.3.0...v1.3.1) (2026-09-04)
 
 ### Bug Fixes
