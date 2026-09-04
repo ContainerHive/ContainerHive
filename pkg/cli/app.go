@@ -17,6 +17,7 @@ import (
 	"github.com/ContainerHive/ContainerHive/pkg/progress"
 	"github.com/ContainerHive/ContainerHive/pkg/registry"
 	"github.com/ContainerHive/ContainerHive/pkg/rendering"
+	"github.com/ContainerHive/ContainerHive/pkg/shard"
 	"github.com/ContainerHive/ContainerHive/pkg/version"
 	"github.com/urfave/cli/v3"
 )
@@ -65,7 +66,16 @@ func generateProject(ctx context.Context, cmd *cli.Command) error {
 	return nil
 }
 
-func buildProject(ctx context.Context, project *model.ContainerHiveProject, distPath string, filters []build.Filter, buildID string, platforms []string, useRegistry bool) error {
+func buildProject(
+	ctx context.Context,
+	project *model.ContainerHiveProject,
+	distPath string,
+	filters []build.Filter,
+	buildID string,
+	platforms []string,
+	useRegistry bool,
+	s shard.Shard,
+) error {
 	if len(platforms) > 0 {
 		project.Config.Platforms = platforms
 	}
@@ -122,6 +132,7 @@ func buildProject(ctx context.Context, project *model.ContainerHiveProject, dist
 		},
 		Filters: filters,
 		BuildID: buildID,
+		Shard:   s,
 	}
 
 	if buildOrder.HasDependencies() {

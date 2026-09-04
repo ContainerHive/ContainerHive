@@ -16,14 +16,19 @@ func testCmd() *cli.Command {
 		Name:      "test",
 		Usage:     "Run container structure tests on built images",
 		ArgsUsage: "[image:tag ...]",
-		Flags: []cli.Flag{
+		Flags: append(shardFlags(),
 			&cli.BoolFlag{
 				Name:  "build",
 				Usage: "Run build before tests",
 			},
-		},
+		),
 		Action: func(ctx context.Context, cmd *cli.Command) error {
 			filters := utils.ParseFilters(cmd.Args().Slice())
+
+			s, err := resolveShard(cmd)
+			if err != nil {
+				return err
+			}
 
 			if cmd.Bool("generate") {
 				if err := generateProject(ctx, cmd); err != nil {
@@ -39,7 +44,7 @@ func testCmd() *cli.Command {
 			}
 
 			if cmd.Bool("build") {
-				if err := buildProject(ctx, project, distPath, filters, cmd.String("build-id"), nil, false); err != nil {
+				if err := buildProject(ctx, project, distPath, filters, cmd.String("build-id"), nil, false, s); err != nil {
 					return err
 				}
 			}
@@ -53,6 +58,7 @@ func testCmd() *cli.Command {
 				Project:  project,
 				Filters:  filters,
 				BuildID:  cmd.String("build-id"),
+				Shard:    s,
 			}
 
 			if os.Getenv("CI") != "" {

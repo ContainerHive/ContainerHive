@@ -14,6 +14,7 @@ import (
 	"github.com/ContainerHive/ContainerHive/pkg/model"
 	"github.com/ContainerHive/ContainerHive/pkg/platform"
 	"github.com/ContainerHive/ContainerHive/pkg/progress"
+	"github.com/ContainerHive/ContainerHive/pkg/shard"
 )
 
 // Registry provides registry metadata for direct BuildKit pushes.
@@ -43,9 +44,16 @@ type ProjectBuildOpts struct {
 	ProgressConfig progress.Config
 	Filters        []Filter // empty = build everything
 	BuildID        string   // if set, registry push/retag uses tags suffixed with -build.<BuildID>
+	Shard          shard.Shard
 
 	// OnBuild is called after each successful build with the image tag and tar path.
 	OnBuild func(imageTag, tarFile string)
+
+	// baseOwns/variantOwns are built once in BuildProject from Shard and
+	// reused across buildWithDeps/buildWithoutDeps, so TagIndex is computed
+	// only once per run rather than once per tag.
+	baseOwns    func(identifier, baseTagName string) bool
+	variantOwns func(identifier, tagName string) bool
 }
 
 func (o *ProjectBuildOpts) pushTag(tagName, platformStr string) string {
@@ -78,6 +86,23 @@ func (o *ProjectBuildOpts) registryInsecure() bool {
 // Docker-scheme media types for the target registry.
 func (o *ProjectBuildOpts) useDockerMediaTypes() bool {
 	return o.Registry != nil && o.Registry.UseDockerMediaTypes()
+}
+
+// ownsBase/ownsVariant default to match-all when baseOwns/variantOwns were
+// never set - e.g. by tests or other callers that build ProjectBuildOpts by
+// hand rather than through BuildProject, where Shard is always disabled.
+func (o *ProjectBuildOpts) ownsBase(identifier, baseTagName string) bool {
+	if o.baseOwns == nil {
+		return true
+	}
+	return o.baseOwns(identifier, baseTagName)
+}
+
+func (o *ProjectBuildOpts) ownsVariant(identifier, tagName string) bool {
+	if o.variantOwns == nil {
+		return true
+	}
+	return o.variantOwns(identifier, tagName)
 }
 
 // matchesFilters checks whether a tag should be built.
@@ -122,6 +147,21 @@ func BuildProject(ctx context.Context, client *Client, opts *ProjectBuildOpts) e
 		opts.ProgressOut = os.Stdout
 	}
 
+	if opts.Shard.Enabled() {
+		owned := shard.OwnedUnits(opts.Project, opts.Shard)
+		if len(owned) == 0 {
+			slog.Warn("Nothing to do for this shard", "shard", opts.Shard.Current, "of", opts.Shard.Max)
+			return nil
+		}
+		slog.Info("Shard selected units", "shard", opts.Shard.Current, "of", opts.Shard.Max, "units", len(owned))
+
+		if opts.BuildOrder.HasDependencies() {
+			slog.Warn("Sharding combined with inter-image dependencies: a dependency not owned by this shard resolves via the registry and must already be pushed there")
+		}
+	}
+	opts.baseOwns = shard.NewBaseTagSharder(opts.Project, opts.Shard)
+	opts.variantOwns = shard.NewTagSharder(opts.Project, opts.Shard)
+
 	if opts.BuildOrder.HasDependencies() {
 		return buildWithDeps(ctx, client, opts)
 	}
@@ -138,7 +178,7 @@ func buildWithDeps(ctx context.Context, client *Client, opts *ProjectBuildOpts) 
 
 		for _, imageDef := range images {
 			for tagName := range imageDef.Tags {
-				buildBase := matchesFilters(opts.Filters, imgName, tagName)
+				buildBase := matchesFilters(opts.Filters, imgName, tagName) && opts.ownsBase(imageDef.Identifier, tagName)
 
 				if buildBase {
 					platforms := platform.Resolve(opts.Project.Config.Platforms, imageDef.Platforms, nil)
@@ -153,6 +193,9 @@ func buildWithDeps(ctx context.Context, client *Client, opts *ProjectBuildOpts) 
 				for variantName, variantDef := range imageDef.Variants {
 					variantTagName := tagName + variantDef.TagSuffix
 					if !matchesFilters(opts.Filters, imgName, variantTagName) {
+						continue
+					}
+					if !opts.ownsVariant(imageDef.Identifier, variantTagName) {
 						continue
 					}
 
@@ -173,7 +216,7 @@ func buildWithoutDeps(ctx context.Context, client *Client, opts *ProjectBuildOpt
 	for _, images := range opts.Project.ImagesByName {
 		for _, imageDef := range images {
 			for tagName := range imageDef.Tags {
-				if matchesFilters(opts.Filters, imageDef.Name, tagName) {
+				if matchesFilters(opts.Filters, imageDef.Name, tagName) && opts.ownsBase(imageDef.Identifier, tagName) {
 					platforms := platform.Resolve(opts.Project.Config.Platforms, imageDef.Platforms, nil)
 					if err := buildPlatforms(platforms, func(platformStr string) error {
 						return buildTag(ctx, client, opts, imageDef, tagName, platformStr)
@@ -185,6 +228,9 @@ func buildWithoutDeps(ctx context.Context, client *Client, opts *ProjectBuildOpt
 				for variantName, variantDef := range imageDef.Variants {
 					variantTag := tagName + variantDef.TagSuffix
 					if !matchesFilters(opts.Filters, imageDef.Name, variantTag) {
+						continue
+					}
+					if !opts.ownsVariant(imageDef.Identifier, variantTag) {
 						continue
 					}
 					platforms := platform.Resolve(opts.Project.Config.Platforms, imageDef.Platforms, variantDef.Platforms)

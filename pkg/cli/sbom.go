@@ -11,6 +11,7 @@ import (
 	"github.com/ContainerHive/ContainerHive/pkg/model"
 	"github.com/ContainerHive/ContainerHive/pkg/platform"
 	"github.com/ContainerHive/ContainerHive/pkg/sbom"
+	"github.com/ContainerHive/ContainerHive/pkg/shard"
 	"github.com/ContainerHive/ContainerHive/pkg/utils"
 	"github.com/urfave/cli/v3"
 	"golang.org/x/sync/errgroup"
@@ -21,7 +22,7 @@ func sbomCmd() *cli.Command {
 		Name:      "sbom",
 		Usage:     "Generate SBOMs for built images",
 		ArgsUsage: "[image:tag ...]",
-		Flags: []cli.Flag{
+		Flags: append(shardFlags(),
 			&cli.StringSliceFlag{
 				Name:  "platform",
 				Usage: "Target platform(s) to generate SBOMs for (e.g. linux/amd64), overrides hive.yml",
@@ -31,9 +32,14 @@ func sbomCmd() *cli.Command {
 				Usage: "Number of concurrent workers for SBOM generation",
 				Value: 4,
 			},
-		},
+		),
 		Action: func(ctx context.Context, cmd *cli.Command) error {
 			filters := utils.ParseFilters(cmd.Args().Slice())
+
+			s, err := resolveShard(cmd)
+			if err != nil {
+				return err
+			}
 
 			if cmd.Bool("generate") {
 				if err := generateProject(ctx, cmd); err != nil {
@@ -55,6 +61,16 @@ func sbomCmd() *cli.Command {
 				project.Config.Platforms = cliPlatforms
 			}
 
+			owns := shard.NewTagSharder(project, s)
+			if s.Enabled() {
+				owned := shard.OwnedUnits(project, s)
+				if len(owned) == 0 {
+					slog.Warn("Nothing to do for this shard", "shard", s.Current, "of", s.Max)
+					return nil
+				}
+				slog.Info("Shard selected units", "shard", s.Current, "of", s.Max, "units", len(owned))
+			}
+
 			workers := cmd.Int("workers")
 			if workers < 1 {
 				workers = 1
@@ -74,6 +90,9 @@ func sbomCmd() *cli.Command {
 			var workItems []workItem
 			enqueue := func(img *model.Image, tagName string, platforms []string) {
 				if !utils.MatchesFilter(filters, img.Name, tagName) {
+					return
+				}
+				if !owns(img.Identifier, tagName) {
 					return
 				}
 				for _, platformStr := range platforms {
