@@ -1,3 +1,14 @@
+## [1.4.0](https://github.com/ContainerHive/ContainerHive/compare/v1.3.2...v1.4.0) (2026-09-04)
+
+### Features
+
+* **ci:** add ci_sbom_generate_cpes template option for GitLab pipelines ([f08fe9e](https://github.com/ContainerHive/ContainerHive/commit/f08fe9e351ecef2ef31ff8f54fa9d6da479d7732))
+
+### Bug Fixes
+
+* **sbom:** drop file cataloging, add opt-out CPE generation ([507bf1d](https://github.com/ContainerHive/ContainerHive/commit/507bf1d6d59481e41c911ffaced24102d4fbc86d))
+* **sbom:** strip syft's per-component properties from CycloneDX output ([2cc517a](https://github.com/ContainerHive/ContainerHive/commit/2cc517adf9fd3544c8ce641d13ca26965ce06ee7))
+
 ## [1.3.2](https://github.com/ContainerHive/ContainerHive/compare/v1.3.1...v1.3.2) (2026-09-04)
 
 ### Bug Fixes
