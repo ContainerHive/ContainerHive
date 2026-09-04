@@ -1,4 +1,5 @@
 {{ define "build-job.yml.gotpl" }}
+{{- $shards := option "ci_build_shards" | atoi }}
 {{- range .Image.Platforms }}
 build-{{ $.Image.Name }}-{{ . }}:
   extends: .build-{{ . }}
@@ -6,6 +7,9 @@ build-{{ $.Image.Name }}-{{ . }}:
   variables:
     IMAGE_NAME: {{ $.Image.Name }}
     PLATFORM: {{ . }}
+{{- if gt $shards 1 }}
+  parallel: {{ $shards }}
+{{- end }}
   needs:
     - generate
 {{- range $.Image.Dependencies }}

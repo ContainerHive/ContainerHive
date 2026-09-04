@@ -191,6 +191,65 @@ func TestBuildCIContext_DefaultTemplateOptions(t *testing.T) {
 	if ctx.TemplateOptions["ci_report"] != "true" {
 		t.Errorf("expected default ci_report 'true', got %q", ctx.TemplateOptions["ci_report"])
 	}
+	if ctx.TemplateOptions["ci_build_shards"] != "1" {
+		t.Errorf("expected default ci_build_shards '1', got %q", ctx.TemplateOptions["ci_build_shards"])
+	}
+	if ctx.TemplateOptions["ci_test_shards"] != "1" {
+		t.Errorf("expected default ci_test_shards '1', got %q", ctx.TemplateOptions["ci_test_shards"])
+	}
+}
+
+func TestBuildCIContext_ShardOptionOverride(t *testing.T) {
+	project := &model.ContainerHiveProject{
+		Config: model.HiveProjectConfig{
+			Platforms: []string{"linux/amd64"},
+			TemplateOptions: map[string]string{
+				"ci_build_shards": "5",
+			},
+		},
+		ImagesByName: map[string][]*model.Image{
+			"app": {{Name: "app", Tags: map[string]*model.Tag{"latest": {Name: "latest"}}}},
+		},
+	}
+
+	ctx, err := BuildCIContext(project, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if ctx.TemplateOptions["ci_build_shards"] != "5" {
+		t.Errorf("expected ci_build_shards '5', got %q", ctx.TemplateOptions["ci_build_shards"])
+	}
+	if ctx.TemplateOptions["ci_test_shards"] != "1" {
+		t.Errorf("expected ci_test_shards default '1' unaffected, got %q", ctx.TemplateOptions["ci_test_shards"])
+	}
+}
+
+func TestBuildCIContext_InvalidShardOptionErrors(t *testing.T) {
+	tests := []struct {
+		name  string
+		value string
+	}{
+		{"non-numeric", "not-a-number"},
+		{"zero", "0"},
+		{"negative", "-1"},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			project := &model.ContainerHiveProject{
+				Config: model.HiveProjectConfig{
+					Platforms:       []string{"linux/amd64"},
+					TemplateOptions: map[string]string{"ci_build_shards": tt.value},
+				},
+				ImagesByName: map[string][]*model.Image{
+					"app": {{Name: "app", Tags: map[string]*model.Tag{"latest": {Name: "latest"}}}},
+				},
+			}
+
+			if _, err := BuildCIContext(project, false); err == nil {
+				t.Errorf("expected an error for ci_build_shards=%q, got nil", tt.value)
+			}
+		})
+	}
 }
 
 func TestBuildCIContext_UserOverridesTemplateOptions(t *testing.T) {

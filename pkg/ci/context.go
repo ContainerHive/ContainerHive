@@ -3,6 +3,7 @@ package ci
 import (
 	"fmt"
 	"sort"
+	"strconv"
 
 	"github.com/ContainerHive/ContainerHive/internal/actions"
 	"github.com/ContainerHive/ContainerHive/internal/buildkit"
@@ -73,16 +74,18 @@ func (c *CIConfigContext) RegistryHost() string {
 // defaultTemplateOptions returns the built-in template option defaults.
 func defaultTemplateOptions() map[string]string {
 	return map[string]string{
-		"ci_buildkit_image":                buildkit.DefaultImage,
-		"ci_buildkit_version":              buildkit.Version,
-		"ci_lint":                          "true",
-		"ci_report":                        "true",
-		"actions_checkout_version":         actions.CheckoutVersion,
-		"actions_upload_artifact_version":  actions.UploadArtifactVersion,
-		"actions_download_artifact_version": actions.DownloadArtifactVersion,
+		"ci_buildkit_image":                     buildkit.DefaultImage,
+		"ci_buildkit_version":                   buildkit.Version,
+		"ci_lint":                               "true",
+		"ci_report":                             "true",
+		"ci_build_shards":                       "1",
+		"ci_test_shards":                        "1",
+		"actions_checkout_version":              actions.CheckoutVersion,
+		"actions_upload_artifact_version":       actions.UploadArtifactVersion,
+		"actions_download_artifact_version":     actions.DownloadArtifactVersion,
 		"actions_upload_pages_artifact_version": actions.UploadPagesArtifactVersion,
-		"actions_deploy_pages_version":     actions.DeployPagesVersion,
-		"actions_junit_report_version":     actions.JunitReportVersion,
+		"actions_deploy_pages_version":          actions.DeployPagesVersion,
+		"actions_junit_report_version":          actions.JunitReportVersion,
 	}
 }
 
@@ -172,6 +175,16 @@ func BuildCIContext(project *model.ContainerHiveProject, artifacts bool) (*CICon
 	opts := defaultTemplateOptions()
 	for k, v := range project.Config.TemplateOptions {
 		opts[k] = v
+	}
+
+	// The gotpl template coerces these with sprig's atoi, which returns 0 for
+	// a non-numeric value rather than failing - validate here so a typo in
+	// template_options errors loudly instead of silently rendering as
+	// unsharded.
+	for _, key := range []string{"ci_build_shards", "ci_test_shards"} {
+		if n, err := strconv.Atoi(opts[key]); err != nil || n < 1 {
+			return nil, fmt.Errorf("template_options.%s must be a positive integer, got %q", key, opts[key])
+		}
 	}
 
 	return &CIContext{
