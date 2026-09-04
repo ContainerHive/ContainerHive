@@ -88,6 +88,7 @@ func sbomCmd() *cli.Command {
 			}
 
 			var workItems []workItem
+			matchedUnits := false
 			enqueue := func(img *model.Image, tagName string, platforms []string) {
 				if !utils.MatchesFilter(filters, img.Name, tagName) {
 					return
@@ -95,6 +96,7 @@ func sbomCmd() *cli.Command {
 				if !owns(img.Identifier, tagName) {
 					return
 				}
+				matchedUnits = true
 				for _, platformStr := range platforms {
 					platDir := filepath.Join(distPath, img.Name, tagName, platform.Sanitize(platformStr))
 					tarFile := filepath.Join(platDir, "image.tar")
@@ -123,6 +125,10 @@ func sbomCmd() *cli.Command {
 			}
 
 			if len(workItems) == 0 {
+				if s.Enabled() && !matchedUnits {
+					slog.Warn("Nothing to do for this shard", "shard", s.Current, "of", s.Max)
+					return nil
+				}
 				return fmt.Errorf("no images found to generate SBOMs for")
 			}
 
