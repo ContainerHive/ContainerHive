@@ -1908,11 +1908,11 @@
 <tbody>
 <tr>
 <td style="text-align: left;"><code>ci_build_shards</code></td>
-<td style="text-align: left;">Number of parallel instances for each build job (default: <code>1</code>)</td>
+<td style="text-align: left;">Upper bound on parallel instances for each build job (default: <code>1</code>). Capped per image to the number of shard units the image actually has.</td>
 </tr>
 <tr>
 <td style="text-align: left;"><code>ci_test_shards</code></td>
-<td style="text-align: left;">Number of parallel instances for each test job (default: <code>1</code>)</td>
+<td style="text-align: left;">Upper bound on parallel instances for each test job (default: <code>1</code>). Capped per image to the number of shard units the image actually has.</td>
 </tr>
 </tbody>
 </table>
@@ -1928,7 +1928,8 @@
 <h2 id="cross-image-dependencies">Cross-image dependencies</h2>
 <p>A project with <code>__hive__/</code> references between <em>different</em> images (not the same-image base/variant case above) needs the dependency image fully built and pushed before a dependent shard starts, since a missing local tar falls back to a registry pull. The generated GitLab pipeline already stages this correctly — each build job depends on the <code>manifest-&lt;image&gt;</code> job of its dependencies — so this is only a concern for hand-rolled pipelines. Enabling sharding on a project with such dependencies logs a warning rather than failing, since the registry fallback is a legitimate (if slower) path.</p>
 <h2 id="zero-unit-shards">Zero-unit shards</h2>
-<p>More shards than units is a normal, supported configuration — for example <code>ci_build_shards: 10</code> on a project with a single image. Assignment is modulo round-robin over a canonically sorted unit list, so a single unit always lands in shard 1 and shards 2 through 10 simply own nothing. A shard that owns nothing logs <code>"Nothing to do for this shard"</code> and exits <code>0</code>, so an over-provisioned shard count never fails the pipeline.</p>
+<p>More shards than units is a normal, supported configuration — for example <code>ci_build_shards: 10</code> on a project with a single image. When using the generated GitLab pipeline, <code>ci_build_shards</code> / <code>ci_test_shards</code> are capped per image to the number of shard units that image has, so over-provisioned shards only arise in hand-rolled pipelines.</p>
+<p>In a hand-rolled pipeline (or any pipeline setting <code>CI_NODE_TOTAL</code> directly), assignment is modulo round-robin over a canonically sorted unit list, so a single unit always lands in shard 1 and shards 2 through 10 simply own nothing. A shard that owns nothing logs <code>"Nothing to do for this shard"</code> and exits <code>0</code>, so an over-provisioned shard count never fails the pipeline.</p>
 <h2 id="cross-command-alignment">Cross-command alignment</h2>
 <p><code>ch build</code>, <code>ch sbom</code> and <code>ch test</code> compute the same canonical, sorted list of shard units from the project, so shard <code>N</code> of <code>M</code> always selects the same tags in every command — <code>ch build --max-shards 3 --current-shard 2</code> and <code>ch sbom --max-shards 3 --current-shard 2</code> operate on the same slice.</p>
 <h2 id="limits">Limits</h2>

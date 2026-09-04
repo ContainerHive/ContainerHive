@@ -2374,6 +2374,21 @@ context.</p>
 <td style="text-align: left;">list</td>
 <td style="text-align: left;">Target platforms</td>
 </tr>
+<tr>
+<td style="text-align: left;"><code>ShardUnits</code></td>
+<td style="text-align: left;">int</td>
+<td style="text-align: left;">Number of shard units (base + variant tags) — the useful max</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>BuildShards</code></td>
+<td style="text-align: left;">int</td>
+<td style="text-align: left;">Effective parallel for build jobs (min(ci_build_shards, ShardUnits))</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>TestShards</code></td>
+<td style="text-align: left;">int</td>
+<td style="text-align: left;">Effective parallel for test jobs (min(ci_test_shards, ShardUnits))</td>
+</tr>
 </tbody>
 </table>
 <h3 id="template-functions">Template functions</h3>
@@ -2468,10 +2483,10 @@ SBOM artifact size limits:</p>
 </span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="w">  </span><span class="nt">ci_sbom_generate_cpes</span><span class="p">:</span><span class="w"> </span><span class="s">"false"</span>
 </span></code></pre></div>
 <h2 id="sharding-build-and-test-jobs">Sharding build and test jobs</h2>
-<p>For GitLab CI, <code>ci_build_shards</code> and <code>ci_test_shards</code> split each build/test job into <code>parallel: N</code> instances, so
-a project with many tags and variants can build, generate SBOMs, and test faster — and stay under GitLab.com's
-SBOM artifact size limits. See <a href="sharding.html">Split work across shards</a> for the full picture; the template option
-is set the same way as <code>ci_lint</code> above:</p>
+<p>For GitLab CI, <code>ci_build_shards</code> and <code>ci_test_shards</code> set an upper bound on <code>parallel: N</code> for each build/test job. The
+actual value is capped per image to the number of shard units (base + variant tags) that image has, so images with fewer
+tags than the configured value never spawn empty jobs that no-op. See <a href="sharding.html">Split work across shards</a> for the
+full picture; the template option is set the same way as <code>ci_lint</code> above:</p>
 <div class="language-yaml highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="nt">template_options</span><span class="p">:</span>
 </span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="w">  </span><span class="nt">ci_build_shards</span><span class="p">:</span><span class="w"> </span><span class="s">"5"</span>
 </span><span id="__span-11-3"><a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a><span class="w">  </span><span class="nt">ci_test_shards</span><span class="p">:</span><span class="w"> </span><span class="s">"5"</span>

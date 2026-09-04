@@ -2338,9 +2338,24 @@
 <td style="text-align: left;">Run hadolint linting in CI pipeline before builds</td>
 </tr>
 <tr>
+<td style="text-align: left;"><code>ci_build_shards</code></td>
+<td style="text-align: left;"><code>1</code></td>
+<td style="text-align: left;">Upper bound on parallel build instances per image (capped to shard unit count)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>ci_test_shards</code></td>
+<td style="text-align: left;"><code>1</code></td>
+<td style="text-align: left;">Upper bound on parallel test instances per image (capped to shard unit count)</td>
+</tr>
+<tr>
 <td style="text-align: left;"><code>ci_report</code></td>
 <td style="text-align: left;"><code>true</code></td>
 <td style="text-align: left;">Generate and publish HTML/JSON report to GitHub Pages / GitLab Pages</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>ci_sbom_generate_cpes</code></td>
+<td style="text-align: left;"><code>true</code></td>
+<td style="text-align: left;">Generate CPEs in SBOMs (set to <code>false</code> to stay under GitLab artifact limits)</td>
 </tr>
 <tr>
 <td style="text-align: left;"><code>actions_checkout_version</code></td>
