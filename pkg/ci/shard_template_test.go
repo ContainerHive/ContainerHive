@@ -65,3 +65,46 @@ func TestGitlabTemplate_ParallelKeyWhenShardsSet(t *testing.T) {
 		t.Errorf("expected test job to have parallel: 5, got:\n%s", rendered)
 	}
 }
+
+// TestGitlabTemplate_NoCPEFlagAtDefault confirms the default
+// ci_sbom_generate_cpes of "true" renders the sbom job without --no-cpe.
+func TestGitlabTemplate_NoCPEFlagAtDefault(t *testing.T) {
+	project := singleImageProjectForTemplate()
+	ctx, err := BuildCIContext(project, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	out, err := Generate("gitlab", ctx, "")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if strings.Contains(string(out), "--no-cpe") {
+		t.Errorf("expected no --no-cpe flag at the default ci_sbom_generate_cpes, got:\n%s", out)
+	}
+}
+
+// TestGitlabTemplate_NoCPEFlagWhenDisabled confirms setting
+// ci_sbom_generate_cpes to "false" adds --no-cpe to the sbom job to keep
+// generated SBOMs under GitLab's artifact size limits.
+func TestGitlabTemplate_NoCPEFlagWhenDisabled(t *testing.T) {
+	project := singleImageProjectForTemplate()
+	project.Config.TemplateOptions = map[string]string{
+		"ci_sbom_generate_cpes": "false",
+	}
+	ctx, err := BuildCIContext(project, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	out, err := Generate("gitlab", ctx, "")
+	if err != nil {
+		t.Fatal(err)
+	}
+	rendered := string(out)
+
+	if !strings.Contains(rendered, `sbom ${IMAGE_NAME} --platform ${PLATFORM} --build-id "$SNAPSHOT_ID" --no-cpe`) {
+		t.Errorf("expected sbom job to have --no-cpe appended, got:\n%s", rendered)
+	}
+}

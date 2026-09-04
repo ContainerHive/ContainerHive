@@ -78,6 +78,7 @@ func defaultTemplateOptions() map[string]string {
 		"ci_buildkit_version":                   buildkit.Version,
 		"ci_lint":                               "true",
 		"ci_report":                             "true",
+		"ci_sbom_generate_cpes":                 "true",
 		"ci_build_shards":                       "1",
 		"ci_test_shards":                        "1",
 		"actions_checkout_version":              actions.CheckoutVersion,

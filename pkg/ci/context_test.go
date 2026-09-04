@@ -191,6 +191,9 @@ func TestBuildCIContext_DefaultTemplateOptions(t *testing.T) {
 	if ctx.TemplateOptions["ci_report"] != "true" {
 		t.Errorf("expected default ci_report 'true', got %q", ctx.TemplateOptions["ci_report"])
 	}
+	if ctx.TemplateOptions["ci_sbom_generate_cpes"] != "true" {
+		t.Errorf("expected default ci_sbom_generate_cpes 'true', got %q", ctx.TemplateOptions["ci_sbom_generate_cpes"])
+	}
 	if ctx.TemplateOptions["ci_build_shards"] != "1" {
 		t.Errorf("expected default ci_build_shards '1', got %q", ctx.TemplateOptions["ci_build_shards"])
 	}

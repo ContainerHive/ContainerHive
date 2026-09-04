@@ -38,7 +38,7 @@ before_script:
   script:
     - {{ .ChCmd }} wait --buildkitd
     - {{ .ChCmd }} build ${IMAGE_NAME} --platform ${PLATFORM} --build-id "$SNAPSHOT_ID"
-    - {{ .ChCmd }} sbom ${IMAGE_NAME} --platform ${PLATFORM} --build-id "$SNAPSHOT_ID"
+    - {{ .ChCmd }} sbom ${IMAGE_NAME} --platform ${PLATFORM} --build-id "$SNAPSHOT_ID"{{ if eq (option "ci_sbom_generate_cpes") "false" }} --no-cpe{{ end }}
 {{ range .Platforms }}
 .build-{{ . }}:
   extends: .build
