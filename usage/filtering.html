@@ -12,7 +12,7 @@
         <link rel="prev" href="secrets-and-versions.html">
       
       
-        <link rel="next" href="testing.html">
+        <link rel="next" href="sharding.html">
       
       
         
@@ -906,10 +906,49 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#sharding" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Sharding
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
       
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="sharding.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Split work across shards
+  
+
+    
+  </span>
+  
+  
+
+      </a>
     </li>
   
 
@@ -1708,6 +1747,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#sharding" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Sharding
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -1839,6 +1889,8 @@
 <li>Specifying only an image name matches all tags of that image.</li>
 <li>Multiple filters are combined with OR logic — an image:tag matches if it matches any filter.</li>
 </ul>
+<h2 id="sharding">Sharding</h2>
+<p>Filters and <a href="sharding.html">sharding</a> compose: filters select which images and tags are in scope at all, and sharding partitions whatever remains across parallel CI jobs.</p>
 
 
 

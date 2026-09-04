@@ -820,6 +820,34 @@
   
   
     <li class="md-nav__item">
+      <a href="sharding.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Split work across shards
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="testing.html" class="md-nav__link">
         
   
@@ -1143,6 +1171,17 @@
         
       </ul>
     </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sharding-build-and-test-jobs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Sharding build and test jobs
+      
+    </span>
+  </a>
   
 </li>
       
@@ -2076,6 +2115,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#sharding-build-and-test-jobs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Sharding build and test jobs
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -2386,6 +2436,15 @@ appear in the workflow log — using <code>--format github-actions</code> makes 
 <p>To disable the lint job entirely, set <code>ci_lint</code> to <code>false</code> in your <code>hive.yml</code>:</p>
 <div class="language-yaml highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="nt">template_options</span><span class="p">:</span>
 </span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="w">  </span><span class="nt">ci_lint</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+</span></code></pre></div>
+<h2 id="sharding-build-and-test-jobs">Sharding build and test jobs</h2>
+<p>For GitLab CI, <code>ci_build_shards</code> and <code>ci_test_shards</code> split each build/test job into <code>parallel: N</code> instances, so
+a project with many tags and variants can build, generate SBOMs, and test faster — and stay under GitLab.com's
+SBOM artifact size limits. See <a href="sharding.html">Split work across shards</a> for the full picture; the template option
+is set the same way as <code>ci_lint</code> above:</p>
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="nt">template_options</span><span class="p">:</span>
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="w">  </span><span class="nt">ci_build_shards</span><span class="p">:</span><span class="w"> </span><span class="s">"5"</span>
+</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="w">  </span><span class="nt">ci_test_shards</span><span class="p">:</span><span class="w"> </span><span class="s">"5"</span>
 </span></code></pre></div>
 
 

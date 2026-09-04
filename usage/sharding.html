@@ -9,8 +9,10 @@
       
       
       
-        <link rel="prev" href="003-container-structure-tests.html">
+        <link rel="prev" href="filtering.html">
       
+      
+        <link rel="next" href="testing.html">
       
       
         
@@ -21,7 +23,7 @@
     
     
       
-        <title>004 - Embedded local registry for inter-image dependency resolution - ContainerHive</title>
+        <title>Split work across shards - ContainerHive</title>
       
     
     
@@ -74,7 +76,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#004-embedded-local-registry-for-inter-image-dependency-resolution" class="md-skip">
+        <a href="#split-work-across-shards" class="md-skip">
           Skip to content
         </a>
       
@@ -107,7 +109,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              004 - Embedded local registry for inter-image dependency resolution
+              Split work across shards
             
           </span>
         </div>
@@ -302,11 +304,13 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="../usage/cli.html" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="cli.html" class="md-tabs__link">
           
   
   
@@ -362,12 +366,10 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
+      <li class="md-tabs__item">
         <a href="../development/local.html" class="md-tabs__link">
           
   
@@ -536,24 +538,29 @@
       
   
   
+    
   
   
+  
     
     
     
     
-      
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
         
           
-          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="">
             
   
   
@@ -571,7 +578,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_5">
             <span class="md-nav__icon md-icon"></span>
             
@@ -589,7 +596,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../usage/cli.html" class="md-nav__link">
+      <a href="cli.html" class="md-nav__link">
         
   
   
@@ -617,7 +624,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../usage/mcp.html" class="md-nav__link">
+      <a href="mcp.html" class="md-nav__link">
         
   
   
@@ -645,7 +652,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../usage/build-ids.html" class="md-nav__link">
+      <a href="build-ids.html" class="md-nav__link">
         
   
   
@@ -673,7 +680,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../usage/caching.html" class="md-nav__link">
+      <a href="caching.html" class="md-nav__link">
         
   
   
@@ -701,7 +708,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../usage/dockerfiles.html" class="md-nav__link">
+      <a href="dockerfiles.html" class="md-nav__link">
         
   
   
@@ -729,7 +736,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../usage/multi-platform.html" class="md-nav__link">
+      <a href="multi-platform.html" class="md-nav__link">
         
   
   
@@ -757,7 +764,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../usage/secrets-and-versions.html" class="md-nav__link">
+      <a href="secrets-and-versions.html" class="md-nav__link">
         
   
   
@@ -785,7 +792,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../usage/filtering.html" class="md-nav__link">
+      <a href="filtering.html" class="md-nav__link">
         
   
   
@@ -810,10 +817,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../usage/sharding.html" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Split work across shards
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="sharding.html" class="md-nav__link md-nav__link--active">
         
   
   
@@ -829,6 +863,114 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#shard-unit" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Shard unit
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#flags" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Flags
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#gitlab-template-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GitLab template options
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#build-and-sbom-must-run-in-the-same-job" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Build and SBOM must run in the same job
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cross-image-dependencies" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cross-image dependencies
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#zero-unit-shards" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Zero-unit shards
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cross-command-alignment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cross-command alignment
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#limits" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Limits
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -841,7 +983,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../usage/testing.html" class="md-nav__link">
+      <a href="testing.html" class="md-nav__link">
         
   
   
@@ -869,7 +1011,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../usage/ci-integration.html" class="md-nav__link">
+      <a href="ci-integration.html" class="md-nav__link">
         
   
   
@@ -897,7 +1039,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../usage/local-development.html" class="md-nav__link">
+      <a href="local-development.html" class="md-nav__link">
         
   
   
@@ -925,7 +1067,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../usage/renovate.html" class="md-nav__link">
+      <a href="renovate.html" class="md-nav__link">
         
   
   
@@ -953,7 +1095,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../usage/pre-commit.html" class="md-nav__link">
+      <a href="pre-commit.html" class="md-nav__link">
         
   
   
@@ -1267,29 +1409,24 @@
       
   
   
-    
   
   
-  
     
     
     
     
       
-        
-        
-      
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
         
           
-          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="">
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
             
   
   
@@ -1307,7 +1444,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_8">
             <span class="md-nav__icon md-icon"></span>
             
@@ -1350,8 +1487,6 @@
                 
   
   
-    
-  
   
   
     
@@ -1362,11 +1497,11 @@
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8_2" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8_2" >
         
           
           <label class="md-nav__link" for="__nav_8_2" id="__nav_8_2_label" tabindex="0">
@@ -1387,7 +1522,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_8_2_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_8_2_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_8_2">
             <span class="md-nav__icon md-icon"></span>
             
@@ -1405,7 +1540,7 @@
   
   
     <li class="md-nav__item">
-      <a href="001-buildkit-integration.html" class="md-nav__link">
+      <a href="../adr/001-buildkit-integration.html" class="md-nav__link">
         
   
   
@@ -1440,7 +1575,7 @@
   
   
     <li class="md-nav__item">
-      <a href="002-sbom-generation.html" class="md-nav__link">
+      <a href="../adr/002-sbom-generation.html" class="md-nav__link">
         
   
   
@@ -1475,7 +1610,7 @@
   
   
     <li class="md-nav__item">
-      <a href="003-container-structure-tests.html" class="md-nav__link">
+      <a href="../adr/003-container-structure-tests.html" class="md-nav__link">
         
   
   
@@ -1507,19 +1642,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-      <a href="004-embedded-local-registry.html" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../adr/004-embedded-local-registry.html" class="md-nav__link">
         
   
   
@@ -1542,7 +1668,6 @@
   
 
       </a>
-      
     </li>
   
 
@@ -1582,6 +1707,102 @@
   
     
   
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#shard-unit" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Shard unit
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#flags" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Flags
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#gitlab-template-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GitLab template options
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#build-and-sbom-must-run-in-the-same-job" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Build and SBOM must run in the same job
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cross-image-dependencies" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cross-image dependencies
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#zero-unit-shards" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Zero-unit shards
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cross-command-alignment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cross-command alignment
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#limits" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Limits
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
   
 </nav>
                   </div>
@@ -1624,28 +1845,10 @@
     
     
       <li class="md-path__item">
-        <a href="../development/local.html" class="md-path__link">
+        <a href="cli.html" class="md-path__link">
           
   <span class="md-ellipsis">
-    Development
-  </span>
-
-        </a>
-      </li>
-    
-  
-
-      
-        
-  
-  
-    
-    
-      <li class="md-path__item">
-        <a href="001-buildkit-integration.html" class="md-path__link">
-          
-  <span class="md-ellipsis">
-    Architecture Decision Records
+    Usage
   </span>
 
         </a>
@@ -1667,107 +1870,77 @@
   
 
 
-<h1 id="004-embedded-local-registry-for-inter-image-dependency-resolution">004 - Embedded local registry for inter-image dependency resolution</h1>
+<h1 id="split-work-across-shards">Split work across shards</h1>
+<p><code>ch build</code>, <code>ch sbom</code> and <code>ch test</code> can split the images and tags they process across a fixed number of CI jobs, so a large project can build, generate SBOMs, and test in parallel instead of one long serial job.</p>
+<p>The main motivation is GitLab.com's SaaS limits on SBOM report artifacts: <strong>10 MB per file, 20 MB per job</strong>. A single build job today uploads the CycloneDX SBOM of every tag and variant of an image, so an image with many tags or variants can push the job over that budget — and the job is also slower because all of that work runs serially. Splitting one job into several <code>parallel:</code> instances, each owning a disjoint slice of the tags, keeps every job under the artifact ceiling and cuts wall-clock time on variant-heavy images.</p>
+<h2 id="shard-unit">Shard unit</h2>
+<p>Every base tag and every variant tag is its own shard unit, addressed by the image and the exact tag name. This is deliberately fine-grained: an image with 20 variants of one base tag needs to split at the variant level, not the base-tag level, or a single job would still hold all 20 SBOMs.</p>
+<p>One rule follows from this: a variant's Dockerfile is <code>FROM</code> its own base tag (e.g. <code>dotnet:8.0.200-node</code> is <code>FROM __hive__/dotnet:8.0.200</code>), and that dependency is invisible to ContainerHive's dependency graph because it's a same-image reference. So <strong>a shard that owns a variant also builds that variant's base tag</strong>, even if the base isn't assigned to it by exact match. The base may therefore be built redundantly by more than one shard — cheap, since BuildKit caches it and the resulting push is content-identical — while <code>ch sbom</code> and <code>ch test</code> still gate on exact tag ownership, so SBOM output stays strictly disjoint across shards. That disjointness is what the per-job artifact budget depends on.</p>
+<h2 id="flags">Flags</h2>
 <table>
-<tr><td><strong>Status</strong></td><td><span style='color: white;background:#28a745;padding:.4em;border-radius:8px;font-size:100%;'>accepted</span></td></tr>
-<tr><td><strong>Date</strong></td><td>2026-02-21</td></tr>
+<thead>
+<tr>
+<th style="text-align: left;">Flag</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>--max-shards</code></td>
+<td style="text-align: left;">Total number of shards to split work across — sourced from <code>CI_NODE_TOTAL</code> env (default: <code>1</code>)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>--current-shard</code></td>
+<td style="text-align: left;">This shard's 1-based index — sourced from <code>CI_NODE_INDEX</code> env (default: <code>1</code>)</td>
+</tr>
+</tbody>
 </table>
-<h1 id="embedded-local-registry-for-inter-image-dependency-resolution">Embedded local registry for inter-image dependency resolution</h1>
-<h2 id="context-and-problem-statement">Context and Problem Statement</h2>
-<p>ContainerHive allows images within a project to depend on each other using <code>__hive__/</code> references in Dockerfiles (e.g.
-<code>FROM __hive__/base:1.0</code>). At build time these references are rewritten to point at a real registry so BuildKit can pull
-the base image. In CI a production registry is available and images will be pushed there with a build-number suffix or
-similar. But during local development and testing, requiring developers to configure and run an external registry just
-to build images that reference each other creates unnecessary friction. How should ContainerHive resolve inter-image
-dependencies locally without requiring external infrastructure?</p>
-<h2 id="decision-drivers">Decision Drivers</h2>
-<ul>
-<li>Local builds must work out of the box without external services beyond BuildKit</li>
-<li>Developers need a fast feedback loop — spinning up infrastructure slows iteration</li>
-<li>The solution must be transparent: the same <code>__hive__/</code> Dockerfile syntax should work identically in local and CI
-  builds</li>
-<li>No images should leak to a production registry during local testing</li>
-<li>In CI the production registry should be used directly — no extra infrastructure needed</li>
-</ul>
-<h2 id="considered-options">Considered Options</h2>
-<ul>
-<li>Option 1: Embedded in-process OCI registry (zot)</li>
-<li>Option 2: Docker load + FROM via local Docker daemon</li>
-<li>Option 3: Combine dependent images into a single BuildKit solve call</li>
-<li>Option 4: Reference OCI layout directories directly in FROM</li>
-<li>Option 5: Always require a real registry, even locally</li>
-</ul>
-<h2 id="decision-outcome">Decision Outcome</h2>
-<p>Chosen option: "Option 1 — Embedded in-process OCI registry (zot)", because it provides a zero-configuration local
-experience while keeping the same <code>__hive__/</code> rewriting mechanism used in CI. The registry starts in-process on a random
-port, lives only for the duration of the build, and is discarded afterwards. In CI the same Registry interface switches
-to a remote passthrough that pushes to the production registry instead.</p>
-<h2 id="pros-and-cons-of-the-options">Pros and Cons of the Options</h2>
-<h3 id="option-1-embedded-in-process-oci-registry-zot">Option 1: Embedded in-process OCI registry (zot)</h3>
-<p>Start an embedded zot instance on localhost during builds. Built images are pushed to it so that dependent images can
-pull them via standard BuildKit FROM. The <code>__hive__/</code> prefix is rewritten to <code>127.0.0.1:&lt;port&gt;/</code> at build time.</p>
-<ul>
-<li>Good, because fully self-contained — no external services needed for local builds</li>
-<li>Good, because the registry is ephemeral, started and stopped automatically per build session</li>
-<li>Good, because the same <code>__hive__/</code> rewriting works for both local zot and a remote CI registry</li>
-<li>Good, because zot is a pure Go library, avoiding subprocess or Docker-in-Docker overhead</li>
-<li>Good, because nothing is pushed externally — safe for testing without polluting a production registry</li>
-<li>Bad, because it adds zot as a dependency, increasing binary size</li>
-<li>Bad, because the in-process registry must be ready before dependent builds start, adding a small startup delay</li>
-</ul>
-<h3 id="option-2-docker-load-from-via-local-docker-daemon">Option 2: Docker load + FROM via local Docker daemon</h3>
-<p>After each image build, load the OCI tar into the local Docker daemon (<code>docker load</code>). Dependent images then reference
-them as regular Docker images.</p>
-<ul>
-<li>Good, because it uses existing Docker infrastructure that developers likely have</li>
-<li>Bad, because it requires a running Docker daemon, which may not be available (e.g. rootless BuildKit setups)</li>
-<li>Bad, because it pollutes the local Docker image store with intermediate build artifacts</li>
-<li>Bad, because <code>docker load</code> is slow for large images</li>
-<li>Bad, because the rewriting mechanism would differ between local (Docker image names) and CI (registry references)</li>
-</ul>
-<h3 id="option-3-combine-dependent-images-into-a-single-buildkit-solve-call">Option 3: Combine dependent images into a single BuildKit solve call</h3>
-<p>Express all inter-image dependencies as a single BuildKit build graph so BuildKit resolves them internally.</p>
-<ul>
-<li>Good, because no registry or external tooling is needed at all</li>
-<li>Bad, because BuildKit's LLB API does not natively support referencing independently-defined Dockerfiles as stages</li>
-<li>Bad, because it would require fundamentally changing how ContainerHive renders and builds images</li>
-<li>Bad, because error reporting and caching become harder when everything is a single solve</li>
-</ul>
-<h3 id="option-4-reference-oci-layout-directories-directly-in-from">Option 4: Reference OCI layout directories directly in FROM</h3>
-<p>Use the built OCI tar / layout path directly in FROM instructions, bypassing a registry entirely.</p>
-<ul>
-<li>Good, because it avoids any network component</li>
-<li>Bad, because BuildKit does not support <code>FROM file:///path/to/layout</code> — there is no standard mechanism for this</li>
-<li>Bad, because it would require a custom BuildKit frontend or source provider, adding significant complexity</li>
-</ul>
-<h3 id="option-5-always-require-a-real-registry-even-locally">Option 5: Always require a real registry, even locally</h3>
-<p>Require developers to run a registry (e.g. via Docker Compose) or point at a remote one for all builds.</p>
-<ul>
-<li>Good, because the build path is identical everywhere — no local/CI divergence</li>
-<li>Good, because it is simpler to implement (no embedded registry code)</li>
-<li>Bad, because it breaks the zero-configuration local experience — developers must manage extra infrastructure</li>
-<li>Bad, because pushing to a remote registry during local testing wastes bandwidth and may pollute tag namespaces</li>
-<li>Bad, because it slows down the feedback loop, especially with large images over the network</li>
-</ul>
-<h2 id="links">Links</h2>
-<ul>
-<li><a href="https://zotregistry.dev/">Zot registry</a> — OCI-native container registry used as the embedded implementation</li>
-<li>Relates to <a href="001-buildkit-integration.html">ADR-001: BuildKit Integration</a> — the registry is needed because BuildKit
-  builds each image independently</li>
-<li><code>internal/registry/zot.go</code> — embedded zot implementation</li>
-<li><code>internal/registry/remote.go</code> — CI remote registry passthrough</li>
-<li><code>internal/buildkit/build_context/dockerfile.go</code> — <code>__hive__/</code> prefix rewriting</li>
-</ul>
-<!-- markdownlint-disable-file MD013 -->
+<p><code>--max-shards</code>/<code>--current-shard</code> and <code>CI_NODE_TOTAL</code>/<code>CI_NODE_INDEX</code> behave as flag over env over default. GitLab sets <code>CI_NODE_TOTAL</code>/<code>CI_NODE_INDEX</code> automatically for a job declared with <code>parallel: N</code>, so sharding works with no flags at all under <code>parallel:</code>. The variable names are vendor-neutral by design — a CI provider without native parallel-job fan-out can export the same two variables from a wrapper script and get the same behavior.</p>
+<h2 id="gitlab-template-options">GitLab template options</h2>
+<p>The generated GitLab pipeline exposes two <a href="ci-integration.html">template options</a> to control shard count without hand-editing the pipeline:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Option</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>ci_build_shards</code></td>
+<td style="text-align: left;">Number of parallel instances for each build job (default: <code>1</code>)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>ci_test_shards</code></td>
+<td style="text-align: left;">Number of parallel instances for each test job (default: <code>1</code>)</td>
+</tr>
+</tbody>
+</table>
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># hive.yml</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="nt">template_options</span><span class="p">:</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">  </span><span class="nt">ci_build_shards</span><span class="p">:</span><span class="w"> </span><span class="s">"5"</span>
+</span></code></pre></div>
+<p>At the default of <code>1</code>, the rendered pipeline has no <code>parallel:</code> key at all — not <code>parallel: 1</code>, which is meaningless and renames the job to <code>... 1/1</code>. Regenerate the pipeline after changing either option:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>ch<span class="w"> </span>template<span class="w"> </span>ci<span class="w"> </span>--provider<span class="w"> </span>gitlab<span class="w"> </span>--output<span class="w"> </span>.gitlab-ci.yml<span class="w"> </span>--image-name<span class="w"> </span>&lt;your-image&gt;
+</span></code></pre></div>
+<h2 id="build-and-sbom-must-run-in-the-same-job">Build and SBOM must run in the same job</h2>
+<p><code>ch sbom</code> only reads local <code>dist/&lt;image&gt;/&lt;tag&gt;/&lt;platform&gt;/image.tar</code> — it never pulls from a registry, deliberately, since pulling a full image just to produce a comparatively small SBOM is the cost sharding exists to avoid. This means a shard's <code>ch build</code> and <code>ch sbom</code> must run in the same CI job, so the tars <code>ch sbom</code> needs are already on disk. The generated GitLab pipeline already does this (<code>ch build</code> followed by <code>ch sbom</code> in the same <code>.build</code> job template), so setting <code>ci_build_shards</code> is sufficient — no extra wiring needed. If you assemble a pipeline by hand, keep this pairing.</p>
+<h2 id="cross-image-dependencies">Cross-image dependencies</h2>
+<p>A project with <code>__hive__/</code> references between <em>different</em> images (not the same-image base/variant case above) needs the dependency image fully built and pushed before a dependent shard starts, since a missing local tar falls back to a registry pull. The generated GitLab pipeline already stages this correctly — each build job depends on the <code>manifest-&lt;image&gt;</code> job of its dependencies — so this is only a concern for hand-rolled pipelines. Enabling sharding on a project with such dependencies logs a warning rather than failing, since the registry fallback is a legitimate (if slower) path.</p>
+<h2 id="zero-unit-shards">Zero-unit shards</h2>
+<p>More shards than units is a normal, supported configuration — for example <code>ci_build_shards: 10</code> on a project with a single image. Assignment is modulo round-robin over a canonically sorted unit list, so a single unit always lands in shard 1 and shards 2 through 10 simply own nothing. A shard that owns nothing logs <code>"Nothing to do for this shard"</code> and exits <code>0</code>, so an over-provisioned shard count never fails the pipeline.</p>
+<h2 id="cross-command-alignment">Cross-command alignment</h2>
+<p><code>ch build</code>, <code>ch sbom</code> and <code>ch test</code> compute the same canonical, sorted list of shard units from the project, so shard <code>N</code> of <code>M</code> always selects the same tags in every command — <code>ch build --max-shards 3 --current-shard 2</code> and <code>ch sbom --max-shards 3 --current-shard 2</code> operate on the same slice.</p>
+<h2 id="limits">Limits</h2>
+<p>Sharding addresses the <strong>20 MB per-job</strong> artifact limit by splitting work across jobs. It does not help with the <strong>10 MB per-file</strong> limit — a single <code>cyclonedx.json</code> for one tag on one platform that is itself larger than 10 MB is not made smaller by adding more shards, since the shard unit is one tag, not a fraction of one SBOM.</p>
+<p><code>ch finalize</code> is never sharded. It runs once, after all shards have completed, and needs the project's complete tag set to resolve multi-arch manifests and semantic version aliases correctly.</p>
+<p>See <a href="filtering.html">Filter images and tags</a> for <code>image:tag</code> filters, which compose with sharding: filters select which images and tags are in scope at all, and sharding partitions whatever remains after filtering.</p>
 
 
 
 
 
 
-
-  
-  
 
 
 
