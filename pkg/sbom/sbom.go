@@ -22,7 +22,17 @@ func NewGenerator() (*Generator, error) {
 }
 
 // Generate produces an SBOM from the given OCI tar file and serializes it
-// in the requested format (e.g. "spdx-json").
+// in the requested format (e.g. "spdx-json"). For CycloneDX output, syft's
+// per-component "properties" bookkeeping is stripped to reduce file size;
+// see stripCycloneDXProperties for why this is safe to drop.
 func (g *Generator) Generate(ctx context.Context, tarFile, outputFormat string) ([]byte, error) {
-	return g.tool.Generate(ctx, tarFile, outputFormat)
+	data, err := g.tool.Generate(ctx, tarFile, outputFormat)
+	if err != nil {
+		return nil, err
+	}
+
+	if isCycloneDXFormat(outputFormat) {
+		return stripCycloneDXProperties(data)
+	}
+	return data, nil
 }
