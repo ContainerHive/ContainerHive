@@ -32,6 +32,10 @@ func sbomCmd() *cli.Command {
 				Usage: "Number of concurrent workers for SBOM generation",
 				Value: 4,
 			},
+			&cli.BoolFlag{
+				Name:  "no-cpe",
+				Usage: "Skip CPE generation to reduce SBOM size (may reduce vuln match accuracy for CPE-based scanners)",
+			},
 		),
 		Action: func(ctx context.Context, cmd *cli.Command) error {
 			filters := utils.ParseFilters(cmd.Args().Slice())
@@ -132,7 +136,7 @@ func sbomCmd() *cli.Command {
 				return fmt.Errorf("no images found to generate SBOMs for")
 			}
 
-			sbomGen, err := sbom.NewGenerator()
+			sbomGen, err := sbom.NewGenerator(sbom.WithGenerateCPEs(!cmd.Bool("no-cpe")))
 			if err != nil {
 				return fmt.Errorf("failed to initialize SBOM generator: %w", err)
 			}

@@ -225,6 +225,53 @@ func TestSBOMImageTool_Generate(t *testing.T) {
 	})
 }
 
+func TestSBOMImageTool_WithGenerateCPEs(t *testing.T) {
+	countCPEs := func(data []byte) int {
+		var doc map[string]any
+		if err := json.Unmarshal(data, &doc); err != nil {
+			t.Fatalf("failed to parse cyclonedx json: %v", err)
+		}
+		components, _ := doc["components"].([]any)
+		count := 0
+		for _, c := range components {
+			component, ok := c.(map[string]any)
+			if ok && component["cpe"] != nil {
+				count++
+			}
+		}
+		return count
+	}
+
+	tests := []struct {
+		name       string
+		opts       []Option
+		expectCPEs bool
+	}{
+		{"default includes CPEs", nil, true},
+		{"WithGenerateCPEs(true) includes CPEs", []Option{WithGenerateCPEs(true)}, true},
+		{"WithGenerateCPEs(false) omits CPEs", []Option{WithGenerateCPEs(false)}, false},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			tool, err := NewSBOMImageTool(tt.opts...)
+			if err != nil {
+				t.Fatalf("NewSBOMImageTool() error = %v", err)
+			}
+
+			data, err := tool.Generate(context.Background(), "testdata/alpine.tar", "cyclonedx-json")
+			if err != nil {
+				t.Fatalf("Generate() error = %v", err)
+			}
+
+			hasCPEs := countCPEs(data) > 0
+			if hasCPEs != tt.expectCPEs {
+				t.Errorf("expected CPEs present = %v, got %v", tt.expectCPEs, hasCPEs)
+			}
+		})
+	}
+}
+
 func TestSBOMImageTool_SerializeSBOM_InvalidFormat(t *testing.T) {
 	t.Log("Testing invalid format handling")
 	tool, err := NewSBOMImageTool()
