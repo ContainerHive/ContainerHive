@@ -1,3 +1,9 @@
+## [1.5.0](https://github.com/ContainerHive/ContainerHive/compare/v1.4.0...v1.5.0) (2026-09-04)
+
+### Features
+
+* **ci:** cap parallel count per image to shard unit count ([ad59653](https://github.com/ContainerHive/ContainerHive/commit/ad596535abe664351516919679dbf0327c593b95))
+
 ## [1.4.0](https://github.com/ContainerHive/ContainerHive/compare/v1.3.2...v1.4.0) (2026-09-04)
 
 ### Features
