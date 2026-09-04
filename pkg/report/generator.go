@@ -57,12 +57,24 @@ func (g *Generator) Generate(project *model.ContainerHiveProject) (*ProjectRepor
 }
 
 func scanProject(project *model.ContainerHiveProject) []ImageReport {
-	var images []ImageReport
+	merged := make(map[string]ImageReport)
 	for imageName, modelImages := range project.ImagesByName {
-		if len(modelImages) == 0 {
-			continue
+		for _, img := range modelImages {
+			imgReport := scanImage(project.RootDir, imageName, img)
+			existing, ok := merged[imageName]
+			if !ok {
+				merged[imageName] = imgReport
+				continue
+			}
+			existing.Tags = append(existing.Tags, imgReport.Tags...)
+			existing.Variants = append(existing.Variants, imgReport.Variants...)
+			merged[imageName] = existing
 		}
-		images = append(images, scanImage(project.RootDir, imageName, modelImages[0]))
+	}
+
+	var images []ImageReport
+	for _, imgReport := range merged {
+		images = append(images, imgReport)
 	}
 	slices.SortFunc(images, func(a, b ImageReport) int {
 		return strings.Compare(a.Name, b.Name)
