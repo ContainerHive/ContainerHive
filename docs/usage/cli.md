@@ -41,8 +41,10 @@ ch build [image:tag patterns...]
 |:-----|:------------|
 | `--registry` | Use registry from config (auto-enabled in CI) |
 | `--platform` | Target platform(s) to build (e.g. `linux/amd64`), overrides `hive.yml` |
+| `--max-shards` | Total number of shards to split work across — sourced from `CI_NODE_TOTAL` env (default: `1`) |
+| `--current-shard` | This shard's 1-based index — sourced from `CI_NODE_INDEX` env (default: `1`) |
 
-You can filter which images to build by passing image:tag patterns as arguments. In CI environments, the registry is auto-enabled.
+You can filter which images to build by passing image:tag patterns as arguments. In CI environments, the registry is auto-enabled. See [Sharding](sharding.md) for `--max-shards`/`--current-shard`.
 
 ### `test`
 
@@ -55,6 +57,10 @@ ch test [image:tag patterns...]
 | Flag | Description |
 |:-----|:------------|
 | `--build` | Run build before tests |
+| `--max-shards` | Total number of shards to split work across — sourced from `CI_NODE_TOTAL` env (default: `1`) |
+| `--current-shard` | This shard's 1-based index — sourced from `CI_NODE_INDEX` env (default: `1`) |
+
+See [Sharding](sharding.md) for `--max-shards`/`--current-shard`.
 
 You can combine `--build` with `--generate` to run the full pipeline in one command:
 
@@ -76,8 +82,10 @@ ch sbom [image:tag patterns...]
 |:-----|:------------|
 | `--platform` | Target platform(s) to generate SBOMs for (e.g. `linux/amd64`), overrides `hive.yml` |
 | `--workers` | Number of concurrent workers for SBOM generation (default: 4) |
+| `--max-shards` | Total number of shards to split work across — sourced from `CI_NODE_TOTAL` env (default: `1`) |
+| `--current-shard` | This shard's 1-based index — sourced from `CI_NODE_INDEX` env (default: `1`) |
 
-Generates CycloneDX JSON format SBOMs using [Syft](https://github.com/anchore/syft) as a Go library. No external tooling required.
+Generates CycloneDX JSON format SBOMs using [Syft](https://github.com/anchore/syft) as a Go library. No external tooling required. See [Sharding](sharding.md) for `--max-shards`/`--current-shard` — useful when many tags and variants push a single job's SBOM artifacts past a CI provider's size limit.
 
 ### `finalize`
 

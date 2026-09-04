@@ -63,3 +63,7 @@ ch build dotnet:8.0.200-node
 - Tag matching is exact — no wildcards or glob patterns.
 - Specifying only an image name matches all tags of that image.
 - Multiple filters are combined with OR logic — an image:tag matches if it matches any filter.
+
+## Sharding
+
+Filters and [sharding](sharding.md) compose: filters select which images and tags are in scope at all, and sharding partitions whatever remains across parallel CI jobs.
