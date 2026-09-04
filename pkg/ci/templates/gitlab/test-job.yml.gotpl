@@ -1,12 +1,11 @@
 {{ define "test-job.yml.gotpl" }}
-{{- $shards := option "ci_test_shards" | atoi }}
 test-{{ .Image.Name }}:
   extends: .test
   stage: test-{{ .Image.Name }}
   variables:
     IMAGE_NAME: {{ .Image.Name }}
-{{- if gt $shards 1 }}
-  parallel: {{ $shards }}
+{{- if gt .Image.TestShards 1 }}
+  parallel: {{ .Image.TestShards }}
 {{- end }}
   needs:
     - generate

@@ -321,3 +321,58 @@ func TestOwnedUnits(t *testing.T) {
 		}
 	})
 }
+
+func TestUnitCountByName(t *testing.T) {
+	project := fixtureProject()
+	counts := UnitCountByName(project)
+
+	// alpha-a: 2 tags × (1+1 variant) = 4 units, alpha-b: 1 tag × 1 = 1 unit → total 5
+	if counts["alpha"] != 5 {
+		t.Errorf("expected alpha to have 5 units, got %d", counts["alpha"])
+	}
+	// beta: 1 tag × 1 = 1 unit
+	if counts["beta"] != 1 {
+		t.Errorf("expected beta to have 1 unit, got %d", counts["beta"])
+	}
+}
+
+func TestUnitCountByName_ConsistencyWithTagIndex(t *testing.T) {
+	project := fixtureProject()
+	counts := UnitCountByName(project)
+	index := TagIndex(project)
+
+	// Sum of per-name counts must equal total units from TagIndex.
+	total := 0
+	for _, c := range counts {
+		total += c
+	}
+	if total != len(index) {
+		t.Errorf("UnitCountByName sum (%d) != TagIndex length (%d)", total, len(index))
+	}
+
+	// Verify per-name breakdown matches TagIndex grouping.
+	perName := make(map[string]int)
+	for _, ref := range index {
+		perName[project.ImagesByIdentifier[ref.Identifier].Name]++
+	}
+	for name, expected := range perName {
+		if counts[name] != expected {
+			t.Errorf("name %q: UnitCountByName=%d, TagIndex grouping=%d", name, counts[name], expected)
+		}
+	}
+}
+
+func TestUnitCountByName_NoVariants(t *testing.T) {
+	project := &model.ContainerHiveProject{
+		ImagesByIdentifier: map[string]*model.Image{
+			"app": {Identifier: "app", Name: "app", Tags: map[string]*model.Tag{"1.0": {}, "2.0": {}, "3.0": {}}},
+		},
+		ImagesByName: map[string][]*model.Image{
+			"app": {{Name: "app", Tags: map[string]*model.Tag{"1.0": {}, "2.0": {}, "3.0": {}}}},
+		},
+	}
+	counts := UnitCountByName(project)
+	if counts["app"] != 3 {
+		t.Errorf("expected 3 units, got %d", counts["app"])
+	}
+}

@@ -75,13 +75,16 @@ Custom templates receive a `CIContext` with the following fields:
 
 Each image in `Images` provides:
 
-| Field          | Type   | Description                            |
-|:---------------|:-------|:---------------------------------------|
-| `Name`         | string | Image name                             |
-| `Tags`         | list   | Tag names                              |
-| `Dependencies` | list   | Names of images this image depends on  |
-| `Depth`        | int    | Dependency depth (0 = no dependencies) |
-| `Platforms`    | list   | Target platforms                       |
+| Field          | Type   | Description                                                    |
+|:---------------|:-------|:---------------------------------------------------------------|
+| `Name`         | string | Image name                                                     |
+| `Tags`         | list   | Tag names                                                      |
+| `Dependencies` | list   | Names of images this image depends on                          |
+| `Depth`        | int    | Dependency depth (0 = no dependencies)                         |
+| `Platforms`    | list   | Target platforms                                               |
+| `ShardUnits`   | int    | Number of shard units (base + variant tags) — the useful max   |
+| `BuildShards`  | int    | Effective parallel for build jobs (min(ci_build_shards, ShardUnits)) |
+| `TestShards`   | int    | Effective parallel for test jobs (min(ci_test_shards, ShardUnits))  |
 
 ### Template functions
 
@@ -206,10 +209,10 @@ template_options:
 
 ## Sharding build and test jobs
 
-For GitLab CI, `ci_build_shards` and `ci_test_shards` split each build/test job into `parallel: N` instances, so
-a project with many tags and variants can build, generate SBOMs, and test faster — and stay under GitLab.com's
-SBOM artifact size limits. See [Split work across shards](sharding.md) for the full picture; the template option
-is set the same way as `ci_lint` above:
+For GitLab CI, `ci_build_shards` and `ci_test_shards` set an upper bound on `parallel: N` for each build/test job. The
+actual value is capped per image to the number of shard units (base + variant tags) that image has, so images with fewer
+tags than the configured value never spawn empty jobs that no-op. See [Split work across shards](sharding.md) for the
+full picture; the template option is set the same way as `ci_lint` above:
 
 ```yaml
 template_options:

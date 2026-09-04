@@ -9,6 +9,7 @@ import (
 	"github.com/ContainerHive/ContainerHive/internal/buildkit"
 	"github.com/ContainerHive/ContainerHive/internal/dependency"
 	"github.com/ContainerHive/ContainerHive/pkg/model"
+	"github.com/ContainerHive/ContainerHive/pkg/shard"
 )
 
 // CIImage represents an image in the CI context.
@@ -18,6 +19,9 @@ type CIImage struct {
 	Dependencies []string
 	Depth        int
 	Platforms    []string
+	ShardUnits   int // number of tag units (base + variant tags) — the useful max
+	BuildShards  int // effective parallel for build jobs (min(ci_build_shards, ShardUnits), ≥1)
+	TestShards   int // effective parallel for test jobs (min(ci_test_shards, ShardUnits), ≥1)
 }
 
 // CIContext holds all data needed to render CI templates.
@@ -186,6 +190,33 @@ func BuildCIContext(project *model.ContainerHiveProject, artifacts bool) (*CICon
 		if n, err := strconv.Atoi(opts[key]); err != nil || n < 1 {
 			return nil, fmt.Errorf("template_options.%s must be a positive integer, got %q", key, opts[key])
 		}
+	}
+
+	// Compute per-image shard counts: effective parallel = min(requested, units), ≥1.
+	// UnitCountByName iterates ImagesByName so it works even when only that map
+	// is populated (e.g. test fixtures).
+	requestedBuild, _ := strconv.Atoi(opts["ci_build_shards"])
+	requestedTest, _ := strconv.Atoi(opts["ci_test_shards"])
+	unitCounts := shard.UnitCountByName(project)
+
+	for i := range ciImages {
+		units := unitCounts[ciImages[i].Name]
+		if units < 1 {
+			units = 1
+		}
+		ciImages[i].ShardUnits = units
+
+		buildShards := requestedBuild
+		if buildShards > units {
+			buildShards = units
+		}
+		ciImages[i].BuildShards = buildShards
+
+		testShards := requestedTest
+		if testShards > units {
+			testShards = units
+		}
+		ciImages[i].TestShards = testShards
 	}
 
 	return &CIContext{
