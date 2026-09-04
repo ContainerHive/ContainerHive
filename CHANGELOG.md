@@ -1,3 +1,10 @@
+## [1.3.1](https://github.com/ContainerHive/ContainerHive/compare/v1.3.0...v1.3.1) (2026-09-04)
+
+### Bug Fixes
+
+* **mcp:** merge all version subdirectories in get_image tool ([b47a403](https://github.com/ContainerHive/ContainerHive/commit/b47a4037d3d43246dff01316c418b4a58a5d7973))
+* **report:** include all version subdirectories for a given image name ([464ca41](https://github.com/ContainerHive/ContainerHive/commit/464ca41a67b43ed44a0f4213f217b4e5332b8ca0))
+
 ## [1.3.0](https://github.com/ContainerHive/ContainerHive/compare/v1.2.1...v1.3.0) (2026-09-04)
 
 ### Features
