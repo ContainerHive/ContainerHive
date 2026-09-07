@@ -1186,6 +1186,45 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#cancelling-outdated-pipelines" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cancelling outdated pipelines
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Cancelling outdated pipelines">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#github-actions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GitHub Actions
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gitlab-ci" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GitLab CI
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#sharding-build-and-test-jobs" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2138,6 +2177,45 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#cancelling-outdated-pipelines" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cancelling outdated pipelines
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Cancelling outdated pipelines">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#github-actions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GitHub Actions
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gitlab-ci" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GitLab CI
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#sharding-build-and-test-jobs" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2482,14 +2560,32 @@ SBOM artifact size limits:</p>
 <div class="language-yaml highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="nt">template_options</span><span class="p">:</span>
 </span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="w">  </span><span class="nt">ci_sbom_generate_cpes</span><span class="p">:</span><span class="w"> </span><span class="s">"false"</span>
 </span></code></pre></div>
+<h2 id="cancelling-outdated-pipelines">Cancelling outdated pipelines</h2>
+<p>By default, when a new pipeline is triggered on the same branch, in-progress pipelines from earlier commits are
+automatically cancelled to save CI resources. This behaviour is controlled by the <code>ci_cancel_outdated</code> option.</p>
+<h3 id="github-actions">GitHub Actions</h3>
+<p>The generated workflow uses a <code>concurrency</code> group scoped to the workflow and branch. On a push to the default branch,
+a new run cancels the previous in-progress run. Pull request runs use a unique group per run, so PR behaviour is
+unchanged (no cancellation, no queueing).</p>
+<p>Requires <code>actions: read</code> permission (included in the generated workflow).</p>
+<h3 id="gitlab-ci">GitLab CI</h3>
+<p>The generated pipeline sets <code>workflow:auto_cancel:on_new_pipeline: interruptible</code> (GitLab 15.7+) and marks all jobs as
+<code>interruptible: true</code> via the <code>default</code> block (GitLab 15.9+). This forces auto-cancel of superseded in-progress
+pipelines on the same ref, regardless of the project-level "Auto-cancel redundant pipelines" setting.</p>
+<p>Note: GitLab's auto-cancel mechanism applies per ref. A new push to a merge request also cancels that MR's
+superseded pipeline. There is no clean way to restrict cancellation to the default branch only.</p>
+<p>To disable, set <code>ci_cancel_outdated</code> to <code>false</code> in your <code>hive.yml</code>:</p>
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="nt">template_options</span><span class="p">:</span>
+</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="w">  </span><span class="nt">ci_cancel_outdated</span><span class="p">:</span><span class="w"> </span><span class="s">"false"</span>
+</span></code></pre></div>
 <h2 id="sharding-build-and-test-jobs">Sharding build and test jobs</h2>
 <p>For GitLab CI, <code>ci_build_shards</code> and <code>ci_test_shards</code> set an upper bound on <code>parallel: N</code> for each build/test job. The
 actual value is capped per image to the number of shard units (base + variant tags) that image has, so images with fewer
 tags than the configured value never spawn empty jobs that no-op. See <a href="sharding.html">Split work across shards</a> for the
 full picture; the template option is set the same way as <code>ci_lint</code> above:</p>
-<div class="language-yaml highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="nt">template_options</span><span class="p">:</span>
-</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="w">  </span><span class="nt">ci_build_shards</span><span class="p">:</span><span class="w"> </span><span class="s">"5"</span>
-</span><span id="__span-11-3"><a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a><span class="w">  </span><span class="nt">ci_test_shards</span><span class="p">:</span><span class="w"> </span><span class="s">"5"</span>
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="nt">template_options</span><span class="p">:</span>
+</span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="w">  </span><span class="nt">ci_build_shards</span><span class="p">:</span><span class="w"> </span><span class="s">"5"</span>
+</span><span id="__span-12-3"><a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a><span class="w">  </span><span class="nt">ci_test_shards</span><span class="p">:</span><span class="w"> </span><span class="s">"5"</span>
 </span></code></pre></div>
 
 
