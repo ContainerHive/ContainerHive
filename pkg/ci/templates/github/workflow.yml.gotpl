@@ -9,6 +9,12 @@ on:
   pull_request:
     types: [opened, synchronize]
     branches: [main]
+{{- if ne (option "ci_cancel_outdated") "false" }}
+
+concurrency:
+  group: ${{ "{{" }} github.event_name == 'push' && format('{0}-{1}', github.workflow, github.ref) || github.run_id {{ "}}" }}
+  cancel-in-progress: ${{ "{{" }} github.event_name == 'push' {{ "}}" }}
+{{- end }}
 
 permissions:
   packages: write

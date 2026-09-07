@@ -80,6 +80,7 @@ func defaultTemplateOptions() map[string]string {
 	return map[string]string{
 		"ci_buildkit_image":                     buildkit.DefaultImage,
 		"ci_buildkit_version":                   buildkit.Version,
+		"ci_cancel_outdated":                    "true",
 		"ci_lint":                               "true",
 		"ci_report":                             "true",
 		"ci_sbom_generate_cpes":                 "true",
