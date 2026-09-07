@@ -1,3 +1,9 @@
+## [1.5.1](https://github.com/ContainerHive/ContainerHive/compare/v1.5.0...v1.5.1) (2026-09-07)
+
+### Bug Fixes
+
+* **report:** inject custom stylesheet after built-in theme block ([aaf52a4](https://github.com/ContainerHive/ContainerHive/commit/aaf52a430883fc144b9a9573b1d5a8c2721cbfc8))
+
 ## [1.5.0](https://github.com/ContainerHive/ContainerHive/compare/v1.4.0...v1.5.0) (2026-09-04)
 
 ### Features
