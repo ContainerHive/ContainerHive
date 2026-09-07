@@ -1,3 +1,9 @@
+## [1.6.0](https://github.com/ContainerHive/ContainerHive/compare/v1.5.1...v1.6.0) (2026-09-07)
+
+### Features
+
+* **ci:** add ci_cancel_outdated option to cancel superseded pipelines ([8eb30ad](https://github.com/ContainerHive/ContainerHive/commit/8eb30adfbc47184c3b0d28fb6bba0fc80191dd2a))
+
 ## [1.5.1](https://github.com/ContainerHive/ContainerHive/compare/v1.5.0...v1.5.1) (2026-09-07)
 
 ### Bug Fixes
