@@ -9,9 +9,6 @@
     <meta name="generator" content="ContainerHive" />
     <meta name="generated" content="/*INJECT_GENERATED_AT*/" />
     <style>
-      /*INJECT_STYLE*/
-    </style>
-    <style>
       :root, [data-theme="light"] {
         /* Light Theme - Precision Architect */
         --surface: #f7f9fb;
@@ -885,6 +882,14 @@
       .platform-sbom .no-data-message {
         font-size: 14px;
       }
+    </style>
+    <!--
+      report.styleSheet content is injected after the built-in theme block
+      above so that equal-specificity overrides (e.g. [data-theme="light"])
+      always win the cascade, regardless of the selectors the user chooses.
+    -->
+    <style>
+      /*INJECT_STYLE*/
     </style>
   </head>
   <body>
