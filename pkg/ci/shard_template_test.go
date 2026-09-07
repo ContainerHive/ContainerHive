@@ -192,3 +192,99 @@ func TestGitlabTemplate_NoCPEFlagWhenDisabled(t *testing.T) {
 		t.Errorf("expected sbom job to have --no-cpe appended, got:\n%s", rendered)
 	}
 }
+
+func TestGithubTemplate_CancelOutdatedAtDefault(t *testing.T) {
+	project := singleImageProjectForTemplate()
+	ctx, err := BuildCIContext(project, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	out, err := Generate("github", ctx, "")
+	if err != nil {
+		t.Fatal(err)
+	}
+	rendered := string(out)
+
+	if !strings.Contains(rendered, "concurrency:") {
+		t.Errorf("expected concurrency: key at the default ci_cancel_outdated, got:\n%s", rendered)
+	}
+	if !strings.Contains(rendered, "cancel-in-progress:") {
+		t.Errorf("expected cancel-in-progress: key at the default ci_cancel_outdated, got:\n%s", rendered)
+	}
+}
+
+func TestGithubTemplate_CancelOutdatedDisabled(t *testing.T) {
+	project := singleImageProjectForTemplate()
+	project.Config.TemplateOptions = map[string]string{
+		"ci_cancel_outdated": "false",
+	}
+	ctx, err := BuildCIContext(project, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	out, err := Generate("github", ctx, "")
+	if err != nil {
+		t.Fatal(err)
+	}
+	rendered := string(out)
+
+	if strings.Contains(rendered, "concurrency:") {
+		t.Errorf("expected no concurrency: key when ci_cancel_outdated is false, got:\n%s", rendered)
+	}
+	if strings.Contains(rendered, "cancel-in-progress:") {
+		t.Errorf("expected no cancel-in-progress: key when ci_cancel_outdated is false, got:\n%s", rendered)
+	}
+}
+
+func TestGitlabTemplate_CancelOutdatedAtDefault(t *testing.T) {
+	project := singleImageProjectForTemplate()
+	ctx, err := BuildCIContext(project, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	out, err := Generate("gitlab", ctx, "")
+	if err != nil {
+		t.Fatal(err)
+	}
+	rendered := string(out)
+
+	if !strings.Contains(rendered, "auto_cancel:") {
+		t.Errorf("expected auto_cancel: key at the default ci_cancel_outdated, got:\n%s", rendered)
+	}
+	if !strings.Contains(rendered, "on_new_pipeline: interruptible") {
+		t.Errorf("expected on_new_pipeline: interruptible at the default ci_cancel_outdated, got:\n%s", rendered)
+	}
+	if !strings.Contains(rendered, "interruptible: true") {
+		t.Errorf("expected interruptible: true at the default ci_cancel_outdated, got:\n%s", rendered)
+	}
+}
+
+func TestGitlabTemplate_CancelOutdatedDisabled(t *testing.T) {
+	project := singleImageProjectForTemplate()
+	project.Config.TemplateOptions = map[string]string{
+		"ci_cancel_outdated": "false",
+	}
+	ctx, err := BuildCIContext(project, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	out, err := Generate("gitlab", ctx, "")
+	if err != nil {
+		t.Fatal(err)
+	}
+	rendered := string(out)
+
+	if strings.Contains(rendered, "auto_cancel:") {
+		t.Errorf("expected no auto_cancel: key when ci_cancel_outdated is false, got:\n%s", rendered)
+	}
+	if strings.Contains(rendered, "on_new_pipeline: interruptible") {
+		t.Errorf("expected no on_new_pipeline: interruptible when ci_cancel_outdated is false, got:\n%s", rendered)
+	}
+	if strings.Contains(rendered, "interruptible: true") {
+		t.Errorf("expected no interruptible: true when ci_cancel_outdated is false, got:\n%s", rendered)
+	}
+}

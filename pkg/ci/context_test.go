@@ -179,6 +179,9 @@ func TestBuildCIContext_DefaultTemplateOptions(t *testing.T) {
 		t.Fatal(err)
 	}
 
+	if ctx.TemplateOptions["ci_cancel_outdated"] != "true" {
+		t.Errorf("expected default ci_cancel_outdated 'true', got %q", ctx.TemplateOptions["ci_cancel_outdated"])
+	}
 	if ctx.TemplateOptions["ci_buildkit_image"] != "moby/buildkit" {
 		t.Errorf("expected default ci_buildkit_image 'moby/buildkit', got %q", ctx.TemplateOptions["ci_buildkit_image"])
 	}

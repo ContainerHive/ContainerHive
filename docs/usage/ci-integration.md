@@ -207,6 +207,35 @@ template_options:
   ci_sbom_generate_cpes: "false"
 ```
 
+## Cancelling outdated pipelines
+
+By default, when a new pipeline is triggered on the same branch, in-progress pipelines from earlier commits are
+automatically cancelled to save CI resources. This behaviour is controlled by the `ci_cancel_outdated` option.
+
+### GitHub Actions
+
+The generated workflow uses a `concurrency` group scoped to the workflow and branch. On a push to the default branch,
+a new run cancels the previous in-progress run. Pull request runs use a unique group per run, so PR behaviour is
+unchanged (no cancellation, no queueing).
+
+Requires `actions: read` permission (included in the generated workflow).
+
+### GitLab CI
+
+The generated pipeline sets `workflow:auto_cancel:on_new_pipeline: interruptible` (GitLab 15.7+) and marks all jobs as
+`interruptible: true` via the `default` block (GitLab 15.9+). This forces auto-cancel of superseded in-progress
+pipelines on the same ref, regardless of the project-level "Auto-cancel redundant pipelines" setting.
+
+Note: GitLab's auto-cancel mechanism applies per ref. A new push to a merge request also cancels that MR's
+superseded pipeline. There is no clean way to restrict cancellation to the default branch only.
+
+To disable, set `ci_cancel_outdated` to `false` in your `hive.yml`:
+
+```yaml
+template_options:
+  ci_cancel_outdated: "false"
+```
+
 ## Sharding build and test jobs
 
 For GitLab CI, `ci_build_shards` and `ci_test_shards` set an upper bound on `parallel: N` for each build/test job. The

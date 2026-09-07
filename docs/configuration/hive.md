@@ -145,6 +145,7 @@ All values must be strings. Keys prefixed with `ci_` have built-in defaults:
 | `ci_lint`                          | `true`                        | Run hadolint linting in CI pipeline before builds                         |
 | `ci_build_shards`                  | `1`                           | Upper bound on parallel build instances per image (capped to shard unit count) |
 | `ci_test_shards`                   | `1`                           | Upper bound on parallel test instances per image (capped to shard unit count)  |
+| `ci_cancel_outdated`               | `true`                        | Cancel in-progress pipelines when a newer pipeline starts on the same ref |
 | `ci_report`                        | `true`                        | Generate and publish HTML/JSON report to GitHub Pages / GitLab Pages       |
 | `ci_sbom_generate_cpes`            | `true`                        | Generate CPEs in SBOMs (set to `false` to stay under GitLab artifact limits) |
 | `actions_checkout_version`         | `v6`                          | Version of `actions/checkout`                                              |
