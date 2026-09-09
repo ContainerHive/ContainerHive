@@ -2435,7 +2435,7 @@ context.</p>
 <tr>
 <td style="text-align: left;"><code>Tags</code></td>
 <td style="text-align: left;">list</td>
-<td style="text-align: left;">Tag names</td>
+<td style="text-align: left;">All tags including variant-suffixed tags (base + variants)</td>
 </tr>
 <tr>
 <td style="text-align: left;"><code>Dependencies</code></td>
@@ -2569,7 +2569,7 @@ a new run cancels the previous in-progress run. Pull request runs use a unique g
 unchanged (no cancellation, no queueing).</p>
 <p>Requires <code>actions: read</code> permission (included in the generated workflow).</p>
 <h3 id="gitlab-ci">GitLab CI</h3>
-<p>The generated pipeline sets <code>workflow:auto_cancel:on_new_pipeline: interruptible</code> (GitLab 15.7+) and marks all jobs as
+<p>The generated pipeline sets <code>workflow:auto_cancel:on_new_commit: interruptible</code> (GitLab 16.9+) and marks all jobs as
 <code>interruptible: true</code> via the <code>default</code> block (GitLab 15.9+). This forces auto-cancel of superseded in-progress
 pipelines on the same ref, regardless of the project-level "Auto-cancel redundant pipelines" setting.</p>
 <p>Note: GitLab's auto-cancel mechanism applies per ref. A new push to a merge request also cancels that MR's
