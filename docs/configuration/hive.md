@@ -71,6 +71,22 @@ Build cache configuration. Supports S3-compatible storage or registry-based cach
 | `ref` | string | Registry reference (e.g. `registry:5000/cache`) |
 | `insecure` | boolean | Allow insecure connections |
 
+### `cache_dir` / `version_cache_ttl`
+
+Configuration for ContainerHive's own local cache of external version lookups made by
+[`tag_ranges`](image.md#tag_ranges). This is **not** the build cache configured by
+[`cache`](#cache) above.
+
+| Field | Type | Description |
+|:------|:-----|:------------|
+| `cache_dir` | string | Directory for the version cache. Relative paths are resolved against the project root. Overridden by the `CONTAINER_HIVE_CACHE_DIR` environment variable, which always wins. Defaults to the XDG cache directory (e.g. `~/.cache/containerhive` on Linux). |
+| `version_cache_ttl` | string | Default TTL for a cached lookup, as a Go duration (e.g. `6h`). Defaults to `1h`. A `tag_range`'s `source.ttl` overrides this per source. |
+
+```yaml
+cache_dir: .ch-cache
+version_cache_ttl: 6h
+```
+
 ### `registry`
 
 Local OCI registry used for inter-image dependencies and multi-arch manifest creation.
