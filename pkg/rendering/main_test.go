@@ -341,6 +341,49 @@ func TestResolveLatestAlias(t *testing.T) {
 	})
 }
 
+func TestResolveAliasesFor_ExcludesPrerelease(t *testing.T) {
+	// semantic_tags.Compare ignores the "-suffix" component entirely, so
+	// without an explicit IsPrerelease flag "1.3.0-rc1" would compare equal
+	// to "1.3.0" and the winner would depend on iteration order. The *For
+	// variants must exclude prerelease candidates outright.
+	candidates := []AliasCandidate{
+		{Name: "1.3.0-rc1", IsPrerelease: true},
+		{Name: "1.3.0", IsPrerelease: false},
+	}
+
+	for i := 0; i < 20; i++ {
+		aliases := ResolveAliasesFor(candidates)
+		if got := aliases["1.3"]; got != "1.3.0" {
+			t.Fatalf("alias 1.3: expected 1.3.0 (never the prerelease), got %q", got)
+		}
+	}
+}
+
+func TestResolveLatestAliasFor_ExcludesPrerelease(t *testing.T) {
+	candidates := []AliasCandidate{
+		{Name: "2.0.0-rc1", IsPrerelease: true},
+		{Name: "1.9.0", IsPrerelease: false},
+	}
+
+	target, err := ResolveLatestAliasFor(candidates, "latest")
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if target != "1.9.0" {
+		t.Errorf("expected latest to skip the prerelease and point at 1.9.0, got %q", target)
+	}
+}
+
+func TestResolveLatestAliasFor_AllPrereleaseIsError(t *testing.T) {
+	candidates := []AliasCandidate{
+		{Name: "1.0.0-rc1", IsPrerelease: true},
+	}
+
+	if _, err := ResolveLatestAliasFor(candidates, "latest"); err == nil {
+		t.Error("expected an error when every candidate is a prerelease")
+	}
+}
+
 // ---------------------------------------------------------------------------
 // Unit tests for low-coverage functions
 // ---------------------------------------------------------------------------

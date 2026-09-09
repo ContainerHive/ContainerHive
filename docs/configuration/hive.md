@@ -71,6 +71,22 @@ Build cache configuration. Supports S3-compatible storage or registry-based cach
 | `ref` | string | Registry reference (e.g. `registry:5000/cache`) |
 | `insecure` | boolean | Allow insecure connections |
 
+### `cache_dir` / `version_cache_ttl`
+
+Configuration for ContainerHive's own local cache of external version lookups made by
+[`tag_ranges`](image.md#tag_ranges). This is **not** the build cache configured by
+[`cache`](#cache) above.
+
+| Field | Type | Description |
+|:------|:-----|:------------|
+| `cache_dir` | string | Directory for the version cache. Relative paths are resolved against the project root. Overridden by the `CONTAINER_HIVE_CACHE_DIR` environment variable, which always wins. Defaults to the XDG cache directory (e.g. `~/.cache/containerhive` on Linux). |
+| `version_cache_ttl` | string | Default TTL for a cached lookup, as a Go duration (e.g. `6h`). Defaults to `1h`. A `tag_range`'s `source.ttl` overrides this per source. |
+
+```yaml
+cache_dir: .ch-cache
+version_cache_ttl: 6h
+```
+
 ### `registry`
 
 Local OCI registry used for inter-image dependencies and multi-arch manifest creation.
@@ -148,12 +164,15 @@ All values must be strings. Keys prefixed with `ci_` have built-in defaults:
 | `ci_cancel_outdated`               | `true`                        | Cancel in-progress pipelines when a newer pipeline starts on the same ref |
 | `ci_report`                        | `true`                        | Generate and publish HTML/JSON report to GitHub Pages / GitLab Pages       |
 | `ci_sbom_generate_cpes`            | `true`                        | Generate CPEs in SBOMs (set to `false` to stay under GitLab artifact limits) |
+| `ci_version_cache`                 | `true`                        | Cache [`tag_ranges`](image.md#tag_ranges) version lookups across CI runs (only emitted when a project uses `tag_ranges`) |
+| `ci_version_cache_dir`             | `.ch-cache`                   | Cache directory for `tag_ranges` version lookups, relative to the project root — add it to `.gitignore` |
 | `actions_checkout_version`         | `v6`                          | Version of `actions/checkout`                                              |
 | `actions_upload_artifact_version`  | `v7`                          | Version of `actions/upload-artifact`                                       |
 | `actions_download_artifact_version` | `v7`                         | Version of `actions/download-artifact`                                     |
 | `actions_upload_pages_artifact_version` | `v3`                     | Version of `actions/upload-pages-artifact`                                 |
 | `actions_deploy_pages_version`     | `v4`                          | Version of `actions/deploy-pages`                                          |
 | `actions_junit_report_version`     | `v6`                          | Version of `mikepenz/action-junit-report`                                  |
+| `actions_cache_version`            | `v4`                          | Version of `actions/cache`, used for the `tag_ranges` version cache        |
 
 User-provided values override built-in defaults.
 

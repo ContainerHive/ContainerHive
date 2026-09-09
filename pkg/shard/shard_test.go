@@ -1,6 +1,7 @@
 package shard
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/ContainerHive/ContainerHive/pkg/model"
@@ -50,45 +51,57 @@ func fixtureProject() *model.ContainerHiveProject {
 	}
 }
 
-func TestShardOwns(t *testing.T) {
-	tests := []struct {
-		name    string
-		max     int
-		current int
-		index   int
-		want    bool
-	}{
-		{"disabled matches everything", 1, 1, 0, true},
-		{"disabled matches everything, large index", 1, 1, 99, true},
-		{"3 shards, index 0 -> shard 1", 3, 1, 0, true},
-		{"3 shards, index 0 -> not shard 2", 3, 2, 0, false},
-		{"3 shards, index 3 -> shard 1 again", 3, 1, 3, true},
-		{"odd count: 7 items, 3 shards, index 6 -> shard 1", 3, 1, 6, true},
-		{"odd count: 7 items, 3 shards, index 6 -> not shard 3", 3, 3, 6, false},
+func testRefs(n int) []TagRef {
+	refs := make([]TagRef, n)
+	for i := range refs {
+		refs[i] = TagRef{Identifier: "img", TagName: fmt.Sprintf("tag-%d", i)}
 	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			s := Shard{Current: tt.current, Max: tt.max}
-			if got := s.Owns(tt.index); got != tt.want {
-				t.Errorf("Owns(%d) = %v, want %v", tt.index, got, tt.want)
-			}
-		})
+	return refs
+}
+
+func TestShardOwns_DisabledMatchesEverything(t *testing.T) {
+	s := Shard{Current: 1, Max: 1}
+	for _, ref := range testRefs(10) {
+		if !s.Owns(ref) {
+			t.Errorf("disabled shard should own every unit, got false for %v", ref)
+		}
 	}
 }
 
 func TestShardOwnsPartitionsExactly(t *testing.T) {
-	// Property: for any Max, every index is owned by exactly one shard.
+	// Property: for any Max, every unit is owned by exactly one shard.
 	for _, max := range []int{1, 2, 3, 5, 7} {
-		for index := 0; index < 20; index++ {
+		for _, ref := range testRefs(20) {
 			owners := 0
 			for current := 1; current <= max; current++ {
 				s := Shard{Current: current, Max: max}
-				if s.Owns(index) {
+				if s.Owns(ref) {
 					owners++
 				}
 			}
 			if owners != 1 {
-				t.Errorf("max=%d index=%d: owned by %d shards, want exactly 1", max, index, owners)
+				t.Errorf("max=%d ref=%v: owned by %d shards, want exactly 1", max, ref, owners)
+			}
+		}
+	}
+}
+
+func TestNewTagSharder_InsertingOneTagMovesOnlyThatTag(t *testing.T) {
+	const max = 4
+	before := fixtureProject()
+	beforeRefs := TagIndex(before)
+
+	after := fixtureProject()
+	after.ImagesByIdentifier["beta"].Tags["3.0"] = &model.Tag{Name: "3.0"}
+	after.ImagesByName["beta"][0].Tags["3.0"] = &model.Tag{Name: "3.0"}
+
+	for current := 1; current <= max; current++ {
+		s := Shard{Current: current, Max: max}
+		sharderBefore := NewTagSharder(before, s)
+		sharderAfter := NewTagSharder(after, s)
+		for _, ref := range beforeRefs {
+			if sharderBefore(ref.Identifier, ref.TagName) != sharderAfter(ref.Identifier, ref.TagName) {
+				t.Errorf("shard %d: ownership of pre-existing unit %v changed after inserting beta:3.0", current, ref)
 			}
 		}
 	}
@@ -150,6 +163,21 @@ func TestTagIndexDeterministic(t *testing.T) {
 	for i := range first {
 		if first[i] != second[i] {
 			t.Errorf("index %d differs across calls: %+v vs %+v", i, first[i], second[i])
+		}
+	}
+}
+
+func TestTagIndexNoDuplicates(t *testing.T) {
+	project := fixtureProject()
+	refs := TagIndex(project)
+
+	seen := make(map[TagRef]int, len(refs))
+	for _, ref := range refs {
+		seen[ref]++
+	}
+	for ref, count := range seen {
+		if count > 1 {
+			t.Errorf("TagIndex contains %d copies of %v, want exactly 1", count, ref)
 		}
 	}
 }
@@ -303,21 +331,19 @@ func TestOwnedUnits(t *testing.T) {
 		}
 	})
 
-	t.Run("single unit with many shards concentrates in shard 1", func(t *testing.T) {
+	t.Run("single unit with many shards is owned by exactly one", func(t *testing.T) {
 		single := &model.ContainerHiveProject{
 			ImagesByIdentifier: map[string]*model.Image{
 				"solo": {Identifier: "solo", Name: "solo", Tags: map[string]*model.Tag{"1.0": {Name: "1.0"}}},
 			},
 		}
-		owned := OwnedUnits(single, Shard{Current: 1, Max: 10})
-		if len(owned) != 1 {
-			t.Fatalf("shard 1 should own the single unit, got %v", owned)
-		}
-		for current := 2; current <= 10; current++ {
+		owners := 0
+		for current := 1; current <= 10; current++ {
 			owned := OwnedUnits(single, Shard{Current: current, Max: 10})
-			if len(owned) != 0 {
-				t.Errorf("shard %d should be empty, got %v", current, owned)
-			}
+			owners += len(owned)
+		}
+		if owners != 1 {
+			t.Fatalf("expected exactly one shard to own the single unit across 10 shards, got %d", owners)
 		}
 	})
 }

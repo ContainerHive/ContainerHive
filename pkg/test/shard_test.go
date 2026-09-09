@@ -47,18 +47,23 @@ func twoImageProject() *model.ContainerHiveProject {
 func TestRunProjectTests_EmptyShardWarnsAndSucceeds(t *testing.T) {
 	buf := captureSlog(t)
 
-	// Single-image project, shard 2 of 2: the one unit is owned by shard 1.
+	// Single-image project, 2 shards: exactly one of the two owns the unit,
+	// hashed by identity rather than position — find the empty one.
 	project := &model.ContainerHiveProject{
 		ImagesByIdentifier: map[string]*model.Image{
 			"app": {Identifier: "app", Name: "app", Tags: map[string]*model.Tag{"1.0": {Name: "1.0"}}, Platforms: []string{"linux/amd64"}},
 		},
 		Config: model.HiveProjectConfig{Platforms: []string{"linux/amd64"}},
 	}
+	empty := shard.Shard{Current: 1, Max: 2}
+	if shard.NewTagSharder(project, empty)("app", "1.0") {
+		empty.Current = 2
+	}
 
 	tested, failed, err := RunProjectTests(context.Background(), &Opts{
 		DistPath: t.TempDir(),
 		Project:  project,
-		Shard:    shard.Shard{Current: 2, Max: 2},
+		Shard:    empty,
 	})
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)

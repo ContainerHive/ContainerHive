@@ -9,10 +9,38 @@ import (
 	"slices"
 	"sync"
 
+	"github.com/ContainerHive/ContainerHive/internal/tagrange"
 	"github.com/ContainerHive/ContainerHive/pkg/model"
 	"github.com/ContainerHive/ContainerHive/pkg/platform"
 	"golang.org/x/sync/errgroup"
 )
+
+// discoverOptions holds the settings Option functions configure. The zero
+// value resolves tag_ranges with a default (network-capable) Resolver,
+// which only actually runs - and only then touches a cache or the network
+// - when some image declares tag_ranges.
+type discoverOptions struct {
+	resolver        *tagrange.Resolver
+	refreshVersions bool
+}
+
+// Option configures optional DiscoverProject behavior.
+type Option func(*discoverOptions)
+
+// WithTagRangeResolver overrides the Resolver used to expand tag_ranges,
+// primarily so tests can inject a fixture source.Registry instead of
+// making real network calls. Takes precedence over WithRefreshVersions,
+// since a caller providing its own resolver is also responsible for its
+// own cache/refresh behavior.
+func WithTagRangeResolver(r *tagrange.Resolver) Option {
+	return func(o *discoverOptions) { o.resolver = r }
+}
+
+// WithRefreshVersions makes the default resolver's cache ignore its TTL
+// and refetch every source, still recording the result for later calls.
+func WithRefreshVersions(refresh bool) Option {
+	return func(o *discoverOptions) { o.refreshVersions = refresh }
+}
 
 func verifyProjectRoot(root string) error {
 	stat, err := os.Stat(root)
@@ -84,7 +112,12 @@ func discoverImages(ctx context.Context, rootPath string) (map[string]*model.Ima
 	return images, eg.Wait()
 }
 
-func DiscoverProject(ctx context.Context, root string) (*model.ContainerHiveProject, error) {
+func DiscoverProject(ctx context.Context, root string, opts ...Option) (*model.ContainerHiveProject, error) {
+	options := &discoverOptions{}
+	for _, opt := range opts {
+		opt(options)
+	}
+
 	if err := verifyProjectRoot(root); err != nil {
 		return nil, errors.Join(errors.New("failed to verify project root"), err)
 	}
@@ -119,6 +152,10 @@ func DiscoverProject(ctx context.Context, root string) (*model.ContainerHiveProj
 	images, err := discoverImages(ctx, imagesPath)
 	if err != nil {
 		return nil, errors.Join(errors.New("failed to discover images"), err)
+	}
+
+	if err := resolveTagRanges(ctx, images, hiveConfig, absoluteRoot, options); err != nil {
+		return nil, errors.Join(errors.New("failed to resolve tag_ranges"), err)
 	}
 
 	for _, img := range images {

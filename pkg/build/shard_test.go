@@ -123,19 +123,30 @@ func TestBuildWithoutDeps_ShardSkipsUnownedVariantTag(t *testing.T) {
 // exercises the gates as pkg/shard.NewBaseTagSharder actually composes them.
 func TestBuildWithoutDeps_ShardBuildsBaseForOwnedVariant(t *testing.T) {
 	project := singleImageProject(true)
-	// A 2-shard split where shard 2 owns the variant but not the base by
-	// exact match, to prove ownsBase still reports true for the base
-	// because of the owned variant.
-	twoShards := shard.Shard{Current: 2, Max: 2}
-	baseOwns := shard.NewBaseTagSharder(project, twoShards)
-	exactOwns := shard.NewTagSharder(project, twoShards)
+	// Shard assignment is a hash of each unit's own identity, so which shard
+	// ends up owning "1.0" vs "1.0-node" isn't fixed — find the shard where
+	// they land apart (base and variant tags are unlikely to collide, but
+	// search a few shard counts to avoid a flaky one-in-a-million false
+	// negative from a hash tie).
+	var twoShards shard.Shard
+	var baseOwns, exactOwns func(string, string) bool
+	found := false
+	for max := 2; max <= 8 && !found; max++ {
+		for current := 1; current <= max; current++ {
+			s := shard.Shard{Current: current, Max: max}
+			exact := shard.NewTagSharder(project, s)
+			if exact("myimg", "1.0-node") && !exact("myimg", "1.0") {
+				twoShards, exactOwns, baseOwns = s, exact, shard.NewBaseTagSharder(project, s)
+				found = true
+				break
+			}
+		}
+	}
+	if !found {
+		t.Fatal("test setup invalid: could not find a shard split where the variant tag is owned but the base tag is not")
+	}
+	t.Logf("using shard %+v", twoShards)
 
-	if exactOwns("myimg", "1.0") {
-		t.Fatal("test setup invalid: shard 2 should not own the base tag by exact match")
-	}
-	if !exactOwns("myimg", "1.0-node") {
-		t.Fatal("test setup invalid: shard 2 should own the variant tag")
-	}
 	if !baseOwns("myimg", "1.0") {
 		t.Fatal("test setup invalid: NewBaseTagSharder should report the base as owned via the variant")
 	}
@@ -203,12 +214,21 @@ func TestBuildProject_ShardWithDependenciesWarns(t *testing.T) {
 	}
 	bo := buildOrderWithDeps(t, distPath, project)
 
+	// Shard assignment is a hash of each unit's own identity, so which of
+	// the 2 shards owns the single "base:1.0" unit isn't fixed — find it,
+	// since the warning under test only fires for the shard that owns
+	// something.
+	owning := shard.Shard{Current: 1, Max: 2}
+	if !shard.NewTagSharder(project, owning)("base", "1.0") {
+		owning.Current = 2
+	}
+
 	opts := &ProjectBuildOpts{
 		Project:     project,
 		DistPath:    distPath,
 		ProgressOut: os.Stdout,
 		BuildOrder:  bo,
-		Shard:       shard.Shard{Current: 1, Max: 2},
+		Shard:       owning,
 	}
 
 	// The build itself will fail fast (missing Dockerfile) - only the

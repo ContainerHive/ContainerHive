@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 	"log/slog"
+	"maps"
+	"slices"
 
 	"github.com/ContainerHive/ContainerHive/internal/gcr"
 	"github.com/ContainerHive/ContainerHive/internal/ocistore"
@@ -70,13 +72,23 @@ func (r *Registry) ImageRef(imageName, tag, platformStr, buildID string) string 
 	return fmt.Sprintf("%s/%s:%s", r.Address(), imageName, pushTag(tag, platformStr, buildID))
 }
 
-// collectAllTags returns all tags for an image, including variant tags.
-func collectAllTags(imageDef *model.Image) []string {
-	var allTags []string
-	for tagName := range imageDef.Tags {
-		allTags = append(allTags, tagName)
-		for _, variantDef := range imageDef.Variants {
-			allTags = append(allTags, tagName+variantDef.TagSuffix)
+// collectAllTags returns all tags for an image, including variant tags, as
+// alias candidates carrying each tag's prerelease status, in a deterministic
+// order. img.Tags and img.Variants are maps, so iterating them directly
+// would make alias resolution (which picks a "highest" tag among ties, e.g.
+// a release vs. its prerelease) depend on Go's randomized map iteration
+// order. Sorting first fixes that.
+func collectAllTags(imageDef *model.Image) []rendering.AliasCandidate {
+	allTags := make([]rendering.AliasCandidate, 0, len(imageDef.Tags)*(1+len(imageDef.Variants)))
+	for _, tagName := range slices.Sorted(maps.Keys(imageDef.Tags)) {
+		tag := imageDef.Tags[tagName]
+		allTags = append(allTags, rendering.AliasCandidate{Name: tagName, IsPrerelease: tag.IsPrerelease})
+		for _, variantName := range slices.Sorted(maps.Keys(imageDef.Variants)) {
+			variantDef := imageDef.Variants[variantName]
+			allTags = append(allTags, rendering.AliasCandidate{
+				Name:         tagName + variantDef.TagSuffix,
+				IsPrerelease: tag.IsPrerelease,
+			})
 		}
 	}
 	return allTags
@@ -174,13 +186,18 @@ func (r *Registry) CreateAllManifests(project *model.ContainerHiveProject, filte
 	return nil
 }
 
-// collectBaseTags returns the base tag names for an image, excluding variant suffixes.
-func collectBaseTags(imageDef *model.Image) []string {
-	tags := make([]string, 0, len(imageDef.Tags))
-	for tagName := range imageDef.Tags {
-		tags = append(tags, tagName)
+// collectBaseTags returns the base tag names for an image, excluding variant
+// suffixes, as alias candidates, in deterministic sorted order (see
+// collectAllTags).
+func collectBaseTags(imageDef *model.Image) []rendering.AliasCandidate {
+	candidates := make([]rendering.AliasCandidate, 0, len(imageDef.Tags))
+	for _, tagName := range slices.Sorted(maps.Keys(imageDef.Tags)) {
+		candidates = append(candidates, rendering.AliasCandidate{
+			Name:         tagName,
+			IsPrerelease: imageDef.Tags[tagName].IsPrerelease,
+		})
 	}
-	return tags
+	return candidates
 }
 
 // retagAliases creates semantic version tag aliases in the registry for a
@@ -189,10 +206,10 @@ func collectBaseTags(imageDef *model.Image) []string {
 // Only tags matching the filters are retagged.
 func (r *Registry) retagAliases(imageDef *model.Image, filters []build.Filter, buildID string) error {
 	allTags := collectAllTags(imageDef)
-	aliases := rendering.ResolveAliases(allTags)
+	aliases := rendering.ResolveAliasesFor(allTags)
 
 	if imageDef.LatestAlias != nil {
-		latestTarget, err := rendering.ResolveLatestAlias(collectBaseTags(imageDef), imageDef.LatestAlias.Tag)
+		latestTarget, err := rendering.ResolveLatestAliasFor(collectBaseTags(imageDef), imageDef.LatestAlias.Tag)
 		if err != nil {
 			switch imageDef.LatestAlias.OnMissing {
 			case "silent":
@@ -206,12 +223,16 @@ func (r *Registry) retagAliases(imageDef *model.Image, filters []build.Filter, b
 			aliases[imageDef.LatestAlias.Tag] = latestTarget
 		}
 
-		for _, variantDef := range imageDef.Variants {
-			variantTags := make([]string, 0, len(imageDef.Tags))
-			for tagName := range imageDef.Tags {
-				variantTags = append(variantTags, tagName+variantDef.TagSuffix)
+		for _, variantName := range slices.Sorted(maps.Keys(imageDef.Variants)) {
+			variantDef := imageDef.Variants[variantName]
+			variantTags := make([]rendering.AliasCandidate, 0, len(imageDef.Tags))
+			for _, tagName := range slices.Sorted(maps.Keys(imageDef.Tags)) {
+				variantTags = append(variantTags, rendering.AliasCandidate{
+					Name:         tagName + variantDef.TagSuffix,
+					IsPrerelease: imageDef.Tags[tagName].IsPrerelease,
+				})
 			}
-			variantTarget, err := rendering.ResolveLatestAlias(variantTags, imageDef.LatestAlias.Tag)
+			variantTarget, err := rendering.ResolveLatestAliasFor(variantTags, imageDef.LatestAlias.Tag)
 			if err != nil {
 				switch imageDef.LatestAlias.OnMissing {
 				case "silent":

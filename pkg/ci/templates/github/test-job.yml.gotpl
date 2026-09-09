@@ -26,6 +26,15 @@
 {{- end }}
       - name: Prepare temp directory
         run: mkdir -p "$RUNNER_TEMP/ch"
+{{- if and $.Ctx.HasTagRanges (ne (option "ci_version_cache") "false") }}
+      - name: Restore version cache
+        uses: actions/cache/restore@{{ option "actions_cache_version" }}
+        with:
+          path: {{ .Ctx.VersionCacheDir }}
+          key: ch-versions-${{ "{{" }} github.run_id {{ "}}" }}
+          restore-keys: |
+            ch-versions-
+{{- end }}
       - name: Setup QEMU
         run: docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
       - name: Create Docker network
@@ -41,7 +50,7 @@
       - name: Wait for Docker socket
         run: docker run --rm --entrypoint="" -u "$(id -u):$(id -g)" -e CI=1 -e HOME="$RUNNER_TEMP/ch" -v "$RUNNER_TEMP/ch:$RUNNER_TEMP/ch" -v "$GITHUB_WORKSPACE:$GITHUB_WORKSPACE" -w "$GITHUB_WORKSPACE" --network ch-net -e DOCKER_HOST=tcp://dind:2375 $CH_IMAGE {{ .Ctx.ChCmd }} wait --docker-socket
       - name: Run container tests
-        run: docker run --rm --entrypoint="" -u "$(id -u):$(id -g)" -e CI=1 -e HOME="$RUNNER_TEMP/ch" -v "$RUNNER_TEMP/ch:$RUNNER_TEMP/ch" -v "$GITHUB_WORKSPACE:$GITHUB_WORKSPACE" -w "$GITHUB_WORKSPACE" --network ch-net -e DOCKER_HOST=tcp://dind:2375 $CH_IMAGE {{ .Ctx.ChCmd }} test {{ .Image.Name }} --build-id "$SNAPSHOT_ID"
+        run: docker run --rm --entrypoint="" -u "$(id -u):$(id -g)" -e CI=1 -e HOME="$RUNNER_TEMP/ch"{{ if .Ctx.HasTagRanges }} -e CONTAINER_HIVE_CACHE_DIR="$GITHUB_WORKSPACE/{{ .Ctx.VersionCacheDir }}"{{ end }} -v "$RUNNER_TEMP/ch:$RUNNER_TEMP/ch" -v "$GITHUB_WORKSPACE:$GITHUB_WORKSPACE" -w "$GITHUB_WORKSPACE" --network ch-net -e DOCKER_HOST=tcp://dind:2375 $CH_IMAGE {{ .Ctx.ChCmd }} test {{ .Image.Name }} --build-id "$SNAPSHOT_ID"
       - name: Publish Test Report
         id: test-report
         uses: mikepenz/action-junit-report@{{ option "actions_junit_report_version" }}
