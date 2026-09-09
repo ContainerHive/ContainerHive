@@ -9,12 +9,24 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"slices"
 	"sort"
 	"testing"
 
 	"github.com/ContainerHive/ContainerHive/pkg/build"
 	"github.com/ContainerHive/ContainerHive/pkg/model"
+	"github.com/ContainerHive/ContainerHive/pkg/rendering"
 )
+
+// candidateNames extracts the Name field from a slice of AliasCandidate, for
+// tests that only care about tag names.
+func candidateNames(candidates []rendering.AliasCandidate) []string {
+	names := make([]string, len(candidates))
+	for i, c := range candidates {
+		names[i] = c.Name
+	}
+	return names
+}
 
 func TestCollectAllTags_NoVariants(t *testing.T) {
 	img := &model.Image{
@@ -26,7 +38,7 @@ func TestCollectAllTags_NoVariants(t *testing.T) {
 		Variants: map[string]*model.ImageVariant{},
 	}
 
-	tags := collectAllTags(img)
+	tags := candidateNames(collectAllTags(img))
 	sort.Strings(tags)
 	if len(tags) != 2 {
 		t.Fatalf("expected 2 tags, got %d: %v", len(tags), tags)
@@ -48,7 +60,7 @@ func TestCollectAllTags_WithVariants(t *testing.T) {
 		},
 	}
 
-	tags := collectAllTags(img)
+	tags := candidateNames(collectAllTags(img))
 	sort.Strings(tags)
 	if len(tags) != 3 {
 		t.Fatalf("expected 3 tags, got %d: %v", len(tags), tags)
@@ -58,6 +70,32 @@ func TestCollectAllTags_WithVariants(t *testing.T) {
 	for i, want := range expected {
 		if tags[i] != want {
 			t.Errorf("tag[%d] = %q, want %q", i, tags[i], want)
+		}
+	}
+}
+
+func TestCollectAllTags_DeterministicAcrossRuns(t *testing.T) {
+	// img.Tags and img.Variants are maps; without sorting, collectAllTags
+	// would return the tags in Go's randomized iteration order, and any
+	// alias-resolution tie (e.g. a release vs. its prerelease sharing the
+	// same alias) would pick a different winner on every run. Rebuild the
+	// map fresh each iteration to actually exercise the randomization.
+	names := []string{"1.0.0", "1.0.0-rc1", "2.0.0", "2.0.0-rc1", "3.0.0"}
+	var first []string
+	for i := 0; i < 20; i++ {
+		tags := make(map[string]*model.Tag, len(names))
+		for _, n := range names {
+			tags[n] = &model.Tag{}
+		}
+		img := &model.Image{Name: "app", Tags: tags, Variants: map[string]*model.ImageVariant{}}
+
+		got := candidateNames(collectAllTags(img))
+		if first == nil {
+			first = got
+			continue
+		}
+		if !slices.Equal(got, first) {
+			t.Fatalf("collectAllTags order is not deterministic: run 0 = %v, run %d = %v", first, i, got)
 		}
 	}
 }
@@ -260,7 +298,7 @@ func TestCollectBaseTags(t *testing.T) {
 		},
 	}
 
-	tags := collectBaseTags(img)
+	tags := candidateNames(collectBaseTags(img))
 	sort.Strings(tags)
 	if len(tags) != 2 {
 		t.Fatalf("expected 2 base tags, got %d: %v", len(tags), tags)
