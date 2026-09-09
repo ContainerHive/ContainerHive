@@ -17,6 +17,17 @@ type Tag struct {
 	Versions  Versions          `yaml:"versions" json:"versions,omitempty" jsonschema:"Versions to use for this tag"`
 	BuildArgs BuildArgs         `yaml:"build_args" json:"build_args,omitempty" jsonschema:"Build args to specify for this tag"`
 	Labels    map[string]string `yaml:"labels,omitempty" json:"labels,omitempty" jsonschema:"Custom OCI image labels applied to this tag. Overrides image-level labels."`
+
+	// IsPrerelease marks a tag whose upstream version is a prerelease. Set by
+	// the tag_ranges resolver for generated tags; static tags default to
+	// false. Prerelease tags are excluded from latest_alias and alias
+	// resolution by default. Not part of the YAML/JSON schema surface.
+	IsPrerelease bool `yaml:"-" json:"-"`
+
+	// GeneratedFrom records the tag_range tag_name template that produced
+	// this tag. Empty for tags declared statically in image.yml. Not part of
+	// the YAML/JSON schema surface.
+	GeneratedFrom string `yaml:"-" json:"-"`
 }
 
 // Image represents a fully resolved container image definition within a project.
