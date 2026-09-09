@@ -45,6 +45,7 @@ type Image struct {
 	BuildArgs           BuildArgs `yaml:"build_args"`
 	Secrets             Secrets   `yaml:"secrets"`
 	Tags                map[string]*Tag
+	TagRanges           []*TagRange
 	Variants            map[string]*ImageVariant
 	DependsOn           []string
 	Platforms           []string

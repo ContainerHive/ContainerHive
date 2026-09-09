@@ -51,6 +51,7 @@ type LatestAliasConfig struct {
 type ImageDefinitionConfig struct {
 	Description string             `yaml:"description" json:"description,omitempty" jsonschema:"Description of the image"`
 	Tags        []*Tag             `yaml:"tags" json:"tags" jsonschema:"Tags to create for this image"`
+	TagRanges   []*TagRange        `yaml:"tag_ranges,omitempty" json:"tag_ranges,omitempty" jsonschema:"Tag ranges generating tags from external version sources at discovery time"`
 	Variants    []VariantConfig    `yaml:"variants" json:"variants,omitempty" jsonschema:"Variants to create for this image"`
 	Versions    Versions           `yaml:"versions" json:"versions,omitempty" jsonschema:"Versions to use for this image"`
 	BuildArgs   BuildArgs          `yaml:"build_args" json:"build_args,omitempty" jsonschema:"Build args to add for this image"`
@@ -135,4 +136,10 @@ type HiveProjectConfig struct {
 	Labels          *LabelsConfig       `yaml:"labels,omitempty" json:"labels,omitempty" jsonschema:"Project-level OCI image labels applied to every built image"`
 	Lint            *LintConfig         `yaml:"lint,omitempty" json:"lint,omitempty" jsonschema:"Dockerfile linting configuration (hadolint)"`
 	Report          ProjectReportConfig `yaml:"report,omitempty" json:"report" jsonSchema:"Report customization"`
+
+	// CacheDir and VersionCacheTTL configure ContainerHive's own local cache
+	// for external version lookups made by tag_ranges. This is distinct
+	// from Cache above, which configures the BuildKit build cache.
+	CacheDir        string `yaml:"cache_dir,omitempty" json:"cache_dir,omitempty" jsonschema:"Directory for ContainerHive's local caches (tag_ranges external version lookups). Overridden by CONTAINER_HIVE_CACHE_DIR. Defaults to the XDG cache directory. Not the build cache configured by 'cache'."`
+	VersionCacheTTL string `yaml:"version_cache_ttl,omitempty" json:"version_cache_ttl,omitempty" jsonschema:"Default TTL for cached tag_ranges external version lookups, as a Go duration (e.g. 6h). Defaults to 1h."`
 }
