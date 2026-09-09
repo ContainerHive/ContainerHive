@@ -126,11 +126,16 @@ func BuildCIContext(project *model.ContainerHiveProject, artifacts bool) (*CICon
 	var ciImages []CIImage
 
 	for name, images := range project.ImagesByName {
-		// Collect tags from all image variants with same name
+		// Collect tags from all image variants with same name, including
+		// variant-suffixed tags so custom templates see the full set of
+		// build units (matching shard.TagIndex).
 		tagSet := make(map[string]bool)
 		for _, img := range images {
 			for tagName := range img.Tags {
 				tagSet[tagName] = true
+				for _, variantDef := range img.Variants {
+					tagSet[tagName+variantDef.TagSuffix] = true
+				}
 			}
 		}
 		tags := make([]string, 0, len(tagSet))

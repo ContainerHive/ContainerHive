@@ -292,6 +292,78 @@ func TestBuildCIContext_UserOverridesTemplateOptions(t *testing.T) {
 	}
 }
 
+func TestBuildCIContext_VariantTags(t *testing.T) {
+	project := &model.ContainerHiveProject{
+		Config: model.HiveProjectConfig{
+			Platforms: []string{"linux/amd64"},
+		},
+		ImagesByName: map[string][]*model.Image{
+			"app": {{
+				Name: "app",
+				Tags: map[string]*model.Tag{
+					"1.0": {Name: "1.0"},
+					"2.0": {Name: "2.0"},
+				},
+				Variants: map[string]*model.ImageVariant{
+					"node": {Name: "node", TagSuffix: "-node"},
+				},
+			}},
+		},
+	}
+
+	ctx, err := BuildCIContext(project, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(ctx.Images) != 1 {
+		t.Fatalf("expected 1 image, got %d", len(ctx.Images))
+	}
+
+	expected := []string{"1.0", "1.0-node", "2.0", "2.0-node"}
+	if !reflect.DeepEqual(ctx.Images[0].Tags, expected) {
+		t.Errorf("expected tags %v, got %v", expected, ctx.Images[0].Tags)
+	}
+}
+
+func TestBuildCIContext_VariantTagsDeduplicated(t *testing.T) {
+	project := &model.ContainerHiveProject{
+		Config: model.HiveProjectConfig{
+			Platforms: []string{"linux/amd64"},
+		},
+		ImagesByName: map[string][]*model.Image{
+			"app": {
+				{
+					Name: "app",
+					Tags: map[string]*model.Tag{"1.0": {Name: "1.0"}},
+					Variants: map[string]*model.ImageVariant{
+						"node": {Name: "node", TagSuffix: "-node"},
+					},
+				},
+				{
+					Name: "app",
+					Tags: map[string]*model.Tag{"1.0": {Name: "1.0"}},
+					Variants: map[string]*model.ImageVariant{
+						"slim": {Name: "slim", TagSuffix: "-slim"},
+					},
+				},
+			},
+		},
+	}
+
+	ctx, err := BuildCIContext(project, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(ctx.Images) != 1 {
+		t.Fatalf("expected 1 image, got %d", len(ctx.Images))
+	}
+
+	expected := []string{"1.0", "1.0-node", "1.0-slim"}
+	if !reflect.DeepEqual(ctx.Images[0].Tags, expected) {
+		t.Errorf("expected tags %v, got %v", expected, ctx.Images[0].Tags)
+	}
+}
+
 func TestBuildCIContext_ShardCountCapping(t *testing.T) {
 	tests := []struct {
 		name             string
