@@ -4,6 +4,9 @@ example/dist
 example/reports
 site/
 
+# tag_ranges version cache
+.ch-cache/
+
 # IDE and editor files
 .idea/
 .claude/worktrees

@@ -6,6 +6,15 @@ lint:
   image:
     name: {{ .ImageName }}:{{ .Version }}
     entrypoint: [""]
+{{- if and .HasTagRanges (ne (option "ci_version_cache") "false") }}
+  cache:
+    key: ch-versions
+    paths:
+      - {{ .VersionCacheDir }}/
+    policy: pull
+  variables:
+    CONTAINER_HIVE_CACHE_DIR: {{ .VersionCacheDir }}
+{{- end }}
   script:
     - {{ .ChCmd }} lint --format codeclimate=gl-code-quality-report.json
   artifacts:
