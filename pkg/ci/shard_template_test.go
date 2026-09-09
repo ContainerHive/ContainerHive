@@ -254,8 +254,8 @@ func TestGitlabTemplate_CancelOutdatedAtDefault(t *testing.T) {
 	if !strings.Contains(rendered, "auto_cancel:") {
 		t.Errorf("expected auto_cancel: key at the default ci_cancel_outdated, got:\n%s", rendered)
 	}
-	if !strings.Contains(rendered, "on_new_pipeline: interruptible") {
-		t.Errorf("expected on_new_pipeline: interruptible at the default ci_cancel_outdated, got:\n%s", rendered)
+	if !strings.Contains(rendered, "on_new_commit: interruptible") {
+		t.Errorf("expected on_new_commit: interruptible at the default ci_cancel_outdated, got:\n%s", rendered)
 	}
 	if !strings.Contains(rendered, "interruptible: true") {
 		t.Errorf("expected interruptible: true at the default ci_cancel_outdated, got:\n%s", rendered)
@@ -281,8 +281,8 @@ func TestGitlabTemplate_CancelOutdatedDisabled(t *testing.T) {
 	if strings.Contains(rendered, "auto_cancel:") {
 		t.Errorf("expected no auto_cancel: key when ci_cancel_outdated is false, got:\n%s", rendered)
 	}
-	if strings.Contains(rendered, "on_new_pipeline: interruptible") {
-		t.Errorf("expected no on_new_pipeline: interruptible when ci_cancel_outdated is false, got:\n%s", rendered)
+	if strings.Contains(rendered, "on_new_commit: interruptible") {
+		t.Errorf("expected no on_new_commit: interruptible when ci_cancel_outdated is false, got:\n%s", rendered)
 	}
 	if strings.Contains(rendered, "interruptible: true") {
 		t.Errorf("expected no interruptible: true when ci_cancel_outdated is false, got:\n%s", rendered)

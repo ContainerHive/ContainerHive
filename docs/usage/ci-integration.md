@@ -222,7 +222,7 @@ Requires `actions: read` permission (included in the generated workflow).
 
 ### GitLab CI
 
-The generated pipeline sets `workflow:auto_cancel:on_new_pipeline: interruptible` (GitLab 15.7+) and marks all jobs as
+The generated pipeline sets `workflow:auto_cancel:on_new_commit: interruptible` (GitLab 16.9+) and marks all jobs as
 `interruptible: true` via the `default` block (GitLab 15.9+). This forces auto-cancel of superseded in-progress
 pipelines on the same ref, regardless of the project-level "Auto-cancel redundant pipelines" setting.
 
