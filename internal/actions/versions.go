@@ -1,10 +1,11 @@
 package actions
 
 const (
-	CheckoutVersion            = "v7.0.1"  // renovate: datasource=github-tags depName=actions/checkout
-	UploadArtifactVersion      = "v7.0.1"  // renovate: datasource=github-tags depName=actions/upload-artifact
-	DownloadArtifactVersion    = "v8.0.1"  // renovate: datasource=github-tags depName=actions/download-artifact
-	UploadPagesArtifactVersion = "v3"  // renovate: datasource=github-tags depName=actions/upload-pages-artifact
-	DeployPagesVersion         = "v5.0.1"  // renovate: datasource=github-tags depName=actions/deploy-pages
-	JunitReportVersion         = "v6.5.0"  // renovate: datasource=github-tags depName=mikepenz/action-junit-report
+	CheckoutVersion            = "v7.0.1" // renovate: datasource=github-tags depName=actions/checkout
+	UploadArtifactVersion      = "v7.0.1" // renovate: datasource=github-tags depName=actions/upload-artifact
+	DownloadArtifactVersion    = "v8.0.1" // renovate: datasource=github-tags depName=actions/download-artifact
+	UploadPagesArtifactVersion = "v3"     // renovate: datasource=github-tags depName=actions/upload-pages-artifact
+	DeployPagesVersion         = "v5.0.1" // renovate: datasource=github-tags depName=actions/deploy-pages
+	JunitReportVersion         = "v6.5.0" // renovate: datasource=github-tags depName=mikepenz/action-junit-report
+	CacheVersion               = "v4.2.0" // renovate: datasource=github-tags depName=actions/cache
 )

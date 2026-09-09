@@ -164,12 +164,15 @@ All values must be strings. Keys prefixed with `ci_` have built-in defaults:
 | `ci_cancel_outdated`               | `true`                        | Cancel in-progress pipelines when a newer pipeline starts on the same ref |
 | `ci_report`                        | `true`                        | Generate and publish HTML/JSON report to GitHub Pages / GitLab Pages       |
 | `ci_sbom_generate_cpes`            | `true`                        | Generate CPEs in SBOMs (set to `false` to stay under GitLab artifact limits) |
+| `ci_version_cache`                 | `true`                        | Cache [`tag_ranges`](image.md#tag_ranges) version lookups across CI runs (only emitted when a project uses `tag_ranges`) |
+| `ci_version_cache_dir`             | `.ch-cache`                   | Cache directory for `tag_ranges` version lookups, relative to the project root — add it to `.gitignore` |
 | `actions_checkout_version`         | `v6`                          | Version of `actions/checkout`                                              |
 | `actions_upload_artifact_version`  | `v7`                          | Version of `actions/upload-artifact`                                       |
 | `actions_download_artifact_version` | `v7`                         | Version of `actions/download-artifact`                                     |
 | `actions_upload_pages_artifact_version` | `v3`                     | Version of `actions/upload-pages-artifact`                                 |
 | `actions_deploy_pages_version`     | `v4`                          | Version of `actions/deploy-pages`                                          |
 | `actions_junit_report_version`     | `v6`                          | Version of `mikepenz/action-junit-report`                                  |
+| `actions_cache_version`            | `v4`                          | Version of `actions/cache`, used for the `tag_ranges` version cache        |
 
 User-provided values override built-in defaults.
 
