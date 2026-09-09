@@ -10,6 +10,7 @@ require (
 	github.com/Masterminds/semver/v3 v3.5.0
 	github.com/Masterminds/sprig/v3 v3.3.0
 	github.com/anchore/syft v1.52.0
+	github.com/blues/jsonata-go v1.5.4
 	github.com/containerd/containerd/v2 v2.3.5
 	github.com/containerd/errdefs v1.0.0
 	github.com/docker/cli v29.8.0+incompatible
