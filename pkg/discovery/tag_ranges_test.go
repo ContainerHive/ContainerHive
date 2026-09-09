@@ -144,6 +144,21 @@ tag_ranges:
 	}
 }
 
+// TestWithRefreshVersions_SetsOption covers the option wiring; the actual
+// force-refresh behavior is covered at the Cache level
+// (internal/tagrange.TestCache_ForceRefresh_IgnoresWarmEntry).
+func TestWithRefreshVersions_SetsOption(t *testing.T) {
+	opts := &discoverOptions{}
+	WithRefreshVersions(true)(opts)
+	if !opts.refreshVersions {
+		t.Error("expected WithRefreshVersions(true) to set refreshVersions")
+	}
+	WithRefreshVersions(false)(opts)
+	if opts.refreshVersions {
+		t.Error("expected WithRefreshVersions(false) to clear refreshVersions")
+	}
+}
+
 func tagNames(tags map[string]*model.Tag) []string {
 	names := make([]string, 0, len(tags))
 	for n := range tags {

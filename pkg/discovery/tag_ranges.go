@@ -34,7 +34,9 @@ func resolveTagRanges(ctx context.Context, images map[string]*model.Image, hiveC
 		if err != nil {
 			return fmt.Errorf("failed to resolve tag_ranges cache directory: %w", err)
 		}
-		resolver = tagrange.NewResolver(tagrange.NewCache(cacheDir), nil)
+		cache := tagrange.NewCache(cacheDir)
+		cache.SetForceRefresh(opts.refreshVersions)
+		resolver = tagrange.NewResolver(cache, nil)
 	}
 
 	for _, identifier := range slices.Sorted(maps.Keys(images)) {

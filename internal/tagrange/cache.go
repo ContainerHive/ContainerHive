@@ -81,6 +81,11 @@ type Cache struct {
 	// unwritable (e.g. a read-only bind mount in CI). Degrading to
 	// in-memory-only must never fail a build.
 	unwritable bool
+
+	// forceRefresh makes every lookup behave as a cold miss (ignoring TTL
+	// and any existing entry) while still writing the refetched result, so
+	// --refresh-versions can force a refetch without disabling the cache.
+	forceRefresh bool
 }
 
 // NewCache constructs a Cache rooted at dir. dir is created lazily on first
@@ -88,6 +93,15 @@ type Cache struct {
 // filesystem.
 func NewCache(dir string) *Cache {
 	return &Cache{dir: dir, now: time.Now, memory: make(map[string]cacheEntry)}
+}
+
+// SetForceRefresh makes every subsequent FetchVersions call ignore any
+// existing entry and TTL, always refetching (and still recording the
+// refetched result, so the cache stays warm for later, non-forced calls).
+func (c *Cache) SetForceRefresh(refresh bool) {
+	c.mu.Lock()
+	c.forceRefresh = refresh
+	c.mu.Unlock()
 }
 
 // entryPath returns the on-disk path for a cache key.
@@ -127,16 +141,24 @@ func TokenFingerprint(token string) string {
 func (c *Cache) FetchVersions(ctx context.Context, src source.VersionSource, cfg *model.SourceConfig, tokenFingerprint string) ([]source.Version, error) {
 	key := cacheKey(src.CacheKeyParts(cfg), tokenFingerprint)
 
-	if entry, ok := c.load(src.Name(), key); ok {
-		return entry.Versions, nil
+	c.mu.Lock()
+	refresh := c.forceRefresh
+	c.mu.Unlock()
+
+	if !refresh {
+		if entry, ok := c.load(src.Name(), key); ok {
+			return entry.Versions, nil
+		}
 	}
 
 	result, err, _ := c.group.Do(src.Name()+"/"+key, func() (any, error) {
 		// Re-check under the singleflight key: a concurrent caller may have
 		// already populated the entry while this one was waiting to enter
-		// Do.
-		if entry, ok := c.load(src.Name(), key); ok {
-			return entry.Versions, nil
+		// Do. Skipped under forceRefresh, which always refetches.
+		if !refresh {
+			if entry, ok := c.load(src.Name(), key); ok {
+				return entry.Versions, nil
+			}
 		}
 
 		versions, err := src.Fetch(ctx, cfg)
