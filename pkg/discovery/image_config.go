@@ -125,6 +125,7 @@ func processImageConfig(projectRoot, configFilePath string) (*model.Image, error
 		Secrets:             ensureSecretsInitialized(parsedImageDef.Secrets),
 		Variants:            indexedVariants,
 		Tags:                processTags(parsedImageDef),
+		TagRanges:           parsedImageDef.TagRanges,
 		DependsOn:           parsedImageDef.DependsOn,
 		Platforms:           parsedImageDef.Platforms,
 		LatestAlias:         parsedImageDef.LatestAlias,
