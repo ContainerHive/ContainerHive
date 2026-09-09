@@ -1,3 +1,14 @@
+## [1.7.0](https://github.com/ContainerHive/ContainerHive/compare/v1.6.0...v1.7.0) (2026-09-09)
+
+### Features
+
+* **ci:** include variant-suffixed tags in CIImage.Tags ([15aa1a4](https://github.com/ContainerHive/ContainerHive/commit/15aa1a458ed327f776acb3a227d028354fabc79b))
+
+### Bug Fixes
+
+* **deps:** update module golang.org/x/sync to v0.23.0 ([b0810b0](https://github.com/ContainerHive/ContainerHive/commit/b0810b03a96ed2b67cc68fcccf5c3283fb354c0d))
+* **deps:** update module modernc.org/sqlite to v1.58.0 ([9957e2c](https://github.com/ContainerHive/ContainerHive/commit/9957e2c1be755ebe0e5b57bca6fd8308cb76e2de))
+
 ## [1.6.0](https://github.com/ContainerHive/ContainerHive/compare/v1.5.1...v1.6.0) (2026-09-07)
 
 ### Features
