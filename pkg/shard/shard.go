@@ -8,6 +8,7 @@ package shard
 
 import (
 	"fmt"
+	"hash/fnv"
 	"sort"
 
 	"github.com/ContainerHive/ContainerHive/pkg/model"
@@ -26,13 +27,20 @@ func (s Shard) Enabled() bool {
 	return s.Max > 1
 }
 
-// Owns reports whether the unit at this index belongs to this shard, using
-// modulo round-robin assignment.
-func (s Shard) Owns(index int) bool {
+// Owns reports whether the given unit belongs to this shard. Assignment
+// hashes the unit's own identity rather than its position in the canonical
+// TagIndex, so inserting or removing one tag only moves that tag between
+// shards instead of reshuffling the whole index (as position-based modulo
+// assignment did).
+func (s Shard) Owns(ref TagRef) bool {
 	if !s.Enabled() {
 		return true
 	}
-	return index%s.Max == s.Current-1
+	h := fnv.New32a()
+	_, _ = h.Write([]byte(ref.Identifier))
+	_, _ = h.Write([]byte{0})
+	_, _ = h.Write([]byte(ref.TagName))
+	return int(h.Sum32()%uint32(s.Max)) == s.Current-1
 }
 
 // Validate checks that Max and Current describe a well-formed shard.
@@ -55,17 +63,22 @@ type TagRef struct {
 
 // TagIndex returns the canonical, sorted list of shard units for a project:
 // one entry per (image identifier, tag), including variant-suffixed tags.
-// The list is sorted by (Identifier, TagName) so that shard assignment is
-// deterministic regardless of Go's randomized map iteration order.
+// The list is sorted by (Identifier, TagName) and deduplicated so that
+// UnitCountByName and hash-based Owns both see each unit exactly once,
+// regardless of Go's randomized map iteration order.
 func TagIndex(project *model.ContainerHiveProject) []TagRef {
-	var refs []TagRef
+	seen := make(map[TagRef]struct{})
 	for _, img := range project.ImagesByIdentifier {
 		for tagName := range img.Tags {
-			refs = append(refs, TagRef{Identifier: img.Identifier, TagName: tagName})
+			seen[TagRef{Identifier: img.Identifier, TagName: tagName}] = struct{}{}
 			for _, variantDef := range img.Variants {
-				refs = append(refs, TagRef{Identifier: img.Identifier, TagName: tagName + variantDef.TagSuffix})
+				seen[TagRef{Identifier: img.Identifier, TagName: tagName + variantDef.TagSuffix}] = struct{}{}
 			}
 		}
+	}
+	refs := make([]TagRef, 0, len(seen))
+	for ref := range seen {
+		refs = append(refs, ref)
 	}
 	sort.Slice(refs, func(i, j int) bool {
 		if refs[i].Identifier != refs[j].Identifier {
@@ -76,14 +89,14 @@ func TagIndex(project *model.ContainerHiveProject) []TagRef {
 	return refs
 }
 
-// indexOf builds a lookup from shard unit to its position in the canonical
-// index, so ownership checks are O(1) after construction.
-func indexOf(refs []TagRef) map[TagRef]int {
-	m := make(map[TagRef]int, len(refs))
-	for i, ref := range refs {
-		m[ref] = i
+// tagSet builds a lookup of every valid shard unit for the project, so an
+// unknown (identifier, tag) pair is never treated as owned.
+func tagSet(refs []TagRef) map[TagRef]struct{} {
+	set := make(map[TagRef]struct{}, len(refs))
+	for _, ref := range refs {
+		set[ref] = struct{}{}
 	}
-	return m
+	return set
 }
 
 // NewTagSharder returns a predicate reporting whether this shard owns the
@@ -93,13 +106,13 @@ func NewTagSharder(project *model.ContainerHiveProject, s Shard) func(identifier
 	if !s.Enabled() {
 		return func(string, string) bool { return true }
 	}
-	positions := indexOf(TagIndex(project))
+	valid := tagSet(TagIndex(project))
 	return func(identifier, tagName string) bool {
-		idx, ok := positions[TagRef{Identifier: identifier, TagName: tagName}]
-		if !ok {
+		ref := TagRef{Identifier: identifier, TagName: tagName}
+		if _, ok := valid[ref]; !ok {
 			return false
 		}
-		return s.Owns(idx)
+		return s.Owns(ref)
 	}
 }
 
@@ -114,7 +127,7 @@ func NewBaseTagSharder(project *model.ContainerHiveProject, s Shard) func(identi
 	if !s.Enabled() {
 		return func(string, string) bool { return true }
 	}
-	positions := indexOf(TagIndex(project))
+	valid := tagSet(TagIndex(project))
 
 	// variantsOf maps identifier -> base tag -> that base tag's variant tag names.
 	variantsOf := make(map[string]map[string][]string)
@@ -132,11 +145,11 @@ func NewBaseTagSharder(project *model.ContainerHiveProject, s Shard) func(identi
 	}
 
 	owns := func(identifier, tagName string) bool {
-		idx, ok := positions[TagRef{Identifier: identifier, TagName: tagName}]
-		if !ok {
+		ref := TagRef{Identifier: identifier, TagName: tagName}
+		if _, ok := valid[ref]; !ok {
 			return false
 		}
-		return s.Owns(idx)
+		return s.Owns(ref)
 	}
 
 	return func(identifier, baseTagName string) bool {
@@ -175,8 +188,8 @@ func OwnedUnits(project *model.ContainerHiveProject, s Shard) []TagRef {
 		return refs
 	}
 	owned := make([]TagRef, 0, len(refs))
-	for i, ref := range refs {
-		if s.Owns(i) {
+	for _, ref := range refs {
+		if s.Owns(ref) {
 			owned = append(owned, ref)
 		}
 	}
