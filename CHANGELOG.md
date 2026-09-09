@@ -1,3 +1,9 @@
+## [1.7.1](https://github.com/ContainerHive/ContainerHive/compare/v1.7.0...v1.7.1) (2026-09-09)
+
+### Bug Fixes
+
+* **ci:** use workflow:auto_cancel:on_new_commit instead of on_new_pipeline ([#250](https://github.com/ContainerHive/ContainerHive/issues/250)) ([c618f44](https://github.com/ContainerHive/ContainerHive/commit/c618f441f68f2e3b4321af95d2171845a7ad1556))
+
 ## [1.7.0](https://github.com/ContainerHive/ContainerHive/compare/v1.6.0...v1.7.0) (2026-09-09)
 
 ### Features
