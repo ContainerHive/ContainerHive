@@ -78,7 +78,7 @@ Each image in `Images` provides:
 | Field          | Type   | Description                                                    |
 |:---------------|:-------|:---------------------------------------------------------------|
 | `Name`         | string | Image name                                                     |
-| `Tags`         | list   | Tag names                                                      |
+| `Tags`         | list   | All tags including variant-suffixed tags (base + variants)     |
 | `Dependencies` | list   | Names of images this image depends on                          |
 | `Depth`        | int    | Dependency depth (0 = no dependencies)                         |
 | `Platforms`    | list   | Target platforms                                               |
