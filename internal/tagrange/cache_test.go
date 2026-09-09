@@ -206,6 +206,42 @@ func TestCache_UnwritableDirDegradesToInMemory(t *testing.T) {
 	}
 }
 
+func TestCache_ForceRefresh_IgnoresWarmEntry(t *testing.T) {
+	c := NewCache(t.TempDir())
+	src := &countingSource{fetch: func(ctx context.Context) ([]source.Version, error) {
+		return []source.Version{{Raw: "1.0.0"}}, nil
+	}}
+	cfg := &model.SourceConfig{Type: "test"}
+
+	if _, err := c.FetchVersions(context.Background(), src, cfg, ""); err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if _, err := c.FetchVersions(context.Background(), src, cfg, ""); err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if got := src.calls.Load(); got != 1 {
+		t.Fatalf("expected 1 fetch before forcing refresh, got %d", got)
+	}
+
+	c.SetForceRefresh(true)
+	if _, err := c.FetchVersions(context.Background(), src, cfg, ""); err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if got := src.calls.Load(); got != 2 {
+		t.Errorf("expected forceRefresh to trigger a second fetch despite a warm entry, got %d calls", got)
+	}
+
+	// The refetched result is still recorded, so a subsequent non-forced
+	// call is served from the cache again.
+	c.SetForceRefresh(false)
+	if _, err := c.FetchVersions(context.Background(), src, cfg, ""); err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if got := src.calls.Load(); got != 2 {
+		t.Errorf("expected the refetched result to warm the cache, got %d calls", got)
+	}
+}
+
 func TestResolveCacheDir_Precedence(t *testing.T) {
 	t.Run("env wins over hive.yml", func(t *testing.T) {
 		got, err := ResolveCacheDir("/env/dir", "/hive/dir", "/project")

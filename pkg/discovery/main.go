@@ -20,7 +20,8 @@ import (
 // which only actually runs - and only then touches a cache or the network
 // - when some image declares tag_ranges.
 type discoverOptions struct {
-	resolver *tagrange.Resolver
+	resolver        *tagrange.Resolver
+	refreshVersions bool
 }
 
 // Option configures optional DiscoverProject behavior.
@@ -28,9 +29,17 @@ type Option func(*discoverOptions)
 
 // WithTagRangeResolver overrides the Resolver used to expand tag_ranges,
 // primarily so tests can inject a fixture source.Registry instead of
-// making real network calls.
+// making real network calls. Takes precedence over WithRefreshVersions,
+// since a caller providing its own resolver is also responsible for its
+// own cache/refresh behavior.
 func WithTagRangeResolver(r *tagrange.Resolver) Option {
 	return func(o *discoverOptions) { o.resolver = r }
+}
+
+// WithRefreshVersions makes the default resolver's cache ignore its TTL
+// and refetch every source, still recording the result for later calls.
+func WithRefreshVersions(refresh bool) Option {
+	return func(o *discoverOptions) { o.refreshVersions = refresh }
 }
 
 func verifyProjectRoot(root string) error {

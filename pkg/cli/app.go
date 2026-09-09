@@ -25,7 +25,10 @@ import (
 func discoverProject(ctx context.Context, cmd *cli.Command) (*model.ContainerHiveProject, error) {
 	projectRoot := cmd.String("project")
 
-	project, err := discovery.DiscoverProject(ctx, projectRoot)
+	project, err := discovery.DiscoverProject(
+		ctx, projectRoot,
+		discovery.WithRefreshVersions(cmd.Bool("refresh-versions")),
+	)
 	if err != nil {
 		return nil, fmt.Errorf("discovery failed: %w", err)
 	}
@@ -184,6 +187,11 @@ func NewApp() *cli.Command {
 				Name:    "generate",
 				Aliases: []string{"g"},
 				Usage:   "Run generate before the command",
+			},
+			&cli.BoolFlag{
+				Name:    "refresh-versions",
+				Usage:   "Ignore the tag_ranges version cache TTL and refetch every external version source",
+				Sources: cli.EnvVars("CH_REFRESH_VERSIONS"),
 			},
 		},
 		Before: func(ctx context.Context, cmd *cli.Command) (context.Context, error) {
