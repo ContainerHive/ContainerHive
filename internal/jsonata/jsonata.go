@@ -1,10 +1,12 @@
-package tagrange
+// Package jsonata wraps github.com/blues/jsonata-go behind a small surface
+// so the engine can be swapped without touching callers.
+package jsonata
 
 import (
 	"fmt"
 	"time"
 
-	"github.com/blues/jsonata-go"
+	jsonatago "github.com/blues/jsonata-go"
 )
 
 // evalTimeout bounds a single JSONata evaluation. jsonata-go has no
@@ -18,7 +20,7 @@ const evalTimeout = 5 * time.Second
 // jsonata-js 1.5.4; an expression copied from a newer JSONata Exerciser may
 // not compile here.
 func EvalTransform(expr string, data any) (any, error) {
-	compiled, err := jsonata.Compile(expr)
+	compiled, err := jsonatago.Compile(expr)
 	if err != nil {
 		return nil, fmt.Errorf("transform %q failed to compile (containerhive uses the JSONata 1.5.4 subset): %w", expr, err)
 	}

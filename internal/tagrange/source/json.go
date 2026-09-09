@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/ContainerHive/ContainerHive/internal/tagrange"
+	"github.com/ContainerHive/ContainerHive/internal/jsonata"
 	"github.com/ContainerHive/ContainerHive/pkg/model"
 )
 
@@ -41,7 +41,7 @@ func (JSONSource) Fetch(ctx context.Context, cfg *model.SourceConfig) ([]Version
 
 	result := doc
 	if cfg.Transform != "" {
-		transformed, err := tagrange.EvalTransform(cfg.Transform, doc)
+		transformed, err := jsonata.EvalTransform(cfg.Transform, doc)
 		if err != nil {
 			return nil, fmt.Errorf("json source %q: %w", cfg.URL, err)
 		}
