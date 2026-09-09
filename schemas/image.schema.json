@@ -49,6 +49,265 @@
       },
       "description": "Tags to create for this image"
     },
+    "tag_ranges": {
+      "type": [
+        "null",
+        "array"
+      ],
+      "items": {
+        "type": [
+          "null",
+          "object"
+        ],
+        "properties": {
+          "tag_name": {
+            "type": "string",
+            "description": "Go template for the generated tag name. Data: .major .minor .patch .full .raw .prerelease .extra.\u003ckey\u003e,required"
+          },
+          "source": {
+            "type": [
+              "null",
+              "object"
+            ],
+            "properties": {
+              "type": {
+                "type": "string",
+                "description": "Source type (json, registry, dockerhub, github),required"
+              },
+              "url": {
+                "type": "string",
+                "description": "HTTP(S) URL returning JSON (type: json)"
+              },
+              "transform": {
+                "type": "string",
+                "description": "JSONata expression mapping the document to a list of {version, ...extras} objects (type: json)"
+              },
+              "headers": {
+                "type": "object",
+                "description": "Extra request headers. Values support $VAR / ${VAR} environment expansion (type: json)",
+                "additionalProperties": {
+                  "type": "string"
+                }
+              },
+              "image": {
+                "type": "string",
+                "description": "Repository whose tags are listed, e.g. library/node or ghcr.io/owner/image (type: registry, dockerhub)"
+              },
+              "repo": {
+                "type": "string",
+                "description": "GitHub repository as owner/name (type: github)"
+              },
+              "kind": {
+                "type": "string",
+                "description": "What to list: releases (default) or tags (type: github)"
+              },
+              "token_env": {
+                "type": "string",
+                "description": "Name of the environment variable holding an auth token. Never put the token itself here."
+              },
+              "ttl": {
+                "type": "string",
+                "description": "Cache TTL override for this source, as a Go duration (e.g. 6h)"
+              }
+            },
+            "description": "External version source. Mutually exclusive with generator.",
+            "required": [
+              "type"
+            ],
+            "additionalProperties": false
+          },
+          "generator": {
+            "type": "string",
+            "description": "Named generator instead of an explicit source (e.g. semver-matrix). Mutually exclusive with source."
+          },
+          "params": {
+            "type": "object",
+            "description": "Parameters for the named generator",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "select": {
+            "type": [
+              "null",
+              "object"
+            ],
+            "properties": {
+              "major": {
+                "description": "Selection at the major level",
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "enum": [
+                      "latest",
+                      "all"
+                    ]
+                  },
+                  {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  {
+                    "type": [
+                      "null",
+                      "object"
+                    ],
+                    "properties": {
+                      "all": {
+                        "type": "boolean",
+                        "description": "Keep every distinct value at this level"
+                      },
+                      "last": {
+                        "type": "integer",
+                        "description": "Keep the N highest distinct values at this level"
+                      }
+                    },
+                    "additionalProperties": false
+                  }
+                ]
+              },
+              "minor": {
+                "description": "Selection at the minor level",
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "enum": [
+                      "latest",
+                      "all"
+                    ]
+                  },
+                  {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  {
+                    "type": [
+                      "null",
+                      "object"
+                    ],
+                    "properties": {
+                      "all": {
+                        "type": "boolean",
+                        "description": "Keep every distinct value at this level"
+                      },
+                      "last": {
+                        "type": "integer",
+                        "description": "Keep the N highest distinct values at this level"
+                      }
+                    },
+                    "additionalProperties": false
+                  }
+                ]
+              },
+              "patch": {
+                "description": "Selection at the patch level",
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "enum": [
+                      "latest",
+                      "all"
+                    ]
+                  },
+                  {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  {
+                    "type": [
+                      "null",
+                      "object"
+                    ],
+                    "properties": {
+                      "all": {
+                        "type": "boolean",
+                        "description": "Keep every distinct value at this level"
+                      },
+                      "last": {
+                        "type": "integer",
+                        "description": "Keep the N highest distinct values at this level"
+                      }
+                    },
+                    "additionalProperties": false
+                  }
+                ]
+              }
+            },
+            "description": "How many versions to keep per semantic version level. Required when source is set. Omitted levels default to latest.",
+            "additionalProperties": false
+          },
+          "filter": {
+            "type": [
+              "null",
+              "object"
+            ],
+            "properties": {
+              "exclude_prerelease": {
+                "type": [
+                  "null",
+                  "boolean"
+                ],
+                "description": "Drop versions with a semantic version prerelease component. Defaults to true."
+              },
+              "exclude_suffixes": {
+                "type": [
+                  "null",
+                  "array"
+                ],
+                "items": {
+                  "type": "string"
+                },
+                "description": "Drop versions whose raw string contains any of these substrings (e.g. -alpine for non-semver flavours)"
+              },
+              "min_version": {
+                "type": "string",
+                "description": "Drop versions lower than this (inclusive)"
+              },
+              "max_version": {
+                "type": "string",
+                "description": "Drop versions higher than this (inclusive)"
+              },
+              "max_major_increment": {
+                "type": "integer",
+                "description": "Sanity guard: drop majors separated from the rest of the set by a version gap larger than this. 0 disables."
+              }
+            },
+            "description": "Filters applied to fetched versions before selection",
+            "additionalProperties": false
+          },
+          "max_tags": {
+            "type": "integer",
+            "description": "Hard cap on generated tags for this range. Exceeding it is an error. Defaults to 50."
+          },
+          "versions": {
+            "type": "object",
+            "description": "Versions for generated tags. Values are Go templates rendered per resolved version.",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "build_args": {
+            "type": "object",
+            "description": "Build args for generated tags. Values are Go templates rendered per resolved version.",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "labels": {
+            "type": "object",
+            "description": "Custom OCI labels for generated tags. Values are Go templates rendered per resolved version.",
+            "additionalProperties": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "tag_name"
+        ],
+        "additionalProperties": false
+      },
+      "description": "Tag ranges generating tags from external version sources at discovery time"
+    },
     "variants": {
       "type": [
         "null",

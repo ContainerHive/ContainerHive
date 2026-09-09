@@ -197,6 +197,14 @@
         }
       },
       "additionalProperties": false
+    },
+    "cache_dir": {
+      "type": "string",
+      "description": "Directory for ContainerHive's local caches (tag_ranges external version lookups). Overridden by CONTAINER_HIVE_CACHE_DIR. Defaults to the XDG cache directory. Not the build cache configured by 'cache'."
+    },
+    "version_cache_ttl": {
+      "type": "string",
+      "description": "Default TTL for cached tag_ranges external version lookups, as a Go duration (e.g. 6h). Defaults to 1h."
     }
   },
   "$id": "https://schema-nest.timo-reymann.de/api/schema/json-schema/containerhive-project/latest",
