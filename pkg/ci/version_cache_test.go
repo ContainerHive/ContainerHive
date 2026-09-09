@@ -96,11 +96,18 @@ func TestGithubTemplate_VersionCacheStepsWithTagRanges(t *testing.T) {
 	}
 	rendered := string(out)
 
-	if strings.Count(rendered, "Restore version cache") != 2 {
-		t.Errorf("expected 2 version cache restore steps (generate + lint), got:\n%s", rendered)
+	// Every job that invokes ch (not just generate+lint) needs the cache,
+	// since each independently re-resolves tag_ranges.
+	if strings.Count(rendered, "Restore version cache") != 6 {
+		t.Errorf("expected 6 version cache restore steps (generate, lint, build, test, manifest, report), got:\n%s", rendered)
 	}
-	if !strings.Contains(rendered, "actions/cache@"+actionsCacheVersionForTest()) {
-		t.Errorf("expected the pinned actions/cache version, got:\n%s", rendered)
+	// Only generate needs to write the cache; every other job only reads
+	// it, via the restore-only sub-action.
+	if strings.Count(rendered, "actions/cache@"+actionsCacheVersionForTest()) != 1 {
+		t.Errorf("expected exactly 1 read-write actions/cache step (generate), got:\n%s", rendered)
+	}
+	if strings.Count(rendered, "actions/cache/restore@"+actionsCacheVersionForTest()) != 5 {
+		t.Errorf("expected 5 read-only actions/cache/restore steps, got:\n%s", rendered)
 	}
 	if !strings.Contains(rendered, `path: .ch-cache`) {
 		t.Errorf("expected the default version cache dir, got:\n%s", rendered)
@@ -155,8 +162,10 @@ func TestGitlabTemplate_VersionCacheWithTagRanges(t *testing.T) {
 	}
 	rendered := string(out)
 
-	if strings.Count(rendered, "key: ch-versions") != 2 {
-		t.Errorf("expected 2 cache blocks (generate + lint), got:\n%s", rendered)
+	// Every job that invokes ch (not just generate+lint) needs the cache,
+	// since each independently re-resolves tag_ranges.
+	if strings.Count(rendered, "key: ch-versions") != 6 {
+		t.Errorf("expected 6 cache blocks (generate, lint, .build, .manifest, .test, report), got:\n%s", rendered)
 	}
 	if !strings.Contains(rendered, "CONTAINER_HIVE_CACHE_DIR: .ch-cache") {
 		t.Errorf("expected CONTAINER_HIVE_CACHE_DIR variable, got:\n%s", rendered)
@@ -164,8 +173,8 @@ func TestGitlabTemplate_VersionCacheWithTagRanges(t *testing.T) {
 	if !strings.Contains(rendered, "policy: pull-push") {
 		t.Errorf("expected the generate job's cache policy to be pull-push, got:\n%s", rendered)
 	}
-	if !strings.Contains(rendered, "policy: pull") {
-		t.Errorf("expected the lint job's cache policy to be pull-only, got:\n%s", rendered)
+	if strings.Count(rendered, "policy: pull\n") != 5 {
+		t.Errorf("expected 5 pull-only cache policies (lint, .build, .manifest, .test, report), got:\n%s", rendered)
 	}
 	if !strings.Contains(rendered, "tag_ranges resolved to") {
 		t.Errorf("expected the resolved-unit-count header comment, got:\n%s", rendered)

@@ -27,6 +27,15 @@
 {{- end }}
       - name: Prepare temp directory
         run: mkdir -p "$RUNNER_TEMP/ch"
+{{- if and $.Ctx.HasTagRanges (ne (option "ci_version_cache") "false") }}
+      - name: Restore version cache
+        uses: actions/cache/restore@{{ option "actions_cache_version" }}
+        with:
+          path: {{ .Ctx.VersionCacheDir }}
+          key: ch-versions-${{ "{{" }} github.run_id {{ "}}" }}
+          restore-keys: |
+            ch-versions-
+{{- end }}
 {{- if $.Ctx.Config.Registry }}
       - name: Login to registry
         run: echo "${{ "{{" }} secrets.CONTAINER_HIVE_REGISTRY_PASSWORD {{ "}}" }}" | docker run --rm --entrypoint="" -u "$(id -u):$(id -g)" -e CI=1 -i -e HOME="$RUNNER_TEMP/ch" -v "$RUNNER_TEMP/ch:$RUNNER_TEMP/ch" -v "$GITHUB_WORKSPACE:$GITHUB_WORKSPACE" -w "$GITHUB_WORKSPACE" $CH_IMAGE {{ $.Ctx.ChCmd }} login -u "${{ "{{" }} secrets.CONTAINER_HIVE_REGISTRY_USERNAME {{ "}}" }}" --password-stdin "{{ $.Ctx.Config.RegistryHost }}"
@@ -34,7 +43,7 @@
       - name: Login to GHCR
         run: echo "${{ "{{" }} secrets.GITHUB_TOKEN {{ "}}" }}" | docker run --rm --entrypoint="" -u "$(id -u):$(id -g)" -e CI=1 -i -e HOME="$RUNNER_TEMP/ch" -v "$RUNNER_TEMP/ch:$RUNNER_TEMP/ch" -v "$GITHUB_WORKSPACE:$GITHUB_WORKSPACE" -w "$GITHUB_WORKSPACE" $CH_IMAGE {{ .Ctx.ChCmd }} login -u "${{ "{{" }} github.actor {{ "}}" }}" --password-stdin ghcr.io
       - name: Finalize manifest
-        run: docker run --rm --entrypoint="" -u "$(id -u):$(id -g)" -e CI=1 -e HOME="$RUNNER_TEMP/ch" -v "$RUNNER_TEMP/ch:$RUNNER_TEMP/ch" -v "$GITHUB_WORKSPACE:$GITHUB_WORKSPACE" -w "$GITHUB_WORKSPACE" $CH_IMAGE {{ .Ctx.ChCmd }} finalize {{ .Image.Name }} --build-id "$SNAPSHOT_ID"
+        run: docker run --rm --entrypoint="" -u "$(id -u):$(id -g)" -e CI=1 -e HOME="$RUNNER_TEMP/ch"{{ if .Ctx.HasTagRanges }} -e CONTAINER_HIVE_CACHE_DIR="$GITHUB_WORKSPACE/{{ .Ctx.VersionCacheDir }}"{{ end }} -v "$RUNNER_TEMP/ch:$RUNNER_TEMP/ch" -v "$GITHUB_WORKSPACE:$GITHUB_WORKSPACE" -w "$GITHUB_WORKSPACE" $CH_IMAGE {{ .Ctx.ChCmd }} finalize {{ .Image.Name }} --build-id "$SNAPSHOT_ID"
 {{- if $.Ctx.Artifacts }}
       - name: Upload manifest artifacts
         uses: actions/upload-artifact@{{ option "actions_upload_artifact_version" }}

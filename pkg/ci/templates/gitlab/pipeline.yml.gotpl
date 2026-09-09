@@ -45,8 +45,18 @@ before_script:
     - name: {{ option "ci_buildkit_image" }}:{{ option "ci_buildkit_version" }}
       alias: buildkitd
       command: ["--addr", "tcp://0.0.0.0:8372"]
+{{- if and .HasTagRanges (ne (option "ci_version_cache") "false") }}
+  cache:
+    key: ch-versions
+    paths:
+      - {{ .VersionCacheDir }}/
+    policy: pull
+{{- end }}
   variables:
     BUILDKIT_HOST: tcp://buildkitd:8372
+{{- if and .HasTagRanges (ne (option "ci_version_cache") "false") }}
+    CONTAINER_HIVE_CACHE_DIR: {{ .VersionCacheDir }}
+{{- end }}
   script:
     - {{ .ChCmd }} wait --buildkitd
     - {{ .ChCmd }} build ${IMAGE_NAME} --platform ${PLATFORM} --build-id "$SNAPSHOT_ID"
@@ -59,6 +69,15 @@ before_script:
   image:
     name: {{ .ImageName }}:{{ .Version }}
     entrypoint: [""]
+{{- if and .HasTagRanges (ne (option "ci_version_cache") "false") }}
+  cache:
+    key: ch-versions
+    paths:
+      - {{ .VersionCacheDir }}/
+    policy: pull
+  variables:
+    CONTAINER_HIVE_CACHE_DIR: {{ .VersionCacheDir }}
+{{- end }}
   script:
     - {{ .ChCmd }} finalize ${IMAGE_NAME} --build-id "$SNAPSHOT_ID"
 
@@ -69,9 +88,19 @@ before_script:
   services:
     - name: docker:dind
       alias: dind
+{{- if and .HasTagRanges (ne (option "ci_version_cache") "false") }}
+  cache:
+    key: ch-versions
+    paths:
+      - {{ .VersionCacheDir }}/
+    policy: pull
+{{- end }}
   variables:
     DOCKER_HOST: tcp://dind:2375
     DOCKER_TLS_CERTDIR: ""
+{{- if and .HasTagRanges (ne (option "ci_version_cache") "false") }}
+    CONTAINER_HIVE_CACHE_DIR: {{ .VersionCacheDir }}
+{{- end }}
   script:
     - {{ .ChCmd }} wait --docker-socket
     - {{ .ChCmd }} test ${IMAGE_NAME} --build-id "$SNAPSHOT_ID"
@@ -113,6 +142,15 @@ report:
     name: {{ .ImageName }}:{{ .Version }}
     entrypoint: [""]
   stage: report
+{{- if and .HasTagRanges (ne (option "ci_version_cache") "false") }}
+  cache:
+    key: ch-versions
+    paths:
+      - {{ .VersionCacheDir }}/
+    policy: pull
+  variables:
+    CONTAINER_HIVE_CACHE_DIR: {{ .VersionCacheDir }}
+{{- end }}
   needs:
     - generate
   {{- range $img := .Images }}
