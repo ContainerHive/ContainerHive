@@ -24,9 +24,10 @@ type Tag struct {
 	// resolution by default. Not part of the YAML/JSON schema surface.
 	IsPrerelease bool `yaml:"-" json:"-"`
 
-	// GeneratedFrom records the tag_range tag_name template that produced
-	// this tag. Empty for tags declared statically in image.yml. Not part of
-	// the YAML/JSON schema surface.
+	// GeneratedFrom identifies the tag_range that produced this tag (a
+	// label including the range's index, unique even when two ranges share
+	// a tag_name template). Empty for tags declared statically in
+	// image.yml. Not part of the YAML/JSON schema surface.
 	GeneratedFrom string `yaml:"-" json:"-"`
 }
 

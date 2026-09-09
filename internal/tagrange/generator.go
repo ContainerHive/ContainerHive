@@ -30,6 +30,13 @@ type GeneratedTag struct {
 	BuildArgs    model.BuildArgs
 	Labels       map[string]string
 	IsPrerelease bool
+
+	// Range identifies which tag_range produced this tag (the rangeLabel
+	// passed to GenerateTags, which includes a per-range index), so a
+	// caller merging tags from multiple ranges can name both ranges in a
+	// cross-range collision error even when two ranges share a tag_name
+	// template.
+	Range string
 }
 
 // GenerateTags runs the full per-range pipeline — parse, filter, select,
@@ -131,6 +138,7 @@ func renderTags(rangeLabel string, tr *model.TagRange, selected []candidate) ([]
 			BuildArgs:    model.BuildArgs(buildArgs),
 			Labels:       labels,
 			IsPrerelease: c.prerelease,
+			Range:        rangeLabel,
 		})
 	}
 	return tags, nil
