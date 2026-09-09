@@ -8,7 +8,7 @@
           lfs: true
 {{- if and .HasTagRanges (ne (option "ci_version_cache") "false") }}
       - name: Restore version cache
-        uses: actions/cache@{{ option "actions_cache_version" }}
+        uses: actions/cache/restore@{{ option "actions_cache_version" }}
         with:
           path: {{ .VersionCacheDir }}
           key: ch-versions-${{ "{{" }} github.run_id {{ "}}" }}
