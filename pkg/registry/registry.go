@@ -153,7 +153,7 @@ func (r *Registry) CreateAllManifests(project *model.ContainerHiveProject, filte
 
 		for tagName := range img.Tags {
 			if matchesTagFilter(filters, img.Name, tagName) {
-				platforms := platform.Resolve(project.Config.Platforms, img.Platforms, nil)
+				platforms := platform.Resolve(nil, project.Config.Platforms, img.Platforms, nil)
 				if err := r.createManifestForTag(img.Name, tagName, platforms, buildID, distPath); err != nil {
 					return fmt.Errorf("failed to create manifest for %s:%s: %w", img.Name, tagName, err)
 				}
@@ -164,7 +164,7 @@ func (r *Registry) CreateAllManifests(project *model.ContainerHiveProject, filte
 				if !matchesTagFilter(filters, img.Name, variantTag) {
 					continue
 				}
-				platforms := platform.Resolve(project.Config.Platforms, img.Platforms, variantDef.Platforms)
+				platforms := platform.Resolve(nil, project.Config.Platforms, img.Platforms, variantDef.Platforms)
 				if err := r.createManifestForTag(img.Name, variantTag, platforms, buildID, distPath); err != nil {
 					return fmt.Errorf("failed to create manifest for %s:%s: %w", img.Name, variantTag, err)
 				}
