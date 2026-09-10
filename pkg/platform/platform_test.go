@@ -50,8 +50,21 @@ func TestSanitize(t *testing.T) {
 }
 
 func TestResolve(t *testing.T) {
+	t.Run("override wins over everything", func(t *testing.T) {
+		got := Resolve(
+			[]string{"linux/riscv64"},
+			[]string{"linux/amd64"},
+			[]string{"linux/arm64"},
+			[]string{"linux/amd64", "linux/arm64"},
+		)
+		if len(got) != 1 || got[0] != "linux/riscv64" {
+			t.Errorf("expected override platforms, got %v", got)
+		}
+	})
+
 	t.Run("variant wins", func(t *testing.T) {
 		got := Resolve(
+			nil,
 			[]string{"linux/amd64"},
 			[]string{"linux/arm64"},
 			[]string{"linux/amd64", "linux/arm64"},
@@ -63,6 +76,7 @@ func TestResolve(t *testing.T) {
 
 	t.Run("image wins over global", func(t *testing.T) {
 		got := Resolve(
+			nil,
 			[]string{"linux/amd64"},
 			[]string{"linux/arm64"},
 			nil,
@@ -74,6 +88,7 @@ func TestResolve(t *testing.T) {
 
 	t.Run("falls back to global", func(t *testing.T) {
 		got := Resolve(
+			nil,
 			[]string{"linux/amd64"},
 			nil,
 			nil,
@@ -84,7 +99,7 @@ func TestResolve(t *testing.T) {
 	})
 
 	t.Run("all empty returns empty slice", func(t *testing.T) {
-		got := Resolve(nil, nil, nil)
+		got := Resolve(nil, nil, nil, nil)
 		if len(got) != 0 {
 			t.Errorf("expected empty slice, got %v", got)
 		}
@@ -92,6 +107,7 @@ func TestResolve(t *testing.T) {
 
 	t.Run("normalizes short platform names", func(t *testing.T) {
 		got := Resolve(
+			nil,
 			[]string{"amd64", "arm64"},
 			nil,
 			nil,

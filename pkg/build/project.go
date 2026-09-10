@@ -46,6 +46,10 @@ type ProjectBuildOpts struct {
 	BuildID        string   // if set, registry push/retag uses tags suffixed with -build.<BuildID>
 	Shard          shard.Shard
 
+	// CLIPlatforms, when set (from --platform), overrides the platform list
+	// for every image/tag/variant regardless of what hive.yml configures.
+	CLIPlatforms []string
+
 	// OnBuild is called after each successful build with the image tag and tar path.
 	OnBuild func(imageTag, tarFile string)
 
@@ -181,7 +185,7 @@ func buildWithDeps(ctx context.Context, client *Client, opts *ProjectBuildOpts) 
 				buildBase := matchesFilters(opts.Filters, imgName, tagName) && opts.ownsBase(imageDef.Identifier, tagName)
 
 				if buildBase {
-					platforms := platform.Resolve(opts.Project.Config.Platforms, imageDef.Platforms, nil)
+					platforms := platform.Resolve(opts.CLIPlatforms, opts.Project.Config.Platforms, imageDef.Platforms, nil)
 					if err := buildPlatforms(platforms, func(platformStr string) error {
 						return buildTag(ctx, client, opts, imageDef, tagName, platformStr)
 					}); err != nil {
@@ -199,7 +203,7 @@ func buildWithDeps(ctx context.Context, client *Client, opts *ProjectBuildOpts) 
 						continue
 					}
 
-					platforms := platform.Resolve(opts.Project.Config.Platforms, imageDef.Platforms, variantDef.Platforms)
+					platforms := platform.Resolve(opts.CLIPlatforms, opts.Project.Config.Platforms, imageDef.Platforms, variantDef.Platforms)
 					if err := buildPlatforms(platforms, func(platformStr string) error {
 						return buildVariant(ctx, client, opts, imageDef, tagName, variantName, variantDef, platformStr)
 					}); err != nil {
@@ -217,7 +221,7 @@ func buildWithoutDeps(ctx context.Context, client *Client, opts *ProjectBuildOpt
 		for _, imageDef := range images {
 			for tagName := range imageDef.Tags {
 				if matchesFilters(opts.Filters, imageDef.Name, tagName) && opts.ownsBase(imageDef.Identifier, tagName) {
-					platforms := platform.Resolve(opts.Project.Config.Platforms, imageDef.Platforms, nil)
+					platforms := platform.Resolve(opts.CLIPlatforms, opts.Project.Config.Platforms, imageDef.Platforms, nil)
 					if err := buildPlatforms(platforms, func(platformStr string) error {
 						return buildTag(ctx, client, opts, imageDef, tagName, platformStr)
 					}); err != nil {
@@ -233,7 +237,7 @@ func buildWithoutDeps(ctx context.Context, client *Client, opts *ProjectBuildOpt
 					if !opts.ownsVariant(imageDef.Identifier, variantTag) {
 						continue
 					}
-					platforms := platform.Resolve(opts.Project.Config.Platforms, imageDef.Platforms, variantDef.Platforms)
+					platforms := platform.Resolve(opts.CLIPlatforms, opts.Project.Config.Platforms, imageDef.Platforms, variantDef.Platforms)
 					if err := buildPlatforms(platforms, func(platformStr string) error {
 						return buildVariant(ctx, client, opts, imageDef, tagName, variantName, variantDef, platformStr)
 					}); err != nil {

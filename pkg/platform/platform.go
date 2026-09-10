@@ -20,12 +20,17 @@ func Sanitize(p string) string {
 	return strings.ReplaceAll(p, "/", "-")
 }
 
-// Resolve returns the most specific platform list: variant > image > global.
+// Resolve returns the platform list to use, in precedence order:
+// override > variant > image > global. override represents an explicit
+// CLI --platform flag and, when set, always wins regardless of what
+// hive.yml configures at the variant/image/global level.
 // If the most specific level is empty, it falls back to the next level.
 // All returned platform strings are normalized to canonical os/arch form.
-func Resolve(global, image, variant []string) []string {
+func Resolve(override, global, image, variant []string) []string {
 	var result []string
-	if len(variant) > 0 {
+	if len(override) > 0 {
+		result = override
+	} else if len(variant) > 0 {
 		result = variant
 	} else if len(image) > 0 {
 		result = image

@@ -76,11 +76,7 @@ func buildProject(
 	useRegistry bool,
 	s shard.Shard,
 ) error {
-	if len(platforms) > 0 {
-		project.Config.Platforms = platforms
-	}
-
-	if len(project.Config.Platforms) == 0 {
+	if len(platforms) == 0 && len(project.Config.Platforms) == 0 {
 		return fmt.Errorf("no platforms configured — set platforms in hive.yml or pass --platform")
 	}
 
@@ -130,9 +126,10 @@ func buildProject(
 			Colors:  progress.DefaultColors(),
 			NoColor: os.Getenv("NO_COLOR") != "",
 		},
-		Filters: filters,
-		BuildID: buildID,
-		Shard:   s,
+		Filters:      filters,
+		BuildID:      buildID,
+		Shard:        s,
+		CLIPlatforms: platforms,
 	}
 
 	if buildOrder.HasDependencies() {

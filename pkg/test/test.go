@@ -55,7 +55,7 @@ func RunProjectTests(ctx context.Context, opts *Opts) (tested, failed int, err e
 		for tagName := range img.Tags {
 			if utils.MatchesFilter(opts.Filters, img.Name, tagName) && owns(img.Identifier, tagName) {
 				t, f, err := runTestsForTag(ctx, opts, img.Name, tagName,
-					platform.Resolve(opts.Project.Config.Platforms, img.Platforms, nil))
+					platform.Resolve(nil, opts.Project.Config.Platforms, img.Platforms, nil))
 				if err != nil {
 					return tested, failed, err
 				}
@@ -72,7 +72,7 @@ func RunProjectTests(ctx context.Context, opts *Opts) (tested, failed int, err e
 					continue
 				}
 				t, f, err := runTestsForTag(ctx, opts, img.Name, variantTag,
-					platform.Resolve(opts.Project.Config.Platforms, img.Platforms, variantDef.Platforms))
+					platform.Resolve(nil, opts.Project.Config.Platforms, img.Platforms, variantDef.Platforms))
 				if err != nil {
 					return tested, failed, err
 				}

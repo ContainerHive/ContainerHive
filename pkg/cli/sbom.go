@@ -61,9 +61,7 @@ func sbomCmd() *cli.Command {
 				return err
 			}
 
-			if cliPlatforms := cmd.StringSlice("platform"); len(cliPlatforms) > 0 {
-				project.Config.Platforms = cliPlatforms
-			}
+			cliPlatforms := cmd.StringSlice("platform")
 
 			owns := shard.NewTagSharder(project, s)
 			if s.Enabled() {
@@ -120,9 +118,9 @@ func sbomCmd() *cli.Command {
 
 			for _, img := range project.ImagesByIdentifier {
 				for tagName := range img.Tags {
-					enqueue(img, tagName, platform.Resolve(project.Config.Platforms, img.Platforms, nil))
+					enqueue(img, tagName, platform.Resolve(cliPlatforms, project.Config.Platforms, img.Platforms, nil))
 					for _, variantDef := range img.Variants {
-						variantPlatforms := platform.Resolve(project.Config.Platforms, img.Platforms, variantDef.Platforms)
+						variantPlatforms := platform.Resolve(cliPlatforms, project.Config.Platforms, img.Platforms, variantDef.Platforms)
 						enqueue(img, tagName+variantDef.TagSuffix, variantPlatforms)
 					}
 				}
