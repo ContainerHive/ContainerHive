@@ -1,3 +1,9 @@
+## [1.7.3](https://github.com/ContainerHive/ContainerHive/compare/v1.7.2...v1.7.3) (2026-09-10)
+
+### Bug Fixes
+
+* **build:** make --platform CLI override take precedence over hive.yml ([#253](https://github.com/ContainerHive/ContainerHive/issues/253)) ([53c2a9e](https://github.com/ContainerHive/ContainerHive/commit/53c2a9e3957d8fed00477a0f6a730fa72a077127))
+
 ## [1.7.2](https://github.com/ContainerHive/ContainerHive/compare/v1.7.1...v1.7.2) (2026-09-10)
 
 ### Bug Fixes
