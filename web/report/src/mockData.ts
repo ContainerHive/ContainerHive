@@ -56,6 +56,7 @@ export const mockData: ProjectReport = {
                     ],
                 },
             ],
+            latestAlias: { name: 'latest', target: '3.19' },
             variants: [
                 {
                     name: 'node',
@@ -79,6 +80,7 @@ export const mockData: ProjectReport = {
                             ],
                         },
                     ],
+                    latestAlias: { name: 'latest-node', target: '3.19-node20' },
                 },
             ],
         },
