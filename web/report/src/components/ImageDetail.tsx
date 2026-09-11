@@ -14,6 +14,17 @@ interface ImageDetailProps {
   kind?: string
 }
 
+function compareVersions(a: string, b: string): number {
+  const pa = a.split('.').map(Number)
+  const pb = b.split('.').map(Number)
+  for (let i = 0; i < Math.max(pa.length, pb.length); i++) {
+    const na = pa[i] ?? 0
+    const nb = pb[i] ?? 0
+    if (na !== nb) return na - nb
+  }
+  return 0
+}
+
 function ImageDetail({ data, imageName, kind }: Readonly<ImageDetailProps>) {
   const image = data.images.find(img => img.name === imageName)
   const isBase = !kind || kind === 'base'
@@ -39,7 +50,7 @@ function ImageDetail({ data, imageName, kind }: Readonly<ImageDetailProps>) {
 
   const registryAddress = data.registry?.address
 
-  const firstTag = tags[0]?.name || ''
+  const firstTag = latestAlias?.name || tags[0]?.name || ''
   const currentTag = activeTag || firstTag
   const isAlias = latestAlias && currentTag === latestAlias.name
   const resolvedTagName = isAlias ? latestAlias.target : currentTag
@@ -114,18 +125,6 @@ function ImageDetail({ data, imageName, kind }: Readonly<ImageDetailProps>) {
         <div className="section">
           <h2>Tags</h2>
           <div className="tabs">
-            {tags.map(tag => (
-              <button
-                key={tag.name}
-                className={`tab ${currentTag === tag.name ? 'active' : ''}`}
-                onClick={() => {
-                  setActiveTag(tag.name)
-                  setSbomSearch('')
-                }}
-              >
-                {tag.name}
-              </button>
-            ))}
             {latestAlias && (
               <button
                 className={`tab tab-alias ${currentTag === latestAlias.name ? 'active' : ''}`}
@@ -137,6 +136,18 @@ function ImageDetail({ data, imageName, kind }: Readonly<ImageDetailProps>) {
                 {latestAlias.name}
               </button>
             )}
+            {[...tags].sort((a, b) => compareVersions(b.name, a.name)).map(tag => (
+              <button
+                key={tag.name}
+                className={`tab ${currentTag === tag.name ? 'active' : ''}`}
+                onClick={() => {
+                  setActiveTag(tag.name)
+                  setSbomSearch('')
+                }}
+              >
+                {tag.name}
+              </button>
+            ))}
           </div>
           {latestAlias && currentTag === latestAlias.name && (
             <div className="alias-info-panel">

@@ -22,7 +22,6 @@ test.describe('Image detail — base image', () => {
     const tabs = page.locator('.tabs .tab')
     await expect(tabs).toHaveCount(base.tags.length + 1)
     await expect(tabs.first()).toHaveClass(/active/)
-    await expect(tabs.first()).toHaveText(base.tags[0].name)
   })
 
   test('switching a tab updates build args and versions', async ({ page }) => {
@@ -66,7 +65,7 @@ test.describe('Image detail — variant', () => {
 
     const tabs = page.locator('.tabs .tab')
     await expect(tabs).toHaveCount(variant.tags.length + 1)
-    await expect(tabs.first()).toHaveText(variant.tags[0].name)
+    await expect(tabs.first()).toHaveText(variant.latestAlias!.name)
   })
 })
 

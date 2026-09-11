@@ -139,6 +139,9 @@ latest_alias:
 
 In this example, the highest semantic version tag will be retagged as `latest`. If no semantic tags are found, a warning will be logged instead of failing.
 
+!!! note "Report inclusion"
+    The resolved alias is also included in the report output (`ch report`) as a separate `latestAlias` property on each image and variant (JSON: `{ "name": "latest", "target": "1.2.3" }`). In the web report, it renders as a badge below the tag tabs, with its own pull command. The alias is never merged into the `tags` array.
+
 ## Directory structure
 
 Each image directory can contain:

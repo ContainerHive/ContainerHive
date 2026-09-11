@@ -1,6 +1,7 @@
 package report
 
 import (
+	"encoding/json"
 	"os"
 	"path/filepath"
 	"strings"
@@ -173,6 +174,267 @@ func TestScanImage_VariantBuildArgsMerged(t *testing.T) {
 	}
 	if vt.BuildArgs["EXTRA"] != "extraval" {
 		t.Errorf("variant BuildArgs[EXTRA] = %q, want %q", vt.BuildArgs["EXTRA"], "extraval")
+	}
+}
+
+func TestScanImage_LatestAlias(t *testing.T) {
+	img := &model.Image{
+		Name:     "test",
+		Versions: map[string]string{"v": "1"},
+		Tags: map[string]*model.Tag{
+			"1.0.0": {Name: "1.0.0"},
+			"2.0.0": {Name: "2.0.0"},
+		},
+		LatestAlias: &model.LatestAliasConfig{Tag: "latest"},
+	}
+
+	report := scanImage("/test", "test", img)
+
+	if report.LatestAlias == nil {
+		t.Fatal("LatestAlias is nil, want non-nil")
+	}
+	if report.LatestAlias.Name != "latest" {
+		t.Errorf("LatestAlias.Name = %q, want %q", report.LatestAlias.Name, "latest")
+	}
+	if report.LatestAlias.Target != "2.0.0" {
+		t.Errorf("LatestAlias.Target = %q, want %q", report.LatestAlias.Target, "2.0.0")
+	}
+}
+
+func TestScanImage_LatestAlias_NotConfigured(t *testing.T) {
+	img := &model.Image{
+		Name: "test",
+		Tags: map[string]*model.Tag{"1.0.0": {Name: "1.0.0"}},
+	}
+
+	report := scanImage("/test", "test", img)
+
+	if report.LatestAlias != nil {
+		t.Errorf("LatestAlias = %+v, want nil", report.LatestAlias)
+	}
+}
+
+func TestScanImage_LatestAlias_NoSemverTags(t *testing.T) {
+	img := &model.Image{
+		Name: "test",
+		Tags: map[string]*model.Tag{
+			"foo": {Name: "foo"},
+			"bar": {Name: "bar"},
+		},
+		LatestAlias: &model.LatestAliasConfig{Tag: "latest"},
+	}
+
+	report := scanImage("/test", "test", img)
+
+	if report.LatestAlias != nil {
+		t.Errorf("LatestAlias = %+v, want nil for non-semver tags", report.LatestAlias)
+	}
+}
+
+func TestScanImage_LatestAlias_TagsNotMerged(t *testing.T) {
+	img := &model.Image{
+		Name: "test",
+		Tags: map[string]*model.Tag{
+			"1.0.0": {Name: "1.0.0"},
+			"2.0.0": {Name: "2.0.0"},
+		},
+		LatestAlias: &model.LatestAliasConfig{Tag: "latest"},
+	}
+
+	report := scanImage("/test", "test", img)
+
+	if len(report.Tags) != 2 {
+		t.Errorf("len(Tags) = %d, want 2 (alias must not be merged)", len(report.Tags))
+	}
+	for _, tag := range report.Tags {
+		if tag.Name == "latest" {
+			t.Errorf("Tags should not contain alias name %q", tag.Name)
+		}
+	}
+}
+
+func TestScanImage_LatestAlias_Variant(t *testing.T) {
+	img := &model.Image{
+		Name: "test",
+		Tags: map[string]*model.Tag{
+			"1.0.0": {Name: "1.0.0"},
+			"2.0.0": {Name: "2.0.0"},
+		},
+		LatestAlias: &model.LatestAliasConfig{Tag: "latest"},
+		Variants: map[string]*model.ImageVariant{
+			"slim": {
+				Name:      "slim",
+				TagSuffix: "-slim",
+			},
+		},
+	}
+
+	report := scanImage("/test", "test", img)
+
+	if len(report.Variants) != 1 {
+		t.Fatalf("len(Variants) = %d, want 1", len(report.Variants))
+	}
+	v := report.Variants[0]
+	if v.LatestAlias == nil {
+		t.Fatal("variant LatestAlias is nil, want non-nil")
+	}
+	if v.LatestAlias.Name != "latest-slim" {
+		t.Errorf("variant LatestAlias.Name = %q, want %q", v.LatestAlias.Name, "latest-slim")
+	}
+	if v.LatestAlias.Target != "2.0.0-slim" {
+		t.Errorf("variant LatestAlias.Target = %q, want %q", v.LatestAlias.Target, "2.0.0-slim")
+	}
+}
+
+func TestScanProject_LatestAlias_MergeFirstWins(t *testing.T) {
+	project := &model.ContainerHiveProject{
+		ImagesByName: map[string][]*model.Image{
+			"img": {
+				{
+					Name: "img",
+					Tags: map[string]*model.Tag{"1.0.0": {Name: "1.0.0"}},
+					LatestAlias: &model.LatestAliasConfig{Tag: "stable"},
+				},
+				{
+					Name: "img",
+					Tags: map[string]*model.Tag{"2.0.0": {Name: "2.0.0"}},
+					LatestAlias: &model.LatestAliasConfig{Tag: "latest"},
+				},
+			},
+		},
+	}
+
+	images := scanProject(project)
+	if len(images) != 1 {
+		t.Fatalf("len(images) = %d, want 1", len(images))
+	}
+
+	img := images[0]
+	if len(img.Tags) != 2 {
+		t.Errorf("len(Tags) = %d, want 2", len(img.Tags))
+	}
+	if img.LatestAlias == nil {
+		t.Fatal("LatestAlias is nil after merge")
+	}
+	if img.LatestAlias.Name != "stable" {
+		t.Errorf("LatestAlias.Name = %q, want first definition %q", img.LatestAlias.Name, "stable")
+	}
+}
+
+func TestScanProject_LatestAlias_SecondDefUsedWhenFirstNil(t *testing.T) {
+	project := &model.ContainerHiveProject{
+		ImagesByName: map[string][]*model.Image{
+			"img": {
+				{
+					Name: "img",
+					Tags: map[string]*model.Tag{"1.0.0": {Name: "1.0.0"}},
+				},
+				{
+					Name: "img",
+					Tags: map[string]*model.Tag{"2.0.0": {Name: "2.0.0"}},
+					LatestAlias: &model.LatestAliasConfig{Tag: "latest"},
+				},
+			},
+		},
+	}
+
+	images := scanProject(project)
+	if len(images) != 1 {
+		t.Fatalf("len(images) = %d, want 1", len(images))
+	}
+
+	img := images[0]
+	if img.LatestAlias == nil {
+		t.Fatal("LatestAlias is nil, want second def's alias")
+	}
+	if img.LatestAlias.Name != "latest" {
+		t.Errorf("LatestAlias.Name = %q, want %q", img.LatestAlias.Name, "latest")
+	}
+}
+
+func TestGenerator_GenerateJSON_IncludesLatestAlias(t *testing.T) {
+	g := NewGenerator()
+
+	report := &ProjectReport{
+		GeneratedAt: "2024-01-01T00:00:00Z",
+		Images: []ImageReport{
+			{
+				Name: "test-image",
+				Tags: []TagReport{
+					{Name: "1.0.0"},
+				},
+				LatestAlias: &LatestAliasReport{
+					Name:   "latest",
+					Target: "1.0.0",
+				},
+				Variants: []VariantReport{
+					{
+						Name:      "slim",
+						TagSuffix: "-slim",
+						Tags:      []TagReport{{Name: "1.0.0-slim"}},
+						LatestAlias: &LatestAliasReport{
+							Name:   "latest-slim",
+							Target: "1.0.0-slim",
+						},
+					},
+				},
+			},
+		},
+	}
+
+	got, err := g.GenerateJSON(report)
+	if err != nil {
+		t.Fatalf("GenerateJSON() error = %v", err)
+	}
+
+	jsonStr := string(got)
+	if !strings.Contains(jsonStr, `"latestAlias"`) {
+		t.Error("JSON output missing latestAlias key")
+	}
+	if !strings.Contains(jsonStr, `"name": "latest"`) {
+		t.Errorf("JSON output missing alias name, got: %s", jsonStr)
+	}
+	if !strings.Contains(jsonStr, `"target": "1.0.0"`) {
+		t.Errorf("JSON output missing alias target, got: %s", jsonStr)
+	}
+
+	// Verify tags array does not contain the alias
+	var parsed struct {
+		Images []struct {
+			Tags         []struct{ Name string } `json:"tags"`
+			LatestAlias  *struct{}               `json:"latestAlias"`
+			Variants     []struct {
+				Tags         []struct{ Name string } `json:"tags"`
+				LatestAlias  *struct{}               `json:"latestAlias"`
+			} `json:"variants"`
+		} `json:"images"`
+	}
+	if err := json.Unmarshal(got, &parsed); err != nil {
+		t.Fatalf("Failed to parse JSON: %v", err)
+	}
+	if len(parsed.Images) != 1 {
+		t.Fatalf("len(Images) = %d, want 1", len(parsed.Images))
+	}
+	img := parsed.Images[0]
+	if img.LatestAlias == nil {
+		t.Error("parsed LatestAlias is nil")
+	}
+	for _, tag := range img.Tags {
+		if tag.Name == "latest" {
+			t.Errorf("Tags array contains alias name %q", tag.Name)
+		}
+	}
+	if len(img.Variants) != 1 {
+		t.Fatalf("len(Variants) = %d, want 1", len(img.Variants))
+	}
+	v := img.Variants[0]
+	if v.LatestAlias == nil {
+		t.Error("parsed variant LatestAlias is nil")
+	}
+	for _, tag := range v.Tags {
+		if tag.Name == "latest-slim" {
+			t.Errorf("variant Tags array contains alias name %q", tag.Name)
+		}
 	}
 }
 

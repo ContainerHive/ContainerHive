@@ -3,6 +3,7 @@ package report
 import (
 	_ "embed"
 	"encoding/json"
+	"log/slog"
 	"os"
 	"path/filepath"
 	"slices"
@@ -14,6 +15,7 @@ import (
 	"github.com/ContainerHive/ContainerHive/internal/file_resolver/templating"
 	"github.com/ContainerHive/ContainerHive/pkg/model"
 	"github.com/ContainerHive/ContainerHive/pkg/platform"
+	"github.com/ContainerHive/ContainerHive/pkg/rendering"
 )
 
 func renderReadmeContent(readmePath string, imageName string, versions model.Versions, buildArgs model.BuildArgs) string {
@@ -31,6 +33,29 @@ func renderReadmeContent(readmePath string, imageName string, versions model.Ver
 		return ""
 	}
 	return string(rendered)
+}
+
+func resolveLatestAliasReport(tags []string, aliasName string) *LatestAliasReport {
+	if aliasName == "" {
+		return nil
+	}
+	target, err := rendering.ResolveLatestAlias(tags, aliasName)
+	if err != nil {
+		slog.Warn("Latest alias resolution failed for report", "alias", aliasName, "error", err)
+		return nil
+	}
+	return &LatestAliasReport{
+		Name:   aliasName,
+		Target: target,
+	}
+}
+
+func collectTagNames(tags map[string]*model.Tag) []string {
+	names := make([]string, 0, len(tags))
+	for tag := range tags {
+		names = append(names, tag)
+	}
+	return names
 }
 
 type Generator struct {
@@ -61,14 +86,17 @@ func scanProject(project *model.ContainerHiveProject) []ImageReport {
 	for imageName, modelImages := range project.ImagesByName {
 		for _, img := range modelImages {
 			imgReport := scanImage(project.RootDir, imageName, img)
-			existing, ok := merged[imageName]
-			if !ok {
-				merged[imageName] = imgReport
-				continue
-			}
-			existing.Tags = append(existing.Tags, imgReport.Tags...)
-			existing.Variants = append(existing.Variants, imgReport.Variants...)
-			merged[imageName] = existing
+		existing, ok := merged[imageName]
+		if !ok {
+			merged[imageName] = imgReport
+			continue
+		}
+		existing.Tags = append(existing.Tags, imgReport.Tags...)
+		existing.Variants = append(existing.Variants, imgReport.Variants...)
+		if existing.LatestAlias == nil {
+			existing.LatestAlias = imgReport.LatestAlias
+		}
+		merged[imageName] = existing
 		}
 	}
 
@@ -112,6 +140,11 @@ func scanImage(projectRoot, imageName string, img *model.Image) ImageReport {
 		})
 	}
 
+	var baseLatestAlias *LatestAliasReport
+	if img.LatestAlias != nil {
+		baseLatestAlias = resolveLatestAliasReport(collectTagNames(img.Tags), img.LatestAlias.Tag)
+	}
+
 	var variantReports []VariantReport
 	for _, variantDef := range img.Variants {
 		var variantTagReports []TagReport
@@ -147,13 +180,23 @@ func scanImage(projectRoot, imageName string, img *model.Image) ImageReport {
 
 		variantReadme := renderReadmeContent(variantDef.ReadmePath, imageName, variantDef.Versions, variantDef.BuildArgs)
 
+		var variantLatestAlias *LatestAliasReport
+		if img.LatestAlias != nil {
+			variantTagNames := make([]string, 0, len(img.Tags))
+			for tagName := range img.Tags {
+				variantTagNames = append(variantTagNames, tagName+variantDef.TagSuffix)
+			}
+			variantLatestAlias = resolveLatestAliasReport(variantTagNames, img.LatestAlias.Tag+variantDef.TagSuffix)
+		}
+
 		variantReports = append(variantReports, VariantReport{
-			Name:      variantDef.Name,
-			Readme:    variantReadme,
-			Report:    Report{Icon: variantDef.Report.Icon},
-			TagSuffix: variantDef.TagSuffix,
-			Platforms: variantDef.Platforms,
-			Tags:      variantTagReports,
+			Name:        variantDef.Name,
+			Readme:      variantReadme,
+			Report:      Report{Icon: variantDef.Report.Icon},
+			TagSuffix:   variantDef.TagSuffix,
+			Platforms:   variantDef.Platforms,
+			Tags:        variantTagReports,
+			LatestAlias: variantLatestAlias,
 		})
 	}
 
@@ -169,6 +212,7 @@ func scanImage(projectRoot, imageName string, img *model.Image) ImageReport {
 		Report: Report{
 			Icon: img.Report.Icon,
 		},
+		LatestAlias: baseLatestAlias,
 	}
 }
 
