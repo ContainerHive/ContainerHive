@@ -2166,6 +2166,10 @@
 </span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">  </span><span class="nt">on_missing</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">warning</span>
 </span></code></pre></div>
 <p>In this example, the highest semantic version tag will be retagged as <code>latest</code>. If no semantic tags are found, a warning will be logged instead of failing.</p>
+<div class="admonition note">
+<p class="admonition-title">Report inclusion</p>
+<p>The resolved alias is also included in the report output (<code>ch report</code>) as a separate <code>latestAlias</code> property on each image and variant (JSON: <code>{ "name": "latest", "target": "1.2.3" }</code>). In the web report, it renders as a badge below the tag tabs, with its own pull command. The alias is never merged into the <code>tags</code> array.</p>
+</div>
 <h2 id="directory-structure">Directory structure</h2>
 <p>Each image directory can contain:</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>images/&lt;image-name&gt;/
