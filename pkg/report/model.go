@@ -18,23 +18,30 @@ type Report struct {
 }
 
 type ImageReport struct {
-	Name        string          `json:"name"`
-	Description string          `json:"description,omitempty"`
-	Readme      string          `json:"readme,omitempty"`
-	Report      Report          `json:"report,omitempty"`
-	Platforms   []string        `json:"platforms,omitempty"`
-	Tags        []TagReport     `json:"tags"`
-	Variants    []VariantReport `json:"variants,omitempty"`
-	SBOM        []SBOMPackage   `json:"sbom,omitempty"`
+	Name         string             `json:"name"`
+	Description  string             `json:"description,omitempty"`
+	Readme       string             `json:"readme,omitempty"`
+	Report       Report             `json:"report,omitempty"`
+	Platforms    []string           `json:"platforms,omitempty"`
+	Tags         []TagReport        `json:"tags"`
+	Variants     []VariantReport    `json:"variants,omitempty"`
+	SBOM         []SBOMPackage      `json:"sbom,omitempty"`
+	LatestAlias  *LatestAliasReport `json:"latestAlias,omitempty"`
 }
 
 type VariantReport struct {
-	Name      string      `json:"name"`
-	Readme    string      `json:"readme,omitempty"`
-	Report    Report      `json:"report,omitempty"`
-	TagSuffix string      `json:"tagSuffix"`
-	Platforms []string    `json:"platforms,omitempty"`
-	Tags      []TagReport `json:"tags"`
+	Name        string             `json:"name"`
+	Readme      string             `json:"readme,omitempty"`
+	Report      Report             `json:"report,omitempty"`
+	TagSuffix   string             `json:"tagSuffix"`
+	Platforms   []string           `json:"platforms,omitempty"`
+	Tags        []TagReport        `json:"tags"`
+	LatestAlias *LatestAliasReport `json:"latestAlias,omitempty"`
+}
+
+type LatestAliasReport struct {
+	Name   string `json:"name"`
+	Target string `json:"target"`
 }
 
 type TagReport struct {

@@ -18,11 +18,10 @@ test.describe('Image detail — base image', () => {
     await expect(page.locator('a.back-link')).toBeVisible()
   })
 
-  test('renders one tab per tag, first tab active by default', async ({ page }) => {
+  test('renders one tab per tag plus alias tab, first tab active by default', async ({ page }) => {
     const tabs = page.locator('.tabs .tab')
-    await expect(tabs).toHaveCount(base.tags.length)
+    await expect(tabs).toHaveCount(base.tags.length + 1)
     await expect(tabs.first()).toHaveClass(/active/)
-    await expect(tabs.first()).toHaveText(base.tags[0].name)
   })
 
   test('switching a tab updates build args and versions', async ({ page }) => {
@@ -61,12 +60,49 @@ test.describe('Image detail — variant', () => {
     await expect(page.locator('.base-badge')).toHaveText('variant')
   })
 
-  test('variant shows only its own tags', async ({ page }) => {
+  test('variant shows only its own tags plus alias', async ({ page }) => {
     await page.goto(`/#/image/${base.name}/${variantDisplayName}`)
 
     const tabs = page.locator('.tabs .tab')
-    await expect(tabs).toHaveCount(variant.tags.length)
-    await expect(tabs.first()).toHaveText(variant.tags[0].name)
+    await expect(tabs).toHaveCount(variant.tags.length + 1)
+    await expect(tabs.first()).toHaveText(variant.latestAlias!.name)
+  })
+})
+
+test.describe('Image detail — latest alias', () => {
+  test('base image shows alias tab inline with other tabs', async ({ page }) => {
+    await page.goto(`/#/image/${base.name}/base`)
+
+    const aliasTab = page.locator('.tabs .tab-alias')
+    await expect(aliasTab).toBeVisible()
+    await expect(aliasTab).toHaveText(base.latestAlias!.name)
+  })
+
+  test('clicking alias tab shows info panel with alias details', async ({ page }) => {
+    await page.goto(`/#/image/${base.name}/base`)
+
+    const aliasTab = page.locator('.tabs .tab-alias')
+    await aliasTab.click()
+
+    const infoPanel = page.locator('.alias-info-panel')
+    await expect(infoPanel).toBeVisible()
+    await expect(infoPanel).toContainText(base.latestAlias!.name)
+    await expect(infoPanel).toContainText(base.latestAlias!.target)
+  })
+
+  test('base image tag tab count includes latest alias', async ({ page }) => {
+    await page.goto(`/#/image/${base.name}/base`)
+
+    const tabs = page.locator('.tabs .tab')
+    await expect(tabs).toHaveCount(base.tags.length + 1)
+  })
+
+  test('variant shows its own alias tab', async ({ page }) => {
+    await page.goto(`/#/image/${base.name}/${variantDisplayName}`)
+
+    const aliasTab = page.locator('.tabs .tab-alias')
+    await expect(aliasTab).toBeVisible()
+    await expect(aliasTab).toHaveText(variant.latestAlias!.name)
   })
 })
 

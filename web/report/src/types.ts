@@ -15,6 +15,11 @@ export interface PlatformReport {
   sbom?: SBOMPackage[];
 }
 
+export interface LatestAliasReport {
+  name: string;
+  target: string;
+}
+
 export interface VariantReport {
   name: string;
   readme?: string;
@@ -22,6 +27,7 @@ export interface VariantReport {
   tagSuffix: string;
   platforms?: string[];
   tags: TagReport[];
+  latestAlias?: LatestAliasReport;
 }
 
 export interface ImageReport {
@@ -32,6 +38,7 @@ export interface ImageReport {
   platforms?: string[];
   tags: TagReport[];
   variants?: VariantReport[];
+  latestAlias?: LatestAliasReport;
 }
 
 export interface RegistryInfo {
