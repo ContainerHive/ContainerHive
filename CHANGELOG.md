@@ -1,3 +1,9 @@
+## [1.8.0](https://github.com/ContainerHive/ContainerHive/compare/v1.7.3...v1.8.0) (2026-09-11)
+
+### Features
+
+* **report:** render latest alias as inline tab with info panel ([#256](https://github.com/ContainerHive/ContainerHive/issues/256)) ([c42f489](https://github.com/ContainerHive/ContainerHive/commit/c42f4894d63f0b2caa4a56889245b88b469773bc))
+
 ## [1.7.3](https://github.com/ContainerHive/ContainerHive/compare/v1.7.2...v1.7.3) (2026-09-10)
 
 ### Bug Fixes
