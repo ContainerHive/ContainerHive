@@ -2441,10 +2441,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ================================================================================
 
 Module:  github.com/google/go-containerregistry
-Version: v0.21.9
+Version: v0.22.1
 Licence: Apache-2.0
 
-Contents of probable licence file $GOMODCACHE/github.com/google/go-containerregistry@v0.21.9/LICENSE:
+Contents of probable licence file $GOMODCACHE/github.com/google/go-containerregistry@v0.22.1/LICENSE:
 
 
                                  Apache License
