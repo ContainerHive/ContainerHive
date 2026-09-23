@@ -236,6 +236,35 @@ template_options:
   ci_cancel_outdated: "false"
 ```
 
+## Publishing only from the default branch
+
+By default, every pipeline run — including merge request / pull request pipelines — builds, tests, and finalizes
+(pushes the tagged manifest for) every image. On projects with high MR/PR volume (e.g. frequent automated dependency
+bumps), this means every such pipeline permanently pushes a new tagged image into the registry, even for branches
+that never merge.
+
+Set `ci_finalize_default_branch_only` to `true` to skip the finalize/manifest job — the one that actually pushes the
+final tagged image — unless the pipeline is running on the repository's default branch. Build and test jobs are
+unaffected and still run on every pipeline for pre-merge validation; only the registry-publishing step is gated.
+
+```yaml
+template_options:
+  ci_finalize_default_branch_only: "true"
+```
+
+### GitLab CI
+
+The generated `.manifest` base template gets a `rules: - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH` block.
+
+### GitHub Actions
+
+The generated `manifest-*` job gets an `if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch)`
+condition.
+
+Note: `ch build` still pushes per-platform intermediate images to the configured registry on every pipeline run,
+since `ch test` depends on pulling them back for validation. This option only affects the final tagged
+manifest/alias pushed by `ch finalize`.
+
 ## Sharding build and test jobs
 
 For GitLab CI, `ci_build_shards` and `ci_test_shards` set an upper bound on `parallel: N` for each build/test job. The

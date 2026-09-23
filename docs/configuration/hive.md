@@ -148,6 +148,7 @@ All values must be strings. Keys prefixed with `ci_` have built-in defaults:
 | `ci_cancel_outdated`               | `true`                        | Cancel in-progress pipelines when a newer pipeline starts on the same ref |
 | `ci_report`                        | `true`                        | Generate and publish HTML/JSON report to GitHub Pages / GitLab Pages       |
 | `ci_sbom_generate_cpes`            | `true`                        | Generate CPEs in SBOMs (set to `false` to stay under GitLab artifact limits) |
+| `ci_finalize_default_branch_only` | `false`                       | Only run the manifest/finalize job (which pushes the final tagged image) on the default branch; build/test still run on every pipeline |
 | `actions_checkout_version`         | `v6`                          | Version of `actions/checkout`                                              |
 | `actions_upload_artifact_version`  | `v7`                          | Version of `actions/upload-artifact`                                       |
 | `actions_download_artifact_version` | `v7`                         | Version of `actions/download-artifact`                                     |
