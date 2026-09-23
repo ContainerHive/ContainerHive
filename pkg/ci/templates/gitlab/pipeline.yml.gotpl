@@ -56,6 +56,10 @@ before_script:
   image:
     name: {{ .ImageName }}:{{ .Version }}
     entrypoint: [""]
+{{- if eq (option "ci_finalize_default_branch_only") "true" }}
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+{{- end }}
   script:
     - {{ .ChCmd }} finalize ${IMAGE_NAME} --build-id "$SNAPSHOT_ID"
 

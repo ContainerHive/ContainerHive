@@ -288,3 +288,88 @@ func TestGitlabTemplate_CancelOutdatedDisabled(t *testing.T) {
 		t.Errorf("expected no interruptible: true when ci_cancel_outdated is false, got:\n%s", rendered)
 	}
 }
+
+// Default ci_finalize_default_branch_only ("false") leaves .manifest unconditional.
+func TestGitlabTemplate_FinalizeDefaultBranchOnlyAtDefault(t *testing.T) {
+	project := singleImageProjectForTemplate()
+	ctx, err := BuildCIContext(project, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	out, err := Generate("gitlab", ctx, "")
+	if err != nil {
+		t.Fatal(err)
+	}
+	rendered := string(out)
+
+	manifestBlock := rendered[strings.Index(rendered, ".manifest:"):]
+	if strings.Contains(manifestBlock[:strings.Index(manifestBlock, "script:")], "rules:") {
+		t.Errorf("expected no rules: on .manifest at the default ci_finalize_default_branch_only, got:\n%s", rendered)
+	}
+}
+
+// ci_finalize_default_branch_only=true gates .manifest (runs ch finalize) to the default branch.
+func TestGitlabTemplate_FinalizeDefaultBranchOnlyEnabled(t *testing.T) {
+	project := singleImageProjectForTemplate()
+	project.Config.TemplateOptions = map[string]string{
+		"ci_finalize_default_branch_only": "true",
+	}
+	ctx, err := BuildCIContext(project, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	out, err := Generate("gitlab", ctx, "")
+	if err != nil {
+		t.Fatal(err)
+	}
+	rendered := string(out)
+
+	manifestBlock := rendered[strings.Index(rendered, ".manifest:"):]
+	manifestBlock = manifestBlock[:strings.Index(manifestBlock, "script:")]
+	if !strings.Contains(manifestBlock, "rules:") || !strings.Contains(manifestBlock, "if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH") {
+		t.Errorf("expected .manifest to gate on $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH, got:\n%s", rendered)
+	}
+}
+
+// Default leaves every manifest-* job in the GitHub workflow unconditional.
+func TestGithubTemplate_FinalizeDefaultBranchOnlyAtDefault(t *testing.T) {
+	project := singleImageProjectForTemplate()
+	ctx, err := BuildCIContext(project, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	out, err := Generate("github", ctx, "")
+	if err != nil {
+		t.Fatal(err)
+	}
+	rendered := string(out)
+
+	if strings.Contains(rendered, "github.event.repository.default_branch") {
+		t.Errorf("expected no default-branch if: on manifest-* at the default ci_finalize_default_branch_only, got:\n%s", rendered)
+	}
+}
+
+// ci_finalize_default_branch_only=true adds a default-branch condition to manifest-* jobs.
+func TestGithubTemplate_FinalizeDefaultBranchOnlyEnabled(t *testing.T) {
+	project := singleImageProjectForTemplate()
+	project.Config.TemplateOptions = map[string]string{
+		"ci_finalize_default_branch_only": "true",
+	}
+	ctx, err := BuildCIContext(project, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	out, err := Generate("github", ctx, "")
+	if err != nil {
+		t.Fatal(err)
+	}
+	rendered := string(out)
+
+	if !strings.Contains(rendered, "if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch)") {
+		t.Errorf("expected manifest-* job to gate on the default branch, got:\n%s", rendered)
+	}
+}

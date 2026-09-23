@@ -86,6 +86,7 @@ func defaultTemplateOptions() map[string]string {
 		"ci_sbom_generate_cpes":                 "true",
 		"ci_build_shards":                       "1",
 		"ci_test_shards":                        "1",
+		"ci_finalize_default_branch_only":       "false",
 		"actions_checkout_version":              actions.CheckoutVersion,
 		"actions_upload_artifact_version":       actions.UploadArtifactVersion,
 		"actions_download_artifact_version":     actions.DownloadArtifactVersion,
