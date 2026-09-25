@@ -1,3 +1,9 @@
+## [1.8.3](https://github.com/ContainerHive/ContainerHive/compare/v1.8.2...v1.8.3) (2026-09-25)
+
+### Bug Fixes
+
+* **deps:** update module github.com/urfave/cli/v3 to v3.12.0 ([#265](https://github.com/ContainerHive/ContainerHive/issues/265)) ([6052639](https://github.com/ContainerHive/ContainerHive/commit/6052639a32e7760d171baca89627b90165d7ee19))
+
 ## [1.8.2](https://github.com/ContainerHive/ContainerHive/compare/v1.8.1...v1.8.2) (2026-09-25)
 
 ### Bug Fixes
