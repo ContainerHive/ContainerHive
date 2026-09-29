@@ -1117,6 +1117,34 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="registry-retention.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Clean up registry images with retention policies
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -1674,6 +1702,41 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../adr/005-registry-retention-policies.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    005 - Use registry retention policies instead of push-gating
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--accepted"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -1984,6 +2047,12 @@
 <li>Your container registry supports OCI image manifests</li>
 <li>You want cache stored in the same place as your images</li>
 </ul>
+<div class="admonition note">
+<p class="admonition-title">Cache retention</p>
+<p>Registry cache layers grow over time. Set up a retention policy on the cache repository (e.g. 3 weeks) to keep
+recent layers while discarding stale ones. See <a href="registry-retention.html">Clean up registry images with retention policies</a>
+for per-provider setup instructions.</p>
+</div>
 <h2 id="how-caching-works">How caching works</h2>
 <p>BuildKit uses the cache configuration for both importing (reading) and exporting (writing) cache layers:</p>
 <ol>

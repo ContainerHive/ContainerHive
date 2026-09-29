@@ -9,10 +9,8 @@
       
       
       
-        <link rel="prev" href="secrets-and-versions.html">
+        <link rel="prev" href="004-embedded-local-registry.html">
       
-      
-        <link rel="next" href="sharding.html">
       
       
         
@@ -23,7 +21,7 @@
     
     
       
-        <title>Filter images and tags - ContainerHive</title>
+        <title>005 - Use registry retention policies instead of push-gating - ContainerHive</title>
       
     
     
@@ -76,7 +74,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#filter-images-and-tags" class="md-skip">
+        <a href="#005-use-registry-retention-policies-instead-of-push-gating" class="md-skip">
           Skip to content
         </a>
       
@@ -109,7 +107,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Filter images and tags
+              005 - Use registry retention policies instead of push-gating
             
           </span>
         </div>
@@ -304,13 +302,11 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
-        <a href="cli.html" class="md-tabs__link">
+      <li class="md-tabs__item">
+        <a href="../usage/cli.html" class="md-tabs__link">
           
   
   
@@ -366,10 +362,12 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
+      <li class="md-tabs__item md-tabs__item--active">
         <a href="../development/local.html" class="md-tabs__link">
           
   
@@ -538,29 +536,24 @@
       
   
   
-    
   
   
-  
     
     
     
     
       
-        
-        
-      
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
         
           
-          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="">
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
             
   
   
@@ -578,7 +571,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_5">
             <span class="md-nav__icon md-icon"></span>
             
@@ -596,7 +589,7 @@
   
   
     <li class="md-nav__item">
-      <a href="cli.html" class="md-nav__link">
+      <a href="../usage/cli.html" class="md-nav__link">
         
   
   
@@ -624,7 +617,7 @@
   
   
     <li class="md-nav__item">
-      <a href="mcp.html" class="md-nav__link">
+      <a href="../usage/mcp.html" class="md-nav__link">
         
   
   
@@ -652,7 +645,7 @@
   
   
     <li class="md-nav__item">
-      <a href="build-ids.html" class="md-nav__link">
+      <a href="../usage/build-ids.html" class="md-nav__link">
         
   
   
@@ -680,7 +673,7 @@
   
   
     <li class="md-nav__item">
-      <a href="caching.html" class="md-nav__link">
+      <a href="../usage/caching.html" class="md-nav__link">
         
   
   
@@ -708,7 +701,7 @@
   
   
     <li class="md-nav__item">
-      <a href="dockerfiles.html" class="md-nav__link">
+      <a href="../usage/dockerfiles.html" class="md-nav__link">
         
   
   
@@ -736,7 +729,7 @@
   
   
     <li class="md-nav__item">
-      <a href="multi-platform.html" class="md-nav__link">
+      <a href="../usage/multi-platform.html" class="md-nav__link">
         
   
   
@@ -764,7 +757,7 @@
   
   
     <li class="md-nav__item">
-      <a href="secrets-and-versions.html" class="md-nav__link">
+      <a href="../usage/secrets-and-versions.html" class="md-nav__link">
         
   
   
@@ -789,37 +782,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Filter images and tags
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="filtering.html" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../usage/filtering.html" class="md-nav__link">
         
   
   
@@ -835,92 +801,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#syntax" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Syntax
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#commands-that-support-filtering" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Commands that support filtering
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#examples" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Examples
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#variant-tags" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Variant tags
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#matching-rules" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Matching rules
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#sharding" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Sharding
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -933,7 +813,7 @@
   
   
     <li class="md-nav__item">
-      <a href="sharding.html" class="md-nav__link">
+      <a href="../usage/sharding.html" class="md-nav__link">
         
   
   
@@ -961,7 +841,7 @@
   
   
     <li class="md-nav__item">
-      <a href="testing.html" class="md-nav__link">
+      <a href="../usage/testing.html" class="md-nav__link">
         
   
   
@@ -989,7 +869,7 @@
   
   
     <li class="md-nav__item">
-      <a href="ci-integration.html" class="md-nav__link">
+      <a href="../usage/ci-integration.html" class="md-nav__link">
         
   
   
@@ -1017,7 +897,7 @@
   
   
     <li class="md-nav__item">
-      <a href="local-development.html" class="md-nav__link">
+      <a href="../usage/local-development.html" class="md-nav__link">
         
   
   
@@ -1045,7 +925,7 @@
   
   
     <li class="md-nav__item">
-      <a href="renovate.html" class="md-nav__link">
+      <a href="../usage/renovate.html" class="md-nav__link">
         
   
   
@@ -1073,7 +953,7 @@
   
   
     <li class="md-nav__item">
-      <a href="pre-commit.html" class="md-nav__link">
+      <a href="../usage/pre-commit.html" class="md-nav__link">
         
   
   
@@ -1101,7 +981,7 @@
   
   
     <li class="md-nav__item">
-      <a href="registry-retention.html" class="md-nav__link">
+      <a href="../usage/registry-retention.html" class="md-nav__link">
         
   
   
@@ -1415,24 +1295,29 @@
       
   
   
+    
   
   
+  
     
     
     
     
-      
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" checked>
         
           
-          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="">
             
   
   
@@ -1450,7 +1335,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_8">
             <span class="md-nav__icon md-icon"></span>
             
@@ -1493,6 +1378,8 @@
                 
   
   
+    
+  
   
   
     
@@ -1503,11 +1390,11 @@
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8_2" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8_2" checked>
         
           
           <label class="md-nav__link" for="__nav_8_2" id="__nav_8_2_label" tabindex="0">
@@ -1528,7 +1415,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_8_2_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_8_2_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_8_2">
             <span class="md-nav__icon md-icon"></span>
             
@@ -1546,7 +1433,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../adr/001-buildkit-integration.html" class="md-nav__link">
+      <a href="001-buildkit-integration.html" class="md-nav__link">
         
   
   
@@ -1581,7 +1468,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../adr/002-sbom-generation.html" class="md-nav__link">
+      <a href="002-sbom-generation.html" class="md-nav__link">
         
   
   
@@ -1616,7 +1503,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../adr/003-container-structure-tests.html" class="md-nav__link">
+      <a href="003-container-structure-tests.html" class="md-nav__link">
         
   
   
@@ -1651,7 +1538,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../adr/004-embedded-local-registry.html" class="md-nav__link">
+      <a href="004-embedded-local-registry.html" class="md-nav__link">
         
   
   
@@ -1683,10 +1570,19 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../adr/005-registry-retention-policies.html" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+      <a href="005-registry-retention-policies.html" class="md-nav__link md-nav__link--active">
         
   
   
@@ -1709,6 +1605,7 @@
   
 
       </a>
+      
     </li>
   
 
@@ -1748,80 +1645,6 @@
   
     
   
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#syntax" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Syntax
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#commands-that-support-filtering" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Commands that support filtering
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#examples" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Examples
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#variant-tags" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Variant tags
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#matching-rules" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Matching rules
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#sharding" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Sharding
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
   
 </nav>
                   </div>
@@ -1864,10 +1687,28 @@
     
     
       <li class="md-path__item">
-        <a href="cli.html" class="md-path__link">
+        <a href="../development/local.html" class="md-path__link">
           
   <span class="md-ellipsis">
-    Usage
+    Development
+  </span>
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+    
+    
+      <li class="md-path__item">
+        <a href="001-buildkit-integration.html" class="md-path__link">
+          
+  <span class="md-ellipsis">
+    Architecture Decision Records
   </span>
 
         </a>
@@ -1889,77 +1730,98 @@
   
 
 
-<h1 id="filter-images-and-tags">Filter images and tags</h1>
-<p>Most ContainerHive commands accept <code>image:tag</code> filters as positional arguments to target specific images or tags instead of processing the entire project.</p>
-<h2 id="syntax">Syntax</h2>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>ch<span class="w"> </span>&lt;command&gt;<span class="w"> </span><span class="o">[</span>image<span class="o">[</span>:tag<span class="o">]</span><span class="w"> </span>...<span class="o">]</span>
-</span></code></pre></div>
+<h1 id="005-use-registry-retention-policies-instead-of-push-gating">005 - Use registry retention policies instead of push-gating</h1>
 <table>
-<thead>
-<tr>
-<th style="text-align: left;">Pattern</th>
-<th style="text-align: left;">Matches</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: left;">(none)</td>
-<td style="text-align: left;">All images and tags</td>
-</tr>
-<tr>
-<td style="text-align: left;"><code>ubuntu</code></td>
-<td style="text-align: left;">All tags of the <code>ubuntu</code> image</td>
-</tr>
-<tr>
-<td style="text-align: left;"><code>ubuntu:24.04</code></td>
-<td style="text-align: left;">Only tag <code>24.04</code> of image <code>ubuntu</code></td>
-</tr>
-<tr>
-<td style="text-align: left;"><code>ubuntu:24.04</code> <code>alpine:3.20</code></td>
-<td style="text-align: left;">Both specified image:tag combinations</td>
-</tr>
-</tbody>
+<tr><td><strong>Status</strong></td><td><span style='color: white;background:#28a745;padding:.4em;border-radius:8px;font-size:100%;'>accepted</span></td></tr>
+<tr><td><strong>Date</strong></td><td>2026-09-29</td></tr>
+<tr><td><strong>Ticket</strong></td><td>268</td></tr>
 </table>
-<h2 id="commands-that-support-filtering">Commands that support filtering</h2>
+<h1 id="use-registry-retention-policies-instead-of-push-gating">Use registry retention policies instead of push-gating</h1>
+<h2 id="context-and-problem-statement">Context and Problem Statement</h2>
+<p><code>ch build</code> and <code>ch finalize</code> push images to the configured registry unconditionally on every pipeline run — including
+merge request (MR) and pull request (PR) pipelines. In projects with high MR churn (e.g. automated dependency-update
+bots), this permanently pushes tagged, semver-aliased images into the production registry via <code>ch finalize</code>, plus
+untagged per-platform intermediates via <code>ch build</code>. The result is thousands of orphaned, superseded images with no
+built-in mechanism to suppress pushing for non-default branches.</p>
+<p>Should ContainerHive add a flag or config to skip pushes on MR/PR pipelines, or should cleanup be handled via
+external retention policies?</p>
+<h2 id="decision-drivers">Decision Drivers</h2>
 <ul>
-<li><code>ch build</code> — build only matching images</li>
-<li><code>ch test</code> — test only matching images</li>
-<li><code>ch sbom</code> — generate SBOMs for matching images</li>
-<li><code>ch finalize</code> — create manifests for matching images</li>
+<li>Pushing intermediates is required by <code>ch test</code> (which pulls them back for validation) and <code>ch finalize</code> (which
+  assembles multi-arch manifests from platform-specific images)</li>
+<li>A <code>--skip-push</code> flag would break the standard MR test-and-finalize pipeline</li>
+<li>Tag namespacing via <code>--build-id</code> already isolates MR tags from production tags (<code>-build.&lt;id&gt;</code> suffix)</li>
+<li>Retention policies are available across all major container registries and operate at the registry level,
+  independent of the build tool</li>
+<li>Users already configure registry access — adding retention policies is a natural extension of that configuration</li>
 </ul>
-<h2 id="examples">Examples</h2>
-<p>Build a single image:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>ch<span class="w"> </span>build<span class="w"> </span>ubuntu
-</span></code></pre></div>
-<p>Build a specific tag:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>ch<span class="w"> </span>build<span class="w"> </span>ubuntu:24.04
-</span></code></pre></div>
-<p>Test multiple images:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>ch<span class="w"> </span><span class="nb">test</span><span class="w"> </span>ubuntu:24.04<span class="w"> </span>python:3.13.7
-</span></code></pre></div>
-<p>Generate SBOMs for one image:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>ch<span class="w"> </span>sbom<span class="w"> </span>dotnet
-</span></code></pre></div>
-<h2 id="variant-tags">Variant tags</h2>
-<p>Variant tags include the tag suffix defined in <code>image.yml</code>. To filter for a variant, specify the full tag including the suffix:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>ch<span class="w"> </span>build<span class="w"> </span>dotnet:8.0.200-node
-</span></code></pre></div>
-<h2 id="matching-rules">Matching rules</h2>
+<h2 id="considered-options">Considered Options</h2>
 <ul>
-<li>If no filters are provided, all images and tags are processed.</li>
-<li>Image name matching is exact — no wildcards or glob patterns.</li>
-<li>Tag matching is exact — no wildcards or glob patterns.</li>
-<li>Specifying only an image name matches all tags of that image.</li>
-<li>Multiple filters are combined with OR logic — an image:tag matches if it matches any filter.</li>
+<li>Option 1: Add a <code>--skip-push</code> / <code>--dry-run</code> flag on <code>ch build</code> and <code>ch finalize</code></li>
+<li>Option 2: Add a <code>push_on_branch</code> setting in <code>hive.yml</code> to gate pushes by CI branch</li>
+<li>Option 3: Add a <code>ci_finalize_default_branch_only</code> template option for generated CI pipelines</li>
+<li>Option 4: Document and recommend registry-level retention policies as the supported approach</li>
 </ul>
-<h2 id="sharding">Sharding</h2>
-<p>Filters and <a href="sharding.html">sharding</a> compose: filters select which images and tags are in scope at all, and sharding partitions whatever remains across parallel CI jobs.</p>
+<h2 id="decision-outcome">Decision Outcome</h2>
+<p>Chosen option: "Option 4 — Document retention policies", because it addresses the root cause (accumulated images)
+without breaking the existing test/finalize pipeline, applies uniformly across all registries and CI providers,
+and shifts lifecycle management to where it naturally belongs — the registry itself.</p>
+<p>The <code>--build-id</code> suffix convention (<code>-build.&lt;id&gt;</code>) already isolates MR images from production tags, making them
+ideal targets for age-based or pattern-based retention rules.</p>
+<h2 id="pros-and-cons-of-the-options">Pros and Cons of the Options</h2>
+<h3 id="option-1-skip-push-dry-run-flag">Option 1: <code>--skip-push</code> / <code>--dry-run</code> flag</h3>
+<p>A CLI flag to suppress pushing during build and finalize.</p>
+<ul>
+<li>Good, because simple UX — single flag</li>
+<li>Good, because zero registry-level configuration needed</li>
+<li>Bad, because <code>ch test</code> cannot pull intermediates that were not pushed — breaks the standard MR pipeline</li>
+<li>Bad, because <code>ch finalize</code> needs platform images in the registry to assemble manifests</li>
+<li>Bad, because users must manually orchestrate partial builds to avoid pushing, losing the full pipeline validation</li>
+</ul>
+<h3 id="option-2-push_on_branch-in-hiveyml">Option 2: <code>push_on_branch</code> in <code>hive.yml</code></h3>
+<p>A config field that gates pushing to specific CI branches.</p>
+<ul>
+<li>Good, because declarative and version-controlled</li>
+<li>Good, because works across all CI providers via environment variable detection</li>
+<li>Bad, because same fundamental issue — <code>ch test</code>/<code>finalize</code> still need pushed intermediates</li>
+<li>Bad, because introduces branch-awareness into ContainerHive's core, coupling it to CI semantics</li>
+<li>Bad, because per-branch behavior is hard to test and document</li>
+</ul>
+<h3 id="option-3-ci_finalize_default_branch_only-template-option">Option 3: <code>ci_finalize_default_branch_only</code> template option</h3>
+<p>A template option that adds branch conditions to the generated CI pipeline's finalize job.</p>
+<ul>
+<li>Good, because scoped to CI pipeline generation — no core changes</li>
+<li>Good, because preserves full MR pipeline validation (build + test still run)</li>
+<li>Bad, because only gates the finalize step, not the per-platform intermediate pushes from <code>ch build</code></li>
+<li>Bad, because adds provider-specific condition logic to templates that must be maintained per CI provider</li>
+<li>Bad, because does not address cache accumulation</li>
+</ul>
+<h3 id="option-4-document-retention-policies">Option 4: Document retention policies</h3>
+<ul>
+<li>Good, because works with the existing push behavior — no pipeline breakage</li>
+<li>Good, because addresses both snapshot images and cache accumulation</li>
+<li>Good, because registry-native — lifecycle management belongs in the registry, not the build tool</li>
+<li>Good, because applies uniformly across all registries and CI providers</li>
+<li>Good, because no code changes — docs-only, ships immediately</li>
+<li>Bad, because requires user action to set up retention policies (not automatic out of the box)</li>
+<li>Bad, because registry-specific configuration varies — requires documentation per provider</li>
+</ul>
+<h2 id="links">Links</h2>
+<ul>
+<li><a href="https://github.com/ContainerHive/ContainerHive/issues/268">Issue #268</a></li>
+<li><a href="../usage/registry-retention.html">Registry retention docs</a></li>
+<li><a href="https://github.com/ContainerHive/ContainerHive/pull/269">PR #269 (closed)</a></li>
+</ul>
+<!-- markdownlint-disable-file MD013 -->
 
 
 
 
 
 
+
+  
+  
 
 
 

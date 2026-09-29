@@ -805,6 +805,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#cleanup" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cleanup
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -1109,6 +1120,34 @@
     
   
     Pre-commit integration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="registry-retention.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Clean up registry images with retention policies
   
 
     
@@ -1679,6 +1718,41 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../adr/005-registry-retention-policies.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    005 - Use registry retention policies instead of push-gating
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--accepted"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -1808,6 +1882,17 @@
     <span class="md-ellipsis">
       
         Flag placement
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cleanup" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cleanup
       
     </span>
   </a>
@@ -1951,6 +2036,11 @@
 </span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>ch<span class="w"> </span>--build-id<span class="w"> </span><span class="s2">"mr-42"</span><span class="w"> </span>sbom
 </span></code></pre></div>
 <p>Use the same build ID across all commands in a single pipeline run to keep tags consistent.</p>
+<h2 id="cleanup">Cleanup</h2>
+<p>Build-ID suffixed images accumulate in the registry on every MR/PR run — even if the MR is never merged. Set up a
+retention policy to automatically clean up these snapshots after a few days. Tags containing <code>-build.</code> are safe to
+delete because production tags (e.g. <code>1.0.0</code>) never carry the <code>-build.</code> infix.</p>
+<p>See <a href="registry-retention.html">Clean up registry images with retention policies</a> for per-provider setup instructions.</p>
 
 
 
