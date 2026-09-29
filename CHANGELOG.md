@@ -1,3 +1,9 @@
+## [1.9.0](https://github.com/ContainerHive/ContainerHive/compare/v1.8.4...v1.9.0) (2026-09-29)
+
+### Features
+
+* Add dynamic tag generation from external version sources (tag_ranges) ([#251](https://github.com/ContainerHive/ContainerHive/issues/251)) ([eb30202](https://github.com/ContainerHive/ContainerHive/commit/eb30202d7a7646e60e9668f8e8b7ca6eaf2f2074)), closes [#241](https://github.com/ContainerHive/ContainerHive/issues/241) [#241](https://github.com/ContainerHive/ContainerHive/issues/241) [#241](https://github.com/ContainerHive/ContainerHive/issues/241) [#241](https://github.com/ContainerHive/ContainerHive/issues/241) [#241](https://github.com/ContainerHive/ContainerHive/issues/241) [#241](https://github.com/ContainerHive/ContainerHive/issues/241) [#241](https://github.com/ContainerHive/ContainerHive/issues/241) [#241](https://github.com/ContainerHive/ContainerHive/issues/241) [#241](https://github.com/ContainerHive/ContainerHive/issues/241) [#241](https://github.com/ContainerHive/ContainerHive/issues/241) [#241](https://github.com/ContainerHive/ContainerHive/issues/241) [#241](https://github.com/ContainerHive/ContainerHive/issues/241) [#241](https://github.com/ContainerHive/ContainerHive/issues/241) [#241](https://github.com/ContainerHive/ContainerHive/issues/241) [#241](https://github.com/ContainerHive/ContainerHive/issues/241)
+
 ## [1.8.4](https://github.com/ContainerHive/ContainerHive/compare/v1.8.3...v1.8.4) (2026-09-29)
 
 ### Bug Fixes
