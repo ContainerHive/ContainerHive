@@ -7,5 +7,5 @@ const (
 	UploadPagesArtifactVersion = "v3"     // renovate: datasource=github-tags depName=actions/upload-pages-artifact
 	DeployPagesVersion         = "v5.0.1" // renovate: datasource=github-tags depName=actions/deploy-pages
 	JunitReportVersion         = "v6.5.0" // renovate: datasource=github-tags depName=mikepenz/action-junit-report
-	CacheVersion               = "v4.2.0" // renovate: datasource=github-tags depName=actions/cache
+	CacheVersion               = "v4.3.0" // renovate: datasource=github-tags depName=actions/cache
 )
