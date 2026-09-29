@@ -78,3 +78,11 @@ ch --build-id "mr-42" sbom
 ```
 
 Use the same build ID across all commands in a single pipeline run to keep tags consistent.
+
+## Cleanup
+
+Build-ID suffixed images accumulate in the registry on every MR/PR run — even if the MR is never merged. Set up a
+retention policy to automatically clean up these snapshots after a few days. Tags containing `-build.` are safe to
+delete because production tags (e.g. `1.0.0`) never carry the `-build.` infix.
+
+See [Clean up registry images with retention policies](registry-retention.md) for per-provider setup instructions.

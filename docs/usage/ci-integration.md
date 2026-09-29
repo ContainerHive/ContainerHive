@@ -248,3 +248,12 @@ template_options:
   ci_build_shards: "5"
   ci_test_shards: "5"
 ```
+
+## Registry retention
+
+Every generated pipeline pushes per-platform intermediate images and, when using `--build-id`, snapshot manifests and
+aliases into the registry. These accumulate over time — even for MRs that are never merged. Since `ch test` and
+`ch finalize` need to pull these images, skipping pushes is not an option. Instead, configure a registry-level
+retention policy to automatically clean up snapshot images after a few days.
+
+See [Clean up registry images with retention policies](registry-retention.md) for per-provider setup instructions.

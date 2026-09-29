@@ -82,6 +82,11 @@ cache:
 - Your container registry supports OCI image manifests
 - You want cache stored in the same place as your images
 
+!!! note "Cache retention"
+    Registry cache layers grow over time. Set up a retention policy on the cache repository (e.g. 3 weeks) to keep
+    recent layers while discarding stale ones. See [Clean up registry images with retention policies](registry-retention.md)
+    for per-provider setup instructions.
+
 ## How caching works
 
 BuildKit uses the cache configuration for both importing (reading) and exporting (writing) cache layers:
