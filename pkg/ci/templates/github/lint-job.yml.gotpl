@@ -6,6 +6,15 @@
       - uses: actions/checkout@{{ option "actions_checkout_version" }}
         with:
           lfs: true
+{{- if and .HasTagRanges (ne (option "ci_version_cache") "false") }}
+      - name: Restore version cache
+        uses: actions/cache/restore@{{ option "actions_cache_version" }}
+        with:
+          path: {{ .VersionCacheDir }}
+          key: ch-versions-${{ "{{" }} github.run_id {{ "}}" }}
+          restore-keys: |
+            ch-versions-
+{{- end }}
       - name: Lint Dockerfiles
-        run: docker run --rm --entrypoint="" -u "$(id -u):$(id -g)" -e CI=1 -e HOME="$RUNNER_TEMP/ch" -v "$RUNNER_TEMP/ch:$RUNNER_TEMP/ch" -v "$GITHUB_WORKSPACE:$GITHUB_WORKSPACE" -w "$GITHUB_WORKSPACE" $CH_IMAGE {{ .ChCmd }} lint --format github-actions
+        run: docker run --rm --entrypoint="" -u "$(id -u):$(id -g)" -e CI=1 -e HOME="$RUNNER_TEMP/ch"{{ if .HasTagRanges }} -e CONTAINER_HIVE_CACHE_DIR="$GITHUB_WORKSPACE/{{ .VersionCacheDir }}"{{ end }} -v "$RUNNER_TEMP/ch:$RUNNER_TEMP/ch" -v "$GITHUB_WORKSPACE:$GITHUB_WORKSPACE" -w "$GITHUB_WORKSPACE" $CH_IMAGE {{ .ChCmd }} lint --format github-actions
 {{- end }}

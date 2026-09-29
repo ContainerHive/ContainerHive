@@ -36,6 +36,14 @@ type CIContext struct {
 	ImageName       string
 	ProjectPath     string // non-empty when --project is not the default "."
 	TemplateOptions map[string]string
+
+	// HasTagRanges gates the version-cache template steps, so projects not
+	// using tag_ranges render byte-identical CI files to before.
+	HasTagRanges bool
+
+	// TagRangeUnits is recorded in the header comment, so a stale
+	// committed pipeline is visible as a diff on the next generate.
+	TagRangeUnits int
 }
 
 // ChCmd returns the ch command prefix, including -p flag when a project path is set.
@@ -52,6 +60,20 @@ func (c *CIContext) Dist() string {
 		return c.ProjectPath + "/dist"
 	}
 	return "dist"
+}
+
+// VersionCacheDir returns the tag_ranges version cache path, prefixed with
+// the project path when set. It is deliberately project-relative rather
+// than XDG-default: GitHub's generate job runs ch in a container with only
+// $RUNNER_TEMP/ch and $GITHUB_WORKSPACE bind-mounted, and GitLab's cache:
+// only accepts paths under $CI_PROJECT_DIR - a path outside the project
+// directory would be invisible to one or the other.
+func (c *CIContext) VersionCacheDir() string {
+	dir := c.TemplateOptions["ci_version_cache_dir"]
+	if c.ProjectPath != "" {
+		return c.ProjectPath + "/" + dir
+	}
+	return dir
 }
 
 // CIConfigContext holds project configuration relevant to CI.
@@ -86,12 +108,15 @@ func defaultTemplateOptions() map[string]string {
 		"ci_sbom_generate_cpes":                 "true",
 		"ci_build_shards":                       "1",
 		"ci_test_shards":                        "1",
+		"ci_version_cache":                      "true",
+		"ci_version_cache_dir":                  ".ch-cache",
 		"actions_checkout_version":              actions.CheckoutVersion,
 		"actions_upload_artifact_version":       actions.UploadArtifactVersion,
 		"actions_download_artifact_version":     actions.DownloadArtifactVersion,
 		"actions_upload_pages_artifact_version": actions.UploadPagesArtifactVersion,
 		"actions_deploy_pages_version":          actions.DeployPagesVersion,
 		"actions_junit_report_version":          actions.JunitReportVersion,
+		"actions_cache_version":                 actions.CacheVersion,
 	}
 }
 
@@ -225,6 +250,21 @@ func BuildCIContext(project *model.ContainerHiveProject, artifacts bool) (*CICon
 		ciImages[i].TestShards = testShards
 	}
 
+	hasTagRanges := false
+	for _, images := range project.ImagesByName {
+		for _, img := range images {
+			if len(img.TagRanges) > 0 {
+				hasTagRanges = true
+			}
+		}
+	}
+	totalUnits := 0
+	if hasTagRanges {
+		for _, units := range unitCounts {
+			totalUnits += units
+		}
+	}
+
 	return &CIContext{
 		Images:    ciImages,
 		Platforms: platformList,
@@ -235,6 +275,8 @@ func BuildCIContext(project *model.ContainerHiveProject, artifacts bool) (*CICon
 		},
 		Artifacts:       artifacts,
 		TemplateOptions: opts,
+		HasTagRanges:    hasTagRanges,
+		TagRangeUnits:   totalUnits,
 	}, nil
 }
 

@@ -15,24 +15,58 @@ import (
 	"golang.org/x/sync/errgroup"
 )
 
+// AliasCandidate is one tag eligible for alias/latest_alias resolution.
+// IsPrerelease is carried explicitly by the caller (it may come from an
+// external version source that knows the version was a prerelease) rather
+// than re-derived from the tag string: semantic_tags.SemanticTagVersion
+// treats any "-suffix" as an opaque flavour (e.g. "1.2.3-alpine" is not a
+// prerelease), and semantic_tags.Compare ignores the suffix entirely, so a
+// tag string alone cannot answer "is this a prerelease".
+type AliasCandidate struct {
+	Name         string
+	IsPrerelease bool
+}
+
+// candidatesFromTags wraps plain tag names as non-prerelease candidates, for
+// callers that have no prerelease information (e.g. purely static tags).
+func candidatesFromTags(tags []string) []AliasCandidate {
+	candidates := make([]AliasCandidate, len(tags))
+	for i, tag := range tags {
+		candidates[i] = AliasCandidate{Name: tag}
+	}
+	return candidates
+}
+
 // ResolveLatestAlias returns the tag that latestAlias should point to — the
 // highest semantic version found in tags. Returns ("", nil) if latestAlias is
-// empty. Returns ("", error) if latestAlias is set but no tags parse as semantic
-// versions.
+// empty. Returns ("", error) if latestAlias is set but no tags parse as
+// semantic versions. All tags are treated as non-prerelease; use
+// ResolveLatestAliasFor when prerelease information is available.
 func ResolveLatestAlias(tags []string, latestAlias string) (string, error) {
+	return ResolveLatestAliasFor(candidatesFromTags(tags), latestAlias)
+}
+
+// ResolveLatestAliasFor returns the tag that latestAlias should point to —
+// the highest semantic version among non-prerelease candidates. Returns
+// ("", nil) if latestAlias is empty. Returns ("", error) if latestAlias is
+// set but no non-prerelease candidate parses as a semantic version.
+func ResolveLatestAliasFor(candidates []AliasCandidate, latestAlias string) (string, error) {
 	if latestAlias == "" {
 		return "", nil
 	}
 	var highest *semantic_tags.SemanticTagVersion
 	var highestTag string
-	for _, tag := range tags {
-		ver, err := semantic_tags.NewSemanticVersion(tag)
+	for _, c := range candidates {
+		if c.IsPrerelease {
+			continue
+		}
+		ver, err := semantic_tags.NewSemanticVersion(c.Name)
 		if err != nil {
 			continue
 		}
 		if highest == nil || ver.Greater(highest) {
 			highest = ver
-			highestTag = tag
+			highestTag = c.Name
 		}
 	}
 	if highestTag == "" {
@@ -42,13 +76,25 @@ func ResolveLatestAlias(tags []string, latestAlias string) (string, error) {
 }
 
 // ResolveAliases computes the alias map for a set of tags, ensuring each alias
-// points to the highest version that claims it.
+// points to the highest version that claims it. All tags are treated as
+// non-prerelease; use ResolveAliasesFor when prerelease information is
+// available.
 func ResolveAliases(tags []string) map[string]string {
+	return ResolveAliasesFor(candidatesFromTags(tags))
+}
+
+// ResolveAliasesFor computes the alias map for a set of candidates, ensuring
+// each alias points to the highest non-prerelease version that claims it.
+// Prerelease candidates never win an alias.
+func ResolveAliasesFor(candidates []AliasCandidate) map[string]string {
 	aliases := make(map[string]string)
 	aliasVersions := make(map[string]*semantic_tags.SemanticTagVersion)
 
-	for _, tag := range tags {
-		ver, err := semantic_tags.NewSemanticVersion(tag)
+	for _, c := range candidates {
+		if c.IsPrerelease {
+			continue
+		}
+		ver, err := semantic_tags.NewSemanticVersion(c.Name)
 		if err != nil {
 			continue
 		}
@@ -56,7 +102,7 @@ func ResolveAliases(tags []string) map[string]string {
 		for _, alias := range ver.GetLowerVariants() {
 			existing, ok := aliasVersions[alias]
 			if !ok || ver.Greater(existing) {
-				aliases[alias] = tag
+				aliases[alias] = c.Name
 				aliasVersions[alias] = ver
 			}
 		}
