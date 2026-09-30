@@ -106,6 +106,65 @@ test.describe('Image detail — latest alias', () => {
   })
 })
 
+test.describe('Image detail — parent tag range chips', () => {
+  test('tags with parent tags render one chip per range', async ({ page }) => {
+    await page.goto(`/#/image/${base.name}/base`)
+
+    for (const tag of base.tags) {
+      if (!tag.parentTags?.length) continue
+      const tab = page.locator('.tabs .tab', { hasText: tag.name })
+      await expect(tab.locator('.tab-parent-tag-chip')).toHaveCount(tag.parentTags.length)
+      for (let i = 0; i < tag.parentTags.length; i++) {
+        await expect(tab.locator('.tab-parent-tag-chip').nth(i)).toHaveText(tag.parentTags[i])
+      }
+    }
+  })
+
+  test('four-part version shows all range chips', async ({ page }) => {
+    await page.goto('/#/image/dotnet-sdk/base')
+
+    const tab = page.locator('.tabs .tab', { hasText: '10.0.400' })
+    await expect(tab.locator('.tab-parent-tag-chip')).toHaveCount(2)
+    await expect(tab.locator('.tab-parent-tag-chip').nth(0)).toHaveText('10.0')
+    await expect(tab.locator('.tab-parent-tag-chip').nth(1)).toHaveText('10')
+  })
+
+  test('tag without parent tags renders no chips', async ({ page }) => {
+    await page.goto('/#/image/node/base')
+
+    const tab = page.locator('.tabs .tab', { hasText: '20' })
+    await expect(tab.locator('.tab-parent-tag-chip')).toHaveCount(0)
+  })
+
+  test('chips do not change tab count', async ({ page }) => {
+    await page.goto('/#/image/dotnet-sdk/base')
+
+    const tabs = page.locator('.tabs .tab')
+    await expect(tabs).toHaveCount(4)
+  })
+
+  test('the same alias appears on exactly one tag', async ({ page }) => {
+    await page.goto('/#/image/dotnet-sdk/base')
+
+    await expect(page.locator('.tab-parent-tag-chip:text-is("10.0")')).toHaveCount(1)
+    await expect(page.locator('.tab-parent-tag-chip:text-is("10")')).toHaveCount(1)
+    await expect(page.locator('.tab-parent-tag-chip:text-is("9.0")')).toHaveCount(1)
+
+    const winner = page.locator('.tabs .tab', { hasText: '10.0.400' })
+    await expect(winner.locator('.tab-parent-tag-chip:text-is("10.0")')).toHaveCount(1)
+    const older = page.locator('.tabs .tab', { hasText: '10.0.399' })
+    await expect(older.locator('.tab-parent-tag-chip')).toHaveCount(0)
+  })
+
+  test('sibling versions of the same range do not repeat its alias', async ({ page }) => {
+    await page.goto(`/#/image/${base.name}/base`)
+
+    await expect(page.locator('.tab-parent-tag-chip:text-is("3")')).toHaveCount(1)
+    const older = page.locator('.tabs .tab', { hasText: '3.18' })
+    await expect(older.locator('.tab-parent-tag-chip')).toHaveCount(0)
+  })
+})
+
 test.describe('Image detail — not found', () => {
   test('renders a not-found message for an unknown image', async ({ page }) => {
     await page.goto('/#/image/does-not-exist/base')

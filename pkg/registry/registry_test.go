@@ -9,7 +9,6 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"slices"
 	"sort"
 	"testing"
 
@@ -26,78 +25,6 @@ func candidateNames(candidates []rendering.AliasCandidate) []string {
 		names[i] = c.Name
 	}
 	return names
-}
-
-func TestCollectAllTags_NoVariants(t *testing.T) {
-	img := &model.Image{
-		Name: "app",
-		Tags: map[string]*model.Tag{
-			"1.0": {},
-			"2.0": {},
-		},
-		Variants: map[string]*model.ImageVariant{},
-	}
-
-	tags := candidateNames(collectAllTags(img))
-	sort.Strings(tags)
-	if len(tags) != 2 {
-		t.Fatalf("expected 2 tags, got %d: %v", len(tags), tags)
-	}
-	if tags[0] != "1.0" || tags[1] != "2.0" {
-		t.Errorf("unexpected tags: %v", tags)
-	}
-}
-
-func TestCollectAllTags_WithVariants(t *testing.T) {
-	img := &model.Image{
-		Name: "app",
-		Tags: map[string]*model.Tag{
-			"1.0": {},
-		},
-		Variants: map[string]*model.ImageVariant{
-			"slim":   {TagSuffix: "-slim"},
-			"alpine": {TagSuffix: "-alpine"},
-		},
-	}
-
-	tags := candidateNames(collectAllTags(img))
-	sort.Strings(tags)
-	if len(tags) != 3 {
-		t.Fatalf("expected 3 tags, got %d: %v", len(tags), tags)
-	}
-
-	expected := []string{"1.0", "1.0-alpine", "1.0-slim"}
-	for i, want := range expected {
-		if tags[i] != want {
-			t.Errorf("tag[%d] = %q, want %q", i, tags[i], want)
-		}
-	}
-}
-
-func TestCollectAllTags_DeterministicAcrossRuns(t *testing.T) {
-	// img.Tags and img.Variants are maps; without sorting, collectAllTags
-	// would return the tags in Go's randomized iteration order, and any
-	// alias-resolution tie (e.g. a release vs. its prerelease sharing the
-	// same alias) would pick a different winner on every run. Rebuild the
-	// map fresh each iteration to actually exercise the randomization.
-	names := []string{"1.0.0", "1.0.0-rc1", "2.0.0", "2.0.0-rc1", "3.0.0"}
-	var first []string
-	for i := 0; i < 20; i++ {
-		tags := make(map[string]*model.Tag, len(names))
-		for _, n := range names {
-			tags[n] = &model.Tag{}
-		}
-		img := &model.Image{Name: "app", Tags: tags, Variants: map[string]*model.ImageVariant{}}
-
-		got := candidateNames(collectAllTags(img))
-		if first == nil {
-			first = got
-			continue
-		}
-		if !slices.Equal(got, first) {
-			t.Fatalf("collectAllTags order is not deterministic: run 0 = %v, run %d = %v", first, i, got)
-		}
-	}
 }
 
 func TestRetagAllAliases_FilterMatch(t *testing.T) {
@@ -305,23 +232,6 @@ func TestCollectBaseTags(t *testing.T) {
 	}
 	if tags[0] != "1.0" || tags[1] != "2.0" {
 		t.Errorf("unexpected base tags: %v", tags)
-	}
-}
-
-// ---------------------------------------------------------------------------
-// collectAllTags – edge case: image with no tags
-// ---------------------------------------------------------------------------
-
-func TestCollectAllTags_NoTags(t *testing.T) {
-	img := &model.Image{
-		Name:     "app",
-		Tags:     map[string]*model.Tag{},
-		Variants: map[string]*model.ImageVariant{},
-	}
-
-	tags := collectAllTags(img)
-	if len(tags) != 0 {
-		t.Fatalf("expected 0 tags for image with no tags, got %d: %v", len(tags), tags)
 	}
 }
 

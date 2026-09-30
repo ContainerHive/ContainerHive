@@ -5,6 +5,7 @@ export interface SBOMPackage {
 
 export interface TagReport {
   name: string;
+  parentTags?: string[];
   buildArgs?: Record<string, string>;
   versions?: Record<string, string>;
   platforms?: PlatformReport[];

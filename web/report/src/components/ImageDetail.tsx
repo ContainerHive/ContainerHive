@@ -145,7 +145,17 @@ function ImageDetail({ data, imageName, kind }: Readonly<ImageDetailProps>) {
                   setSbomSearch('')
                 }}
               >
-                {tag.name}
+                <span className="tab-name">{tag.name}</span>
+                {tag.parentTags && tag.parentTags.length > 0 && (
+                  <span
+                    className="tab-parent-tags"
+                    title={`Part of tag range: ${tag.parentTags.join(', ')}`}
+                  >
+                    {tag.parentTags.map(parent => (
+                      <span key={parent} className="tab-parent-tag-chip">{parent}</span>
+                    ))}
+                  </span>
+                )}
               </button>
             ))}
           </div>

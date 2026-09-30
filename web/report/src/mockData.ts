@@ -13,6 +13,7 @@ export const mockData: ProjectReport = {
             tags: [
                 {
                     name: '3.19',
+                    parentTags: ['3'],
                     buildArgs: {FOO: 'bar'},
                     versions: {distribution_version: '1.0', os_version: '3.19.1'},
                     platforms: [
@@ -67,6 +68,7 @@ export const mockData: ProjectReport = {
                     tags: [
                         {
                             name: '3.19-node20',
+                            parentTags: ['3-node20'],
                             buildArgs: {NODE_ENV: 'production'},
                             versions: {distribution_version: '1.0', os_version: '3.18.0', node_version: '22'},
                             platforms: [
@@ -92,6 +94,7 @@ export const mockData: ProjectReport = {
             tags: [
                 {
                     name: '1.25',
+                    parentTags: ['1'],
                     platforms: [
                         {
                             platform: 'linux/amd64',
@@ -130,6 +133,55 @@ export const mockData: ProjectReport = {
                     ],
                 },
             ],
+        },
+        {
+            name: 'dotnet-sdk',
+            description: 'Official .NET SDK image with tag ranges for major/minor channels.',
+            report: {icon: 'devicon-dotnetcore-plain'},
+            platforms: ['linux/amd64', 'linux/arm64'],
+            tags: [
+                {
+                    name: '10.0.400',
+                    parentTags: ['10.0', '10'],
+                    versions: {dotnet_version: '10.0.100'},
+                    platforms: [
+                        {
+                            platform: 'linux/amd64',
+                            sbom: [
+                                {name: 'dotnet-sdk', version: '10.0.100'},
+                                {name: 'aspnetcore-runtime', version: '10.0.0'},
+                            ],
+                        },
+                    ],
+                },
+                {
+                    name: '10.0.399',
+                    versions: {dotnet_version: '10.0.99'},
+                    platforms: [
+                        {
+                            platform: 'linux/amd64',
+                            sbom: [
+                                {name: 'dotnet-sdk', version: '10.0.99'},
+                                {name: 'aspnetcore-runtime', version: '10.0.0'},
+                            ],
+                        },
+                    ],
+                },
+                {
+                    name: '9.0.300',
+                    parentTags: ['9.0', '9'],
+                    versions: {dotnet_version: '9.0.200'},
+                    platforms: [
+                        {
+                            platform: 'linux/amd64',
+                            sbom: [
+                                {name: 'dotnet-sdk', version: '9.0.200'},
+                            ],
+                        },
+                    ],
+                },
+            ],
+            latestAlias: {name: 'latest', target: '10.0.400'},
         },
     ],
 }

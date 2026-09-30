@@ -4,8 +4,10 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"maps"
 	"os"
 	"path/filepath"
+	"slices"
 	"strings"
 
 	"github.com/ContainerHive/ContainerHive/internal/buildconfig_resolver"
@@ -35,6 +37,36 @@ func candidatesFromTags(tags []string) []AliasCandidate {
 		candidates[i] = AliasCandidate{Name: tag}
 	}
 	return candidates
+}
+
+// AliasCandidatesFor returns all tags for an image, including variant tags,
+// as alias candidates carrying each tag's prerelease status, in a
+// deterministic sorted order. img.Tags and img.Variants are maps, so
+// iterating them directly would make alias resolution (which picks a
+// "highest" tag among ties, e.g. a release vs. its prerelease) depend on
+// Go's randomized map iteration order. Sorting first fixes that.
+func AliasCandidatesFor(img *model.Image) []AliasCandidate {
+	candidates := make([]AliasCandidate, 0, len(img.Tags)*(1+len(img.Variants)))
+	for _, tagName := range slices.Sorted(maps.Keys(img.Tags)) {
+		tag := img.Tags[tagName]
+		candidates = append(candidates, AliasCandidate{Name: tagName, IsPrerelease: tag.IsPrerelease})
+		for _, variantName := range slices.Sorted(maps.Keys(img.Variants)) {
+			variantDef := img.Variants[variantName]
+			candidates = append(candidates, AliasCandidate{
+				Name:         tagName + variantDef.TagSuffix,
+				IsPrerelease: tag.IsPrerelease,
+			})
+		}
+	}
+	return candidates
+}
+
+// ResolveImageAliases resolves the alias map for an image's tags, including
+// variant tags. Each alias maps to exactly one tag — the highest
+// non-prerelease version claiming it — mirroring what retagAliases pushes to
+// the registry.
+func ResolveImageAliases(img *model.Image) map[string]string {
+	return ResolveAliasesFor(AliasCandidatesFor(img))
 }
 
 // ResolveLatestAlias returns the tag that latestAlias should point to — the

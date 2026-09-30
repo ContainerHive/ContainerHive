@@ -72,28 +72,6 @@ func (r *Registry) ImageRef(imageName, tag, platformStr, buildID string) string 
 	return fmt.Sprintf("%s/%s:%s", r.Address(), imageName, pushTag(tag, platformStr, buildID))
 }
 
-// collectAllTags returns all tags for an image, including variant tags, as
-// alias candidates carrying each tag's prerelease status, in a deterministic
-// order. img.Tags and img.Variants are maps, so iterating them directly
-// would make alias resolution (which picks a "highest" tag among ties, e.g.
-// a release vs. its prerelease) depend on Go's randomized map iteration
-// order. Sorting first fixes that.
-func collectAllTags(imageDef *model.Image) []rendering.AliasCandidate {
-	allTags := make([]rendering.AliasCandidate, 0, len(imageDef.Tags)*(1+len(imageDef.Variants)))
-	for _, tagName := range slices.Sorted(maps.Keys(imageDef.Tags)) {
-		tag := imageDef.Tags[tagName]
-		allTags = append(allTags, rendering.AliasCandidate{Name: tagName, IsPrerelease: tag.IsPrerelease})
-		for _, variantName := range slices.Sorted(maps.Keys(imageDef.Variants)) {
-			variantDef := imageDef.Variants[variantName]
-			allTags = append(allTags, rendering.AliasCandidate{
-				Name:         tagName + variantDef.TagSuffix,
-				IsPrerelease: tag.IsPrerelease,
-			})
-		}
-	}
-	return allTags
-}
-
 // loadImageFromTar extracts an OCI tar and returns the first image from the
 // layout. The caller must call the returned cleanup function after the image
 // is no longer needed (v1.Image reads blobs lazily from disk).
@@ -188,7 +166,7 @@ func (r *Registry) CreateAllManifests(project *model.ContainerHiveProject, filte
 
 // collectBaseTags returns the base tag names for an image, excluding variant
 // suffixes, as alias candidates, in deterministic sorted order (see
-// collectAllTags).
+// rendering.AliasCandidatesFor).
 func collectBaseTags(imageDef *model.Image) []rendering.AliasCandidate {
 	candidates := make([]rendering.AliasCandidate, 0, len(imageDef.Tags))
 	for _, tagName := range slices.Sorted(maps.Keys(imageDef.Tags)) {
@@ -205,8 +183,7 @@ func collectBaseTags(imageDef *model.Image) []rendering.AliasCandidate {
 // platform suffix). If buildID is set, it is appended to match pushed tags.
 // Only tags matching the filters are retagged.
 func (r *Registry) retagAliases(imageDef *model.Image, filters []build.Filter, buildID string) error {
-	allTags := collectAllTags(imageDef)
-	aliases := rendering.ResolveAliasesFor(allTags)
+	aliases := rendering.ResolveImageAliases(imageDef)
 
 	if imageDef.LatestAlias != nil {
 		latestTarget, err := rendering.ResolveLatestAliasFor(collectBaseTags(imageDef), imageDef.LatestAlias.Tag)
