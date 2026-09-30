@@ -3,10 +3,12 @@ package rendering
 import (
 	"os"
 	"path/filepath"
+	"slices"
 	"strings"
 	"testing"
 
 	"github.com/ContainerHive/ContainerHive/pkg/discovery"
+	"github.com/ContainerHive/ContainerHive/pkg/model"
 )
 
 func discoverAndRender(t *testing.T, projectPath string) string {
@@ -381,6 +383,105 @@ func TestResolveLatestAliasFor_AllPrereleaseIsError(t *testing.T) {
 
 	if _, err := ResolveLatestAliasFor(candidates, "latest"); err == nil {
 		t.Error("expected an error when every candidate is a prerelease")
+	}
+}
+
+// ---------------------------------------------------------------------------
+// AliasCandidatesFor
+// ---------------------------------------------------------------------------
+
+// candidateNames extracts the Name field from a slice of AliasCandidate, for
+// tests that only care about tag names.
+func candidateNames(candidates []AliasCandidate) []string {
+	names := make([]string, len(candidates))
+	for i, c := range candidates {
+		names[i] = c.Name
+	}
+	return names
+}
+
+func TestAliasCandidatesFor_NoVariants(t *testing.T) {
+	img := &model.Image{
+		Name: "app",
+		Tags: map[string]*model.Tag{
+			"1.0": {},
+			"2.0": {},
+		},
+		Variants: map[string]*model.ImageVariant{},
+	}
+
+	tags := candidateNames(AliasCandidatesFor(img))
+	slices.Sort(tags)
+	if len(tags) != 2 {
+		t.Fatalf("expected 2 tags, got %d: %v", len(tags), tags)
+	}
+	if tags[0] != "1.0" || tags[1] != "2.0" {
+		t.Errorf("unexpected tags: %v", tags)
+	}
+}
+
+func TestAliasCandidatesFor_WithVariants(t *testing.T) {
+	img := &model.Image{
+		Name: "app",
+		Tags: map[string]*model.Tag{
+			"1.0": {},
+		},
+		Variants: map[string]*model.ImageVariant{
+			"slim":   {TagSuffix: "-slim"},
+			"alpine": {TagSuffix: "-alpine"},
+		},
+	}
+
+	tags := candidateNames(AliasCandidatesFor(img))
+	slices.Sort(tags)
+	if len(tags) != 3 {
+		t.Fatalf("expected 3 tags, got %d: %v", len(tags), tags)
+	}
+
+	expected := []string{"1.0", "1.0-alpine", "1.0-slim"}
+	for i, want := range expected {
+		if tags[i] != want {
+			t.Errorf("tag[%d] = %q, want %q", i, tags[i], want)
+		}
+	}
+}
+
+func TestAliasCandidatesFor_DeterministicAcrossRuns(t *testing.T) {
+	// img.Tags and img.Variants are maps; without sorting, AliasCandidatesFor
+	// would return the tags in Go's randomized iteration order, and any
+	// alias-resolution tie (e.g. a release vs. its prerelease sharing the
+	// same alias) would pick a different winner on every run. Rebuild the
+	// map fresh each iteration to actually exercise the randomization.
+	names := []string{"1.0.0", "1.0.0-rc1", "2.0.0", "2.0.0-rc1", "3.0.0"}
+	var first []string
+	for i := 0; i < 20; i++ {
+		tags := make(map[string]*model.Tag, len(names))
+		for _, n := range names {
+			tags[n] = &model.Tag{}
+		}
+		img := &model.Image{Name: "app", Tags: tags, Variants: map[string]*model.ImageVariant{}}
+
+		got := candidateNames(AliasCandidatesFor(img))
+		if first == nil {
+			first = got
+			continue
+		}
+		if !slices.Equal(got, first) {
+			t.Fatalf("AliasCandidatesFor order is not deterministic: run 0 = %v, run %d = %v", first, i, got)
+		}
+	}
+}
+
+func TestAliasCandidatesFor_NoTags(t *testing.T) {
+	img := &model.Image{
+		Name:     "app",
+		Tags:     map[string]*model.Tag{},
+		Variants: map[string]*model.ImageVariant{},
+	}
+
+	tags := AliasCandidatesFor(img)
+	if len(tags) != 0 {
+		t.Fatalf("expected 0 tags for image with no tags, got %d: %v", len(tags), tags)
 	}
 }
 

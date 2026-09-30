@@ -13,6 +13,7 @@ import (
 	"github.com/ContainerHive/ContainerHive/internal/buildconfig_resolver"
 	"github.com/ContainerHive/ContainerHive/internal/file_resolver"
 	"github.com/ContainerHive/ContainerHive/internal/file_resolver/templating"
+	"github.com/ContainerHive/ContainerHive/internal/semantic_tags"
 	"github.com/ContainerHive/ContainerHive/pkg/model"
 	"github.com/ContainerHive/ContainerHive/pkg/platform"
 	"github.com/ContainerHive/ContainerHive/pkg/rendering"
@@ -58,6 +59,52 @@ func collectTagNames(tags map[string]*model.Tag) []string {
 	return names
 }
 
+// collectVariantTagNames returns the concrete tag names of one variant
+// (base tag name + variant suffix).
+func collectVariantTagNames(tags map[string]*model.Tag, suffix string) []string {
+	names := make([]string, 0, len(tags))
+	for tag := range tags {
+		names = append(names, tag+suffix)
+	}
+	return names
+}
+
+// parentTagsOf resolves the tag range aliases that point at tagName, e.g.
+// "10.0.400" -> ["10.0", "10"]. Aliases follow registry resolution rules
+// (rendering.ResolveImageAliases): each alias points at exactly one tag — the
+// highest non-prerelease version claiming it — so the same alias never shows
+// up on two tags. Aliases that are themselves concrete tags of the image are
+// skipped, since they already appear as their own tab. Returns nil for tags
+// that win no alias.
+func parentTagsOf(tagName string, aliases map[string]string, concreteTags map[string]bool) []string {
+	parsed, err := semantic_tags.NewSemanticVersion(tagName)
+	if err != nil {
+		return nil
+	}
+	var parents []string
+	for _, candidate := range parsed.GetLowerVariants() {
+		if concreteTags[candidate] {
+			continue
+		}
+		if target, ok := aliases[candidate]; ok && target == tagName {
+			parents = append(parents, candidate)
+		}
+	}
+	if len(parents) == 0 {
+		return nil
+	}
+	return parents
+}
+
+// concreteTagSet returns the given tag names as a set for membership checks.
+func concreteTagSet(names []string) map[string]bool {
+	set := make(map[string]bool, len(names))
+	for _, name := range names {
+		set[name] = true
+	}
+	return set
+}
+
 type Generator struct {
 }
 
@@ -86,17 +133,17 @@ func scanProject(project *model.ContainerHiveProject) []ImageReport {
 	for imageName, modelImages := range project.ImagesByName {
 		for _, img := range modelImages {
 			imgReport := scanImage(project.RootDir, imageName, img)
-		existing, ok := merged[imageName]
-		if !ok {
-			merged[imageName] = imgReport
-			continue
-		}
-		existing.Tags = append(existing.Tags, imgReport.Tags...)
-		existing.Variants = append(existing.Variants, imgReport.Variants...)
-		if existing.LatestAlias == nil {
-			existing.LatestAlias = imgReport.LatestAlias
-		}
-		merged[imageName] = existing
+			existing, ok := merged[imageName]
+			if !ok {
+				merged[imageName] = imgReport
+				continue
+			}
+			existing.Tags = append(existing.Tags, imgReport.Tags...)
+			existing.Variants = append(existing.Variants, imgReport.Variants...)
+			if existing.LatestAlias == nil {
+				existing.LatestAlias = imgReport.LatestAlias
+			}
+			merged[imageName] = existing
 		}
 	}
 
@@ -112,6 +159,10 @@ func scanProject(project *model.ContainerHiveProject) []ImageReport {
 
 func scanImage(projectRoot, imageName string, img *model.Image) ImageReport {
 	distPath := filepath.Join(projectRoot, model.DistDirName)
+
+	aliases := rendering.ResolveImageAliases(img)
+	baseTagNames := collectTagNames(img.Tags)
+	baseTagSet := concreteTagSet(baseTagNames)
 
 	var tagReports []TagReport
 	for _, tagDef := range img.Tags {
@@ -133,10 +184,11 @@ func scanImage(projectRoot, imageName string, img *model.Image) ImageReport {
 		resolvedTagArgs, _ := buildconfig_resolver.ForTag(img, tagDef)
 
 		tagReports = append(tagReports, TagReport{
-			Name:      tagDef.Name,
-			Platforms: platforms,
-			Versions:  resolvedTagArgs.Versions,
-			BuildArgs: resolvedTagArgs.BuildArgs,
+			Name:       tagDef.Name,
+			ParentTags: parentTagsOf(tagDef.Name, aliases, baseTagSet),
+			Platforms:  platforms,
+			Versions:   resolvedTagArgs.Versions,
+			BuildArgs:  resolvedTagArgs.BuildArgs,
 		})
 	}
 
@@ -152,6 +204,7 @@ func scanImage(projectRoot, imageName string, img *model.Image) ImageReport {
 		if len(variantPlatforms) == 0 {
 			variantPlatforms = img.Platforms
 		}
+		variantTagSet := concreteTagSet(collectVariantTagNames(img.Tags, variantDef.TagSuffix))
 		for _, baseTag := range img.Tags {
 			var platforms []PlatformReport
 			for _, plat := range variantPlatforms {
@@ -171,10 +224,11 @@ func scanImage(projectRoot, imageName string, img *model.Image) ImageReport {
 			resolvedVariantTagArgs, _ := buildconfig_resolver.ForTagVariant(img, variantDef, baseTag)
 
 			variantTagReports = append(variantTagReports, TagReport{
-				Name:      baseTag.Name + variantDef.TagSuffix,
-				Platforms: platforms,
-				BuildArgs: resolvedVariantTagArgs.BuildArgs,
-				Versions:  resolvedVariantTagArgs.Versions,
+				Name:       baseTag.Name + variantDef.TagSuffix,
+				ParentTags: parentTagsOf(baseTag.Name+variantDef.TagSuffix, aliases, variantTagSet),
+				Platforms:  platforms,
+				BuildArgs:  resolvedVariantTagArgs.BuildArgs,
+				Versions:   resolvedVariantTagArgs.Versions,
 			})
 		}
 
@@ -182,10 +236,7 @@ func scanImage(projectRoot, imageName string, img *model.Image) ImageReport {
 
 		var variantLatestAlias *LatestAliasReport
 		if img.LatestAlias != nil {
-			variantTagNames := make([]string, 0, len(img.Tags))
-			for tagName := range img.Tags {
-				variantTagNames = append(variantTagNames, tagName+variantDef.TagSuffix)
-			}
+			variantTagNames := collectVariantTagNames(img.Tags, variantDef.TagSuffix)
 			variantLatestAlias = resolveLatestAliasReport(variantTagNames, img.LatestAlias.Tag+variantDef.TagSuffix)
 		}
 

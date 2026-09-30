@@ -291,13 +291,13 @@ func TestScanProject_LatestAlias_MergeFirstWins(t *testing.T) {
 		ImagesByName: map[string][]*model.Image{
 			"img": {
 				{
-					Name: "img",
-					Tags: map[string]*model.Tag{"1.0.0": {Name: "1.0.0"}},
+					Name:        "img",
+					Tags:        map[string]*model.Tag{"1.0.0": {Name: "1.0.0"}},
 					LatestAlias: &model.LatestAliasConfig{Tag: "stable"},
 				},
 				{
-					Name: "img",
-					Tags: map[string]*model.Tag{"2.0.0": {Name: "2.0.0"}},
+					Name:        "img",
+					Tags:        map[string]*model.Tag{"2.0.0": {Name: "2.0.0"}},
 					LatestAlias: &model.LatestAliasConfig{Tag: "latest"},
 				},
 			},
@@ -330,8 +330,8 @@ func TestScanProject_LatestAlias_SecondDefUsedWhenFirstNil(t *testing.T) {
 					Tags: map[string]*model.Tag{"1.0.0": {Name: "1.0.0"}},
 				},
 				{
-					Name: "img",
-					Tags: map[string]*model.Tag{"2.0.0": {Name: "2.0.0"}},
+					Name:        "img",
+					Tags:        map[string]*model.Tag{"2.0.0": {Name: "2.0.0"}},
 					LatestAlias: &model.LatestAliasConfig{Tag: "latest"},
 				},
 			},
@@ -349,6 +349,219 @@ func TestScanProject_LatestAlias_SecondDefUsedWhenFirstNil(t *testing.T) {
 	}
 	if img.LatestAlias.Name != "latest" {
 		t.Errorf("LatestAlias.Name = %q, want %q", img.LatestAlias.Name, "latest")
+	}
+}
+
+func TestScanImage_ParentTags(t *testing.T) {
+	tests := []struct {
+		name         string
+		tag          *model.Tag
+		wantParent   []string
+		wantOmitJSON bool
+	}{
+		{
+			name:       "four part version",
+			tag:        &model.Tag{Name: "10.0.400"},
+			wantParent: []string{"10.0", "10"},
+		},
+		{
+			name:       "three part version",
+			tag:        &model.Tag{Name: "1.2.3"},
+			wantParent: []string{"1.2", "1"},
+		},
+		{
+			name:       "two part version",
+			tag:        &model.Tag{Name: "3.19"},
+			wantParent: []string{"3"},
+		},
+		{
+			name:       "major only has no parents",
+			tag:        &model.Tag{Name: "10"},
+			wantParent: nil,
+		},
+		{
+			name:       "non semantic tag",
+			tag:        &model.Tag{Name: "nightly"},
+			wantParent: nil,
+		},
+		{
+			name:       "prerelease tag has no parents",
+			tag:        &model.Tag{Name: "2.0.0-rc1", IsPrerelease: true},
+			wantParent: nil,
+		},
+		{
+			name:       "prefixed version keeps prefix in parents",
+			tag:        &model.Tag{Name: "v1.2.3"},
+			wantParent: []string{"v1.2", "v1"},
+		},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			img := &model.Image{
+				Name: "test",
+				Tags: map[string]*model.Tag{tc.tag.Name: tc.tag},
+			}
+
+			report := scanImage("/test", "test", img)
+
+			if len(report.Tags) != 1 {
+				t.Fatalf("len(Tags) = %d, want 1", len(report.Tags))
+			}
+			got := report.Tags[0].ParentTags
+			if len(got) != len(tc.wantParent) {
+				t.Fatalf("ParentTags = %v, want %v", got, tc.wantParent)
+			}
+			for i := range tc.wantParent {
+				if got[i] != tc.wantParent[i] {
+					t.Errorf("ParentTags[%d] = %q, want %q", i, got[i], tc.wantParent[i])
+				}
+			}
+		})
+	}
+}
+
+func TestScanImage_ParentTags_OnlyHighestWins(t *testing.T) {
+	img := &model.Image{
+		Name: "test",
+		Tags: map[string]*model.Tag{
+			"10.0.400": {Name: "10.0.400"},
+			"10.0.399": {Name: "10.0.399"},
+			"10.0.300": {Name: "10.0.300"},
+		},
+	}
+
+	report := scanImage("/test", "test", img)
+
+	if len(report.Tags) != 3 {
+		t.Fatalf("len(Tags) = %d, want 3", len(report.Tags))
+	}
+	seen := map[string][]string{}
+	for _, tag := range report.Tags {
+		seen[tag.Name] = tag.ParentTags
+	}
+
+	want := []string{"10.0", "10"}
+	if len(seen["10.0.400"]) != len(want) {
+		t.Fatalf("10.0.400 ParentTags = %v, want %v", seen["10.0.400"], want)
+	}
+	for i := range want {
+		if seen["10.0.400"][i] != want[i] {
+			t.Errorf("10.0.400 ParentTags[%d] = %q, want %q", i, seen["10.0.400"][i], want[i])
+		}
+	}
+	if seen["10.0.399"] != nil {
+		t.Errorf("10.0.399 ParentTags = %v, want nil (alias resolves to highest only)", seen["10.0.399"])
+	}
+	if seen["10.0.300"] != nil {
+		t.Errorf("10.0.300 ParentTags = %v, want nil (alias resolves to highest only)", seen["10.0.300"])
+	}
+}
+
+func TestScanImage_ParentTags_ExistingTagNotChipped(t *testing.T) {
+	img := &model.Image{
+		Name: "test",
+		Tags: map[string]*model.Tag{
+			"8.0":     {Name: "8.0"},
+			"8.0.300": {Name: "8.0.300"},
+		},
+	}
+
+	report := scanImage("/test", "test", img)
+
+	seen := map[string][]string{}
+	for _, tag := range report.Tags {
+		seen[tag.Name] = tag.ParentTags
+	}
+
+	if len(seen["8.0.300"]) != 1 || seen["8.0.300"][0] != "8" {
+		t.Errorf("8.0.300 ParentTags = %v, want [8] (8.0 skipped: it is its own tab)", seen["8.0.300"])
+	}
+	if seen["8.0"] != nil {
+		t.Errorf("8.0 ParentTags = %v, want nil (alias 8 resolves to 8.0.300)", seen["8.0"])
+	}
+}
+
+func TestScanImage_ParentTags_Variant(t *testing.T) {
+	img := &model.Image{
+		Name: "test",
+		Tags: map[string]*model.Tag{"10.0.400": {Name: "10.0.400"}},
+		Variants: map[string]*model.ImageVariant{
+			"alpine": {
+				Name:      "alpine",
+				TagSuffix: "-alpine",
+			},
+		},
+	}
+
+	report := scanImage("/test", "test", img)
+
+	if len(report.Variants) != 1 {
+		t.Fatalf("len(Variants) = %d, want 1", len(report.Variants))
+	}
+	vt := report.Variants[0].Tags[0]
+	if vt.Name != "10.0.400-alpine" {
+		t.Errorf("variant tag Name = %q, want %q", vt.Name, "10.0.400-alpine")
+	}
+	want := []string{"10.0-alpine", "10-alpine"}
+	if len(vt.ParentTags) != len(want) {
+		t.Fatalf("variant ParentTags = %v, want %v", vt.ParentTags, want)
+	}
+	for i := range want {
+		if vt.ParentTags[i] != want[i] {
+			t.Errorf("variant ParentTags[%d] = %q, want %q", i, vt.ParentTags[i], want[i])
+		}
+	}
+}
+
+func TestGenerator_GenerateJSON_IncludesParentTags(t *testing.T) {
+	g := NewGenerator()
+
+	report := &ProjectReport{
+		GeneratedAt: "2024-01-01T00:00:00Z",
+		Images: []ImageReport{
+			{
+				Name: "test-image",
+				Tags: []TagReport{
+					{Name: "10.0.400", ParentTags: []string{"10.0", "10"}},
+					{Name: "nightly"},
+				},
+			},
+		},
+	}
+
+	got, err := g.GenerateJSON(report)
+	if err != nil {
+		t.Fatalf("GenerateJSON() error = %v", err)
+	}
+
+	var decoded ProjectReport
+	if err := json.Unmarshal(got, &decoded); err != nil {
+		t.Fatalf("json.Unmarshal() error = %v", err)
+	}
+	if len(decoded.Images) != 1 {
+		t.Fatalf("len(Images) = %d, want 1", len(decoded.Images))
+	}
+
+	tagWithParents := decoded.Images[0].Tags[0]
+	if len(tagWithParents.ParentTags) != 2 {
+		t.Fatalf("ParentTags = %v, want [10.0 10]", tagWithParents.ParentTags)
+	}
+	if tagWithParents.ParentTags[0] != "10.0" || tagWithParents.ParentTags[1] != "10" {
+		t.Errorf("ParentTags = %v, want [10.0 10]", tagWithParents.ParentTags)
+	}
+	if decoded.Images[0].Tags[1].ParentTags != nil {
+		t.Errorf("ParentTags for non-semantic tag = %v, want nil", decoded.Images[0].Tags[1].ParentTags)
+	}
+
+	var raw map[string]any
+	if err := json.Unmarshal(got, &raw); err != nil {
+		t.Fatalf("json.Unmarshal() error = %v", err)
+	}
+	images := raw["images"].([]any)
+	tags := images[0].(map[string]any)["tags"].([]any)
+	if _, ok := tags[1].(map[string]any)["parentTags"]; ok {
+		t.Error("empty parentTags must be omitted from JSON output")
 	}
 }
 
@@ -401,11 +614,11 @@ func TestGenerator_GenerateJSON_IncludesLatestAlias(t *testing.T) {
 	// Verify tags array does not contain the alias
 	var parsed struct {
 		Images []struct {
-			Tags         []struct{ Name string } `json:"tags"`
-			LatestAlias  *struct{}               `json:"latestAlias"`
-			Variants     []struct {
-				Tags         []struct{ Name string } `json:"tags"`
-				LatestAlias  *struct{}               `json:"latestAlias"`
+			Tags        []struct{ Name string } `json:"tags"`
+			LatestAlias *struct{}               `json:"latestAlias"`
+			Variants    []struct {
+				Tags        []struct{ Name string } `json:"tags"`
+				LatestAlias *struct{}               `json:"latestAlias"`
 			} `json:"variants"`
 		} `json:"images"`
 	}

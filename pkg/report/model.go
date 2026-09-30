@@ -18,15 +18,15 @@ type Report struct {
 }
 
 type ImageReport struct {
-	Name         string             `json:"name"`
-	Description  string             `json:"description,omitempty"`
-	Readme       string             `json:"readme,omitempty"`
-	Report       Report             `json:"report,omitempty"`
-	Platforms    []string           `json:"platforms,omitempty"`
-	Tags         []TagReport        `json:"tags"`
-	Variants     []VariantReport    `json:"variants,omitempty"`
-	SBOM         []SBOMPackage      `json:"sbom,omitempty"`
-	LatestAlias  *LatestAliasReport `json:"latestAlias,omitempty"`
+	Name        string             `json:"name"`
+	Description string             `json:"description,omitempty"`
+	Readme      string             `json:"readme,omitempty"`
+	Report      Report             `json:"report,omitempty"`
+	Platforms   []string           `json:"platforms,omitempty"`
+	Tags        []TagReport        `json:"tags"`
+	Variants    []VariantReport    `json:"variants,omitempty"`
+	SBOM        []SBOMPackage      `json:"sbom,omitempty"`
+	LatestAlias *LatestAliasReport `json:"latestAlias,omitempty"`
 }
 
 type VariantReport struct {
@@ -45,10 +45,11 @@ type LatestAliasReport struct {
 }
 
 type TagReport struct {
-	Name      string            `json:"name"`
-	BuildArgs map[string]string `json:"buildArgs,omitempty"`
-	Versions  map[string]string `json:"versions,omitempty"`
-	Platforms []PlatformReport  `json:"platforms,omitempty"`
+	Name       string            `json:"name"`
+	ParentTags []string          `json:"parentTags,omitempty"`
+	BuildArgs  map[string]string `json:"buildArgs,omitempty"`
+	Versions   map[string]string `json:"versions,omitempty"`
+	Platforms  []PlatformReport  `json:"platforms,omitempty"`
 }
 
 type PlatformReport struct {
