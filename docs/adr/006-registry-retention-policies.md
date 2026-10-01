@@ -1,5 +1,5 @@
 ---
-id: 006
+id: "006"
 status: accepted
 date: 2026-09-29
 ticket: "268"
