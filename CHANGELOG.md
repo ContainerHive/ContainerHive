@@ -1,3 +1,10 @@
+## [1.10.0](https://github.com/ContainerHive/ContainerHive/compare/v1.9.1...v1.10.0) (2026-10-01)
+
+### Features
+
+* **ci:** expose resolved aliases in CIImage.Aliases ([b2e284c](https://github.com/ContainerHive/ContainerHive/commit/b2e284cad2fe74ebe7ac66c025c4fe10c1dbee80))
+* **report:** Add aliases to report view ([89031bf](https://github.com/ContainerHive/ContainerHive/commit/89031bfa2e9aa8b142294d91f62e8bd42840ca02))
+
 ## [1.9.1](https://github.com/ContainerHive/ContainerHive/compare/v1.9.0...v1.9.1) (2026-09-30)
 
 ### Bug Fixes
