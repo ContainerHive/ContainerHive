@@ -79,6 +79,7 @@ Each image in `Images` provides:
 |:---------------|:-------|:---------------------------------------------------------------|
 | `Name`         | string | Image name                                                     |
 | `Tags`         | list   | All tags including variant-suffixed tags (base + variants)     |
+| `Aliases`      | map    | Alias name to the exact tag it points at: semantic version series aliases (`1.2.3` → `1.2`, `1`) and `latest_alias`, including variant-suffixed ones. Same resolution as the registry retagging step |
 | `Dependencies` | list   | Names of images this image depends on                          |
 | `Depth`        | int    | Dependency depth (0 = no dependencies)                         |
 | `Platforms`    | list   | Target platforms                                               |

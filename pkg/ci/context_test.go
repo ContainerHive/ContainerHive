@@ -458,3 +458,59 @@ func TestBuildCIContext_ShardCountCapping(t *testing.T) {
 		})
 	}
 }
+
+func TestBuildCIContext_Aliases(t *testing.T) {
+	project := &model.ContainerHiveProject{
+		Config: model.HiveProjectConfig{
+			Platforms: []string{"linux/amd64"},
+		},
+		ImagesByName: map[string][]*model.Image{
+			"app": {{
+				Name: "app",
+				Tags: map[string]*model.Tag{
+					"1.2.3":     {Name: "1.2.3"},
+					"1.2.4":     {Name: "1.2.4"},
+					"2.0.0-rc1": {Name: "2.0.0-rc1", IsPrerelease: true},
+				},
+				Variants: map[string]*model.ImageVariant{
+					"alpine": {Name: "alpine", TagSuffix: "-alpine"},
+				},
+				LatestAlias: &model.LatestAliasConfig{Tag: "latest"},
+			}},
+		},
+	}
+
+	ctx, err := BuildCIContext(project, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expected := map[string]string{
+		"1.2":           "1.2.4",
+		"1":             "1.2.4",
+		"1.2-alpine":    "1.2.4-alpine",
+		"1-alpine":      "1.2.4-alpine",
+		"latest":        "1.2.4",
+		"latest-alpine": "1.2.4-alpine",
+	}
+	if !reflect.DeepEqual(ctx.Images[0].Aliases, expected) {
+		t.Errorf("expected aliases %v, got %v", expected, ctx.Images[0].Aliases)
+	}
+}
+
+func TestBuildCIContext_NoAliases(t *testing.T) {
+	project := &model.ContainerHiveProject{
+		Config: model.HiveProjectConfig{Platforms: []string{"linux/amd64"}},
+		ImagesByName: map[string][]*model.Image{
+			"app": {{Name: "app", Tags: map[string]*model.Tag{"edge": {Name: "edge"}}}},
+		},
+	}
+
+	ctx, err := BuildCIContext(project, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(ctx.Images[0].Aliases) != 0 {
+		t.Errorf("expected no aliases, got %v", ctx.Images[0].Aliases)
+	}
+}

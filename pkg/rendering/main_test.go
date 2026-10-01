@@ -1,6 +1,7 @@
 package rendering
 
 import (
+	"maps"
 	"os"
 	"path/filepath"
 	"slices"
@@ -819,4 +820,64 @@ func TestRenderProject_MultiVariantProject(t *testing.T) {
 			assertFileContains(t, variantTest, "enabled")
 		})
 	})
+}
+
+func TestResolveAllAliases(t *testing.T) {
+	img := &model.Image{
+		Name: "app",
+		Tags: map[string]*model.Tag{
+			"1.2.3":     {},
+			"1.2.4":     {},
+			"2.0.0-rc1": {IsPrerelease: true},
+		},
+		Variants: map[string]*model.ImageVariant{
+			"slim": {Name: "slim", TagSuffix: "-slim"},
+		},
+		LatestAlias: &model.LatestAliasConfig{Tag: "latest"},
+	}
+
+	got, err := ResolveAllAliases(img)
+	if err != nil {
+		t.Fatal(err)
+	}
+	want := map[string]string{
+		"1.2":         "1.2.4",
+		"1":           "1.2.4",
+		"1.2-slim":    "1.2.4-slim",
+		"1-slim":      "1.2.4-slim",
+		"latest":      "1.2.4",
+		"latest-slim": "1.2.4-slim",
+	}
+	if !maps.Equal(got, want) {
+		t.Errorf("ResolveAllAliases() = %v, want %v", got, want)
+	}
+}
+
+func TestResolveAllAliases_NoLatestAlias(t *testing.T) {
+	img := &model.Image{Name: "app", Tags: map[string]*model.Tag{"1.2.3": {}}}
+
+	got, err := ResolveAllAliases(img)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, ok := got["latest"]; ok || got["1.2"] != "1.2.3" {
+		t.Errorf("unexpected aliases: %v", got)
+	}
+}
+
+func TestResolveAllAliases_OnMissing(t *testing.T) {
+	for _, tc := range []struct {
+		onMissing string
+		wantErr   bool
+	}{{"", true}, {"error", true}, {"warning", false}, {"silent", false}} {
+		img := &model.Image{
+			Name:        "app",
+			Tags:        map[string]*model.Tag{"edge": {}},
+			LatestAlias: &model.LatestAliasConfig{Tag: "latest", OnMissing: tc.onMissing},
+		}
+		_, err := ResolveAllAliases(img)
+		if (err != nil) != tc.wantErr {
+			t.Errorf("on_missing=%q: err=%v, wantErr=%v", tc.onMissing, err, tc.wantErr)
+		}
+	}
 }
