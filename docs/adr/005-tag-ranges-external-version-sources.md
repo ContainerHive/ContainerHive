@@ -2,7 +2,7 @@
 id: "005"
 status: accepted
 date: 2026-09-09
-ticket: 241
+ticket: "241"
 ---
 
 # Dynamically generated tags from external version sources (`tag_ranges`)
