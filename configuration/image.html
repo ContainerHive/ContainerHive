@@ -1195,6 +1195,89 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#tag_ranges" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        tag_ranges
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="tag_ranges">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#source" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        source
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#select" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        select
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#filter" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        filter
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#generator-semver-matrix" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        generator: semver-matrix
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#collision-rules" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Collision rules
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#known-limitations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Known limitations
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#versions" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1758,14 +1841,49 @@
   
   
     <li class="md-nav__item">
-      <a href="../adr/005-registry-retention-policies.html" class="md-nav__link">
+      <a href="../adr/005-tag-ranges-external-version-sources.html" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    005 - Use registry retention policies instead of push-gating
+    005 - Dynamically generated tags from external version sources (`tag_ranges`)
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--accepted"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../adr/006-registry-retention-policies.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    006 - Use registry retention policies instead of push-gating
   
 
     
@@ -1858,6 +1976,89 @@
       
     </span>
   </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tag_ranges" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        tag_ranges
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="tag_ranges">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#source" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        source
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#select" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        select
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#filter" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        filter
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#generator-semver-matrix" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        generator: semver-matrix
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#collision-rules" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Collision rules
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#known-limitations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Known limitations
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
         
@@ -2107,6 +2308,240 @@
 </tr>
 </tbody>
 </table>
+<h3 id="tag_ranges"><code>tag_ranges</code></h3>
+<p>Generates tags automatically from an external version source (a JSON feed, an OCI
+registry, or GitHub releases), instead of listing every tag by hand. Resolution happens
+at discovery time (<code>ch generate</code>, <code>ch build</code>, ...) and requires network access unless a
+warm cache is available.</p>
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nt">tag_ranges</span><span class="p">:</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">tag_name</span><span class="p">:</span><span class="w"> </span><span class="s">"{{.major}}.{{.minor}}"</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">    </span><span class="nt">source</span><span class="p">:</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">      </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">json</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">      </span><span class="nt">url</span><span class="p">:</span><span class="w"> </span><span class="s">"https://nodejs.org/dist/index.json"</span>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="w">      </span><span class="nt">transform</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="w">        </span><span class="no">$[lts != false].{</span>
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="w">          </span><span class="no">"version": $substring(version, 1),</span>
+</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="w">          </span><span class="no">"npm": npm,</span>
+</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="w">          </span><span class="no">"openssl": openssl</span>
+</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a><span class="w">        </span><span class="no">}</span>
+</span><span id="__span-1-12"><a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a><span class="w">    </span><span class="nt">select</span><span class="p">:</span>
+</span><span id="__span-1-13"><a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a><span class="w">      </span><span class="nt">major</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt"> last</span><span class="p">:</span><span class="w"> </span><span class="nv">3</span><span class="w"> </span><span class="p p-Indicator">}</span>
+</span><span id="__span-1-14"><a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a><span class="w">      </span><span class="nt">minor</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt"> last</span><span class="p">:</span><span class="w"> </span><span class="nv">3</span><span class="w"> </span><span class="p p-Indicator">}</span>
+</span><span id="__span-1-15"><a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a><span class="w">      </span><span class="nt">patch</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">latest</span>
+</span><span id="__span-1-16"><a id="__codelineno-1-16" name="__codelineno-1-16" href="#__codelineno-1-16"></a><span class="w">    </span><span class="nt">filter</span><span class="p">:</span>
+</span><span id="__span-1-17"><a id="__codelineno-1-17" name="__codelineno-1-17" href="#__codelineno-1-17"></a><span class="w">      </span><span class="nt">exclude_prerelease</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+</span><span id="__span-1-18"><a id="__codelineno-1-18" name="__codelineno-1-18" href="#__codelineno-1-18"></a><span class="w">      </span><span class="nt">max_major_increment</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5</span>
+</span><span id="__span-1-19"><a id="__codelineno-1-19" name="__codelineno-1-19" href="#__codelineno-1-19"></a><span class="w">    </span><span class="nt">versions</span><span class="p">:</span>
+</span><span id="__span-1-20"><a id="__codelineno-1-20" name="__codelineno-1-20" href="#__codelineno-1-20"></a><span class="w">      </span><span class="nt">nodejs</span><span class="p">:</span><span class="w"> </span><span class="s">"{{.full}}"</span>
+</span><span id="__span-1-21"><a id="__codelineno-1-21" name="__codelineno-1-21" href="#__codelineno-1-21"></a><span class="w">      </span><span class="nt">npm</span><span class="p">:</span><span class="w"> </span><span class="s">"{{.extra.npm}}"</span>
+</span><span id="__span-1-22"><a id="__codelineno-1-22" name="__codelineno-1-22" href="#__codelineno-1-22"></a><span class="w">      </span><span class="nt">openssl</span><span class="p">:</span><span class="w"> </span><span class="s">"{{.extra.openssl}}"</span>
+</span></code></pre></div>
+<p>For the Node.js LTS feed, this generates tags like <code>24.11, 24.10, 24.9, 22.22, 22.21,
+20.20, 20.19</code> — the 3 highest majors, the 3 highest minors within each, and the latest
+patch of each minor — each with its own <code>NODEJS_VERSION</code>, <code>NPM_VERSION</code> and
+<code>OPENSSL_VERSION</code> build args.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Field</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>tag_name</code></td>
+<td style="text-align: left;">string</td>
+<td style="text-align: left;">Required. Go template for the generated tag name. Available data: <code>.major</code>, <code>.minor</code>, <code>.patch</code>, <code>.full</code> (normalized version), <code>.raw</code> (exactly as the source reported it), <code>.prerelease</code>, <code>.extra.&lt;key&gt;</code> (source-specific metadata).</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>source</code></td>
+<td style="text-align: left;">object</td>
+<td style="text-align: left;">External version source. Mutually exclusive with <code>generator</code>. See below.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>generator</code></td>
+<td style="text-align: left;">string</td>
+<td style="text-align: left;">Named generator to use instead of an explicit <code>source</code> (currently only <code>semver-matrix</code>). Mutually exclusive with <code>source</code>.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>params</code></td>
+<td style="text-align: left;">map</td>
+<td style="text-align: left;">Parameters for the named generator.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>select</code></td>
+<td style="text-align: left;">object</td>
+<td style="text-align: left;">How many versions to keep per semantic version level. <strong>Required</strong> when <code>source</code> is set. See below.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>filter</code></td>
+<td style="text-align: left;">object</td>
+<td style="text-align: left;">Filters applied to fetched versions before selection. See below.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>max_tags</code></td>
+<td style="text-align: left;">integer</td>
+<td style="text-align: left;">Hard cap on generated tags for this range. Exceeding it is an error. Defaults to 50.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>versions</code></td>
+<td style="text-align: left;">map</td>
+<td style="text-align: left;">Versions for generated tags. Values are Go templates rendered per resolved version (same syntax as <code>tag_name</code>).</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>build_args</code></td>
+<td style="text-align: left;">map</td>
+<td style="text-align: left;">Build args for generated tags, rendered the same way.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>labels</code></td>
+<td style="text-align: left;">map</td>
+<td style="text-align: left;">Custom OCI labels for generated tags, rendered the same way.</td>
+</tr>
+</tbody>
+</table>
+<h4 id="source"><code>source</code></h4>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Field</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>type</code></td>
+<td style="text-align: left;">string</td>
+<td style="text-align: left;">Required. <code>json</code>, <code>registry</code>, <code>dockerhub</code> (alias of <code>registry</code>), or <code>github</code>.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>url</code></td>
+<td style="text-align: left;">string</td>
+<td style="text-align: left;">HTTP(S) URL returning JSON (<code>type: json</code>).</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>transform</code></td>
+<td style="text-align: left;">string</td>
+<td style="text-align: left;">JSONata expression mapping the document to a list of <code>{version, ...extras}</code> objects (<code>type: json</code>). ContainerHive uses the JSONata <strong>1.5.4</strong> subset — an expression copied from a newer JSONata Exerciser may not compile.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>headers</code></td>
+<td style="text-align: left;">map</td>
+<td style="text-align: left;">Extra request headers for <code>type: json</code>. Values support <code>$VAR</code> / <code>${VAR}</code> environment expansion, so a token never has to be inlined.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>image</code></td>
+<td style="text-align: left;">string</td>
+<td style="text-align: left;">Repository whose tags are listed, e.g. <code>library/node</code> or <code>ghcr.io/owner/image</code> (<code>type: registry</code>, <code>dockerhub</code>). Uses the same registry credentials as <code>ch login</code>.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>repo</code></td>
+<td style="text-align: left;">string</td>
+<td style="text-align: left;">GitHub repository as <code>owner/name</code> (<code>type: github</code>).</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>kind</code></td>
+<td style="text-align: left;">string</td>
+<td style="text-align: left;">What to list for <code>type: github</code>: <code>releases</code> (default, drafts excluded) or <code>tags</code>.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>token_env</code></td>
+<td style="text-align: left;">string</td>
+<td style="text-align: left;">Name of the environment variable holding an auth token. Never put the token itself here. Falls back to <code>GITHUB_TOKEN</code> / <code>GH_TOKEN</code> for <code>type: github</code>. Anonymous GitHub API access is rate-limited to 60 requests/hour.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>ttl</code></td>
+<td style="text-align: left;">string</td>
+<td style="text-align: left;">Cache TTL override for this source, as a Go duration (e.g. <code>6h</code>).</td>
+</tr>
+</tbody>
+</table>
+<h4 id="select"><code>select</code></h4>
+<p>Selects how many versions survive at each semantic version level, applied hierarchically:
+majors first, then minors within each kept major, then patches within each kept minor.
+Each level accepts:</p>
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="nt">select</span><span class="p">:</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">  </span><span class="nt">major</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">latest</span><span class="w">        </span><span class="c1"># keep the single highest value (equivalent to { last: 1 })</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">  </span><span class="nt">minor</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">all</span><span class="w">           </span><span class="c1"># keep every distinct value</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">  </span><span class="nt">patch</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2</span><span class="w">             </span><span class="c1"># keep the 2 highest distinct values (equivalent to { last: 2 })</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">  </span><span class="c1"># patch: { last: 2 } # same as above, mapping form</span>
+</span></code></pre></div>
+<p>An <strong>omitted level defaults to <code>latest</code></strong>, never <code>all</code> — a config that forgets a level
+can't silently explode the tag count.</p>
+<h4 id="filter"><code>filter</code></h4>
+<p>Filters are applied, in this fixed order, before selection:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Field</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>exclude_prerelease</code></td>
+<td style="text-align: left;">boolean</td>
+<td style="text-align: left;">Drop versions with a semantic version prerelease component. Defaults to <code>true</code>.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>exclude_suffixes</code></td>
+<td style="text-align: left;">list</td>
+<td style="text-align: left;">Drop versions whose raw string contains any of these substrings — for <strong>non</strong>-semver flavours like <code>-alpine</code>. <code>exclude_prerelease</code> already covers <code>-rc</code>/<code>-beta</code>/<code>-alpha</code>.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>min_version</code> / <code>max_version</code></td>
+<td style="text-align: left;">string</td>
+<td style="text-align: left;">Drop versions outside this inclusive range.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>max_major_increment</code></td>
+<td style="text-align: left;">integer</td>
+<td style="text-align: left;">Sanity guard, not a window: drops a major (and everything above it) only if it's separated from the rest of the set by a gap larger than this. <code>[18, 20, 22, 24]</code> with <code>5</code> keeps everything (gaps of 2); adding <code>99</code> drops it (a gap of 75). <code>0</code> disables the guard.</td>
+</tr>
+</tbody>
+</table>
+<h4 id="generator-semver-matrix"><code>generator: semver-matrix</code></h4>
+<p>A shorthand for the common "last N majors, last M minors" shape, expanding to an
+equivalent <code>source</code>/<code>select</code>/<code>filter</code>:</p>
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="nt">tag_ranges</span><span class="p">:</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">generator</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">semver-matrix</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">    </span><span class="nt">params</span><span class="p">:</span>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">      </span><span class="nt">source</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">dockerhub</span>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="w">      </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">library/node</span>
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="w">      </span><span class="nt">majors</span><span class="p">:</span><span class="w"> </span><span class="s">"3"</span>
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="w">      </span><span class="nt">minors</span><span class="p">:</span><span class="w"> </span><span class="s">"3"</span>
+</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="w">    </span><span class="nt">tag_name</span><span class="p">:</span><span class="w"> </span><span class="s">"{{.major}}.{{.minor}}"</span>
+</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="w">    </span><span class="nt">versions</span><span class="p">:</span>
+</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a><span class="w">      </span><span class="nt">nodejs</span><span class="p">:</span><span class="w"> </span><span class="s">"{{.full}}"</span>
+</span></code></pre></div>
+<p><code>params</code>: <code>source</code> (required — any <code>source.type</code>), <code>image</code> / <code>repo</code> / <code>url</code> /
+<code>transform</code> (matching the chosen source type), <code>majors</code> / <code>minors</code> / <code>patches</code> (each
+defaulting to <code>1</code>). Explicit <code>select</code> or <code>filter</code> on the range override the generator's.</p>
+<h4 id="collision-rules">Collision rules</h4>
+<ul>
+<li>A <strong>static</strong> tag in <code>tags</code> always wins over a generated tag of the same name — this is
+  the pin/escape hatch.</li>
+<li>Two different <code>tag_ranges</code> producing the same tag name is a <strong>hard error</strong>: there's no
+  defensible winner.</li>
+<li>Within one range, if the <code>tag_name</code> template is coarser than the <code>select</code> granularity
+  (e.g. <code>"{{.major}}.{{.minor}}"</code> with <code>patch: { last: 2 }</code>), the <strong>highest version wins</strong>
+  the collision by design — the template is what sets the granularity.</li>
+<li>A generated tag colliding with another tag's variant-suffixed form (<code>tag +
+  variant.tag_suffix</code>) is a hard error.</li>
+</ul>
+<h4 id="known-limitations">Known limitations</h4>
+<ul>
+<li><code>tag_ranges</code> feed into <code>versions</code>, which become build args, which are part of the
+  BuildKit cache key — so an upstream release can change what a tag builds to without a
+  new commit. The same commit can produce different images over time.</li>
+<li>A tag-level <code>build_args</code> entry (generated or static) can currently be silently
+  overwritten by an image-level <code>build_args</code> entry of the same key — see the
+  <code>secrets-and-versions</code> docs for the merge precedence. This is a pre-existing issue,
+  tracked separately, not specific to <code>tag_ranges</code>.</li>
+</ul>
 <h3 id="versions"><code>versions</code></h3>
 <p>Default version variables available in Dockerfiles and templates.</p>
 <h3 id="build_args"><code>build_args</code></h3>
@@ -2184,20 +2619,20 @@
 <p>Override the project-level platform list for this specific image.</p>
 <h3 id="labels"><code>labels</code></h3>
 <p>Custom OCI image labels applied to every tag and variant of this image. Values are merged with project-, tag-, and variant-level labels following the precedence chain documented in <a href="hive.html#labels">Configure your project › <code>labels</code></a>.</p>
-<div class="language-yaml highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nt">labels</span><span class="p">:</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">  </span><span class="nt">com.acme.layer</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">image</span>
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">  </span><span class="nt">com.acme.image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">python</span>
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="nt">tags</span><span class="p">:</span>
-</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3.13.7</span>
-</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="w">    </span><span class="nt">labels</span><span class="p">:</span>
-</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="w">      </span><span class="nt">com.acme.layer</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">tag</span><span class="w">        </span><span class="c1"># overrides image-level entry for this tag</span>
-</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>
-</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="nt">variants</span><span class="p">:</span>
-</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">slim</span>
-</span><span id="__span-1-12"><a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a><span class="w">    </span><span class="nt">tag_suffix</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">-slim</span>
-</span><span id="__span-1-13"><a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a><span class="w">    </span><span class="nt">labels</span><span class="p">:</span>
-</span><span id="__span-1-14"><a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a><span class="w">      </span><span class="nt">com.acme.layer</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">variant</span><span class="w">    </span><span class="c1"># overrides image and tag for the variant build</span>
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="nt">labels</span><span class="p">:</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="w">  </span><span class="nt">com.acme.layer</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">image</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">  </span><span class="nt">com.acme.image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">python</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="nt">tags</span><span class="p">:</span>
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3.13.7</span>
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="w">    </span><span class="nt">labels</span><span class="p">:</span>
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="w">      </span><span class="nt">com.acme.layer</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">tag</span><span class="w">        </span><span class="c1"># overrides image-level entry for this tag</span>
+</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a>
+</span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a><span class="nt">variants</span><span class="p">:</span>
+</span><span id="__span-4-11"><a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">slim</span>
+</span><span id="__span-4-12"><a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a><span class="w">    </span><span class="nt">tag_suffix</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">-slim</span>
+</span><span id="__span-4-13"><a id="__codelineno-4-13" name="__codelineno-4-13" href="#__codelineno-4-13"></a><span class="w">    </span><span class="nt">labels</span><span class="p">:</span>
+</span><span id="__span-4-14"><a id="__codelineno-4-14" name="__codelineno-4-14" href="#__codelineno-4-14"></a><span class="w">      </span><span class="nt">com.acme.layer</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">variant</span><span class="w">    </span><span class="c1"># overrides image and tag for the variant build</span>
 </span></code></pre></div>
 <p>Standard auto-derived OCI keys (<code>title</code>, <code>version</code>, <code>created</code>, etc.) always win over custom map entries with the same key.</p>
 <h3 id="latest_alias"><code>latest_alias</code></h3>
@@ -2224,9 +2659,9 @@
 </tbody>
 </table>
 <p><strong>Example:</strong></p>
-<div class="language-yaml highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="nt">latest_alias</span><span class="p">:</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">  </span><span class="nt">tag</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">latest</span>
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">  </span><span class="nt">on_missing</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">warning</span>
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="nt">latest_alias</span><span class="p">:</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="w">  </span><span class="nt">tag</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">latest</span>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="w">  </span><span class="nt">on_missing</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">warning</span>
 </span></code></pre></div>
 <p>In this example, the highest semantic version tag will be retagged as <code>latest</code>. If no semantic tags are found, a warning will be logged instead of failing.</p>
 <div class="admonition note">
@@ -2235,15 +2670,15 @@
 </div>
 <h2 id="directory-structure">Directory structure</h2>
 <p>Each image directory can contain:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>images/&lt;image-name&gt;/
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>├── image.yml                  # Image definition (required)
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>├── Dockerfile[.gotpl]         # Build instructions (required)
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>├── test.yml[.gotpl]           # Container structure tests (optional)
-</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>├── rootfs/                    # Files to copy into the image (optional)
-</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>└── &lt;variant-name&gt;/            # Variant subdirectory (optional)
-</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>    ├── Dockerfile[.gotpl]
-</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>    ├── test.yml[.gotpl]
-</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>    └── rootfs/
+<div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>images/&lt;image-name&gt;/
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>├── image.yml                  # Image definition (required)
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>├── Dockerfile[.gotpl]         # Build instructions (required)
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>├── test.yml[.gotpl]           # Container structure tests (optional)
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>├── rootfs/                    # Files to copy into the image (optional)
+</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>└── &lt;variant-name&gt;/            # Variant subdirectory (optional)
+</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a>    ├── Dockerfile[.gotpl]
+</span><span id="__span-6-8"><a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a>    ├── test.yml[.gotpl]
+</span><span id="__span-6-9"><a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a>    └── rootfs/
 </span></code></pre></div>
 <p>The <code>.gotpl</code> extension is optional for Dockerfiles and test files. Plain files are copied as-is. Use <code>.gotpl</code> when you need Go template features (e.g. <code>resolve_base</code>, conditionals). See <a href="../usage/dockerfiles.html">Write your Dockerfiles</a> for details.</p>
 

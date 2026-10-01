@@ -12,6 +12,8 @@
         <link rel="prev" href="004-embedded-local-registry.html">
       
       
+        <link rel="next" href="006-registry-retention-policies.html">
+      
       
         
       
@@ -21,7 +23,7 @@
     
     
       
-        <title>005 - Use registry retention policies instead of push-gating - ContainerHive</title>
+        <title>005 - Dynamically generated tags from external version sources (`tag_ranges`) - ContainerHive</title>
       
     
     
@@ -74,7 +76,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#005-use-registry-retention-policies-instead-of-push-gating" class="md-skip">
+        <a href="#005-dynamically-generated-tags-from-external-version-sources-tag_ranges" class="md-skip">
           Skip to content
         </a>
       
@@ -107,7 +109,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              005 - Use registry retention policies instead of push-gating
+              005 - Dynamically generated tags from external version sources (`tag_ranges`)
             
           </span>
         </div>
@@ -1582,14 +1584,14 @@
         
       
       
-      <a href="005-registry-retention-policies.html" class="md-nav__link md-nav__link--active">
+      <a href="005-tag-ranges-external-version-sources.html" class="md-nav__link md-nav__link--active">
         
   
   
   <span class="md-ellipsis">
     
   
-    005 - Use registry retention policies instead of push-gating
+    005 - Dynamically generated tags from external version sources (`tag_ranges`)
   
 
     
@@ -1606,6 +1608,41 @@
 
       </a>
       
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="006-registry-retention-policies.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    006 - Use registry retention policies instead of push-gating
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--accepted"></span>
+  
+
+  
+
+      </a>
     </li>
   
 
@@ -1730,87 +1767,138 @@
   
 
 
-<h1 id="005-use-registry-retention-policies-instead-of-push-gating">005 - Use registry retention policies instead of push-gating</h1>
+<h1 id="005-dynamically-generated-tags-from-external-version-sources-tag_ranges">005 - Dynamically generated tags from external version sources (<code>tag_ranges</code>)</h1>
 <table>
 <tr><td><strong>Status</strong></td><td><span style='color: white;background:#28a745;padding:.4em;border-radius:8px;font-size:100%;'>accepted</span></td></tr>
-<tr><td><strong>Date</strong></td><td>2026-09-29</td></tr>
-<tr><td><strong>Ticket</strong></td><td>268</td></tr>
+<tr><td><strong>Date</strong></td><td>2026-09-09</td></tr>
+<tr><td><strong>Ticket</strong></td><td>241</td></tr>
 </table>
-<h1 id="use-registry-retention-policies-instead-of-push-gating">Use registry retention policies instead of push-gating</h1>
+<h1 id="dynamically-generated-tags-from-external-version-sources-tag_ranges">Dynamically generated tags from external version sources (<code>tag_ranges</code>)</h1>
 <h2 id="context-and-problem-statement">Context and Problem Statement</h2>
-<p><code>ch build</code> and <code>ch finalize</code> push images to the configured registry unconditionally on every pipeline run — including
-merge request (MR) and pull request (PR) pipelines. In projects with high MR churn (e.g. automated dependency-update
-bots), this permanently pushes tagged, semver-aliased images into the production registry via <code>ch finalize</code>, plus
-untagged per-platform intermediates via <code>ch build</code>. The result is thousands of orphaned, superseded images with no
-built-in mechanism to suppress pushing for non-default branches.</p>
-<p>Should ContainerHive add a flag or config to skip pushes on MR/PR pipelines, or should cleanup be handled via
-external retention policies?</p>
+<p>Images that track upstream releases (Node.js, Python, .NET) need every tag hand-listed
+in <code>image.yml</code>. That list goes stale and misses new releases; keeping it current is
+manual, repetitive work. Issue #241 asks for <code>tag_ranges</code>: a declarative range that
+queries an external version source (a JSON feed, an OCI registry, GitHub releases) at
+discovery time and generates concrete tags plus their <code>versions</code> values. This introduces
+several choices that are easy to get wrong later: a new outbound-network dependency
+inside a previously offline discovery step, a new expression language for extracting
+versions from arbitrary JSON, a cache with a failure policy, and a mechanism for keeping
+sharded CI jobs in agreement about the resolved tag set.</p>
 <h2 id="decision-drivers">Decision Drivers</h2>
 <ul>
-<li>Pushing intermediates is required by <code>ch test</code> (which pulls them back for validation) and <code>ch finalize</code> (which
-  assembles multi-arch manifests from platform-specific images)</li>
-<li>A <code>--skip-push</code> flag would break the standard MR test-and-finalize pipeline</li>
-<li>Tag namespacing via <code>--build-id</code> already isolates MR tags from production tags (<code>-build.&lt;id&gt;</code> suffix)</li>
-<li>Retention policies are available across all major container registries and operate at the registry level,
-  independent of the build tool</li>
-<li>Users already configure registry access — adding retention policies is a natural extension of that configuration</li>
+<li>Discovery is called from nearly every <code>ch</code> command; the feature must not make
+  read-adjacent commands unexpectedly slow, flaky, or dependent on an upstream API's
+  uptime.</li>
+<li>CI sharding runs each unit's build in a separate process; whatever those processes
+  resolve must agree, or shards can overlap and leave tags unbuilt.</li>
+<li>The transform language must support the issue's own example verbatim
+  (<code>$[lts != false].{...}</code> against <code>nodejs.org/dist/index.json</code>).</li>
+<li>Generated tags must flow through the existing tag pipeline (rendering, building,
+  sharding, aliasing) unchanged wherever possible.</li>
 </ul>
 <h2 id="considered-options">Considered Options</h2>
 <ul>
-<li>Option 1: Add a <code>--skip-push</code> / <code>--dry-run</code> flag on <code>ch build</code> and <code>ch finalize</code></li>
-<li>Option 2: Add a <code>push_on_branch</code> setting in <code>hive.yml</code> to gate pushes by CI branch</li>
-<li>Option 3: Add a <code>ci_finalize_default_branch_only</code> template option for generated CI pipelines</li>
-<li>Option 4: Document and recommend registry-level retention policies as the supported approach</li>
+<li>Transform language: JSONata dependency vs. a bespoke selector DSL</li>
+<li>Semver library for range selection: extend <code>internal/semantic_tags</code> vs. add
+  <code>Masterminds/semver/v3</code></li>
+<li>Registry source: hand-roll the Docker Hub v2 API vs. reuse
+  <code>google/go-containerregistry</code>'s <code>remote.List</code></li>
+<li>Cache failure policy: hard-fail on a cold miss vs. serve a stale entry</li>
+<li>Cache directory: XDG default vs. always project-relative</li>
+<li>CI determinism: resolve once per pipeline via network-mode differentiation
+  (deferred) vs. resolve-per-invocation with a warmed, shared cache (chosen for now)</li>
+<li>Sharding: keep positional (<code>index % Max</code>) assignment vs. switch to hashing each unit's
+  own identity</li>
 </ul>
 <h2 id="decision-outcome">Decision Outcome</h2>
-<p>Chosen option: "Option 4 — Document retention policies", because it addresses the root cause (accumulated images)
-without breaking the existing test/finalize pipeline, applies uniformly across all registries and CI providers,
-and shifts lifecycle management to where it naturally belongs — the registry itself.</p>
-<p>The <code>--build-id</code> suffix convention (<code>-build.&lt;id&gt;</code>) already isolates MR images from production tags, making them
-ideal targets for age-based or pattern-based retention rules.</p>
+<p>Chosen option, per-area:</p>
+<ul>
+<li><strong>JSONata</strong> (<code>github.com/blues/jsonata-go</code>) for <code>type: json</code> transforms, wrapped
+  behind <code>internal/jsonata.EvalTransform</code> rather than exposed directly, so the engine can
+  be swapped without touching callers. Verified against the issue's exact expression in
+  <code>internal/tagrange/source/json_test.go</code>.</li>
+<li><strong><code>Masterminds/semver/v3</code></strong> for range selection and filtering, kept separate from
+  <code>internal/semantic_tags</code>. <code>internal/semantic_tags.Compare</code> ignores the prerelease
+  suffix entirely (<code>1.0.0-rc1</code> compares equal to <code>1.0.0</code>), which is load-bearing for
+  <code>exclude_prerelease</code> and "highest wins" selection; fixing that would change alias
+  behavior for every existing project. <code>semantic_tags</code> keeps its own job: parsing <em>tag</em>
+  strings that carry non-semver flavour suffixes (<code>24.11-alpine</code>) and prefixes.</li>
+<li><strong><code>go-containerregistry</code>'s <code>remote.List</code></strong> for the <code>registry</code>/<code>dockerhub</code> source,
+  reusing an existing direct dependency, inheriting credentials from the same docker
+  config <code>ch login</code> already writes, and working against any OCI registry rather than
+  only Docker Hub.</li>
+<li><strong>Hard-fail on a cold miss.</strong> A fetch failure with no valid cached entry is always an
+  error; the cache never serves an expired entry as a silent fallback. Predictable over
+  convenient — a build that silently used week-old versions would be a worse failure
+  mode than an explicit error.</li>
+<li><strong>Project-relative cache directory</strong>, resolved as <code>CONTAINER_HIVE_CACHE_DIR</code> env (wins)
+  → <code>hive.yml</code>'s <code>cache_dir</code> → the XDG cache directory. The XDG default only works for
+  local development; CI's generated jobs run <code>ch</code> in a container with just
+  <code>$RUNNER_TEMP/ch</code>/<code>$GITHUB_WORKSPACE</code> (GitHub) or require paths under
+  <code>$CI_PROJECT_DIR</code> (GitLab) to be cacheable, so the CI templates set
+  <code>CONTAINER_HIVE_CACHE_DIR</code> to a project-relative path (<code>.ch-cache</code>, cached across runs
+  via <code>actions/cache</code> / GitLab's <code>cache:</code>).</li>
+<li><strong>Resolve-per-invocation with a shared, CI-cached disk cache</strong>, not a <code>dist/</code>
+  manifest, for the current iteration. <code>ch generate</code>/<code>ch build</code>/<code>ch lint</code> each resolve
+  <code>tag_ranges</code> themselves; the CI-cached TTL cache (§ above) keeps this cheap and, once
+  the generate job's cache is warm, keeps other jobs off the network in practice. A
+  <code>dist/tag-ranges.json</code> resolved manifest with per-command network-mode
+  differentiation (<code>ModeManifest</code>/<code>ModeCache</code>/<code>ModeResolve</code>/<code>ModeOffline</code>) was designed
+  and remains the intended follow-up for guaranteeing (not just making likely) that
+  read-only commands never touch the network — see Open Questions.</li>
+<li><strong>Hash-based shard assignment</strong>, changed in the same effort as this feature though
+  logically a prerequisite fix: <code>Owns</code> now hashes a unit's own identity
+  (<code>fnv32a(identifier + tagName)</code>) instead of its position in the sorted <code>TagIndex</code>.
+  Positional <code>index % Max</code> reassigns nearly the entire project to different shards when
+  a single tag is added or removed — exactly what <code>tag_ranges</code> does routinely as
+  upstream publishes new versions — producing shard sets that overlap in some places and
+  leave gaps in others. Hashing means only the tags that actually changed can move
+  shard. This is a one-time reshuffle of existing projects' shard assignment, not a
+  correctness regression: coverage (each unit owned exactly once) is unchanged.</li>
+</ul>
 <h2 id="pros-and-cons-of-the-options">Pros and Cons of the Options</h2>
-<h3 id="option-1-skip-push-dry-run-flag">Option 1: <code>--skip-push</code> / <code>--dry-run</code> flag</h3>
-<p>A CLI flag to suppress pushing during build and finalize.</p>
+<h3 id="jsonata-dependency">JSONata dependency</h3>
 <ul>
-<li>Good, because simple UX — single flag</li>
-<li>Good, because zero registry-level configuration needed</li>
-<li>Bad, because <code>ch test</code> cannot pull intermediates that were not pushed — breaks the standard MR pipeline</li>
-<li>Bad, because <code>ch finalize</code> needs platform images in the registry to assemble manifests</li>
-<li>Bad, because users must manually orchestrate partial builds to avoid pushing, losing the full pipeline validation</li>
+<li>Good, because it supports the issue's example verbatim, including predicate filters
+  and object construction — no bespoke DSL could match this for free.</li>
+<li>Bad, because <code>blues/jsonata-go</code> targets jsonata-js <strong>1.5.4</strong>: an expression a user
+  copies from a newer JSONata Exerciser (2.x) may not compile. Documented as a known
+  subset in <code>docs/configuration/image.md</code> and in the wrapper's own comment.</li>
+<li>Bad, because <code>*jsonata.Expr</code>'s concurrency safety is undocumented — mitigated by
+  compiling per evaluation rather than sharing a compiled expression across goroutines,
+  and by a 5-second evaluation timeout (<code>jsonata-go</code> has no cancellation of its own).</li>
 </ul>
-<h3 id="option-2-push_on_branch-in-hiveyml">Option 2: <code>push_on_branch</code> in <code>hive.yml</code></h3>
-<p>A config field that gates pushing to specific CI branches.</p>
+<h3 id="resolve-per-invocation-vs-a-dist-manifest">Resolve-per-invocation vs. a <code>dist/</code> manifest</h3>
 <ul>
-<li>Good, because declarative and version-controlled</li>
-<li>Good, because works across all CI providers via environment variable detection</li>
-<li>Bad, because same fundamental issue — <code>ch test</code>/<code>finalize</code> still need pushed intermediates</li>
-<li>Bad, because introduces branch-awareness into ContainerHive's core, coupling it to CI semantics</li>
-<li>Bad, because per-branch behavior is hard to test and document</li>
+<li>Resolve-per-invocation (chosen): simpler to implement and reason about; every command
+  behaves the same way; the CI version cache still keeps steady-state network calls to
+  roughly one fetch per source per pipeline.</li>
+<li>Bad, because a command that never downloads <code>dist/</code> in its generated CI job (<code>ch
+  lint</code>) still performs a cache lookup — and, on a cold cache, a live fetch — rather than
+  being guaranteed offline.</li>
+<li><code>dist/</code> manifest (deferred): would make every post-<code>generate</code> command provably
+  network-free and immune to a TTL boundary crossed mid-pipeline, at the cost of a mode
+  parameter threaded through every CLI command and MCP tool call, and a decision about
+  what "stale manifest" means for each of them. Left as a follow-up once real-world
+  usage shows whether the simpler cache-based approach is sufficient.</li>
 </ul>
-<h3 id="option-3-ci_finalize_default_branch_only-template-option">Option 3: <code>ci_finalize_default_branch_only</code> template option</h3>
-<p>A template option that adds branch conditions to the generated CI pipeline's finalize job.</p>
+<h3 id="hash-based-vs-positional-shard-assignment">Hash-based vs. positional shard assignment</h3>
 <ul>
-<li>Good, because scoped to CI pipeline generation — no core changes</li>
-<li>Good, because preserves full MR pipeline validation (build + test still run)</li>
-<li>Bad, because only gates the finalize step, not the per-platform intermediate pushes from <code>ch build</code></li>
-<li>Bad, because adds provider-specific condition logic to templates that must be maintained per CI provider</li>
-<li>Bad, because does not address cache accumulation</li>
-</ul>
-<h3 id="option-4-document-retention-policies">Option 4: Document retention policies</h3>
-<ul>
-<li>Good, because works with the existing push behavior — no pipeline breakage</li>
-<li>Good, because addresses both snapshot images and cache accumulation</li>
-<li>Good, because registry-native — lifecycle management belongs in the registry, not the build tool</li>
-<li>Good, because applies uniformly across all registries and CI providers</li>
-<li>Good, because no code changes — docs-only, ships immediately</li>
-<li>Bad, because requires user action to set up retention policies (not automatic out of the box)</li>
-<li>Bad, because registry-specific configuration varies — requires documentation per provider</li>
+<li>Hash-based (chosen): adding or removing one tag only moves that tag between shards.</li>
+<li>Bad, because it reshuffles which CI node builds which unit for every existing project
+  on first use after this change — a one-time cache-locality cost, not a correctness
+  issue.</li>
 </ul>
 <h2 id="links">Links</h2>
 <ul>
-<li><a href="https://github.com/ContainerHive/ContainerHive/issues/268">Issue #268</a></li>
-<li><a href="../usage/registry-retention.html">Registry retention docs</a></li>
-<li><a href="https://github.com/ContainerHive/ContainerHive/pull/269">PR #269 (closed)</a></li>
+<li>Refined by: the deferred <code>dist/tag-ranges.json</code> manifest and CLI mode
+  differentiation (§ Decision Outcome, "Resolve-per-invocation") — tracked for a
+  follow-up once this iteration has real-world usage.</li>
+<li>Related: <code>internal/buildconfig_resolver</code>'s tag-vs-image <code>build_args</code> merge order is
+  inverted relative to <code>versions</code> (tag-level values can be silently overwritten by
+  image-level ones); <code>tag_ranges</code>-generated <code>build_args</code> are affected identically to
+  static ones. Not fixed as part of this change — tracked as a separate, pre-existing
+  issue.</li>
 </ul>
 <!-- markdownlint-disable-file MD013 -->
 
