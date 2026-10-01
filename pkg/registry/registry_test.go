@@ -9,7 +9,6 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"sort"
 	"testing"
 
 	"github.com/ContainerHive/ContainerHive/pkg/build"
@@ -206,32 +205,6 @@ func TestImageRef_FormatWithBuildID(t *testing.T) {
 	want := "127.0.0.1:0/myapp:1.0.linux-amd64-build.abc123"
 	if got != want {
 		t.Errorf("ImageRef() = %q, want %q", got, want)
-	}
-}
-
-// ---------------------------------------------------------------------------
-// collectBaseTags
-// ---------------------------------------------------------------------------
-
-func TestCollectBaseTags(t *testing.T) {
-	img := &model.Image{
-		Name: "app",
-		Tags: map[string]*model.Tag{
-			"1.0": {},
-			"2.0": {},
-		},
-		Variants: map[string]*model.ImageVariant{
-			"slim": {TagSuffix: "-slim"},
-		},
-	}
-
-	tags := candidateNames(collectBaseTags(img))
-	sort.Strings(tags)
-	if len(tags) != 2 {
-		t.Fatalf("expected 2 base tags, got %d: %v", len(tags), tags)
-	}
-	if tags[0] != "1.0" || tags[1] != "2.0" {
-		t.Errorf("unexpected base tags: %v", tags)
 	}
 }
 

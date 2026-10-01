@@ -4,8 +4,6 @@ import (
 	"context"
 	"fmt"
 	"log/slog"
-	"maps"
-	"slices"
 
 	"github.com/ContainerHive/ContainerHive/internal/gcr"
 	"github.com/ContainerHive/ContainerHive/internal/ocistore"
@@ -164,65 +162,14 @@ func (r *Registry) CreateAllManifests(project *model.ContainerHiveProject, filte
 	return nil
 }
 
-// collectBaseTags returns the base tag names for an image, excluding variant
-// suffixes, as alias candidates, in deterministic sorted order (see
-// rendering.AliasCandidatesFor).
-func collectBaseTags(imageDef *model.Image) []rendering.AliasCandidate {
-	candidates := make([]rendering.AliasCandidate, 0, len(imageDef.Tags))
-	for _, tagName := range slices.Sorted(maps.Keys(imageDef.Tags)) {
-		candidates = append(candidates, rendering.AliasCandidate{
-			Name:         tagName,
-			IsPrerelease: imageDef.Tags[tagName].IsPrerelease,
-		})
-	}
-	return candidates
-}
-
 // retagAliases creates semantic version tag aliases in the registry for a
 // single image. Aliases are retagged from the multi-arch manifest (without
 // platform suffix). If buildID is set, it is appended to match pushed tags.
 // Only tags matching the filters are retagged.
 func (r *Registry) retagAliases(imageDef *model.Image, filters []build.Filter, buildID string) error {
-	aliases := rendering.ResolveImageAliases(imageDef)
-
-	if imageDef.LatestAlias != nil {
-		latestTarget, err := rendering.ResolveLatestAliasFor(collectBaseTags(imageDef), imageDef.LatestAlias.Tag)
-		if err != nil {
-			switch imageDef.LatestAlias.OnMissing {
-			case "silent":
-				// do nothing
-			case "warning":
-				slog.Warn("Latest alias resolution failed", "error", err)
-			default: // "error" or unset
-				return err
-			}
-		} else {
-			aliases[imageDef.LatestAlias.Tag] = latestTarget
-		}
-
-		for _, variantName := range slices.Sorted(maps.Keys(imageDef.Variants)) {
-			variantDef := imageDef.Variants[variantName]
-			variantTags := make([]rendering.AliasCandidate, 0, len(imageDef.Tags))
-			for _, tagName := range slices.Sorted(maps.Keys(imageDef.Tags)) {
-				variantTags = append(variantTags, rendering.AliasCandidate{
-					Name:         tagName + variantDef.TagSuffix,
-					IsPrerelease: imageDef.Tags[tagName].IsPrerelease,
-				})
-			}
-			variantTarget, err := rendering.ResolveLatestAliasFor(variantTags, imageDef.LatestAlias.Tag)
-			if err != nil {
-				switch imageDef.LatestAlias.OnMissing {
-				case "silent":
-					// do nothing
-				case "warning":
-					slog.Warn("Latest alias resolution failed for variant", "variant", variantDef.Name, "error", err)
-				default: // "error" or unset
-					return err
-				}
-			} else {
-				aliases[imageDef.LatestAlias.Tag+variantDef.TagSuffix] = variantTarget
-			}
-		}
+	aliases, err := rendering.ResolveAllAliases(imageDef)
+	if err != nil {
+		return err
 	}
 
 	for alias, tag := range aliases {

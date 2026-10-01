@@ -9,6 +9,7 @@ import (
 	"github.com/ContainerHive/ContainerHive/internal/buildkit"
 	"github.com/ContainerHive/ContainerHive/internal/dependency"
 	"github.com/ContainerHive/ContainerHive/pkg/model"
+	"github.com/ContainerHive/ContainerHive/pkg/rendering"
 	"github.com/ContainerHive/ContainerHive/pkg/shard"
 )
 
@@ -16,6 +17,7 @@ import (
 type CIImage struct {
 	Name         string
 	Tags         []string
+	Aliases      map[string]string // alias -> exact tag it points at (semver series aliases and latest_alias, incl. variants)
 	Dependencies []string
 	Depth        int
 	Platforms    []string
@@ -163,6 +165,22 @@ func BuildCIContext(project *model.ContainerHiveProject, artifacts bool) (*CICon
 				}
 			}
 		}
+
+		// Aliases are resolved by the same code that retags them in the
+		// registry, so templates see exactly the names that will exist.
+		aliases := make(map[string]string)
+		for _, img := range images {
+			imgAliases, err := rendering.ResolveAllAliases(img)
+			if err != nil {
+				return nil, fmt.Errorf("failed to resolve aliases for image %s: %w", name, err)
+			}
+			for alias, target := range imgAliases {
+				if _, ok := aliases[alias]; !ok {
+					aliases[alias] = target
+				}
+			}
+		}
+
 		tags := make([]string, 0, len(tagSet))
 		for t := range tagSet {
 			tags = append(tags, t)
@@ -178,6 +196,7 @@ func BuildCIContext(project *model.ContainerHiveProject, artifacts bool) (*CICon
 		ciImages = append(ciImages, CIImage{
 			Name:         name,
 			Tags:         tags,
+			Aliases:      aliases,
 			Dependencies: dependencies[name],
 			Depth:        depths[name],
 			Platforms:    platforms,
