@@ -12,7 +12,7 @@ require (
 	github.com/adrg/xdg v0.5.3
 	github.com/anchore/syft v1.52.0
 	github.com/blues/jsonata-go v1.5.4
-	github.com/containerd/containerd/v2 v2.4.0
+	github.com/containerd/containerd/v2 v2.4.1
 	github.com/containerd/errdefs v1.0.0
 	github.com/docker/cli v29.8.0+incompatible
 	github.com/docker/docker v28.5.2+incompatible
@@ -226,7 +226,7 @@ require (
 	github.com/fsnotify/fsnotify v1.10.1 // indirect
 	github.com/fsouza/go-dockerclient v1.11.2 // indirect
 	github.com/fvbommel/sortorder v1.1.0 // indirect
-	github.com/fxamacker/cbor/v2 v2.9.1 // indirect
+	github.com/fxamacker/cbor/v2 v2.9.4 // indirect
 	github.com/gabriel-vasile/mimetype v1.4.15 // indirect
 	github.com/github/go-spdx/v2 v2.7.0 // indirect
 	github.com/go-asn1-ber/asn1-ber v1.5.8-0.20250403174932-29230038a667 // indirect
