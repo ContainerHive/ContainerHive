@@ -14,7 +14,7 @@ require (
 	github.com/blues/jsonata-go v1.5.4
 	github.com/containerd/containerd/v2 v2.4.0
 	github.com/containerd/errdefs v1.0.0
-	github.com/docker/cli v29.8.0+incompatible
+	github.com/docker/cli v29.8.2+incompatible
 	github.com/docker/docker v28.5.2+incompatible
 	github.com/docker/go-connections v0.8.1
 	github.com/go-git/go-git/v5 v5.19.2
