@@ -2626,6 +2626,11 @@ directories in the output path are created automatically.</p>
 <td style="text-align: left;">Target platforms</td>
 </tr>
 <tr>
+<td style="text-align: left;"><code>ReadmePath</code></td>
+<td style="text-align: left;">string</td>
+<td style="text-align: left;">Path to the image's <code>README.md</code>, empty if it has none. Load the content with <code>read_file</code></td>
+</tr>
+<tr>
 <td style="text-align: left;"><code>ShardUnits</code></td>
 <td style="text-align: left;">int</td>
 <td style="text-align: left;">Number of shard units (base + variant tags) — the useful max</td>
@@ -2759,6 +2764,10 @@ directories in the output path are created automatically.</p>
 <tr>
 <td style="text-align: left;"><code>option(key)</code></td>
 <td style="text-align: left;">Returns the value of a template option from <code>hive.yml</code>, or empty string if not set</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>read_file(path)</code></td>
+<td style="text-align: left;">Returns the content of a file, or an empty string for an empty path — e.g. <code>{{ .Image.ReadmePath \| read_file }}</code>. Fails if the file does not exist</td>
 </tr>
 </tbody>
 </table>
