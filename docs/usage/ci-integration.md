@@ -103,6 +103,7 @@ Each image in `Images` provides:
 | `Dependencies` | list   | Names of images this image depends on                          |
 | `Depth`        | int    | Dependency depth (0 = no dependencies)                         |
 | `Platforms`    | list   | Target platforms                                               |
+| `ReadmePath`   | string | Path to the image's `README.md`, empty if it has none. Load the content with `read_file` |
 | `ShardUnits`   | int    | Number of shard units (base + variant tags) — the useful max   |
 | `BuildShards`  | int    | Effective parallel for build jobs (min(ci_build_shards, ShardUnits)) |
 | `TestShards`   | int    | Effective parallel for test jobs (min(ci_test_shards, ShardUnits))  |
@@ -145,6 +146,7 @@ Templates have access to [Sprig](http://masterminds.github.io/sprig/) functions 
 |:--------------------------|:----------------------------------------------------------------------------------------|
 | `resolve_base(name, tag)` | Produces an internal image reference (`__hive__/name:tag`) for inter-image dependencies |
 | `option(key)`             | Returns the value of a template option from `hive.yml`, or empty string if not set      |
+| `read_file(path)`         | Returns the content of a file, or an empty string for an empty path — e.g. `{{ .Image.ReadmePath \| read_file }}`. Fails if the file does not exist |
 
 ### Example custom template
 
