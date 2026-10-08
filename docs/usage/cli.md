@@ -212,7 +212,7 @@ ch template custom --template <path.gotpl> --output <path>
 | Flag | Description |
 |:-----|:------------|
 | `--template` | Path to Go template file (`.gotpl`) |
-| `--output` | Output file (default: stdout) |
+| `--output` | Output path rendered as a Go template (default: stdout). References to `.Image` render once per image, one file each |
 
 ### `wait`
 
