@@ -1,6 +1,8 @@
 package templating
 
 import (
+	"os"
+	"path/filepath"
 	"strings"
 	"testing"
 	"testing/fstest"
@@ -147,4 +149,40 @@ func TestRender(t *testing.T) {
 			t.Fatal("expected error for missing entrypoint")
 		}
 	})
+}
+
+func TestRenderString_ReadFile(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "README.md")
+	if err := os.WriteFile(path, []byte("# hello\n"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+
+	tests := []struct {
+		name    string
+		path    string
+		want    string
+		wantErr bool
+	}{
+		{name: "existing file", path: path, want: "# hello\n"},
+		{name: "empty path", path: "", want: ""},
+		{name: "missing file", path: filepath.Join(filepath.Dir(path), "missing.md"), wantErr: true},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			result, err := RenderString("test", `{{ .Path | read_file }}`, map[string]string{"Path": tt.path})
+			if tt.wantErr {
+				if err == nil {
+					t.Fatal("expected error, got nil")
+				}
+				return
+			}
+			if err != nil {
+				t.Fatal(err)
+			}
+			if got := string(result); got != tt.want {
+				t.Errorf("got %q, want %q", got, tt.want)
+			}
+		})
+	}
 }

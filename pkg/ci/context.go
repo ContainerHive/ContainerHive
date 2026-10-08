@@ -21,9 +21,10 @@ type CIImage struct {
 	Dependencies []string
 	Depth        int
 	Platforms    []string
-	ShardUnits   int // number of tag units (base + variant tags) — the useful max
-	BuildShards  int // effective parallel for build jobs (min(ci_build_shards, ShardUnits), ≥1)
-	TestShards   int // effective parallel for test jobs (min(ci_test_shards, ShardUnits), ≥1)
+	ReadmePath   string // path to the image's README.md, empty if it has none; load it with the read_file template function
+	ShardUnits   int    // number of tag units (base + variant tags) — the useful max
+	BuildShards  int    // effective parallel for build jobs (min(ci_build_shards, ShardUnits), ≥1)
+	TestShards   int    // effective parallel for test jobs (min(ci_test_shards, ShardUnits), ≥1)
 }
 
 // CIContext holds all data needed to render CI templates.
@@ -181,6 +182,14 @@ func BuildCIContext(project *model.ContainerHiveProject, artifacts bool) (*CICon
 			}
 		}
 
+		readmePath := ""
+		for _, img := range images {
+			if img.ReadmePath != "" {
+				readmePath = img.ReadmePath
+				break
+			}
+		}
+
 		tags := make([]string, 0, len(tagSet))
 		for t := range tagSet {
 			tags = append(tags, t)
@@ -200,6 +209,7 @@ func BuildCIContext(project *model.ContainerHiveProject, artifacts bool) (*CICon
 			Dependencies: dependencies[name],
 			Depth:        depths[name],
 			Platforms:    platforms,
+			ReadmePath:   readmePath,
 		})
 	}
 

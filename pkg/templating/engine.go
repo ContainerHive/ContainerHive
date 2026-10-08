@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"io/fs"
+	"os"
 	"text/template"
 
 	sprig "github.com/Masterminds/sprig/v3"
@@ -14,7 +15,22 @@ func funcMap() template.FuncMap {
 	funcs["resolve_base"] = func(name, tag string) string {
 		return fmt.Sprintf("__hive__/%s:%s", name, tag)
 	}
+	funcs["read_file"] = readFile
 	return funcs
+}
+
+// readFile returns the content of the file at path. An empty path yields an
+// empty string, so optional paths such as .Image.ReadmePath can be piped in
+// without a guard.
+func readFile(path string) (string, error) {
+	if path == "" {
+		return "", nil
+	}
+	content, err := os.ReadFile(path)
+	if err != nil {
+		return "", fmt.Errorf("read_file: %w", err)
+	}
+	return string(content), nil
 }
 
 // Render renders a template from an fs.FS, supporting partials via ParseFS.

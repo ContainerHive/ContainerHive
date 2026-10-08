@@ -514,3 +514,35 @@ func TestBuildCIContext_NoAliases(t *testing.T) {
 		t.Errorf("expected no aliases, got %v", ctx.Images[0].Aliases)
 	}
 }
+
+func TestBuildCIContext_ReadmePath(t *testing.T) {
+	tests := []struct {
+		name   string
+		images []*model.Image
+		want   string
+	}{
+		{name: "no readme", images: []*model.Image{{Name: "app", Tags: map[string]*model.Tag{"edge": {Name: "edge"}}}}, want: ""},
+		{name: "readme", images: []*model.Image{{Name: "app", ReadmePath: "images/app/README.md", Tags: map[string]*model.Tag{"edge": {Name: "edge"}}}}, want: "images/app/README.md"},
+		{name: "first non-empty wins", images: []*model.Image{
+			{Name: "app", Tags: map[string]*model.Tag{"1": {Name: "1"}}},
+			{Name: "app", ReadmePath: "images/app/2/README.md", Tags: map[string]*model.Tag{"2": {Name: "2"}}},
+		}, want: "images/app/2/README.md"},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			project := &model.ContainerHiveProject{
+				Config:       model.HiveProjectConfig{Platforms: []string{"linux/amd64"}},
+				ImagesByName: map[string][]*model.Image{"app": tt.images},
+			}
+
+			ctx, err := BuildCIContext(project, false)
+			if err != nil {
+				t.Fatal(err)
+			}
+			if got := ctx.Images[0].ReadmePath; got != tt.want {
+				t.Errorf("ReadmePath = %q, want %q", got, tt.want)
+			}
+		})
+	}
+}
