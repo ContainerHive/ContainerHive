@@ -1,3 +1,9 @@
+## [1.12.0](https://github.com/ContainerHive/ContainerHive/compare/v1.11.1...v1.12.0) (2026-10-08)
+
+### Features
+
+* expose image README path and add read_file template function ([#289](https://github.com/ContainerHive/ContainerHive/issues/289)) ([2b15a7c](https://github.com/ContainerHive/ContainerHive/commit/2b15a7c4d81d8e2856198cfbcd1bde85033d3b50))
+
 ## [1.11.1](https://github.com/ContainerHive/ContainerHive/compare/v1.11.0...v1.11.1) (2026-10-08)
 
 ### Bug Fixes
