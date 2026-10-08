@@ -66,12 +66,20 @@ ch template custom --template my-template.gotpl --output output.yml
 
 Custom templates receive a `CIContext` with the following fields:
 
-| Field       | Type   | Description                                                |
-|:------------|:-------|:-----------------------------------------------------------|
-| `Images`    | list   | All images with name, tags, dependencies, depth, platforms |
-| `Platforms` | list   | All unique platforms across all images                     |
-| `Stages`    | list   | Ordered build stages                                       |
-| `Config`    | object | Registry and cache configuration                           |
+| Field             | Type   | Description                                                                                        |
+|:------------------|:-------|:---------------------------------------------------------------------------------------------------|
+| `Images`          | list   | All images (see below)                                                                             |
+| `Platforms`       | list   | All unique platforms across all images                                                             |
+| `Stages`          | list   | Ordered build stages (`build-<image>`, `test-<image>`, `manifest-<image>`)                          |
+| `Config`          | object | Registry and cache configuration (see below)                                                       |
+| `Artifacts`       | bool   | Whether build artifacts are passed between jobs (set by `template ci --artifacts`)                 |
+| `TemplateOptions` | map    | Merged template options (defaults + `hive.yml`), same values the `option(key)` function returns     |
+| `HasTagRanges`    | bool   | Whether any image defines `tag_ranges`                                                             |
+| `TagRangeUnits`   | int    | Total version-cache tag units across all images (0 unless `HasTagRanges` is true)                   |
+| `Command`         | string | The `ch template ci` command line — only set by `template ci`, empty in custom templates            |
+| `Version`         | string | CH CLI version used in CI templates — only set by `template ci`                                     |
+| `ImageName`       | string | Container image name for the CH CLI — only set by `template ci`                                     |
+| `ProjectPath`     | string | `--project` value when it is not `.` — only set by `template ci`                                    |
 
 Each image in `Images` provides:
 
@@ -86,6 +94,36 @@ Each image in `Images` provides:
 | `ShardUnits`   | int    | Number of shard units (base + variant tags) — the useful max   |
 | `BuildShards`  | int    | Effective parallel for build jobs (min(ci_build_shards, ShardUnits)) |
 | `TestShards`   | int    | Effective parallel for test jobs (min(ci_test_shards, ShardUnits))  |
+
+`Config` exposes the project registry and cache configuration:
+
+| Field                      | Type   | Description                                                        |
+|:---------------------------|:-------|:-------------------------------------------------------------------|
+| `Config.Registry.Address`  | string | Container registry address                                         |
+| `Config.Registry.DockerMediaTypes` | bool | Force Docker-scheme media types (`null` = auto-detect)      |
+| `Config.RegistryHost()`    | string | Registry hostname without path (e.g. `docker.io/timoreymann` → `docker.io`) |
+| `Config.Cache.Type`        | string | Cache backend: `s3` or `registry`                                  |
+| `Config.Cache.Endpoint`    | string | S3 endpoint URL                                                    |
+| `Config.Cache.Bucket`      | string | S3 bucket name                                                     |
+| `Config.Cache.Region`      | string | S3 region                                                          |
+| `Config.Cache.AccessKeyId` | string | S3 access key ID                                                   |
+| `Config.Cache.SecretAccessKey` | string | S3 secret access key — available, but avoid rendering it into committed files |
+| `Config.Cache.UsePathStyle` | bool  | Use path-style S3 URLs                                             |
+| `Config.Cache.Ref`         | string | Registry cache ref (e.g. `registry:5000/cache`)                    |
+| `Config.Cache.Insecure`    | bool   | Allow insecure registry connections                                |
+
+!!! note
+
+    `Config.Registry` and `Config.Cache` are pointers and render as `<no value>` when unset — guard with
+    `{{ with .Config.Cache }}...{{ end }}`. `Registry.DockerMediaTypes` is a tri-state: unset means auto-detect.
+
+The context also provides helper methods, callable like functions:
+
+| Method                 | Description                                                              |
+|:-----------------------|:-------------------------------------------------------------------------|
+| `ChCmd()`              | The `ch` command prefix, including `-p <project>` when a project path is set |
+| `Dist()`               | The `dist` directory path, prefixed with the project path when set       |
+| `VersionCacheDir()`    | The `tag_ranges` version cache path, prefixed with the project path when set |
 
 ### Template functions
 
