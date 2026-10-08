@@ -62,6 +62,18 @@ context.
 ch template custom --template my-template.gotpl --output output.yml
 ```
 
+The `--output` value is itself rendered as a Go template with the same context as the template file, so the
+destination can be derived from the project:
+
+```bash
+ch template custom --template image.gotpl --output 'foo/{{ .Image.Name }}.yml'
+```
+
+When the output path references `.Image`, the template is rendered once per image and one file is written per
+image — `.Image` is bound to the current image in both the output path and the template content. Without
+`.Image`, a single render writes a single file (and `.Image` is not available in the content). Missing parent
+directories in the output path are created automatically.
+
 ### Template context
 
 Custom templates receive a `CIContext` with the following fields:
