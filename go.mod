@@ -1,6 +1,6 @@
 module github.com/ContainerHive/ContainerHive
 
-go 1.26.6
+go 1.26.8
 
 tool go.elastic.co/go-licence-detector
 
@@ -23,7 +23,7 @@ require (
 	github.com/google/go-containerregistry v0.22.1
 	github.com/kcmvp/archunit v0.1.2
 	github.com/lmittmann/tint v1.1.3
-	github.com/moby/buildkit v0.33.0
+	github.com/moby/buildkit v0.33.1
 	github.com/moby/moby/api v1.56.0
 	github.com/modelcontextprotocol/go-sdk v1.6.1
 	github.com/opencontainers/go-digest v1.0.0
@@ -49,6 +49,7 @@ require (
 	cloud.google.com/go/iam v1.12.0 // indirect
 	cloud.google.com/go/monitoring v1.30.0 // indirect
 	cloud.google.com/go/storage v1.65.1 // indirect
+	cyphar.com/go-pathrs v0.2.5 // indirect
 	dario.cat/mergo v1.0.2 // indirect
 	github.com/99designs/gqlgen v0.17.91 // indirect
 	github.com/Azure/azure-sdk-for-go/sdk/azcore v1.22.0 // indirect
