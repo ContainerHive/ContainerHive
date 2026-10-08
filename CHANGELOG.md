@@ -1,3 +1,9 @@
+## [1.11.0](https://github.com/ContainerHive/ContainerHive/compare/v1.10.3...v1.11.0) (2026-10-08)
+
+### Features
+
+* render template custom --output as a Go template ([9bf84e9](https://github.com/ContainerHive/ContainerHive/commit/9bf84e981016eb346c3523bb244baef570ce683b))
+
 ## [1.10.3](https://github.com/ContainerHive/ContainerHive/compare/v1.10.2...v1.10.3) (2026-10-07)
 
 ### Bug Fixes
