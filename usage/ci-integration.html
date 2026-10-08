@@ -2504,6 +2504,14 @@ YAML by hand.</p>
 context.</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>ch<span class="w"> </span>template<span class="w"> </span>custom<span class="w"> </span>--template<span class="w"> </span>my-template.gotpl<span class="w"> </span>--output<span class="w"> </span>output.yml
 </span></code></pre></div>
+<p>The <code>--output</code> value is itself rendered as a Go template with the same context as the template file, so the
+destination can be derived from the project:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>ch<span class="w"> </span>template<span class="w"> </span>custom<span class="w"> </span>--template<span class="w"> </span>image.gotpl<span class="w"> </span>--output<span class="w"> </span><span class="s1">'foo/{{ .Image.Name }}.yml'</span>
+</span></code></pre></div>
+<p>When the output path references <code>.Image</code>, the template is rendered once per image and one file is written per
+image — <code>.Image</code> is bound to the current image in both the output path and the template content. Without
+<code>.Image</code>, a single render writes a single file (and <code>.Image</code> is not available in the content). Missing parent
+directories in the output path are created automatically.</p>
 <h3 id="template-context">Template context</h3>
 <p>Custom templates receive a <code>CIContext</code> with the following fields:</p>
 <table>
@@ -2518,7 +2526,7 @@ context.</p>
 <tr>
 <td style="text-align: left;"><code>Images</code></td>
 <td style="text-align: left;">list</td>
-<td style="text-align: left;">All images with name, tags, dependencies, depth, platforms</td>
+<td style="text-align: left;">All images (see below)</td>
 </tr>
 <tr>
 <td style="text-align: left;"><code>Platforms</code></td>
@@ -2528,12 +2536,52 @@ context.</p>
 <tr>
 <td style="text-align: left;"><code>Stages</code></td>
 <td style="text-align: left;">list</td>
-<td style="text-align: left;">Ordered build stages</td>
+<td style="text-align: left;">Ordered build stages (<code>build-&lt;image&gt;</code>, <code>test-&lt;image&gt;</code>, <code>manifest-&lt;image&gt;</code>)</td>
 </tr>
 <tr>
 <td style="text-align: left;"><code>Config</code></td>
 <td style="text-align: left;">object</td>
-<td style="text-align: left;">Registry and cache configuration</td>
+<td style="text-align: left;">Registry and cache configuration (see below)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>Artifacts</code></td>
+<td style="text-align: left;">bool</td>
+<td style="text-align: left;">Whether build artifacts are passed between jobs (set by <code>template ci --artifacts</code>)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>TemplateOptions</code></td>
+<td style="text-align: left;">map</td>
+<td style="text-align: left;">Merged template options (defaults + <code>hive.yml</code>), same values the <code>option(key)</code> function returns</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>HasTagRanges</code></td>
+<td style="text-align: left;">bool</td>
+<td style="text-align: left;">Whether any image defines <code>tag_ranges</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>TagRangeUnits</code></td>
+<td style="text-align: left;">int</td>
+<td style="text-align: left;">Total version-cache tag units across all images (0 unless <code>HasTagRanges</code> is true)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>Command</code></td>
+<td style="text-align: left;">string</td>
+<td style="text-align: left;">The <code>ch template ci</code> command line — only set by <code>template ci</code>, empty in custom templates</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>Version</code></td>
+<td style="text-align: left;">string</td>
+<td style="text-align: left;">CH CLI version used in CI templates — only set by <code>template ci</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>ImageName</code></td>
+<td style="text-align: left;">string</td>
+<td style="text-align: left;">Container image name for the CH CLI — only set by <code>template ci</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>ProjectPath</code></td>
+<td style="text-align: left;">string</td>
+<td style="text-align: left;"><code>--project</code> value when it is not <code>.</code> — only set by <code>template ci</code></td>
 </tr>
 </tbody>
 </table>
@@ -2594,6 +2642,106 @@ context.</p>
 </tr>
 </tbody>
 </table>
+<p><code>Config</code> exposes the project registry and cache configuration:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Field</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>Config.Registry.Address</code></td>
+<td style="text-align: left;">string</td>
+<td style="text-align: left;">Container registry address</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>Config.Registry.DockerMediaTypes</code></td>
+<td style="text-align: left;">bool</td>
+<td style="text-align: left;">Force Docker-scheme media types (<code>null</code> = auto-detect)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>Config.RegistryHost()</code></td>
+<td style="text-align: left;">string</td>
+<td style="text-align: left;">Registry hostname without path (e.g. <code>docker.io/timoreymann</code> → <code>docker.io</code>)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>Config.Cache.Type</code></td>
+<td style="text-align: left;">string</td>
+<td style="text-align: left;">Cache backend: <code>s3</code> or <code>registry</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>Config.Cache.Endpoint</code></td>
+<td style="text-align: left;">string</td>
+<td style="text-align: left;">S3 endpoint URL</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>Config.Cache.Bucket</code></td>
+<td style="text-align: left;">string</td>
+<td style="text-align: left;">S3 bucket name</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>Config.Cache.Region</code></td>
+<td style="text-align: left;">string</td>
+<td style="text-align: left;">S3 region</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>Config.Cache.AccessKeyId</code></td>
+<td style="text-align: left;">string</td>
+<td style="text-align: left;">S3 access key ID</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>Config.Cache.SecretAccessKey</code></td>
+<td style="text-align: left;">string</td>
+<td style="text-align: left;">S3 secret access key — available, but avoid rendering it into committed files</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>Config.Cache.UsePathStyle</code></td>
+<td style="text-align: left;">bool</td>
+<td style="text-align: left;">Use path-style S3 URLs</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>Config.Cache.Ref</code></td>
+<td style="text-align: left;">string</td>
+<td style="text-align: left;">Registry cache ref (e.g. <code>registry:5000/cache</code>)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>Config.Cache.Insecure</code></td>
+<td style="text-align: left;">bool</td>
+<td style="text-align: left;">Allow insecure registry connections</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><code>Config.Registry</code> and <code>Config.Cache</code> are pointers and render as <code>&lt;no value&gt;</code> when unset — guard with
+<code>{{ with .Config.Cache }}...{{ end }}</code>. <code>Registry.DockerMediaTypes</code> is a tri-state: unset means auto-detect.</p>
+</div>
+<p>The context also provides helper methods, callable like functions:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Method</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>ChCmd()</code></td>
+<td style="text-align: left;">The <code>ch</code> command prefix, including <code>-p &lt;project&gt;</code> when a project path is set</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>Dist()</code></td>
+<td style="text-align: left;">The <code>dist</code> directory path, prefixed with the project path when set</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>VersionCacheDir()</code></td>
+<td style="text-align: left;">The <code>tag_ranges</code> version cache path, prefixed with the project path when set</td>
+</tr>
+</tbody>
+</table>
 <h3 id="template-functions">Template functions</h3>
 <p>Templates have access to <a href="http://masterminds.github.io/sprig/">Sprig</a> functions plus:</p>
 <table>
@@ -2615,32 +2763,32 @@ context.</p>
 </tbody>
 </table>
 <h3 id="example-custom-template">Example custom template</h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>{{- range .Images }}
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>Image: {{ .Name }}
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>  Tags: {{ range .Tags }}{{ . }}, {{ end }}
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>  Platforms: {{ range .Platforms }}{{ . }}, {{ end }}
-</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>  Dependencies: {{ range .Dependencies }}{{ . }}, {{ end }}
-</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>{{ end }}
+<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>{{- range .Images }}
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>Image: {{ .Name }}
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>  Tags: {{ range .Tags }}{{ . }}, {{ end }}
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>  Platforms: {{ range .Platforms }}{{ . }}, {{ end }}
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>  Dependencies: {{ range .Dependencies }}{{ . }}, {{ end }}
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>{{ end }}
 </span></code></pre></div>
 <h2 id="overriding-built-in-ci-templates">Overriding built-in CI templates</h2>
 <p>You can override the built-in CI templates by providing a custom template directory:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>ch<span class="w"> </span>template<span class="w"> </span>ci<span class="w"> </span>--provider<span class="w"> </span>gitlab<span class="w"> </span>--template-dir<span class="w"> </span>./my-templates<span class="w"> </span>--output<span class="w"> </span>.gitlab-ci.yml
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>ch<span class="w"> </span>template<span class="w"> </span>ci<span class="w"> </span>--provider<span class="w"> </span>gitlab<span class="w"> </span>--template-dir<span class="w"> </span>./my-templates<span class="w"> </span>--output<span class="w"> </span>.gitlab-ci.yml
 </span></code></pre></div>
 <p>The directory should contain <code>.gotpl</code> files following the same structure as the built-in templates. Files in the custom
 directory take precedence over the built-in ones.</p>
 <h3 id="built-in-template-structure">Built-in template structure</h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>templates/&lt;provider&gt;/
-</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>├── pipeline.yml.gotpl   (or workflow.yml.gotpl for GitHub)
-</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>├── build-job.yml.gotpl
-</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>├── lint-job.yml.gotpl
-</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>├── manifest-job.yml.gotpl
-</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>└── test-job.yml.gotpl
+<div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>templates/&lt;provider&gt;/
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>├── pipeline.yml.gotpl   (or workflow.yml.gotpl for GitHub)
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>├── build-job.yml.gotpl
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>├── lint-job.yml.gotpl
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>├── manifest-job.yml.gotpl
+</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>└── test-job.yml.gotpl
 </span></code></pre></div>
 <p>The entrypoint template includes the job templates as partials using <code>{{ template "build-job.yml.gotpl" . }}</code>.</p>
 <h2 id="the-generate-command">The <code>generate</code> command</h2>
 <p>Before building or generating CI configs, run <code>generate</code> to discover the project and render all configurations to
 <code>dist/</code>:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>ch<span class="w"> </span>generate
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>ch<span class="w"> </span>generate
 </span></code></pre></div>
 <p>This processes <code>hive.yml</code> and all <code>image.yml</code> definitions, renders Dockerfiles and test templates, and prepares the
 <code>dist/</code> directory for subsequent <code>build</code>, <code>test</code>, and <code>sbom</code> commands.</p>
@@ -2664,26 +2812,26 @@ via <code>ch lint</code>.</p>
 <h3 id="gitlab-code-quality-report">GitLab Code Quality report</h3>
 <p>For GitLab CI, the lint job produces a <a href="https://docs.gitlab.com/ee/ci/testing/code_quality.html">Code Quality report</a>
 artifact that GitLab renders inline on merge requests. The report uses the <code>codeclimate</code> output format:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>ch<span class="w"> </span>lint<span class="w"> </span>--format<span class="w"> </span><span class="nv">codeclimate</span><span class="o">=</span>gl-code-quality-report.json
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>ch<span class="w"> </span>lint<span class="w"> </span>--format<span class="w"> </span><span class="nv">codeclimate</span><span class="o">=</span>gl-code-quality-report.json
 </span></code></pre></div>
 <h3 id="github-actions-annotations">GitHub Actions annotations</h3>
 <p>For GitHub Actions, use the <code>github-actions</code> output format to emit annotations inline on pull request diffs:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>ch<span class="w"> </span>lint<span class="w"> </span>--format<span class="w"> </span>github-actions
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>ch<span class="w"> </span>lint<span class="w"> </span>--format<span class="w"> </span>github-actions
 </span></code></pre></div>
 <p>Lint failures still cause the job to fail and gate subsequent build jobs. Without the <code>--format</code> flag, findings only
 appear in the workflow log — using <code>--format github-actions</code> makes them visible on the changed lines in the PR.</p>
 <h3 id="disabling-linting">Disabling linting</h3>
 <p>To disable the lint job entirely, set <code>ci_lint</code> to <code>false</code> in your <code>hive.yml</code>:</p>
-<div class="language-yaml highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="nt">template_options</span><span class="p">:</span>
-</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="w">  </span><span class="nt">ci_lint</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="nt">template_options</span><span class="p">:</span>
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="w">  </span><span class="nt">ci_lint</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
 </span></code></pre></div>
 <h2 id="reducing-sbom-size">Reducing SBOM size</h2>
 <p>syft attaches CPEs to every component by default, which is a meaningful contributor to SBOM size on images with
 many packages. Set <code>ci_sbom_generate_cpes</code> to <code>false</code> to pass <code>--no-cpe</code> to <code>ch sbom</code> in the generated GitLab CI
 pipeline, trading CPE-based vulnerability matching for a smaller artifact — useful if you're running into GitLab's
 SBOM artifact size limits:</p>
-<div class="language-yaml highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="nt">template_options</span><span class="p">:</span>
-</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="w">  </span><span class="nt">ci_sbom_generate_cpes</span><span class="p">:</span><span class="w"> </span><span class="s">"false"</span>
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="nt">template_options</span><span class="p">:</span>
+</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="w">  </span><span class="nt">ci_sbom_generate_cpes</span><span class="p">:</span><span class="w"> </span><span class="s">"false"</span>
 </span></code></pre></div>
 <h2 id="cancelling-outdated-pipelines">Cancelling outdated pipelines</h2>
 <p>By default, when a new pipeline is triggered on the same branch, in-progress pipelines from earlier commits are
@@ -2700,17 +2848,17 @@ pipelines on the same ref, regardless of the project-level "Auto-cancel redundan
 <p>Note: GitLab's auto-cancel mechanism applies per ref. A new push to a merge request also cancels that MR's
 superseded pipeline. There is no clean way to restrict cancellation to the default branch only.</p>
 <p>To disable, set <code>ci_cancel_outdated</code> to <code>false</code> in your <code>hive.yml</code>:</p>
-<div class="language-yaml highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="nt">template_options</span><span class="p">:</span>
-</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="w">  </span><span class="nt">ci_cancel_outdated</span><span class="p">:</span><span class="w"> </span><span class="s">"false"</span>
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="nt">template_options</span><span class="p">:</span>
+</span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="w">  </span><span class="nt">ci_cancel_outdated</span><span class="p">:</span><span class="w"> </span><span class="s">"false"</span>
 </span></code></pre></div>
 <h2 id="sharding-build-and-test-jobs">Sharding build and test jobs</h2>
 <p>For GitLab CI, <code>ci_build_shards</code> and <code>ci_test_shards</code> set an upper bound on <code>parallel: N</code> for each build/test job. The
 actual value is capped per image to the number of shard units (base + variant tags) that image has, so images with fewer
 tags than the configured value never spawn empty jobs that no-op. See <a href="sharding.html">Split work across shards</a> for the
 full picture; the template option is set the same way as <code>ci_lint</code> above:</p>
-<div class="language-yaml highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="nt">template_options</span><span class="p">:</span>
-</span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="w">  </span><span class="nt">ci_build_shards</span><span class="p">:</span><span class="w"> </span><span class="s">"5"</span>
-</span><span id="__span-12-3"><a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a><span class="w">  </span><span class="nt">ci_test_shards</span><span class="p">:</span><span class="w"> </span><span class="s">"5"</span>
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="nt">template_options</span><span class="p">:</span>
+</span><span id="__span-13-2"><a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a><span class="w">  </span><span class="nt">ci_build_shards</span><span class="p">:</span><span class="w"> </span><span class="s">"5"</span>
+</span><span id="__span-13-3"><a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a><span class="w">  </span><span class="nt">ci_test_shards</span><span class="p">:</span><span class="w"> </span><span class="s">"5"</span>
 </span></code></pre></div>
 <h2 id="registry-retention">Registry retention</h2>
 <p>Every generated pipeline pushes per-platform intermediate images and, when using <code>--build-id</code>, snapshot manifests and
