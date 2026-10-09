@@ -1,3 +1,10 @@
+## [1.12.1](https://github.com/ContainerHive/ContainerHive/compare/v1.12.0...v1.12.1) (2026-10-09)
+
+### Bug Fixes
+
+* **deps:** update module github.com/anchore/syft to v1.54.0 ([#291](https://github.com/ContainerHive/ContainerHive/issues/291)) ([1e549b3](https://github.com/ContainerHive/ContainerHive/commit/1e549b33d8774e7909976cde7a426bca10f66aa4))
+* **deps:** update module github.com/moby/moby/api to v1.56.1 ([#290](https://github.com/ContainerHive/ContainerHive/issues/290)) ([73618f3](https://github.com/ContainerHive/ContainerHive/commit/73618f3ce1ecbb7db349b5f13c27e97f6cc61640))
+
 ## [1.12.0](https://github.com/ContainerHive/ContainerHive/compare/v1.11.1...v1.12.0) (2026-10-08)
 
 ### Features
