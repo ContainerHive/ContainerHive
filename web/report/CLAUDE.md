@@ -15,7 +15,7 @@ After changing UI code: `yarn build` → `make generate` → rebuild the Go bina
 
 ## Tech stack
 
-- **Vite 6** + **React 19** + **TypeScript**
+- **Vite 8** + **React 19** + **TypeScript**
 - `vite-plugin-singlefile` — bundles everything (JS, CSS, fonts) into a single `index.html`
 - `vite-plugin-webfont-dl` — downloads Google Fonts locally so the output is fully offline
 
