@@ -1,3 +1,10 @@
+## [1.12.2](https://github.com/ContainerHive/ContainerHive/compare/v1.12.1...v1.12.2) (2026-10-12)
+
+### Bug Fixes
+
+* **deps:** update module github.com/lmittmann/tint to v1.2.1 ([#294](https://github.com/ContainerHive/ContainerHive/issues/294)) ([337c941](https://github.com/ContainerHive/ContainerHive/commit/337c94156ade93cd9845b1bec1f50c13fcc55849))
+* **deps:** update module github.com/urfave/cli/v3 to v3.14.0 ([#295](https://github.com/ContainerHive/ContainerHive/issues/295)) ([fd0fd16](https://github.com/ContainerHive/ContainerHive/commit/fd0fd16fb51f3a23fc2ab782ceac32284d9a70c3))
+
 ## [1.12.1](https://github.com/ContainerHive/ContainerHive/compare/v1.12.0...v1.12.1) (2026-10-09)
 
 ### Bug Fixes
