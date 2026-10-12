@@ -1,3 +1,9 @@
+## [1.12.3](https://github.com/ContainerHive/ContainerHive/compare/v1.12.2...v1.12.3) (2026-10-12)
+
+### Bug Fixes
+
+* **deps:** update module github.com/go-git/go-git/v5 to v5.19.3 ([#292](https://github.com/ContainerHive/ContainerHive/issues/292)) ([427fa21](https://github.com/ContainerHive/ContainerHive/commit/427fa21bd822703dd38f49fffaf01a9ab40cfefe))
+
 ## [1.12.2](https://github.com/ContainerHive/ContainerHive/compare/v1.12.1...v1.12.2) (2026-10-12)
 
 ### Bug Fixes
