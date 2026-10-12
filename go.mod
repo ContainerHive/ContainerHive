@@ -22,7 +22,7 @@ require (
 	github.com/google/go-cmp v0.7.0
 	github.com/google/go-containerregistry v0.22.1
 	github.com/kcmvp/archunit v0.1.2
-	github.com/lmittmann/tint v1.1.3
+	github.com/lmittmann/tint v1.2.1
 	github.com/moby/buildkit v0.33.1
 	github.com/moby/moby/api v1.56.1
 	github.com/modelcontextprotocol/go-sdk v1.6.1
