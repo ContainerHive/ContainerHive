@@ -1,3 +1,9 @@
+## [1.12.4](https://github.com/ContainerHive/ContainerHive/compare/v1.12.3...v1.12.4) (2026-10-12)
+
+### Bug Fixes
+
+* **deps:** update frontend major updates (major) ([#285](https://github.com/ContainerHive/ContainerHive/issues/285)) ([6ce4b95](https://github.com/ContainerHive/ContainerHive/commit/6ce4b95c95c6893f3585c71b58caeb5ca443b1c7))
+
 ## [1.12.3](https://github.com/ContainerHive/ContainerHive/compare/v1.12.2...v1.12.3) (2026-10-12)
 
 ### Bug Fixes
