@@ -2253,10 +2253,10 @@ Contents of probable licence file $GOMODCACHE/github.com/docker/go-connections@v
 ================================================================================
 
 Module:  github.com/go-git/go-git/v5
-Version: v5.19.2
+Version: v5.19.3
 Licence: Apache-2.0
 
-Contents of probable licence file $GOMODCACHE/github.com/go-git/go-git/v5@v5.19.2/LICENSE:
+Contents of probable licence file $GOMODCACHE/github.com/go-git/go-git/v5@v5.19.3/LICENSE:
 
                                  Apache License
                            Version 2.0, January 2004
@@ -29200,10 +29200,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ================================================================================
 
 Module:  github.com/go-git/go-billy/v5
-Version: v5.9.1
+Version: v5.9.2
 Licence: Apache-2.0
 
-Contents of probable licence file $GOMODCACHE/github.com/go-git/go-billy/v5@v5.9.1/LICENSE:
+Contents of probable licence file $GOMODCACHE/github.com/go-git/go-billy/v5@v5.9.2/LICENSE:
 
                                  Apache License
                            Version 2.0, January 2004
@@ -54419,10 +54419,10 @@ Contents of probable licence file $GOMODCACHE/github.com/piprate/json-gold@v0.7.
 ================================================================================
 
 Module:  github.com/pjbgf/sha1cd
-Version: v0.6.0
+Version: v0.7.0
 Licence: Apache-2.0
 
-Contents of probable licence file $GOMODCACHE/github.com/pjbgf/sha1cd@v0.6.0/LICENSE:
+Contents of probable licence file $GOMODCACHE/github.com/pjbgf/sha1cd@v0.7.0/LICENSE:
 
                                  Apache License
                            Version 2.0, January 2004
