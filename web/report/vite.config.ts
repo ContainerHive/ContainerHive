@@ -56,7 +56,6 @@ export default defineConfig({
   ],
   build: {
     target: 'esnext',
-    minify: 'esbuild',
     cssCodeSplit: false,
     assetsInlineLimit: 100000000,
   },
