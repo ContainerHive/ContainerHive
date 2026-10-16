@@ -28,6 +28,30 @@ ContainerHive is the production-grade successor, rewritten in Go as a single sta
 beyond BuildKit. It takes the validated ideas from the PoC and packages them into something you can drop into any CI
 pipeline or developer workstation without setup overhead.
 
+## Why not just do it manually?
+
+Take a typical set of CI images, each building on another:
+
+```
+ubuntu-base      curl, wget, zip, internal CI tools
+├── node            + Node.js, Yarn
+│   └── node-browsers   + Chrome, Firefox, Playwright
+└── python          + uv, Poetry, pip
+    └── pre-commit      + pre-commit, global dev tools, toolchains hooks rely on
+```
+
+Doing this by hand means writing the CI pipeline yourself, wiring `needs:` so each child waits for its parent,
+handling tagging and pushing so children find the right parent, writing tests and hooking them into the pipeline,
+and updating all of it whenever an image is added or re-parented.
+
+With ContainerHive you drop flat image directories into your project, and each Dockerfile references its parent with
+`FROM __hive__/<image>`. ContainerHive resolves the dependency graph, generates the CI pipeline with the right build
+order and parallelism, detects which images have a `test.yml` and adds the test steps for them, and passes parent
+images to children without a registry round trip.
+
+See [Why use ContainerHive?](https://container-hive.timo-reymann.de/why-containerhive/) for the full walkthrough with
+diagrams.
+
 ## Features
 
 - **Next-gen builds**: Powered by BuildKit, the modern container image builder behind Docker.

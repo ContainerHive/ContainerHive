@@ -45,6 +45,137 @@ Without a shared tool, each team independently solves the same problems — and 
 
 The cost isn't just engineering time — it's organizational friction. Onboarding is slower, audits are harder, and every team carries maintenance burden for infrastructure that isn't their core product.
 
+## Example: a hierarchy of CI images
+
+Take a typical set of CI images. Every job in your pipelines runs in one of them, and they build on each other:
+
+| Image | Based on | Adds |
+|:------|:---------|:-----|
+| `ubuntu-base` | `ubuntu` | Essentials like `curl`, `wget`, `zip`, plus internal tools CI jobs can use |
+| `node` | `ubuntu-base` | Node.js, Yarn, and friends |
+| `node-browsers` | `node` | Chrome, Firefox, and Playwright |
+| `python` | `ubuntu-base` | `uv`, Poetry, `pip`, and friends |
+| `pre-commit` | `python` | `pre-commit`, commonly used global dev tools, and system-level installs of the ecosystems hooks rely on, so hooks don't install them on every run |
+
+### Images stack, layers are reused
+
+Each image only adds what is specific to it. Everything below comes from its parent, so the parent's layers exist once and are shared by every image built on top.
+
+```plantuml
+@startuml ci-image-stack
+skinparam defaultTextAlignment center
+
+rectangle "ubuntu-base\n<b>curl, wget, zip, internal CI tools</b>" as base
+rectangle "node\n<b>+ Node.js, Yarn</b>" as node
+rectangle "python\n<b>+ uv, Poetry, pip</b>" as python
+rectangle "node-browsers\n<b>+ Chrome, Firefox, Playwright</b>" as browsers
+rectangle "pre-commit\n<b>+ pre-commit, global dev tools,</b>\n<b>hook toolchains</b>" as precommit
+
+base <-- node
+base <-- python
+node <-- browsers
+python <-- precommit
+@enduml
+```
+
+A change to `ubuntu-base` ripples down both branches. A change to `python` only affects `python` and `pre-commit`, and `node` and `node-browsers` are left alone.
+
+```plantuml
+@startuml ci-image-layers
+skinparam defaultTextAlignment center
+
+rectangle "<b>node-browsers</b>\n|<#00000014>   Chrome, Firefox, Playwright   |\n|<#FFFFFF30>   Node.js, Yarn   |\n|<#00000014>   curl, wget, zip, internal tools   |\n|<#FFFFFF30>   ubuntu   |" as nb
+rectangle "<b>pre-commit</b>\n|<#00000014>   pre-commit, global tools, hook toolchains   |\n|<#FFFFFF30>   uv, Poetry, pip   |\n|<#00000014>   curl, wget, zip, internal tools   |\n|<#FFFFFF30>   ubuntu   |" as pc
+
+nb -[hidden]right- pc
+@enduml
+```
+
+The bottom two layers of both images, the Ubuntu base and the `ubuntu-base` tools, are identical. They are built once, cached once, and pulled once.
+
+### Without ContainerHive
+
+You build the machinery yourself:
+
+- A hand-written CI pipeline with a job per image, `needs:` wired up so `node-browsers` waits for `node`, and `node` waits for `ubuntu-base`.
+- Tagging and pushing logic so each child can find the exact parent it was built from.
+- A test setup for each image, and the glue to run it in the right place in the pipeline.
+- Updates to all of the above whenever you add, rename, or re-parent an image.
+
+```plantuml
+@startuml without-containerhive
+left to right direction
+skinparam defaultTextAlignment center
+
+rectangle "Dockerfiles" as df
+rectangle "Hand-written CI\n(stages, needs, rules)" as ci
+rectangle "Hand-written\ntagging & pushing" as tag
+rectangle "Hand-written\ntest wiring" as tests
+rectangle "Registry" as reg
+
+df --> ci
+ci --> tag
+ci --> tests
+tag --> reg
+@enduml
+```
+
+### With ContainerHive
+
+You drop flat image directories into your project. Each image references its parent with `FROM __hive__/<image>`. ContainerHive does the rest.
+
+```
+images/
+├── ubuntu-base/
+│   ├── image.yml
+│   ├── Dockerfile
+│   └── test.yml
+├── node/
+│   ├── image.yml
+│   └── Dockerfile          # FROM __hive__/ubuntu-base
+├── node-browsers/
+│   ├── image.yml
+│   ├── Dockerfile          # FROM __hive__/node
+│   └── test.yml
+├── python/
+│   ├── image.yml
+│   └── Dockerfile          # FROM __hive__/ubuntu-base
+└── pre-commit/
+    ├── image.yml
+    ├── Dockerfile          # FROM __hive__/python
+    └── test.yml
+```
+
+There is no hierarchy to model. The directories stay flat, and the stacking is just the `FROM` line in each Dockerfile. From that, ContainerHive:
+
+- **Resolves the dependency graph** and works out the build order.
+- **Generates the CI pipeline** with one stage per depth, so `node` and `python` build in parallel once `ubuntu-base` is done.
+- **Detects which images have tests** by looking for a `test.yml` next to the Dockerfile, and adds the test steps for exactly those images.
+- **Passes parent images to children** directly during the build, without a registry round trip.
+
+```plantuml
+@startuml with-containerhive
+skinparam defaultTextAlignment center
+
+rectangle "Flat image directories\n(Dockerfile + optional test.yml)" as src
+rectangle "<b>ch generate</b>" as ch
+rectangle "Generated CI pipeline" as pipeline #00000018 {
+  rectangle "Stage 1\nubuntu-base" as s1
+  rectangle "Stage 2\nnode, python" as s2
+  rectangle "Stage 3\nnode-browsers, pre-commit" as s3
+}
+rectangle "Test steps\n(only for images with test.yml)" as tests
+
+src --> ch
+ch --> pipeline
+s1 --> s2
+s2 --> s3
+ch --> tests
+@enduml
+```
+
+Adding a new image, say a `go` image on top of `ubuntu-base`, means adding a directory with a Dockerfile that starts with `FROM __hive__/ubuntu-base`. The pipeline, the ordering, and the test steps follow from that.
+
 ## What ContainerHive does instead
 
 ContainerHive gives every team the same declarative workflow:
