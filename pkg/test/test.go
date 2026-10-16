@@ -105,6 +105,12 @@ func runTestsForTag(ctx context.Context, opts *Opts, imageName, tagName string, 
 
 		if _, err := os.Stat(imageSource); err != nil {
 			if opts.Registry == nil {
+				if len(opts.Platforms) > 0 {
+					return tested, failed, fmt.Errorf(
+						"no image.tar found for explicitly selected platform %s for %s:%s: %w",
+						platformStr, imageName, tagName, err,
+					)
+				}
 				slog.Info("Skipping, no image.tar found", "image", imageName, "tag", tagName, "platform", platformStr)
 				continue
 			}

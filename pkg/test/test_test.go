@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 
 	"github.com/ContainerHive/ContainerHive/pkg/build"
@@ -204,6 +205,17 @@ func TestRunTestsForTag_MissingTarFile(t *testing.T) {
 	if failed != 0 {
 		t.Errorf("expected 0 failed, got %d", failed)
 	}
+
+	_, _, err = runTestsForTag(t.Context(), &Opts{
+		DistPath:  tempDir,
+		Platforms: []string{"linux/amd64"},
+	}, "app", "1.0", []string{"linux/amd64"})
+	if err == nil {
+		t.Fatal("expected an error when an explicitly selected platform has no image.tar and no registry")
+	}
+	if !strings.Contains(err.Error(), "explicitly selected platform linux/amd64") {
+		t.Errorf("expected error to identify the explicitly selected platform, got %v", err)
+	}
 }
 
 func TestRunProjectTests_WithVariants(t *testing.T) {
@@ -257,6 +269,49 @@ func TestRunProjectTests_WithVariants(t *testing.T) {
 			t.Errorf("expected 0 failed, got %d", failed)
 		}
 	})
+}
+
+func TestRunProjectTests_ExplicitPlatformMissingImageForBaseAndVariant(t *testing.T) {
+	project := &model.ContainerHiveProject{
+		ImagesByIdentifier: map[string]*model.Image{
+			"app": {
+				Identifier: "app",
+				Name:       "app",
+				Tags:       map[string]*model.Tag{"1.0": {Name: "1.0"}},
+				Variants: map[string]*model.ImageVariant{
+					"alpine": {Name: "alpine", TagSuffix: "-alpine"},
+				},
+				Platforms: []string{"linux/amd64"},
+			},
+		},
+		Config: model.HiveProjectConfig{Platforms: []string{"linux/amd64"}},
+	}
+
+	for _, tagName := range []string{"1.0", "1.0-alpine"} {
+		t.Run(tagName, func(t *testing.T) {
+			distPath := t.TempDir()
+			testsDir := filepath.Join(distPath, "app", tagName, "tests")
+			if err := os.MkdirAll(testsDir, 0755); err != nil {
+				t.Fatalf("failed to create tests directory: %v", err)
+			}
+			if err := os.WriteFile(filepath.Join(testsDir, "test.yaml"), []byte("test: true"), 0644); err != nil {
+				t.Fatalf("failed to write test definition: %v", err)
+			}
+
+			_, _, err := RunProjectTests(t.Context(), &Opts{
+				DistPath:  distPath,
+				Project:   project,
+				Filters:   []build.Filter{{ImageName: "app", TagName: tagName}},
+				Platforms: []string{"linux/arm64"},
+			})
+			if err == nil {
+				t.Fatalf("expected an error for explicitly selected platform with no image for %s", tagName)
+			}
+			if !strings.Contains(err.Error(), "explicitly selected platform linux/arm64") {
+				t.Errorf("expected error to identify the explicitly selected platform, got %v", err)
+			}
+		})
+	}
 }
 
 func TestRunProjectTests_MultipleImages(t *testing.T) {
