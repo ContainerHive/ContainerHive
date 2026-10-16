@@ -6,8 +6,8 @@ manifest-{{ .Image.Name }}:
     IMAGE_NAME: {{ .Image.Name }}
   needs:
     - generate
-    - test-{{ .Image.Name }}
 {{- range .Image.Platforms }}
+    - test-{{ $.Image.Name }}-{{ . }}
     - build-{{ $.Image.Name }}-{{ . }}
 {{- end }}
 {{- end }}

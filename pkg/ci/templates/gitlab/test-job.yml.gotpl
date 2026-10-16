@@ -1,21 +1,22 @@
 {{ define "test-job.yml.gotpl" }}
-test-{{ .Image.Name }}:
-  extends: .test
-  stage: test-{{ .Image.Name }}
+{{- range .Image.Platforms }}
+test-{{ $.Image.Name }}-{{ . }}:
+  extends: .test-{{ . }}
+  stage: test-{{ $.Image.Name }}
   variables:
-    IMAGE_NAME: {{ .Image.Name }}
-{{- if gt .Image.TestShards 1 }}
-  parallel: {{ .Image.TestShards }}
+    IMAGE_NAME: {{ $.Image.Name }}
+    PLATFORM: {{ . }}
+{{- if gt $.Image.TestShards 1 }}
+  parallel: {{ $.Image.TestShards }}
 {{- end }}
   needs:
     - generate
-{{- range .Image.Platforms }}
     - build-{{ $.Image.Name }}-{{ . }}
-{{- end }}
   artifacts:
     when: always
     paths:
-      - {{ .Ctx.Dist }}/**/*-cst-report.xml
+      - {{ $.Ctx.Dist }}/**/*-cst-report.xml
     reports:
-      junit: {{ .Ctx.Dist }}/**/*-cst-report.xml
+      junit: {{ $.Ctx.Dist }}/**/*-cst-report.xml
+{{- end }}
 {{- end }}

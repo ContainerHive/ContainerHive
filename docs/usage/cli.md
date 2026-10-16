@@ -57,6 +57,7 @@ ch test [image:tag patterns...]
 | Flag | Description |
 |:-----|:------------|
 | `--build` | Run build before tests |
+| `--platform` | Target platform(s) to test (e.g. `linux/amd64`), overrides `hive.yml`; also applies to `--build` |
 | `--max-shards` | Total number of shards to split work across — sourced from `CI_NODE_TOTAL` env (default: `1`) |
 | `--current-shard` | This shard's 1-based index — sourced from `CI_NODE_INDEX` env (default: `1`) |
 

@@ -103,7 +103,11 @@ before_script:
 {{- end }}
   script:
     - {{ .ChCmd }} wait --docker-socket
-    - {{ .ChCmd }} test ${IMAGE_NAME} --build-id "$SNAPSHOT_ID"
+    - {{ .ChCmd }} test ${IMAGE_NAME} --platform ${PLATFORM} --build-id "$SNAPSHOT_ID"
+{{ range .Platforms }}
+.test-{{ . }}:
+  extends: .test
+{{ end }}
 
 # === GENERATE ===
 generate:
