@@ -2865,9 +2865,14 @@ superseded pipeline. There is no clean way to restrict cancellation to the defau
 actual value is capped per image to the number of shard units (base + variant tags) that image has, so images with fewer
 tags than the configured value never spawn empty jobs that no-op. See <a href="sharding.html">Split work across shards</a> for the
 full picture; the template option is set the same way as <code>ci_lint</code> above:</p>
-<div class="language-yaml highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="nt">template_options</span><span class="p">:</span>
-</span><span id="__span-13-2"><a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a><span class="w">  </span><span class="nt">ci_build_shards</span><span class="p">:</span><span class="w"> </span><span class="s">"5"</span>
-</span><span id="__span-13-3"><a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a><span class="w">  </span><span class="nt">ci_test_shards</span><span class="p">:</span><span class="w"> </span><span class="s">"5"</span>
+<p>Generated test jobs are split by platform and run on matching architecture runners. In GitLab, each job extends a shared
+<code>.test-amd64</code> or <code>.test-arm64</code> base, which can be extended in your root <code>.gitlab-ci.yml</code> to add runner tags:</p>
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="nt">.test-arm64</span><span class="p">:</span>
+</span><span id="__span-13-2"><a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a><span class="w">  </span><span class="nt">tags</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">my-arm64-runner</span><span class="p p-Indicator">]</span>
+</span></code></pre></div>
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="nt">template_options</span><span class="p">:</span>
+</span><span id="__span-14-2"><a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a><span class="w">  </span><span class="nt">ci_build_shards</span><span class="p">:</span><span class="w"> </span><span class="s">"5"</span>
+</span><span id="__span-14-3"><a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a><span class="w">  </span><span class="nt">ci_test_shards</span><span class="p">:</span><span class="w"> </span><span class="s">"5"</span>
 </span></code></pre></div>
 <h2 id="registry-retention">Registry retention</h2>
 <p>Every generated pipeline pushes per-platform intermediate images and, when using <code>--build-id</code>, snapshot manifests and

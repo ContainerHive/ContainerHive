@@ -1970,6 +1970,7 @@
 
 <h1 id="split-work-across-shards">Split work across shards</h1>
 <p><code>ch build</code>, <code>ch sbom</code> and <code>ch test</code> can split the images and tags they process across a fixed number of CI jobs, so a large project can build, generate SBOMs, and test in parallel instead of one long serial job.</p>
+<p>Generated CI also creates a separate test job for each configured platform. <code>ci_test_shards</code> applies to each platform job, so test parallelism scales with both the number of platforms and the configured shard count. Each job tests only its platform; GitHub Actions uses a matching native runner, while GitLab jobs extend <code>.test-&lt;arch&gt;</code> bases that can be assigned architecture-specific runner tags.</p>
 <p>The main motivation is GitLab.com's SaaS limits on SBOM report artifacts: <strong>10 MB per file, 20 MB per job</strong>. A single build job today uploads the CycloneDX SBOM of every tag and variant of an image, so an image with many tags or variants can push the job over that budget — and the job is also slower because all of that work runs serially. Splitting one job into several <code>parallel:</code> instances, each owning a disjoint slice of the tags, keeps every job under the artifact ceiling and cuts wall-clock time on variant-heavy images.</p>
 <h2 id="shard-unit">Shard unit</h2>
 <p>Every base tag and every variant tag is its own shard unit, addressed by the image and the exact tag name. This is deliberately fine-grained: an image with 20 variants of one base tag needs to split at the variant level, not the base-tag level, or a single job would still hold all 20 SBOMs.</p>
@@ -2010,7 +2011,7 @@
 </tr>
 <tr>
 <td style="text-align: left;"><code>ci_test_shards</code></td>
-<td style="text-align: left;">Upper bound on parallel instances for each test job (default: <code>1</code>). Capped per image to the number of shard units the image actually has.</td>
+<td style="text-align: left;">Upper bound on parallel instances for each platform-specific test job (default: <code>1</code>). Capped per image to the number of shard units the image actually has.</td>
 </tr>
 </tbody>
 </table>
