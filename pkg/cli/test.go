@@ -21,6 +21,10 @@ func testCmd() *cli.Command {
 				Name:  "build",
 				Usage: "Run build before tests",
 			},
+			&cli.StringSliceFlag{
+				Name:  "platform",
+				Usage: "Target platform(s) to test (e.g. linux/amd64), overrides hive.yml",
+			},
 		),
 		Action: func(ctx context.Context, cmd *cli.Command) error {
 			filters := utils.ParseFilters(cmd.Args().Slice())
@@ -44,7 +48,7 @@ func testCmd() *cli.Command {
 			}
 
 			if cmd.Bool("build") {
-				if err := buildProject(ctx, project, distPath, filters, cmd.String("build-id"), nil, false, s); err != nil {
+				if err := buildProject(ctx, project, distPath, filters, cmd.String("build-id"), cmd.StringSlice("platform"), false, s); err != nil {
 					return err
 				}
 			}
@@ -54,11 +58,12 @@ func testCmd() *cli.Command {
 			}
 
 			opts := &test.Opts{
-				DistPath: distPath,
-				Project:  project,
-				Filters:  filters,
-				BuildID:  cmd.String("build-id"),
-				Shard:    s,
+				DistPath:  distPath,
+				Project:   project,
+				Filters:   filters,
+				BuildID:   cmd.String("build-id"),
+				Shard:     s,
+				Platforms: cmd.StringSlice("platform"),
 			}
 
 			if os.Getenv("CI") != "" {

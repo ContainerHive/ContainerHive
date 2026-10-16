@@ -25,12 +25,13 @@ type Registry interface {
 
 // Opts holds configuration for running project tests.
 type Opts struct {
-	DistPath string
-	Project  *model.ContainerHiveProject
-	Filters  []build.Filter
-	Registry Registry // if set, use registry refs when no local tar exists
-	BuildID  string
-	Shard    shard.Shard
+	DistPath  string
+	Project   *model.ContainerHiveProject
+	Filters   []build.Filter
+	Registry  Registry // if set, use registry refs when no local tar exists
+	BuildID   string
+	Shard     shard.Shard
+	Platforms []string // when set, overrides configured project/image platforms
 }
 
 // RunProjectTests executes container structure tests for all images in a project
@@ -55,7 +56,7 @@ func RunProjectTests(ctx context.Context, opts *Opts) (tested, failed int, err e
 		for tagName := range img.Tags {
 			if utils.MatchesFilter(opts.Filters, img.Name, tagName) && owns(img.Identifier, tagName) {
 				t, f, err := runTestsForTag(ctx, opts, img.Name, tagName,
-					platform.Resolve(nil, opts.Project.Config.Platforms, img.Platforms, nil))
+					platform.Resolve(opts.Platforms, opts.Project.Config.Platforms, img.Platforms, nil))
 				if err != nil {
 					return tested, failed, err
 				}
@@ -72,7 +73,7 @@ func RunProjectTests(ctx context.Context, opts *Opts) (tested, failed int, err e
 					continue
 				}
 				t, f, err := runTestsForTag(ctx, opts, img.Name, variantTag,
-					platform.Resolve(nil, opts.Project.Config.Platforms, img.Platforms, variantDef.Platforms))
+					platform.Resolve(opts.Platforms, opts.Project.Config.Platforms, img.Platforms, variantDef.Platforms))
 				if err != nil {
 					return tested, failed, err
 				}
@@ -104,6 +105,12 @@ func runTestsForTag(ctx context.Context, opts *Opts, imageName, tagName string, 
 
 		if _, err := os.Stat(imageSource); err != nil {
 			if opts.Registry == nil {
+				if len(opts.Platforms) > 0 {
+					return tested, failed, fmt.Errorf(
+						"no image.tar found for explicitly selected platform %s for %s:%s: %w",
+						platformStr, imageName, tagName, err,
+					)
+				}
 				slog.Info("Skipping, no image.tar found", "image", imageName, "tag", tagName, "platform", platformStr)
 				continue
 			}

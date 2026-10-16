@@ -2,6 +2,8 @@
 
 `ch build`, `ch sbom` and `ch test` can split the images and tags they process across a fixed number of CI jobs, so a large project can build, generate SBOMs, and test in parallel instead of one long serial job.
 
+Generated CI also creates a separate test job for each configured platform. `ci_test_shards` applies to each platform job, so test parallelism scales with both the number of platforms and the configured shard count. Each job tests only its platform; GitHub Actions uses a matching native runner, while GitLab jobs extend `.test-<arch>` bases that can be assigned architecture-specific runner tags.
+
 The main motivation is GitLab.com's SaaS limits on SBOM report artifacts: **10 MB per file, 20 MB per job**. A single build job today uploads the CycloneDX SBOM of every tag and variant of an image, so an image with many tags or variants can push the job over that budget — and the job is also slower because all of that work runs serially. Splitting one job into several `parallel:` instances, each owning a disjoint slice of the tags, keeps every job under the artifact ceiling and cuts wall-clock time on variant-heavy images.
 
 ## Shard unit
@@ -26,7 +28,7 @@ The generated GitLab pipeline exposes two [template options](ci-integration.md) 
 | Option | Description |
 |:-------|:------------|
 | `ci_build_shards` | Upper bound on parallel instances for each build job (default: `1`). Capped per image to the number of shard units the image actually has. |
-| `ci_test_shards` | Upper bound on parallel instances for each test job (default: `1`). Capped per image to the number of shard units the image actually has. |
+| `ci_test_shards` | Upper bound on parallel instances for each platform-specific test job (default: `1`). Capped per image to the number of shard units the image actually has. |
 
 ```yaml
 # hive.yml

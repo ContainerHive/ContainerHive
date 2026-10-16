@@ -296,6 +296,14 @@ actual value is capped per image to the number of shard units (base + variant ta
 tags than the configured value never spawn empty jobs that no-op. See [Split work across shards](sharding.md) for the
 full picture; the template option is set the same way as `ci_lint` above:
 
+Generated test jobs are split by platform and run on matching architecture runners. In GitLab, each job extends a shared
+`.test-amd64` or `.test-arm64` base, which can be extended in your root `.gitlab-ci.yml` to add runner tags:
+
+```yaml
+.test-arm64:
+  tags: [my-arm64-runner]
+```
+
 ```yaml
 template_options:
   ci_build_shards: "5"
