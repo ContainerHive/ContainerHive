@@ -1,3 +1,9 @@
+## [1.13.0](https://github.com/ContainerHive/ContainerHive/compare/v1.12.8...v1.13.0) (2026-10-16)
+
+### Features
+
+* split generated tests by architecture ([#307](https://github.com/ContainerHive/ContainerHive/issues/307)) ([d8a9897](https://github.com/ContainerHive/ContainerHive/commit/d8a98975b4e60f4d484232deb67999b085e41173))
+
 ## [1.12.8](https://github.com/ContainerHive/ContainerHive/compare/v1.12.7...v1.12.8) (2026-10-16)
 
 ### Bug Fixes
