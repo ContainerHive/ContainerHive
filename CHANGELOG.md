@@ -1,3 +1,9 @@
+## [1.12.8](https://github.com/ContainerHive/ContainerHive/compare/v1.12.7...v1.12.8) (2026-10-16)
+
+### Bug Fixes
+
+* **deps:** update module github.com/docker/go-connections to v0.8.2 ([#304](https://github.com/ContainerHive/ContainerHive/issues/304)) ([3125aa9](https://github.com/ContainerHive/ContainerHive/commit/3125aa98996fe420d4694c1055cd1a143c4ead9a))
+
 ## [1.12.7](https://github.com/ContainerHive/ContainerHive/compare/v1.12.6...v1.12.7) (2026-10-16)
 
 ### Bug Fixes
