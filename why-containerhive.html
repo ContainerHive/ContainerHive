@@ -564,6 +564,56 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#example-a-hierarchy-of-ci-images" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example: a hierarchy of CI images
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Example: a hierarchy of CI images">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#images-stack-layers-are-reused" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Images stack, layers are reused
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#without-containerhive" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Without ContainerHive
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#with-containerhive" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        With ContainerHive
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#what-containerhive-does-instead" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1819,6 +1869,56 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#example-a-hierarchy-of-ci-images" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example: a hierarchy of CI images
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Example: a hierarchy of CI images">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#images-stack-layers-are-reused" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Images stack, layers are reused
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#without-containerhive" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Without ContainerHive
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#with-containerhive" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        With ContainerHive
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#what-containerhive-does-instead" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1891,6 +1991,90 @@
 <li><strong>Compliance gaps</strong>: SBOM generation and reproducibility are either applied inconsistently or not at all.</li>
 </ul>
 <p>The cost isn't just engineering time — it's organizational friction. Onboarding is slower, audits are harder, and every team carries maintenance burden for infrastructure that isn't their core product.</p>
+<h2 id="example-a-hierarchy-of-ci-images">Example: a hierarchy of CI images</h2>
+<p>Take a typical set of CI images. Every job in your pipelines runs in one of them, and they build on each other:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Image</th>
+<th style="text-align: left;">Based on</th>
+<th style="text-align: left;">Adds</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>ubuntu-base</code></td>
+<td style="text-align: left;"><code>ubuntu</code></td>
+<td style="text-align: left;">Essentials like <code>curl</code>, <code>wget</code>, <code>zip</code>, plus internal tools CI jobs can use</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>node</code></td>
+<td style="text-align: left;"><code>ubuntu-base</code></td>
+<td style="text-align: left;">Node.js, Yarn, and friends</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>node-browsers</code></td>
+<td style="text-align: left;"><code>node</code></td>
+<td style="text-align: left;">Chrome, Firefox, and Playwright</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>python</code></td>
+<td style="text-align: left;"><code>ubuntu-base</code></td>
+<td style="text-align: left;"><code>uv</code>, Poetry, <code>pip</code>, and friends</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>pre-commit</code></td>
+<td style="text-align: left;"><code>python</code></td>
+<td style="text-align: left;"><code>pre-commit</code>, commonly used global dev tools, and system-level installs of the ecosystems hooks rely on, so hooks don't install them on every run</td>
+</tr>
+</tbody>
+</table>
+<h3 id="images-stack-layers-are-reused">Images stack, layers are reused</h3>
+<p>Each image only adds what is specific to it. Everything below comes from its parent, so the parent's layers exist once and are shared by every image built on top.</p>
+<p><img alt="Kroki" src="kroki-generated-f5c1d665-7fcc-38ae-98f7-f9a804beb169.svg#only-light" /><img alt="Kroki" src="kroki-generated-c27d700b-d904-3820-8935-b81e20c12f92.svg#only-dark" /></p>
+<p>A change to <code>ubuntu-base</code> ripples down both branches. A change to <code>python</code> only affects <code>python</code> and <code>pre-commit</code>, and <code>node</code> and <code>node-browsers</code> are left alone.</p>
+<p><img alt="Kroki" src="kroki-generated-57bacfa0-276c-3c28-bf86-c1303031a300.svg#only-light" /><img alt="Kroki" src="kroki-generated-41ef9436-c25f-3929-bf46-9e21f0f626ec.svg#only-dark" /></p>
+<p>The bottom two layers of both images, the Ubuntu base and the <code>ubuntu-base</code> tools, are identical. They are built once, cached once, and pulled once.</p>
+<h3 id="without-containerhive">Without ContainerHive</h3>
+<p>You build the machinery yourself:</p>
+<ul>
+<li>A hand-written CI pipeline with a job per image, <code>needs:</code> wired up so <code>node-browsers</code> waits for <code>node</code>, and <code>node</code> waits for <code>ubuntu-base</code>.</li>
+<li>Tagging and pushing logic so each child can find the exact parent it was built from.</li>
+<li>A test setup for each image, and the glue to run it in the right place in the pipeline.</li>
+<li>Updates to all of the above whenever you add, rename, or re-parent an image.</li>
+</ul>
+<p><img alt="Kroki" src="kroki-generated-c08ece68-a586-36a9-97aa-542377c84ed3.svg#only-light" /><img alt="Kroki" src="kroki-generated-49dbf12c-a354-3733-9994-2d9cda3f4950.svg#only-dark" /></p>
+<h3 id="with-containerhive">With ContainerHive</h3>
+<p>You drop flat image directories into your project. Each image references its parent with <code>FROM __hive__/&lt;image&gt;</code>. ContainerHive does the rest.</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>images/
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>├── ubuntu-base/
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>│   ├── image.yml
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>│   ├── Dockerfile
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>│   └── test.yml
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>├── node/
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>│   ├── image.yml
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>│   └── Dockerfile          # FROM __hive__/ubuntu-base
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>├── node-browsers/
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>│   ├── image.yml
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>│   ├── Dockerfile          # FROM __hive__/node
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>│   └── test.yml
+</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>├── python/
+</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>│   ├── image.yml
+</span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a>│   └── Dockerfile          # FROM __hive__/ubuntu-base
+</span><span id="__span-0-16"><a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a>└── pre-commit/
+</span><span id="__span-0-17"><a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a>    ├── image.yml
+</span><span id="__span-0-18"><a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a>    ├── Dockerfile          # FROM __hive__/python
+</span><span id="__span-0-19"><a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a>    └── test.yml
+</span></code></pre></div>
+<p>There is no hierarchy to model. The directories stay flat, and the stacking is just the <code>FROM</code> line in each Dockerfile. From that, ContainerHive:</p>
+<ul>
+<li><strong>Resolves the dependency graph</strong> and works out the build order.</li>
+<li><strong>Generates the CI pipeline</strong> with one stage per depth, so <code>node</code> and <code>python</code> build in parallel once <code>ubuntu-base</code> is done.</li>
+<li><strong>Detects which images have tests</strong> by looking for a <code>test.yml</code> next to the Dockerfile, and adds the test steps for exactly those images.</li>
+<li><strong>Passes parent images to children</strong> directly during the build, without a registry round trip.</li>
+</ul>
+<p><img alt="Kroki" src="kroki-generated-975ddb4c-3e3f-36ad-a3fb-8e31072a4869.svg#only-light" /><img alt="Kroki" src="kroki-generated-19378c75-5114-3056-bed6-6af86eaab6c2.svg#only-dark" /></p>
+<p>Adding a new image, say a <code>go</code> image on top of <code>ubuntu-base</code>, means adding a directory with a Dockerfile that starts with <code>FROM __hive__/ubuntu-base</code>. The pipeline, the ordering, and the test steps follow from that.</p>
 <h2 id="what-containerhive-does-instead">What ContainerHive does instead</h2>
 <p>ContainerHive gives every team the same declarative workflow:</p>
 <ul>
