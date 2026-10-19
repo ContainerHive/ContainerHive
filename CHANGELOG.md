@@ -1,3 +1,9 @@
+## [1.13.2](https://github.com/ContainerHive/ContainerHive/compare/v1.13.1...v1.13.2) (2026-10-19)
+
+### Bug Fixes
+
+* **deps:** update github.com/tonistiigi/fsutil digest to c1c5bff ([#308](https://github.com/ContainerHive/ContainerHive/issues/308)) ([75bd387](https://github.com/ContainerHive/ContainerHive/commit/75bd387e4aacc063df2bf73e4c4a5c4eed1b6bd9))
+
 ## [1.13.1](https://github.com/ContainerHive/ContainerHive/compare/v1.13.0...v1.13.1) (2026-10-19)
 
 ### Bug Fixes
