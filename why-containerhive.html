@@ -2031,9 +2031,117 @@
 </table>
 <h3 id="images-stack-layers-are-reused">Images stack, layers are reused</h3>
 <p>Each image only adds what is specific to it. Everything below comes from its parent, so the parent's layers exist once and are shared by every image built on top.</p>
-<p><img alt="Kroki" src="kroki-generated-f5c1d665-7fcc-38ae-98f7-f9a804beb169.svg#only-light" /><img alt="Kroki" src="kroki-generated-c27d700b-d904-3820-8935-b81e20c12f92.svg#only-dark" /></p>
+<details open=""><summary>Request error [url:https://kroki.io/plantuml/svg]: </summary><p></p><pre><code linenums="1">@startuml ci-image-stack
+skinparam RectangleBackgroundColor #B3D9FF
+skinparam ComponentBackgroundColor #B3D9FF
+skinparam ClassBackgroundColor #B3D9FF
+skinparam ObjectBackgroundColor #B3D9FF
+skinparam ActivityBackgroundColor #B3D9FF
+skinparam StateBackgroundColor #B3D9FF
+skinparam UsecaseBackgroundColor #B3D9FF
+skinparam SequenceBackgroundColor #B3D9FF
+skinparam ParticipantBackgroundColor #B3D9FF
+skinparam EntityBackgroundColor #B3D9FF
+skinparam DatabaseBackgroundColor #B3D9FF
+skinparam CollectionsBackgroundColor #B3D9FF
+skinparam QueueBackgroundColor #B3D9FF
+skinparam NodeBackgroundColor #B3D9FF
+skinparam CardBackgroundColor #B3D9FF
+skinparam PackageBackgroundColor #B3D9FF
+skinparam RectangleBorderColor #303f9f
+skinparam ComponentBorderColor #303f9f
+skinparam ClassBorderColor #303f9f
+skinparam ObjectBorderColor #303f9f
+skinparam ActivityBorderColor #303f9f
+skinparam StateBorderColor #303f9f
+skinparam UsecaseBorderColor #303f9f
+skinparam SequenceBorderColor #303f9f
+skinparam ParticipantBorderColor #303f9f
+skinparam EntityBorderColor #303f9f
+skinparam DatabaseBorderColor #303f9f
+skinparam CollectionsBorderColor #303f9f
+skinparam QueueBorderColor #303f9f
+skinparam NodeBorderColor #303f9f
+skinparam CardBorderColor #303f9f
+skinparam PackageBorderColor #303f9f
+skinparam defaultFontColor #333333
+skinparam defaultFontName Arial
+skinparam defaultFontSize 14
+skinparam ArrowColor #1a237e
+skinparam LifeLineBorderColor #1a237e
+skinparam NoteBackgroundColor #fff9c4
+skinparam NoteBorderColor #f57f17
+skinparam NoteFontColor #000000
+skinparam BackgroundColor transparent
+skinparam LifeLineBackgroundColor transparent
+skinparam defaultTextAlignment center
+
+rectangle "ubuntu-base\n<b>curl, wget, zip, internal CI tools</b>" as base
+rectangle "node\n<b>+ Node.js, Yarn</b>" as node
+rectangle "python\n<b>+ uv, Poetry, pip</b>" as python
+rectangle "node-browsers\n<b>+ Chrome, Firefox, Playwright</b>" as browsers
+rectangle "pre-commit\n<b>+ pre-commit, global dev tools,</b>\n<b>hook toolchains</b>" as precommit
+
+base <-- node
+base <-- python
+node <-- browsers
+python <-- precommit
+@enduml
+</code></pre></details>
+
 <p>A change to <code>ubuntu-base</code> ripples down both branches. A change to <code>python</code> only affects <code>python</code> and <code>pre-commit</code>, and <code>node</code> and <code>node-browsers</code> are left alone.</p>
-<p><img alt="Kroki" src="kroki-generated-57bacfa0-276c-3c28-bf86-c1303031a300.svg#only-light" /><img alt="Kroki" src="kroki-generated-41ef9436-c25f-3929-bf46-9e21f0f626ec.svg#only-dark" /></p>
+<details open=""><summary>Request error [url:https://kroki.io/plantuml/svg]: </summary><p></p><pre><code linenums="1">@startuml ci-image-layers
+skinparam RectangleBackgroundColor #B3D9FF
+skinparam ComponentBackgroundColor #B3D9FF
+skinparam ClassBackgroundColor #B3D9FF
+skinparam ObjectBackgroundColor #B3D9FF
+skinparam ActivityBackgroundColor #B3D9FF
+skinparam StateBackgroundColor #B3D9FF
+skinparam UsecaseBackgroundColor #B3D9FF
+skinparam SequenceBackgroundColor #B3D9FF
+skinparam ParticipantBackgroundColor #B3D9FF
+skinparam EntityBackgroundColor #B3D9FF
+skinparam DatabaseBackgroundColor #B3D9FF
+skinparam CollectionsBackgroundColor #B3D9FF
+skinparam QueueBackgroundColor #B3D9FF
+skinparam NodeBackgroundColor #B3D9FF
+skinparam CardBackgroundColor #B3D9FF
+skinparam PackageBackgroundColor #B3D9FF
+skinparam RectangleBorderColor #303f9f
+skinparam ComponentBorderColor #303f9f
+skinparam ClassBorderColor #303f9f
+skinparam ObjectBorderColor #303f9f
+skinparam ActivityBorderColor #303f9f
+skinparam StateBorderColor #303f9f
+skinparam UsecaseBorderColor #303f9f
+skinparam SequenceBorderColor #303f9f
+skinparam ParticipantBorderColor #303f9f
+skinparam EntityBorderColor #303f9f
+skinparam DatabaseBorderColor #303f9f
+skinparam CollectionsBorderColor #303f9f
+skinparam QueueBorderColor #303f9f
+skinparam NodeBorderColor #303f9f
+skinparam CardBorderColor #303f9f
+skinparam PackageBorderColor #303f9f
+skinparam defaultFontColor #333333
+skinparam defaultFontName Arial
+skinparam defaultFontSize 14
+skinparam ArrowColor #1a237e
+skinparam LifeLineBorderColor #1a237e
+skinparam NoteBackgroundColor #fff9c4
+skinparam NoteBorderColor #f57f17
+skinparam NoteFontColor #000000
+skinparam BackgroundColor transparent
+skinparam LifeLineBackgroundColor transparent
+skinparam defaultTextAlignment center
+
+rectangle "<b>node-browsers</b>\n|<#00000014>   Chrome, Firefox, Playwright   |\n|<#FFFFFF30>   Node.js, Yarn   |\n|<#00000014>   curl, wget, zip, internal tools   |\n|<#FFFFFF30>   ubuntu   |" as nb
+rectangle "<b>pre-commit</b>\n|<#00000014>   pre-commit, global tools, hook toolchains   |\n|<#FFFFFF30>   uv, Poetry, pip   |\n|<#00000014>   curl, wget, zip, internal tools   |\n|<#FFFFFF30>   ubuntu   |" as pc
+
+nb -[hidden]right- pc
+@enduml
+</code></pre></details>
+
 <p>The bottom two layers of both images, the Ubuntu base and the <code>ubuntu-base</code> tools, are identical. They are built once, cached once, and pulled once.</p>
 <h3 id="without-containerhive">Without ContainerHive</h3>
 <p>You build the machinery yourself:</p>
@@ -2043,7 +2151,65 @@
 <li>A test setup for each image, and the glue to run it in the right place in the pipeline.</li>
 <li>Updates to all of the above whenever you add, rename, or re-parent an image.</li>
 </ul>
-<p><img alt="Kroki" src="kroki-generated-c08ece68-a586-36a9-97aa-542377c84ed3.svg#only-light" /><img alt="Kroki" src="kroki-generated-49dbf12c-a354-3733-9994-2d9cda3f4950.svg#only-dark" /></p>
+<details open=""><summary>Request error [url:https://kroki.io/plantuml/svg]: </summary><p></p><pre><code linenums="1">@startuml without-containerhive
+skinparam RectangleBackgroundColor #B3D9FF
+skinparam ComponentBackgroundColor #B3D9FF
+skinparam ClassBackgroundColor #B3D9FF
+skinparam ObjectBackgroundColor #B3D9FF
+skinparam ActivityBackgroundColor #B3D9FF
+skinparam StateBackgroundColor #B3D9FF
+skinparam UsecaseBackgroundColor #B3D9FF
+skinparam SequenceBackgroundColor #B3D9FF
+skinparam ParticipantBackgroundColor #B3D9FF
+skinparam EntityBackgroundColor #B3D9FF
+skinparam DatabaseBackgroundColor #B3D9FF
+skinparam CollectionsBackgroundColor #B3D9FF
+skinparam QueueBackgroundColor #B3D9FF
+skinparam NodeBackgroundColor #B3D9FF
+skinparam CardBackgroundColor #B3D9FF
+skinparam PackageBackgroundColor #B3D9FF
+skinparam RectangleBorderColor #303f9f
+skinparam ComponentBorderColor #303f9f
+skinparam ClassBorderColor #303f9f
+skinparam ObjectBorderColor #303f9f
+skinparam ActivityBorderColor #303f9f
+skinparam StateBorderColor #303f9f
+skinparam UsecaseBorderColor #303f9f
+skinparam SequenceBorderColor #303f9f
+skinparam ParticipantBorderColor #303f9f
+skinparam EntityBorderColor #303f9f
+skinparam DatabaseBorderColor #303f9f
+skinparam CollectionsBorderColor #303f9f
+skinparam QueueBorderColor #303f9f
+skinparam NodeBorderColor #303f9f
+skinparam CardBorderColor #303f9f
+skinparam PackageBorderColor #303f9f
+skinparam defaultFontColor #333333
+skinparam defaultFontName Arial
+skinparam defaultFontSize 14
+skinparam ArrowColor #1a237e
+skinparam LifeLineBorderColor #1a237e
+skinparam NoteBackgroundColor #fff9c4
+skinparam NoteBorderColor #f57f17
+skinparam NoteFontColor #000000
+skinparam BackgroundColor transparent
+skinparam LifeLineBackgroundColor transparent
+left to right direction
+skinparam defaultTextAlignment center
+
+rectangle "Dockerfiles" as df
+rectangle "Hand-written CI\n(stages, needs, rules)" as ci
+rectangle "Hand-written\ntagging & pushing" as tag
+rectangle "Hand-written\ntest wiring" as tests
+rectangle "Registry" as reg
+
+df --> ci
+ci --> tag
+ci --> tests
+tag --> reg
+@enduml
+</code></pre></details>
+
 <h3 id="with-containerhive">With ContainerHive</h3>
 <p>You drop flat image directories into your project. Each image references its parent with <code>FROM __hive__/&lt;image&gt;</code>. ContainerHive does the rest.</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>images/
@@ -2073,7 +2239,68 @@
 <li><strong>Detects which images have tests</strong> by looking for a <code>test.yml</code> next to the Dockerfile, and adds the test steps for exactly those images.</li>
 <li><strong>Passes parent images to children</strong> directly during the build, without a registry round trip.</li>
 </ul>
-<p><img alt="Kroki" src="kroki-generated-975ddb4c-3e3f-36ad-a3fb-8e31072a4869.svg#only-light" /><img alt="Kroki" src="kroki-generated-19378c75-5114-3056-bed6-6af86eaab6c2.svg#only-dark" /></p>
+<details open=""><summary>Request error [url:https://kroki.io/plantuml/svg]: </summary><p></p><pre><code linenums="1">@startuml with-containerhive
+skinparam RectangleBackgroundColor #B3D9FF
+skinparam ComponentBackgroundColor #B3D9FF
+skinparam ClassBackgroundColor #B3D9FF
+skinparam ObjectBackgroundColor #B3D9FF
+skinparam ActivityBackgroundColor #B3D9FF
+skinparam StateBackgroundColor #B3D9FF
+skinparam UsecaseBackgroundColor #B3D9FF
+skinparam SequenceBackgroundColor #B3D9FF
+skinparam ParticipantBackgroundColor #B3D9FF
+skinparam EntityBackgroundColor #B3D9FF
+skinparam DatabaseBackgroundColor #B3D9FF
+skinparam CollectionsBackgroundColor #B3D9FF
+skinparam QueueBackgroundColor #B3D9FF
+skinparam NodeBackgroundColor #B3D9FF
+skinparam CardBackgroundColor #B3D9FF
+skinparam PackageBackgroundColor #B3D9FF
+skinparam RectangleBorderColor #303f9f
+skinparam ComponentBorderColor #303f9f
+skinparam ClassBorderColor #303f9f
+skinparam ObjectBorderColor #303f9f
+skinparam ActivityBorderColor #303f9f
+skinparam StateBorderColor #303f9f
+skinparam UsecaseBorderColor #303f9f
+skinparam SequenceBorderColor #303f9f
+skinparam ParticipantBorderColor #303f9f
+skinparam EntityBorderColor #303f9f
+skinparam DatabaseBorderColor #303f9f
+skinparam CollectionsBorderColor #303f9f
+skinparam QueueBorderColor #303f9f
+skinparam NodeBorderColor #303f9f
+skinparam CardBorderColor #303f9f
+skinparam PackageBorderColor #303f9f
+skinparam defaultFontColor #333333
+skinparam defaultFontName Arial
+skinparam defaultFontSize 14
+skinparam ArrowColor #1a237e
+skinparam LifeLineBorderColor #1a237e
+skinparam NoteBackgroundColor #fff9c4
+skinparam NoteBorderColor #f57f17
+skinparam NoteFontColor #000000
+skinparam BackgroundColor transparent
+skinparam LifeLineBackgroundColor transparent
+skinparam defaultTextAlignment center
+
+rectangle "Flat image directories\n(Dockerfile + optional test.yml)" as src
+rectangle "<b>ch generate</b>" as ch
+rectangle "Generated CI pipeline" as pipeline #00000018 {
+  rectangle "Stage 1\nubuntu-base" as s1
+  rectangle "Stage 2\nnode, python" as s2
+  rectangle "Stage 3\nnode-browsers, pre-commit" as s3
+}
+rectangle "Test steps\n(only for images with test.yml)" as tests
+
+src --> ch
+ch --> pipeline
+s1 --> s2
+s2 --> s3
+ch --> tests
+@enduml
+</code></pre></details>
+
 <p>Adding a new image, say a <code>go</code> image on top of <code>ubuntu-base</code>, means adding a directory with a Dockerfile that starts with <code>FROM __hive__/ubuntu-base</code>. The pipeline, the ordering, and the test steps follow from that.</p>
 <h2 id="what-containerhive-does-instead">What ContainerHive does instead</h2>
 <p>ContainerHive gives every team the same declarative workflow:</p>
