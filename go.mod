@@ -31,7 +31,7 @@ require (
 	github.com/sirupsen/logrus v1.10.2
 	github.com/testcontainers/testcontainers-go v0.42.0
 	github.com/timo-reymann/go-hadolint v0.1.0
-	github.com/tonistiigi/fsutil v0.0.0-20260819142231-83cac42c1c52
+	github.com/tonistiigi/fsutil v0.0.0-20261009124904-c1c5bffae3b5
 	github.com/urfave/cli/v3 v3.14.0
 	golang.org/x/sync v0.23.0
 	golang.org/x/term v0.46.0
