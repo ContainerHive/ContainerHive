@@ -6,6 +6,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"slices"
 	"strings"
 	"testing"
 
@@ -190,6 +191,62 @@ func TestParentOverlayScript(t *testing.T) {
 	}
 }
 
+func TestNixBuildContext_imageConfigParentInheritance(t *testing.T) {
+	parentConfig := &ocispecs.ImageConfig{
+		Env:        []string{"A=old", "C=keep"},
+		Entrypoint: []string{"/parent-entrypoint"},
+		Cmd:        []string{"--parent-cmd"},
+		User:       "1000:1000",
+		WorkingDir: "/parent-workdir",
+	}
+
+	// Explicit fields win; unset fields inherit; env merges per key.
+	nc := NixBuildContext{Env: map[string]string{"A": "new", "B": "1"}}
+	data, err := nc.imageConfig(ocispecs.Platform{OS: "linux", Architecture: "amd64"}, nil, parentConfig)
+	if err != nil {
+		t.Fatalf("imageConfig failed: %v", err)
+	}
+	var got ocispecs.Image
+	if err := json.Unmarshal(data, &got); err != nil {
+		t.Fatalf("imageConfig produce invalid JSON: %v", err)
+	}
+	if want := []string{"A=new", "B=1", "C=keep"}; !slices.Equal(got.Config.Env, want) {
+		t.Errorf("Env = %v, want %v (parent env overridden per key)", got.Config.Env, want)
+	}
+	if !slices.Equal(got.Config.Entrypoint, []string{"/parent-entrypoint"}) {
+		t.Errorf("Entrypoint = %v, want the parent entrypoint", got.Config.Entrypoint)
+	}
+	if !slices.Equal(got.Config.Cmd, []string{"--parent-cmd"}) {
+		t.Errorf("Cmd = %v, want the parent cmd", got.Config.Cmd)
+	}
+	if got.Config.User != "1000:1000" || got.Config.WorkingDir != "/parent-workdir" {
+		t.Errorf("User/WorkingDir = %q/%q, want the parent values", got.Config.User, got.Config.WorkingDir)
+	}
+
+	// Explicit fields beat the parent.
+	explicit := NixBuildContext{
+		Entrypoint: []string{"/own"},
+		Cmd:        []string{"--own"},
+		User:       "0",
+		WorkingDir: "/own",
+	}
+	data, err = explicit.imageConfig(ocispecs.Platform{OS: "linux", Architecture: "amd64"}, nil, parentConfig)
+	if err != nil {
+		t.Fatalf("imageConfig failed: %v", err)
+	}
+	var gotExplicit ocispecs.Image
+	if err := json.Unmarshal(data, &gotExplicit); err != nil {
+		t.Fatalf("imageConfig produce invalid JSON: %v", err)
+	}
+	got = gotExplicit
+	if !slices.Equal(got.Config.Cmd, []string{"--own"}) {
+		t.Errorf("Cmd = %v, want the explicit cmd", got.Config.Cmd)
+	}
+	if got.Config.User != "0" || got.Config.WorkingDir != "/own" || !slices.Equal(got.Config.Entrypoint, []string{"/own"}) {
+		t.Errorf("explicit config must beat the parent config: %+v", got.Config)
+	}
+}
+
 func TestNixSystemName(t *testing.T) {
 	cases := []struct {
 		plat  ocispecs.Platform
@@ -239,7 +296,7 @@ func TestNixBuildContext_imageConfig(t *testing.T) {
 	}, map[string]string{
 		"label:org.opencontainers.image.title": "hive",
 		"platform":                             "linux/arm64",
-	})
+	}, nil)
 	if err != nil {
 		t.Fatalf("imageConfig failed: %v", err)
 	}

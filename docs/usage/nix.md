@@ -155,7 +155,10 @@ nix:
 The value takes two forms:
 
 - `__hive__/<name>:<tag>` — another image of the project. ContainerHive resolves it from the local build cache like a
-  Dockerfile dependency; CI resolves it from the registry. Declare the build order with `depends_on`.
+  Dockerfile dependency; CI resolves it from the registry. The build order derives from the reference; an explicit
+  `depends_on` is not required.
+- `__hive_parent__` — the variant placeholder. Only valid inside a variant: it resolves to the base tag `__hive__/<name>:<tag>`
+  of the same image, so a variant of a flake image builds from that tag without more config.
 - Any other value is a plain image reference, for example `ubuntu:22.04`. It resolves through the registry and is
   digest-pinned like the builder image.
 
@@ -165,8 +168,39 @@ parent. Two limitations apply:
 - The flake cannot read the parent rootfs while it builds. Nix evaluates and builds in its own sandbox; the parent
   merge happens in the build script afterwards. Declare parent-provided file paths as image content, not as flake
   inputs.
-- The parent image config (entrypoint, env, user) does not carry over. The `config` block of the image stays
-  authoritative.
+- The parent image config flows into the result (from semantics): entrypoint, cmd, env, user and working dir inherit
+  from the parent unless the `config` block sets them. The `env` of the `config` block overlays the parent env per
+  key.
+
+## Build args and templating
+
+A flake renders through the ContainerHive template engine like any other build entrypoint, so image versions and
+build args reach the flake through the template context. Name the templated flake `flake.nix.gotpl`; `generate`
+renders it and writes the result as `flake.nix`. A plain `flake.nix` is copied as is without template processing, so
+Nix would see the literal `{{ ... }}` expressions.
+
+```nix title="flake.nix.gotpl"
+{
+  inputs.nixpkgs.url = "github:NixOS/nixpkgs?rev={{ .BuildArgs.nixpkgs_rev }}";
+
+  outputs = { self, nixpkgs }: {
+    packages = nixpkgs.lib.genAttrs nixpkgs.lib.systems.flakeExposed (system:
+      let
+        pkgs = import nixpkgs { inherit system; };
+      in
+      {
+        default = pkgs.buildEnv { name = "my-tool-{{ .Versions.vm }}"; };
+      });
+  };
+}
+```
+
+Two notes:
+
+- Rendering happens at `generate` time. A new build arg value re-renders the flake and invalidates the build cache, by
+  design.
+- A rendered flake usually needs a committed `flake.lock` that stays stable against the rendered inputs; without one
+  the build resolves freely (see the lock file section).
 
 ## Nix store caching
 
@@ -195,4 +229,3 @@ closure after it. A changed flake reuses the downloaded packages instead of re-f
   builders; BuildKit caches the step afterwards. The build runs with `filter-syscalls = false` because Nix syscall
   filtering does not work under emulation, a known limitation. Understood trade-off when you accept the nix backend.
 - The flake cannot read the parent rootfs while it builds (see [parent images](#parent-images)).
-- `build_args` do not apply to Nix builds; a flake takes its versions from its own inputs.

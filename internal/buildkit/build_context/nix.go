@@ -112,12 +112,12 @@ func (d NixBuildContext) RunBuild(ctx context.Context, client gatewayClient.Clie
 		return nil, err
 	}
 
-	parentState, hasParent, err := d.resolveParentState(ctx, client, plat)
+	parentState, parentConfig, err := d.resolveParentState(ctx, client, plat)
 	if err != nil {
 		return nil, err
 	}
 
-	buildState := d.buildGraph(plat, system, build.env, build.digestRef, parentState, hasParent)
+	buildState := d.buildGraph(plat, system, build.env, build.digestRef, parentState, parentState != nil)
 	def, err := buildState.Marshal(ctx, llb.Platform(plat))
 	if err != nil {
 		return nil, fmt.Errorf("failed to marshal nix build: %w", err)
@@ -128,7 +128,7 @@ func (d NixBuildContext) RunBuild(ctx context.Context, client gatewayClient.Clie
 		return nil, fmt.Errorf("nix build failed: %w", err)
 	}
 
-	config, err := d.imageConfig(plat, opts)
+	config, err := d.imageConfig(plat, opts, parentConfig)
 	if err != nil {
 		return nil, fmt.Errorf("failed to marshal image config: %w", err)
 	}
@@ -176,9 +176,9 @@ func (d NixBuildContext) resolveBuilder(ctx context.Context, client gatewayClien
 // build resolves the parent through the OCI layout store attached to the
 // solve session; the registry path resolves as a plain image reference. The
 // state applies the parent image config, matching BuildKit named contexts.
-func (d NixBuildContext) resolveParentState(ctx context.Context, client gatewayClient.Client, plat v1.Platform) (*llb.State, bool, error) {
+func (d NixBuildContext) resolveParentState(ctx context.Context, client gatewayClient.Client, plat v1.Platform) (*llb.State, *v1.ImageConfig, error) {
 	if d.Parent == nil {
-		return nil, false, nil
+		return nil, nil, nil
 	}
 
 	if d.Parent.OCIStoreID != "" {
@@ -193,40 +193,44 @@ func (d NixBuildContext) resolveParentState(ctx context.Context, client gatewayC
 			},
 		})
 		if err != nil {
-			return nil, false, fmt.Errorf("failed to resolve parent image %s: %w", d.Parent.OCIDigestRef, err)
+			return nil, nil, fmt.Errorf("failed to resolve parent image %s: %w", d.Parent.OCIDigestRef, err)
 		}
 		st := llb.OCILayout(d.Parent.OCIDigestRef,
 			llb.OCIStore(sessionID, d.Parent.OCIStoreID),
 			llb.Platform(plat),
 		)
+		var img v1.Image
+		if err := json.Unmarshal(config, &img); err != nil {
+			return nil, nil, fmt.Errorf("failed to parse parent image config for %s: %w", d.Parent.OCIDigestRef, err)
+		}
 		st, err = st.WithImageConfig(config)
 		if err != nil {
-			return nil, false, fmt.Errorf("failed to apply parent image config for %s: %w", d.Parent.OCIDigestRef, err)
+			return nil, nil, fmt.Errorf("failed to apply parent image config for %s: %w", d.Parent.OCIDigestRef, err)
 		}
-		return &st, true, nil
+		return &st, &img.Config, nil
 	}
 
 	named, err := canonicalImageRef(d.Parent.RegistryRef)
 	if err != nil {
-		return nil, false, fmt.Errorf("invalid nix parent image reference %q: %w", d.Parent.RegistryRef, err)
+		return nil, nil, fmt.Errorf("invalid nix parent image reference %q: %w", d.Parent.RegistryRef, err)
 	}
 	_, imageDigest, config, err := client.ResolveImageConfig(ctx, named, sourceresolver.Opt{
 		ImageOpt: &sourceresolver.ResolveImageOpt{Platform: &plat},
 	})
 	if err != nil {
-		return nil, false, fmt.Errorf("failed to resolve parent image %s: %w", named, err)
+		return nil, nil, fmt.Errorf("failed to resolve parent image %s: %w", named, err)
 	}
 	var img v1.Image
 	if err := json.Unmarshal(config, &img); err != nil {
-		return nil, false, fmt.Errorf("failed to parse parent image config for %s: %w", named, err)
+		return nil, nil, fmt.Errorf("failed to parse parent image config for %s: %w", named, err)
 	}
 	digestRef := pinImageRef(named, imageDigest.String())
 	st := llb.Image(digestRef)
 	st, err = st.WithImageConfig(config)
 	if err != nil {
-		return nil, false, fmt.Errorf("failed to apply parent image config for %s: %w", digestRef, err)
+		return nil, nil, fmt.Errorf("failed to apply parent image config for %s: %w", digestRef, err)
 	}
-	return &st, true, nil
+	return &st, &img.Config, nil
 }
 
 // canonicalImageRef returns the fully qualified image reference. ResolveImage
@@ -419,17 +423,39 @@ func nixSystemName(plat v1.Platform) (string, error) {
 // imageConfig marshals the image config metadata for the export. The value
 // must be an OCI image document (architecture, os and config), which the
 // containerimage exporter parses from the result metadata. Frontend label
-// options build the exported label map, matching Dockerfile builds.
-func (d NixBuildContext) imageConfig(plat v1.Platform, opts map[string]string) ([]byte, error) {
-	env := d.envSlice()
+// options build the exported label map, matching Dockerfile builds. A parent
+// config backs the unset fields: the parent entrypoint, cmd, user and
+// workingdir flow in, and the parent env entries merge with the config
+// block on top.
+func (d NixBuildContext) imageConfig(plat v1.Platform, opts map[string]string, parentConfig *v1.ImageConfig) ([]byte, error) {
+	env := d.envSlice(parentConfig)
 	labels := d.labelMap(opts)
 
+	entrypoint := d.Entrypoint
+	cmd := d.Cmd
+	user := d.User
+	workingDir := d.WorkingDir
+	if parentConfig != nil {
+		if entrypoint == nil {
+			entrypoint = parentConfig.Entrypoint
+		}
+		if cmd == nil {
+			cmd = parentConfig.Cmd
+		}
+		if user == "" {
+			user = parentConfig.User
+		}
+		if workingDir == "" {
+			workingDir = parentConfig.WorkingDir
+		}
+	}
+
 	config := &v1.ImageConfig{
-		User:       d.User,
+		User:       user,
 		Env:        env,
-		Entrypoint: d.Entrypoint,
-		Cmd:        d.Cmd,
-		WorkingDir: d.WorkingDir,
+		Entrypoint: entrypoint,
+		Cmd:        cmd,
+		WorkingDir: workingDir,
 		Labels:     labels,
 	}
 
@@ -443,13 +469,28 @@ func (d NixBuildContext) imageConfig(plat v1.Platform, opts map[string]string) (
 	})
 }
 
-func (d NixBuildContext) envSlice() []string {
-	env := make([]string, 0, len(d.Env))
-	for _, key := range sortedKeys(d.Env) {
-		env = append(env, key+"="+d.Env[key])
+// envSlice merges the parent environment entries with the config block.
+// The config block wins per key.
+func (d NixBuildContext) envSlice(parentConfig *v1.ImageConfig) []string {
+	merged := map[string]string{}
+	if parentConfig != nil {
+		for _, entry := range parentConfig.Env {
+			key, value, found := strings.Cut(entry, "=")
+			if !found {
+				continue
+			}
+			merged[key] = value
+		}
 	}
-	if len(env) == 0 {
+	for key, value := range d.Env {
+		merged[key] = value
+	}
+	if len(merged) == 0 {
 		return nil
+	}
+	env := make([]string, 0, len(merged))
+	for _, key := range sortedKeys(merged) {
+		env = append(env, key+"="+merged[key])
 	}
 	return env
 }
