@@ -7,11 +7,11 @@ import (
 
 func TestPushTagFunc(t *testing.T) {
 	tests := []struct {
-		name      string
-		tagName   string
-		platform  string
-		buildID   string
-		want      string
+		name     string
+		tagName  string
+		platform string
+		buildID  string
+		want     string
 	}{
 		{
 			name:     "tag without buildID",

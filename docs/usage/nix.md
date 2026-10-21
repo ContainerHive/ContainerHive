@@ -139,13 +139,60 @@ Set `working_dir`, `user`, `cmd`, `env`, and `entrypoint` as needed. Unset field
 Variants keep working: place a `flake.nix` into the variant directory and configure the variant like an image, with
 variant-level `build`, `nix`, and `config` blocks.
 
-## Known limitations of phase 1
+## Parent images
 
-- Parent images of the `__hive__` dependency graph do not work yet: the image base is always empty. Declare build order
-  with `depends_on` but do not reference parents inside a flake.
+A flake build can start from a parent image rootfs instead of an empty base. Set `nix.parent` on the image or variant:
+
+```yaml
+build: nix
+depends_on:
+  - base
+
+nix:
+  parent: "__hive__/base:1.0"
+```
+
+The value takes two forms:
+
+- `__hive__/<name>:<tag>` — another image of the project. ContainerHive resolves it from the local build cache like a
+  Dockerfile dependency; CI resolves it from the registry. Declare the build order with `depends_on`.
+- Any other value is a plain image reference, for example `ubuntu:22.04`. It resolves through the registry and is
+  digest-pinned like the builder image.
+
+The build mounts the parent rootfs at `/parent` and copies it into the image first, so the flake output overlays the
+parent. Two limitations apply:
+
+- The flake cannot read the parent rootfs while it builds. Nix evaluates and builds in its own sandbox; the parent
+  merge happens in the build script afterwards. Declare parent-provided file paths as image content, not as flake
+  inputs.
+- The parent image config (entrypoint, env, user) does not carry over. The `config` block of the image stays
+  authoritative.
+
+## Nix store caching
+
+Every build otherwise starts with an empty nix store inside the builder container and re-downloads the closure of a
+changed flake. Set `store_cache: true` to keep the store across builds:
+
+```yaml
+build: nix
+
+nix:
+  store_cache: true
+```
+
+The script imports the build closure from a persistent BuildKit cache mount before the build and saves the new
+closure after it. A changed flake reuses the downloaded packages instead of re-fetching them. Three limits apply:
+
+- The cache mount lives inside one BuildKit daemon. A fresh daemon starts cold.
+- The registry or S3 build cache does not carry the store. For cross-machine warmup, pin the flake inputs with
+  `flake.lock` and let nix substitute from a binary cache.
+- The saves are best effort and grow unbounded across builds of the daemon. Clear the cache mount when it grows
+  too large.
+
+## Known limitations
+
 - Multi-platform `nix build` runs under emulation on non-native machines. Expect slow first builds for arm64 on x86
   builders; BuildKit caches the step afterwards. The build runs with `filter-syscalls = false` because Nix syscall
   filtering does not work under emulation, a known limitation. Understood trade-off when you accept the nix backend.
-- The `/nix` store of the builder is not cached across builds. A build reruns `nix build` from scratch when the flake
-  changes. Put frequently used packages into your `flake.lock` from a binary cache for reasonable cold start times.
+- The flake cannot read the parent rootfs while it builds (see [parent images](#parent-images)).
 - `build_args` do not apply to Nix builds; a flake takes its versions from its own inputs.

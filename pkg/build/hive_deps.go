@@ -6,9 +6,11 @@ import (
 	"os"
 	"strings"
 
+	"github.com/ContainerHive/ContainerHive/internal/buildkit/build_context"
 	"github.com/ContainerHive/ContainerHive/internal/dependency"
 	"github.com/ContainerHive/ContainerHive/internal/ocistore"
 	"github.com/containerd/containerd/v2/core/content"
+	"github.com/distribution/reference"
 )
 
 // namedContextPrefix replaces __hive__/ in the rewritten Dockerfile. It must be
@@ -77,46 +79,130 @@ func ResolveHiveDeps(opts HiveDepsOpts) (*HiveDeps, error) {
 	d.cleanups = append(d.cleanups, func() { os.Remove(rewritten) })
 
 	for _, ref := range refs {
-		contextKey := fmt.Sprintf("context:%s%s:%s", namedContextPrefix, ref.ImageName, ref.Tag)
-
-		tarPath := TarFilePath(opts.DistPath, ref.ImageName, ref.Tag, opts.PlatformStr)
-		if _, err := os.Stat(tarPath); err != nil {
-			// Fall back to registry reference in CI
-			if opts.RegistryAddress == "" {
-				d.Cleanup()
-				return nil, fmt.Errorf("dependency %s:%s not built yet (expected %s) and no registry configured: %w", ref.ImageName, ref.Tag, tarPath, err)
-			}
-
-			registryTag := WithBuildID(ref.Tag, opts.BuildID)
-			contextValue := fmt.Sprintf("docker-image://%s/%s:%s", opts.RegistryAddress, ref.ImageName, registryTag)
-			d.NamedContexts[contextKey] = contextValue
-			slog.Info("Resolved hive dep via registry", "image", ref.ImageName, "tag", ref.Tag, "ref", contextValue)
-			continue
-		}
-
-		tmpDir, err := os.MkdirTemp("", fmt.Sprintf("hive-oci-%s-%s-*", ref.ImageName, ref.Tag))
-		if err != nil {
+		if err := resolveDepContext(d, ref.ImageName, ref.Tag, opts); err != nil {
 			d.Cleanup()
-			return nil, fmt.Errorf("creating temp dir for %s:%s: %w", ref.ImageName, ref.Tag, err)
+			return nil, err
 		}
-		d.cleanups = append(d.cleanups, func() { os.RemoveAll(tmpDir) })
-
-		ols, err := ocistore.FromTar(tarPath, tmpDir)
-		if err != nil {
-			d.Cleanup()
-			return nil, fmt.Errorf("loading OCI layout for %s:%s: %w", ref.ImageName, ref.Tag, err)
-		}
-
-		storeID := fmt.Sprintf("hive-%s-%s", ref.ImageName, ref.Tag)
-		contextValue := fmt.Sprintf("oci-layout:%s@%s", storeID, ols.Digest)
-
-		d.OCIStores[storeID] = ols.Store
-		d.NamedContexts[contextKey] = contextValue
-
-		slog.Info("Resolved hive dep", "image", ref.ImageName, "tag", ref.Tag, "ref", contextValue)
 	}
 
 	return d, nil
+}
+
+// resolveDepContext resolves one hive dependency to a named context. A local
+// tar becomes an OCI layout content store; without a tar, a configured
+// registry provides the fallback reference.
+func resolveDepContext(d *HiveDeps, imageName, tag string, opts HiveDepsOpts) error {
+	contextKey := fmt.Sprintf("context:%s%s:%s", namedContextPrefix, imageName, tag)
+
+	tarPath := TarFilePath(opts.DistPath, imageName, tag, opts.PlatformStr)
+	if _, err := os.Stat(tarPath); err != nil {
+		// Fall back to registry reference in CI
+		if opts.RegistryAddress == "" {
+			return fmt.Errorf("dependency %s:%s not built yet (expected %s) and no registry configured: %w", imageName, tag, tarPath, err)
+		}
+
+		registryTag := WithBuildID(tag, opts.BuildID)
+		contextValue := fmt.Sprintf("docker-image://%s/%s:%s", opts.RegistryAddress, imageName, registryTag)
+		d.NamedContexts[contextKey] = contextValue
+		slog.Info("Resolved hive dep via registry", "image", imageName, "tag", tag, "ref", contextValue)
+		return nil
+	}
+
+	tmpDir, err := os.MkdirTemp("", fmt.Sprintf("hive-oci-%s-%s-*", imageName, tag))
+	if err != nil {
+		return fmt.Errorf("creating temp dir for %s:%s: %w", imageName, tag, err)
+	}
+	d.cleanups = append(d.cleanups, func() { os.RemoveAll(tmpDir) })
+
+	ols, err := ocistore.FromTar(tarPath, tmpDir)
+	if err != nil {
+		return fmt.Errorf("loading OCI layout for %s:%s: %w", imageName, tag, err)
+	}
+
+	storeID := fmt.Sprintf("hive-%s-%s", imageName, tag)
+	contextValue := fmt.Sprintf("oci-layout:%s@%s", storeID, ols.Digest)
+
+	d.OCIStores[storeID] = ols.Store
+	d.NamedContexts[contextKey] = contextValue
+
+	slog.Info("Resolved hive dep", "image", imageName, "tag", tag, "ref", contextValue)
+	return nil
+}
+
+// NixParentDeps couples the resolved nix parent source with its cleanup
+// handle. Deps is nil for plain image references.
+type NixParentDeps struct {
+	Parent *build_context.NixParent
+	Deps   *HiveDeps
+}
+
+// ResolveNixParent resolves the nix parent image reference. A __hive__/
+// reference resolves through the local build cache or the registry, like a
+// Dockerfile dependency. Any other value is a plain image reference for the
+// registry path.
+func ResolveNixParent(parentRef string, opts HiveDepsOpts) (*NixParentDeps, error) {
+	if !strings.HasPrefix(parentRef, dependency.HivePrefix) {
+		return &NixParentDeps{
+			Parent: &build_context.NixParent{RegistryRef: parentRef},
+		}, nil
+	}
+
+	name, tag := splitHiveRef(strings.TrimPrefix(parentRef, dependency.HivePrefix))
+	if name == "" || tag == "" {
+		return nil, fmt.Errorf("invalid hive parent reference %q, want %q<name>:<tag>", parentRef, dependency.HivePrefix)
+	}
+
+	d := &HiveDeps{
+		OCIStores:     make(map[string]content.Store),
+		NamedContexts: make(map[string]string),
+	}
+	if err := resolveDepContext(d, name, tag, opts); err != nil {
+		d.Cleanup()
+		return nil, err
+	}
+
+	parent := &build_context.NixParent{}
+	for _, contextValue := range d.NamedContexts {
+		if storeID, digest, found := parseOCILayoutRef(contextValue); found {
+			named, err := reference.ParseNormalizedNamed(storeID)
+			if err != nil {
+				d.Cleanup()
+				return nil, fmt.Errorf("normalizing parent store id %q: %w", storeID, err)
+			}
+			// The OCI source parser requires a host-qualified name: an
+			// unqualified "store@sha256:..." puts the digest into the URL
+			// authority and fails to parse.
+			parent.OCIStoreID = storeID
+			parent.OCIDigestRef = named.String() + "@" + digest
+		}
+		if strings.HasPrefix(contextValue, "docker-image://") {
+			parent.RegistryRef = strings.TrimPrefix(contextValue, "docker-image://")
+		}
+	}
+	return &NixParentDeps{Parent: parent, Deps: d}, nil
+}
+
+// splitHiveRef splits an image name and tag at the last colon.
+func splitHiveRef(ref string) (string, string) {
+	idx := strings.LastIndex(ref, ":")
+	if idx < 0 {
+		return ref, ""
+	}
+	return ref[:idx], ref[idx+1:]
+}
+
+// parseOCILayoutRef reads the store id and digest from an "oci-layout:<id>@<digest>"
+// named context value.
+func parseOCILayoutRef(value string) (string, string, bool) {
+	rest, found := strings.CutPrefix(value, "oci-layout:")
+	if !found {
+		return "", "", false
+	}
+	id, digest, found := strings.Cut(rest, "@")
+	if !found || id == "" || digest == "" {
+		return "", "", false
+	}
+	return id, digest, true
 }
 
 // rewriteDockerfile creates a copy of the Dockerfile with __hive__/ replaced by

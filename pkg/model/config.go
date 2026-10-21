@@ -62,6 +62,22 @@ type NixConfig struct {
 	BuilderImage string `yaml:"builder_image,omitempty" json:"builder_image,omitempty" jsonschema:"Container image providing nix for the build (e.g. nixos/nix:2.31). Empty uses the default builder image."`
 	// ExtraArgs holds additional arguments passed to nix build.
 	ExtraArgs []string `yaml:"extra_args,omitempty" json:"extra_args,omitempty" jsonschema:"Additional arguments passed to nix build (e.g. --impure)"`
+	// Parent mounts a parent image rootfs into the build. Hive references
+	// (`__hive__/<name>:<tag>`) resolve through the local build cache or the
+	// registry, like Dockerfile references. Plain image references resolve
+	// through the registry. The flake output overlays the parent rootfs.
+	Parent string `yaml:"parent,omitempty" json:"parent,omitempty" jsonschema:"Parent image rootfs mounted into the nix build (e.g. __hive__/base:1.0 or ubuntu:22.04). The flake output overlays it. Requires depends_on for hive references."`
+	// StoreCache keeps the nix store across builds in a persistent cache
+	// mount. It warms rebuilds after a flake change inside one BuildKit
+	// daemon. It does not survive a fresh daemon; the registry cache and
+	// binary caches cover that.
+	StoreCache *bool `yaml:"store_cache,omitempty" json:"store_cache,omitempty" jsonschema:"Keep the nix store across builds with a persistent cache mount (default false)"`
+}
+
+// StoreCacheEnabled reports whether the persistent nix store cache mount is
+// active. The zero value keeps the default off.
+func (c NixConfig) StoreCacheEnabled() bool {
+	return c.StoreCache != nil && *c.StoreCache
 }
 
 // ImageRunConfig captures the runtime configuration applied to the image
