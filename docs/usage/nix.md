@@ -70,7 +70,18 @@ Platforms without a mapping fail the build with a clear error. See
 [the range of supported platforms](multi-platform.md) for the project level view.
 
 Keep the parent project files out of the flake. Static files the image should contain have to be part of the flake
-output, for example `paths = [ pkgs.my-tool ./rootfs ];` in the `buildEnv` above.
+output. A `rootfs/` directory next to the flake is not picked up automatically, and `buildEnv` only accepts
+derivations in `paths`, so wrap the directory in a derivation and add it to the `buildEnv` above:
+
+```nix
+let
+  rootfs = pkgs.runCommand "my-tool-rootfs-files" { } "cp -r ${./rootfs} $out";
+in
+pkgs.buildEnv {
+  name = "my-tool-rootfs";
+  paths = [ pkgs.my-tool rootfs ];
+}
+```
 
 ## flake.lock handling
 
