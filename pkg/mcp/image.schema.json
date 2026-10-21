@@ -28,6 +28,17 @@
             "type": "string"
           },
           "description": "Additional arguments passed to nix build (e.g. --impure)"
+        },
+        "parent": {
+          "type": "string",
+          "description": "Parent image rootfs mounted into the nix build (e.g. __hive__/base:1.0 or ubuntu:22.04). The flake output overlays it. Requires depends_on for hive references."
+        },
+        "store_cache": {
+          "type": [
+            "null",
+            "boolean"
+          ],
+          "description": "Keep the nix store across builds with a persistent cache mount (default false)"
         }
       },
       "description": "Nix flake build configuration, applies when build is nix",
@@ -420,6 +431,17 @@
                   "type": "string"
                 },
                 "description": "Additional arguments passed to nix build (e.g. --impure)"
+              },
+              "parent": {
+                "type": "string",
+                "description": "Parent image rootfs mounted into the nix build (e.g. __hive__/base:1.0 or ubuntu:22.04). The flake output overlays it. Requires depends_on for hive references."
+              },
+              "store_cache": {
+                "type": [
+                  "null",
+                  "boolean"
+                ],
+                "description": "Keep the nix store across builds with a persistent cache mount (default false)"
               }
             },
             "description": "Nix flake build configuration for this variant, applies when build is nix",
