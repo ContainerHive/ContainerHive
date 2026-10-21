@@ -324,7 +324,11 @@ func buildTag(ctx context.Context, client *Client, opts *ProjectBuildOpts, image
 		ProgressConfig:   opts.ProgressConfig,
 	}
 	if imageDef.BuildBackend == model.BuildBackendNix {
-		parentDeps, err := resolveNixParent(imageDef.Nix.Parent, opts, platformStr)
+		nixConfig, err := nixParentForBuild(imageDef.Nix, imageDef, "")
+		if err != nil {
+			return fmt.Errorf("failed to resolve nix parent for %s:%s: %w", imageDef.Name, tagName, err)
+		}
+		parentDeps, err := resolveNixParent(nixConfig.Parent, opts, platformStr)
 		if err != nil {
 			return fmt.Errorf("failed to resolve nix parent for %s:%s: %w", imageDef.Name, tagName, err)
 		}
@@ -338,7 +342,7 @@ func buildTag(ctx context.Context, client *Client, opts *ProjectBuildOpts, image
 		if parentDeps != nil {
 			parent = parentDeps.Parent
 		}
-		buildOpts.BuildContext = nixBuildContext(root, imageDef.Nix, imageDef.RunConfig, parent)
+		buildOpts.BuildContext = nixBuildContext(root, nixConfig, imageDef.RunConfig, parent)
 	}
 	if hiveDeps != nil {
 		buildOpts.OCIStores = hiveDeps.OCIStores
@@ -434,6 +438,10 @@ func buildVariant(ctx context.Context, client *Client, opts *ProjectBuildOpts, i
 	}
 	if variantBackend(imageDef, variantDef) == model.BuildBackendNix {
 		nixConfig := nixConfigFor(imageDef, variantDef)
+		nixConfig, err := nixParentForBuild(nixConfig, imageDef, tagName)
+		if err != nil {
+			return fmt.Errorf("failed to resolve nix parent for %s:%s.%s: %w", imageDef.Name, tagName, variantName, err)
+		}
 		parentDeps, err := resolveNixParent(nixConfig.Parent, opts, platformStr)
 		if err != nil {
 			return fmt.Errorf("failed to resolve nix parent for %s:%s.%s: %w", imageDef.Name, tagName, variantName, err)

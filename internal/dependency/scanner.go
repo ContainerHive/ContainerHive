@@ -61,7 +61,38 @@ func ScanProjectSource(project *model.ContainerHiveProject) *Graph {
 		}
 	}
 
+	for name, images := range project.ImagesByName {
+		for _, img := range images {
+			// A nix parent hive ref implies a build order edge; missing
+			// parents stay silent here: the build reports them.
+			dependOnNixParent(graph, name, img.Nix.Parent)
+			for _, variant := range img.Variants {
+				if variant.Nix != nil {
+					dependOnNixParent(graph, name, variant.Nix.Parent)
+				}
+			}
+		}
+	}
+
 	return graph
+}
+
+// dependOnNixParent records the build order edge of a nix.parent hive
+// reference when the target image exists.
+func dependOnNixParent(graph *Graph, from, parent string) {
+	if parent == "" || parent == model.HiveParentPlaceholder || !strings.HasPrefix(parent, HivePrefix) {
+		return
+	}
+	rest := strings.TrimPrefix(parent, HivePrefix)
+	idx := strings.LastIndex(rest, ":")
+	if idx < 1 {
+		return
+	}
+	name := rest[:idx]
+	if !graph.nodes[name] || name == from {
+		return
+	}
+	graph.AddDependency(from, name)
 }
 
 func scanEntryPoint(graph *Graph, imageName, entryPointPath string) {

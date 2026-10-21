@@ -2,6 +2,7 @@ package build
 
 import (
 	"errors"
+	"fmt"
 	"os"
 	"path/filepath"
 
@@ -65,6 +66,20 @@ func runConfigFor(imageDef *model.Image, variantDef *model.ImageVariant) *model.
 		return variantDef.RunConfig
 	}
 	return imageDef.RunConfig
+}
+
+// nixParentForBuild expands the __hive_parent__ placeholder for a variant
+// build into the image name and tag of the variant. The image level build
+// has no parent tag to resolve, so the placeholder errors there.
+func nixParentForBuild(config model.NixConfig, imageDef *model.Image, tagName string) (model.NixConfig, error) {
+	if config.Parent != model.HiveParentPlaceholder {
+		return config, nil
+	}
+	if tagName != "" {
+		config.Parent = fmt.Sprintf("__hive__/%s:%s", imageDef.Name, tagName)
+		return config, nil
+	}
+	return model.NixConfig{}, fmt.Errorf("image %q cannot use the %s placeholder outside a variant: a nix build without a variant has no parent tag", imageDef.Name, model.HiveParentPlaceholder)
 }
 
 // resolveNixParent resolves the nix.parent config value for a build. An
