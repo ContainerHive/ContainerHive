@@ -65,11 +65,8 @@ func ScanProjectSource(project *model.ContainerHiveProject) *Graph {
 		for _, img := range images {
 			// A nix parent hive ref implies a build order edge; missing
 			// parents stay silent here: the build reports them.
-			dependOnNixParent(graph, name, img.Nix.Parent)
-			for _, variant := range img.Variants {
-				if variant.Nix != nil {
-					dependOnNixParent(graph, name, variant.Nix.Parent)
-				}
+			for _, parent := range nixParentRefs(img) {
+				dependOnNixParent(graph, name, parent)
 			}
 		}
 	}

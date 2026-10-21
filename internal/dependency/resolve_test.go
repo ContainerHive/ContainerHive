@@ -76,7 +76,7 @@ func TestBuildDependencyGraph_NixParent(t *testing.T) {
 		project := &model.ContainerHiveProject{
 			ImagesByName: map[string][]*model.Image{
 				"base":  {{Name: "base"}},
-				"child": {{Name: "child", Nix: model.NixConfig{Parent: "__hive__/base:1.0"}}},
+				"child": {{Name: "child", BuildBackend: model.BuildBackendNix, Nix: model.NixConfig{Parent: "__hive__/base:1.0"}}},
 			},
 		}
 
@@ -97,7 +97,7 @@ func TestBuildDependencyGraph_NixParent(t *testing.T) {
 		scannedGraph := NewGraph()
 		project := &model.ContainerHiveProject{
 			ImagesByName: map[string][]*model.Image{
-				"child": {{Name: "child", Nix: model.NixConfig{Parent: "__hive__/missing:1.0"}}},
+				"child": {{Name: "child", BuildBackend: model.BuildBackendNix, Nix: model.NixConfig{Parent: "__hive__/missing:1.0"}}},
 			},
 		}
 		_, err := BuildDependencyGraph(scannedGraph, project)
