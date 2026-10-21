@@ -153,7 +153,7 @@ func (d NixBuildContext) resolveBuilder(ctx context.Context, client gatewayClien
 	}
 	named, err := canonicalImageRef(ref)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("invalid builder image reference %q: %w", ref, err)
 	}
 	_, imageDigest, config, err := client.ResolveImageConfig(ctx, named, sourceresolver.Opt{
 		ImageOpt: &sourceresolver.ResolveImageOpt{Platform: &plat},
@@ -167,7 +167,7 @@ func (d NixBuildContext) resolveBuilder(ctx context.Context, client gatewayClien
 		return nil, fmt.Errorf("failed to parse builder image config for %s: %w", named, err)
 	}
 	return &resolvedBuilder{
-		digestRef: named + "@" + imageDigest.String(),
+		digestRef: pinImageRef(named, imageDigest.String()),
 		env:       img.Config.Env,
 	}, nil
 }
@@ -208,7 +208,7 @@ func (d NixBuildContext) resolveParentState(ctx context.Context, client gatewayC
 
 	named, err := canonicalImageRef(d.Parent.RegistryRef)
 	if err != nil {
-		return nil, false, err
+		return nil, false, fmt.Errorf("invalid nix parent image reference %q: %w", d.Parent.RegistryRef, err)
 	}
 	_, imageDigest, config, err := client.ResolveImageConfig(ctx, named, sourceresolver.Opt{
 		ImageOpt: &sourceresolver.ResolveImageOpt{Platform: &plat},
@@ -220,7 +220,7 @@ func (d NixBuildContext) resolveParentState(ctx context.Context, client gatewayC
 	if err := json.Unmarshal(config, &img); err != nil {
 		return nil, false, fmt.Errorf("failed to parse parent image config for %s: %w", named, err)
 	}
-	digestRef := named + "@" + imageDigest.String()
+	digestRef := pinImageRef(named, imageDigest.String())
 	st := llb.Image(digestRef)
 	st, err = st.WithImageConfig(config)
 	if err != nil {
@@ -235,9 +235,23 @@ func (d NixBuildContext) resolveParentState(ctx context.Context, client gatewayC
 func canonicalImageRef(ref string) (string, error) {
 	named, err := reference.ParseNormalizedNamed(ref)
 	if err != nil {
-		return "", fmt.Errorf("invalid builder image reference %q: %w", ref, err)
+		return "", err
 	}
 	return reference.TagNameOnly(named).String(), nil
+}
+
+// pinImageRef appends the resolved digest to a canonical image reference. A
+// reference that already carries a digest is returned unchanged: appending a
+// second digest yields a reference llb.Image cannot parse.
+func pinImageRef(canonical, imageDigest string) string {
+	named, err := reference.ParseNormalizedNamed(canonical)
+	if err != nil {
+		return canonical + "@" + imageDigest
+	}
+	if _, ok := named.(reference.Digested); ok {
+		return canonical
+	}
+	return canonical + "@" + imageDigest
 }
 
 // buildGraph assembles the LLB state for the Nix flake build. The exec op
@@ -315,7 +329,12 @@ func (d NixBuildContext) buildScript(system string, hasParent bool) string {
 		// carries the closure: import its content before the build and save
 		// the new closure after it. Both copies are best effort.
 		b.WriteString("install='.#packages." + system + ".default'\n")
-		b.WriteString("drv=\"$(nix --extra-experimental-features 'nix-command flakes' eval --raw \"$install.drvPath\")\"\n")
+		// The eval is best effort and takes the same lock mode and extra args as
+		// the build, so flakes needing e.g. --impure evaluate. A failed eval
+		// leaves drv empty and skips the export instead of aborting under set -e.
+		b.WriteString("drv=\"$(nix --extra-experimental-features 'nix-command flakes' eval --raw $lockmode \"$install.drvPath\"")
+		d.writeExtraArgs(b)
+		b.WriteString(")\" || drv=''\n")
 		b.WriteString("nix --extra-experimental-features 'nix-command flakes' copy --no-check-sigs --all --from local?root=/nix-cache || true\n")
 	}
 	b.WriteString("nix --extra-experimental-features 'nix-command flakes' --option sandbox false")
@@ -325,10 +344,7 @@ func (d NixBuildContext) buildScript(system string, hasParent bool) string {
 	b.WriteString(" --option filter-syscalls false")
 	b.WriteString(" build $lockmode --show-trace -L --out-link /tmp/hive-rootfs .")
 	b.WriteString(d.installableAttr(system))
-	for _, arg := range d.ExtraArgs {
-		b.WriteString(" ")
-		b.WriteString(shellQuote(arg))
-	}
+	d.writeExtraArgs(b)
 	b.WriteString("\n")
 	// Rootfs copy plus the full store closure: dereferenced symlinks point
 	// into the nix store, and dynamically linked binaries need their
@@ -346,11 +362,19 @@ func (d NixBuildContext) buildScript(system string, hasParent bool) string {
 	gnix()
 	b.WriteString(" copy --no-check-sigs --to /out /tmp/hive-rootfs")
 	if d.StoreCache {
-		b.WriteString("\n")
+		b.WriteString("\n[ -z \"$drv\" ] || ")
 		gnix()
 		b.WriteString(" copy --no-check-sigs --to local?root=" + nixStoreCachePath + " \"$drv\" || true")
 	}
 	return b.String()
+}
+
+// writeExtraArgs appends the shell quoted extra args, each preceded by a space.
+func (d NixBuildContext) writeExtraArgs(b *strings.Builder) {
+	for _, arg := range d.ExtraArgs {
+		b.WriteString(" ")
+		b.WriteString(shellQuote(arg))
+	}
 }
 
 // installableAttr returns the flake attribute expression the build runs on,
