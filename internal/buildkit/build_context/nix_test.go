@@ -56,20 +56,23 @@ func TestNixBuildContext_buildScript(t *testing.T) {
 
 	parentNC := NixBuildContext{Parent: &NixParent{RegistryRef: "example.com/base:1.0"}}
 	got = parentNC.buildScript("x86_64-linux", true)
-	if !strings.Contains(got, " && cp -RL --preserve=links /parent/. /out/ && cp -RL --preserve=links /tmp/hive-rootfs/. /out/") {
-		t.Errorf("buildScript() = %q, want the parent rootfs copy before the flake copy", got)
+	if want := "mkdir -p /out/nix/store && cp -RL --preserve=links /parent/nix/store/. /out/nix/store/"; !strings.Contains(got, want) {
+		t.Errorf("buildScript() = %q, want the parent store copy %q", got, want)
+	}
+	if want := `do [ "$entry" != /parent/nix ] && [ -e "$entry" ] && cp -RL --preserve=links "$entry" /out/ || true; done && cp -RL --preserve=links /tmp/hive-rootfs/. /out/`; !strings.Contains(got, want) {
+		t.Errorf("buildScript() = %q, want the parent tree copy without nix metadata", got)
 	}
 
 	cacheNC := NixBuildContext{StoreCache: true}
 	got = cacheNC.buildScript("x86_64-linux", false)
-	if want := "nix --store /nix-cache --extra-experimental-features"; !strings.Contains(got, want) {
-		t.Errorf("buildScript() = %q, want the build against the chroot store %q", got, want)
+	if want := "install='.#packages.x86_64-linux.default'"; !strings.Contains(got, want) {
+		t.Errorf("buildScript() = %q, want the installable variable %q", got, want)
 	}
-	if want := "nix --store /nix-cache --extra-experimental-features 'nix-command flakes' copy"; !strings.Contains(got, want) {
-		t.Errorf("buildScript() = %q, want the copy from the chroot store %q", got, want)
+	if want := "nix --extra-experimental-features 'nix-command flakes' copy --no-check-sigs --all --from local?root=/nix-cache || true\nnix"; !strings.Contains(got, want) {
+		t.Errorf("buildScript() = %q, want the store import before the build", got)
 	}
-	if strings.Count(got, "--store /nix-cache") != 2 {
-		t.Errorf("buildScript() = %q, want both nix invocations against the chroot store", got)
+	if want := " && nix --extra-experimental-features 'nix-command flakes' copy --no-check-sigs --to local?root=/nix-cache \"$drv\" || true"; !strings.Contains(got, want) {
+		t.Errorf("buildScript() = %q, want the store export after the copy", got)
 	}
 }
 

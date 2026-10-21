@@ -180,12 +180,14 @@ nix:
   store_cache: true
 ```
 
-The build then runs nix against a chroot store in a persistent BuildKit cache mount. A flake change reuses the
-downloaded packages instead of re-fetching them. Two limits apply:
+The script imports the build closure from a persistent BuildKit cache mount before the build and saves the new
+closure after it. A changed flake reuses the downloaded packages instead of re-fetching them. Three limits apply:
 
 - The cache mount lives inside one BuildKit daemon. A fresh daemon starts cold.
 - The registry or S3 build cache does not carry the store. For cross-machine warmup, pin the flake inputs with
   `flake.lock` and let nix substitute from a binary cache.
+- The saves are best effort and grow unbounded across builds of the daemon. Clear the cache mount when it grows
+  too large.
 
 ## Known limitations
 
