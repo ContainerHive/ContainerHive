@@ -54,6 +54,15 @@ func TestNixBuildContext_buildScript(t *testing.T) {
 	}
 }
 
+func TestNixBuildContext_buildScriptQuotesExtraArgs(t *testing.T) {
+	nc := NixBuildContext{ExtraArgs: []string{"--option", "extra substituters", "it's;$HOME"}}
+	got := nc.buildScript("x86_64-linux")
+	want := ".#packages.x86_64-linux.default '--option' 'extra substituters' 'it'\\''s;$HOME' && cp"
+	if !strings.Contains(got, want) {
+		t.Errorf("buildScript() = %q, want it to contain %q", got, want)
+	}
+}
+
 func TestNixSystemName(t *testing.T) {
 	cases := []struct {
 		plat  ocispecs.Platform

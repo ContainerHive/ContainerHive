@@ -29,12 +29,16 @@ func entrypointFileName(backend string) string {
 
 // hashSource returns the content bytes driving the cache scope hash. For Nix
 // flakes, flake.lock pins the flake resolution and belongs into the hash.
-// Dockerfile builds have no flake.lock, so the source reduces to the file
-// content alone.
+// Dockerfile builds ignore a stray flake.lock, so the source reduces to the
+// file content alone.
 func hashSource(entrypointPath string) ([]byte, error) {
 	content, err := os.ReadFile(entrypointPath)
 	if err != nil {
 		return nil, err
+	}
+
+	if filepath.Base(entrypointPath) != model.FlakeFileName {
+		return content, nil
 	}
 
 	lock, err := os.ReadFile(filepath.Join(filepath.Dir(entrypointPath), "flake.lock"))

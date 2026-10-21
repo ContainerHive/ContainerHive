@@ -69,8 +69,8 @@ Platform mapping:
 Platforms without a mapping fail the build with a clear error. See
 [the range of supported platforms](multi-platform.md) for the project level view.
 
-Keep the parent project files out of the flake. Static files the image should contain belong in the image `rootfs/`
-directory, which ContainerHive already renders next to the flake.
+Keep the parent project files out of the flake. Static files the image should contain have to be part of the flake
+output, for example `paths = [ pkgs.my-tool ./rootfs ];` in the `buildEnv` above.
 
 ## flake.lock handling
 

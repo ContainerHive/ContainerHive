@@ -27,7 +27,7 @@ func TestCopyFlakeLock(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		if err := copyFlakeLock(target, lockSrc); err != nil {
+		if err := copyFlakeLock(target, filepath.Join(dir, "flake.nix")); err != nil {
 			t.Fatalf("copyFlakeLock failed: %v", err)
 		}
 
@@ -37,6 +37,21 @@ func TestCopyFlakeLock(t *testing.T) {
 		}
 		if string(got) != want {
 			t.Errorf("flake.lock content = %q, want %q", got, want)
+		}
+	})
+
+	t.Run("ignores flake.lock next to a Dockerfile", func(t *testing.T) {
+		dockerDir := t.TempDir()
+		dockerTarget := t.TempDir()
+		if err := os.WriteFile(filepath.Join(dockerDir, "flake.lock"), []byte("{}"), 0o600); err != nil {
+			t.Fatal(err)
+		}
+
+		if err := copyFlakeLock(dockerTarget, filepath.Join(dockerDir, "Dockerfile")); err != nil {
+			t.Fatalf("copyFlakeLock failed: %v", err)
+		}
+		if _, err := os.Stat(filepath.Join(dockerTarget, "flake.lock")); !os.IsNotExist(err) {
+			t.Errorf("flake.lock copied for a Dockerfile entrypoint, stat error: %v", err)
 		}
 	})
 }

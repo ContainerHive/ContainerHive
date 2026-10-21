@@ -5,4 +5,4 @@ config:
   entrypoint: ["/bin/sh"]
 
 tags:
-  - name: "1.36.0"
+  - name: "1.37.0"

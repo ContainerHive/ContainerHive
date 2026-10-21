@@ -15,9 +15,11 @@ import (
 	gatewayClient "github.com/moby/buildkit/frontend/gateway/client"
 	v1 "github.com/opencontainers/image-spec/specs-go/v1"
 	"github.com/tonistiigi/fsutil"
-
-	"github.com/ContainerHive/ContainerHive/pkg/model"
 )
+
+// flakeFileName is the build entry point name inside the context. It mirrors
+// model.FlakeFileName, which internal packages must not import.
+const flakeFileName = "flake.nix"
 
 // DefaultNixBuilderImage provides nix when the image config does not set one.
 const DefaultNixBuilderImage = "nixos/nix:2.31.6"
@@ -207,7 +209,7 @@ func (d NixBuildContext) buildScript(system string) string {
 	b.WriteString(d.installableAttr(system))
 	for _, arg := range d.ExtraArgs {
 		b.WriteString(" ")
-		b.WriteString(arg)
+		b.WriteString(shellQuote(arg))
 	}
 	// Rootfs copy plus the full store closure: dereferenced symlinks point
 	// into the nix store, and dynamically linked binaries need their
@@ -256,7 +258,7 @@ func nixSystemName(plat v1.Platform) (string, error) {
 			return "armv6l-linux", nil
 		}
 	}
-	return "", fmt.Errorf("no nix system mapping for platform %s (variant %q); set an explicit flake attribute via nix.output", plat.Architecture, plat.Variant)
+	return "", fmt.Errorf("no nix system mapping for platform linux/%s (variant %q); remove it from the image platforms", plat.Architecture, plat.Variant)
 }
 
 // imageConfig marshals the image config metadata for the export. The value
@@ -346,10 +348,16 @@ func (d NixBuildContext) ToLocalMounts() (map[string]fsutil.FS, error) {
 
 // FileName returns the build entry point name inside the context.
 func (d NixBuildContext) FileName() string {
-	return model.FlakeFileName
+	return flakeFileName
 }
 
 // FrontendType returns the frontend identifier for nix flake builds.
 func (d NixBuildContext) FrontendType() string {
 	return "nix.v0"
+}
+
+// shellQuote wraps arg in single quotes so the build script passes it to nix
+// as one literal word.
+func shellQuote(arg string) string {
+	return "'" + strings.ReplaceAll(arg, "'", `'\''`) + "'"
 }
