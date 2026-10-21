@@ -43,8 +43,8 @@ const nixContextSharedKeyHint = "hive-nix-flake"
 // under inside the builder image.
 const parentMountPath = "/parent"
 
-// nixStoreCachePath is the internal chroot store mount for the persistent
-// nix store cache.
+// nixStoreCachePath is the internal mount for the persistent nix store
+// closure cache.
 const nixStoreCachePath = "/nix-cache"
 
 // nixStoreCacheKey names the persistent cache mount the chroot store uses.
@@ -298,19 +298,27 @@ func builderStateFor(digestRef string, env []string) llb.State {
 // the flake result as a symlink, so the script dereferences it and copies the
 // rootfs directory into the out mount. With a parent, the script copies the
 // parent rootfs into the out mount first, so the flake output overlays it.
-// With StoreCache, nix runs against a chroot store in the persistent cache
-// mount.
+// With StoreCache, the script warms the default store from a persistent
+// cache mount before the build and saves the build closure after it.
 func (d NixBuildContext) buildScript(system string, hasParent bool) string {
 	b := &strings.Builder{}
 	// Respect a committed flake.lock and fail when it no longer matches the
 	// flake inputs. Without a lockfile the build resolves inputs freely, so
 	// the lock stays optional.
 	b.WriteString("lockmode=''; [ -f /src/flake.lock ] && lockmode='--no-update-lock-file'\n")
-	b.WriteString("nix")
+	gnix := func() { b.WriteString("nix --extra-experimental-features 'nix-command flakes'") }
+
 	if d.StoreCache {
-		b.WriteString(" --store " + nixStoreCachePath)
+		// Store caching runs the build against the default store: a chroot
+		// store cannot build with sandbox=false, because builders resolve
+		// store paths against the image store root. The cache mount only
+		// carries the closure: import its content before the build and save
+		// the new closure after it. Both copies are best effort.
+		b.WriteString("install='.#packages." + system + ".default'\n")
+		b.WriteString("drv=\"$(nix --extra-experimental-features 'nix-command flakes' eval --raw \"$install.drvPath\")\"\n")
+		b.WriteString("nix --extra-experimental-features 'nix-command flakes' copy --no-check-sigs --all --from local?root=/nix-cache || true\n")
 	}
-	b.WriteString(" --extra-experimental-features 'nix-command flakes' --option sandbox false")
+	b.WriteString("nix --extra-experimental-features 'nix-command flakes' --option sandbox false")
 	// Syscall filtering breaks under emulation (qemu syscall translation), a
 	// known limitation. The build exec op already runs without the Nix chroot
 	// sandbox, so the filter is the remaining hardening to drop.
@@ -323,7 +331,16 @@ func (d NixBuildContext) buildScript(system string, hasParent bool) string {
 	}
 	if hasParent {
 		// The parent rootfs goes in first: the flake output overlays it.
-		b.WriteString(" && cp -RL --preserve=links " + parentMountPath + "/. /out/")
+		// The parent nix store content moves into /out/nix/store, and the
+		// parent nix metadata stays out: a carried over store database and
+		// dangling gcroot symlinks corrupt the destination store, and the
+		// child closure copy brings the shared store paths anyway. The cp
+		// chain needs the trailing true: unmatched shell globs produce a
+		// literal entry and the test fails under set -e.
+		b.WriteString(" && mkdir -p /out/nix/store")
+		b.WriteString(" && cp -RL --preserve=links " + parentMountPath + "/nix/store/. /out/nix/store/")
+		b.WriteString(" && for entry in " + parentMountPath + "/* " + parentMountPath + "/.[!.]* " + parentMountPath + "/..?*;")
+		b.WriteString(" do [ \"$entry\" != " + parentMountPath + "/nix ] && [ -e \"$entry\" ] && cp -RL --preserve=links \"$entry\" /out/ || true; done")
 	}
 	// Rootfs copy plus the full store closure: dereferenced symlinks point
 	// into the nix store, and dynamically linked binaries need their
@@ -332,11 +349,14 @@ func (d NixBuildContext) buildScript(system string, hasParent bool) string {
 	// references resolve inside the container. A scheme-less destination is a
 	// chroot store: nix unpacks the closure below /out/nix/store.
 	b.WriteString(" && cp -RL --preserve=links /tmp/hive-rootfs/. /out/")
-	b.WriteString(" && nix")
+	b.WriteString(" && ")
+	gnix()
+	b.WriteString(" copy --no-check-sigs --to /out /tmp/hive-rootfs")
 	if d.StoreCache {
-		b.WriteString(" --store " + nixStoreCachePath)
+		b.WriteString(" && ")
+		gnix()
+		b.WriteString(" copy --no-check-sigs --to local?root=" + nixStoreCachePath + " \"$drv\" || true")
 	}
-	b.WriteString(" --extra-experimental-features 'nix-command flakes' copy --no-check-sigs --to /out /tmp/hive-rootfs")
 	return b.String()
 }
 
