@@ -174,10 +174,12 @@ parent. Two limitations apply:
 
 ## Build args and templating
 
-`flake.nix` renders through the ContainerHive template engine like any other build entrypoint, so image versions and
-build args reach the flake through the template context:
+A flake renders through the ContainerHive template engine like any other build entrypoint, so image versions and
+build args reach the flake through the template context. Name the templated flake `flake.nix.gotpl`; `generate`
+renders it and writes the result as `flake.nix`. A plain `flake.nix` is copied as is without template processing, so
+Nix would see the literal `{{ ... }}` expressions.
 
-```nix
+```nix title="flake.nix.gotpl"
 {
   inputs.nixpkgs.url = "github:NixOS/nixpkgs?rev={{ .BuildArgs.nixpkgs_rev }}";
 
@@ -195,7 +197,7 @@ build args reach the flake through the template context:
 
 Two notes:
 
-- Rending happens at `generate` time. A new build arg value re-renders the flake and invalidates the build cache, by
+- Rendering happens at `generate` time. A new build arg value re-renders the flake and invalidates the build cache, by
   design.
 - A rendered flake usually needs a committed `flake.lock` that stays stable against the rendered inputs; without one
   the build resolves freely (see the lock file section).

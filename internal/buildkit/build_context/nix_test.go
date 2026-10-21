@@ -234,8 +234,13 @@ func TestNixBuildContext_imageConfigParentInheritance(t *testing.T) {
 	if err != nil {
 		t.Fatalf("imageConfig failed: %v", err)
 	}
-	if err := json.Unmarshal(data, &got); err != nil {
+	var gotExplicit ocispecs.Image
+	if err := json.Unmarshal(data, &gotExplicit); err != nil {
 		t.Fatalf("imageConfig produce invalid JSON: %v", err)
+	}
+	got = gotExplicit
+	if !slices.Equal(got.Config.Cmd, []string{"--own"}) {
+		t.Errorf("Cmd = %v, want the explicit cmd", got.Config.Cmd)
 	}
 	if got.Config.User != "0" || got.Config.WorkingDir != "/own" || !slices.Equal(got.Config.Entrypoint, []string{"/own"}) {
 		t.Errorf("explicit config must beat the parent config: %+v", got.Config)
