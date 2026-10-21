@@ -23,7 +23,7 @@ RUN if [[ "$(arch)" == "x86_64" ]]; then \
 FROM ubuntu:24.04
 ENV DEBIAN_FRONTEND="noninteractive"
 RUN apt update \
-    && apt-get install -y --upgrade \
+    && apt-get install -y --no-install-recommends --upgrade \
       curl \
       ca-certificates \
       unzip \
