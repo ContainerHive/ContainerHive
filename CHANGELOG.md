@@ -1,3 +1,9 @@
+## [1.13.3](https://github.com/ContainerHive/ContainerHive/compare/v1.13.2...v1.13.3) (2026-10-21)
+
+### Bug Fixes
+
+* **report:** deduplicate packages parsed from SBOM files ([#311](https://github.com/ContainerHive/ContainerHive/issues/311)) ([3773657](https://github.com/ContainerHive/ContainerHive/commit/37736570a21f654e12d616b3921b7f8eeb7dff8e))
+
 ## [1.13.2](https://github.com/ContainerHive/ContainerHive/compare/v1.13.1...v1.13.2) (2026-10-19)
 
 ### Bug Fixes
