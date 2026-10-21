@@ -67,13 +67,29 @@ func runConfigFor(imageDef *model.Image, variantDef *model.ImageVariant) *model.
 	return imageDef.RunConfig
 }
 
+// resolveNixParent resolves the nix.parent config value for a build. An
+// empty parent returns nil.
+func resolveNixParent(parentRef string, opts *ProjectBuildOpts, platformStr string) (*NixParentDeps, error) {
+	if parentRef == "" {
+		return nil, nil
+	}
+	return ResolveNixParent(parentRef, HiveDepsOpts{
+		DistPath:        opts.DistPath,
+		PlatformStr:     platformStr,
+		RegistryAddress: opts.registryAddress(),
+		BuildID:         opts.BuildID,
+	})
+}
+
 // nixBuildContext assembles the NixBuildContext for the backend from a
-// resolved Nix config and run config.
-func nixBuildContext(root string, nix model.NixConfig, run *model.ImageRunConfig) *build_context.NixBuildContext {
+// resolved Nix config, run config and parent source.
+func nixBuildContext(root string, nix model.NixConfig, run *model.ImageRunConfig, parent *build_context.NixParent) *build_context.NixBuildContext {
 	buildCtx := &build_context.NixBuildContext{
 		Root:         root,
 		BuilderImage: nix.BuilderImage,
 		ExtraArgs:    nix.ExtraArgs,
+		Parent:       parent,
+		StoreCache:   nix.StoreCacheEnabled(),
 	}
 	if run != nil {
 		buildCtx.Entrypoint = run.Entrypoint

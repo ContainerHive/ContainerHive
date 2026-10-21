@@ -9,6 +9,7 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/ContainerHive/ContainerHive/internal/buildkit/build_context"
 	"github.com/ContainerHive/ContainerHive/pkg/cache"
 	"github.com/ContainerHive/ContainerHive/pkg/deps"
 	"github.com/ContainerHive/ContainerHive/pkg/model"
@@ -323,7 +324,21 @@ func buildTag(ctx context.Context, client *Client, opts *ProjectBuildOpts, image
 		ProgressConfig:   opts.ProgressConfig,
 	}
 	if imageDef.BuildBackend == model.BuildBackendNix {
-		buildOpts.BuildContext = nixBuildContext(root, imageDef.Nix, imageDef.RunConfig)
+		parentDeps, err := resolveNixParent(imageDef.Nix.Parent, opts, platformStr)
+		if err != nil {
+			return fmt.Errorf("failed to resolve nix parent for %s:%s: %w", imageDef.Name, tagName, err)
+		}
+		if parentDeps != nil && parentDeps.Deps != nil {
+			defer parentDeps.Deps.Cleanup()
+			if buildOpts.OCIStores == nil {
+				buildOpts.OCIStores = parentDeps.Deps.OCIStores
+			}
+		}
+		var parent *build_context.NixParent
+		if parentDeps != nil {
+			parent = parentDeps.Parent
+		}
+		buildOpts.BuildContext = nixBuildContext(root, imageDef.Nix, imageDef.RunConfig, parent)
 	}
 	if hiveDeps != nil {
 		buildOpts.OCIStores = hiveDeps.OCIStores
@@ -418,7 +433,22 @@ func buildVariant(ctx context.Context, client *Client, opts *ProjectBuildOpts, i
 		ProgressConfig:   opts.ProgressConfig,
 	}
 	if variantBackend(imageDef, variantDef) == model.BuildBackendNix {
-		buildOpts.BuildContext = nixBuildContext(root, nixConfigFor(imageDef, variantDef), runConfigFor(imageDef, variantDef))
+		nixConfig := nixConfigFor(imageDef, variantDef)
+		parentDeps, err := resolveNixParent(nixConfig.Parent, opts, platformStr)
+		if err != nil {
+			return fmt.Errorf("failed to resolve nix parent for %s:%s.%s: %w", imageDef.Name, tagName, variantName, err)
+		}
+		if parentDeps != nil && parentDeps.Deps != nil {
+			defer parentDeps.Deps.Cleanup()
+			if buildOpts.OCIStores == nil {
+				buildOpts.OCIStores = parentDeps.Deps.OCIStores
+			}
+		}
+		var parent *build_context.NixParent
+		if parentDeps != nil {
+			parent = parentDeps.Parent
+		}
+		buildOpts.BuildContext = nixBuildContext(root, nixConfig, runConfigFor(imageDef, variantDef), parent)
 	}
 	if hiveDeps != nil {
 		buildOpts.OCIStores = hiveDeps.OCIStores

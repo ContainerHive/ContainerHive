@@ -8,6 +8,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/moby/buildkit/client/llb"
 	pb "github.com/moby/buildkit/solver/pb"
 	ocispecs "github.com/opencontainers/image-spec/specs-go/v1"
 	"google.golang.org/protobuf/proto"
@@ -42,15 +43,33 @@ func TestNixBuildContext_ToLocalMounts(t *testing.T) {
 
 func TestNixBuildContext_buildScript(t *testing.T) {
 	nc := NixBuildContext{}
-	got := nc.buildScript("x86_64-linux")
+	got := nc.buildScript("x86_64-linux", false)
 	want := "lockmode=''; [ -f /src/flake.lock ] && lockmode='--no-update-lock-file'\nnix --extra-experimental-features 'nix-command flakes' --option sandbox false --option filter-syscalls false build $lockmode --show-trace -L --out-link /tmp/hive-rootfs .#packages.x86_64-linux.default && cp -RL --preserve=links /tmp/hive-rootfs/. /out/ && nix --extra-experimental-features 'nix-command flakes' copy --no-check-sigs --to /out /tmp/hive-rootfs"
 	if got != want {
 		t.Errorf("buildScript() =\n%q\nwant\n%q", got, want)
 	}
 
-	got = nc.buildScript("aarch64-linux")
+	got = nc.buildScript("aarch64-linux", false)
 	if !strings.Contains(got, ".#packages.aarch64-linux.default") {
 		t.Errorf("buildScript() = %q, want the mapped system attr", got)
+	}
+
+	parentNC := NixBuildContext{Parent: &NixParent{RegistryRef: "example.com/base:1.0"}}
+	got = parentNC.buildScript("x86_64-linux", true)
+	if !strings.Contains(got, " && cp -RL --preserve=links /parent/. /out/ && cp -RL --preserve=links /tmp/hive-rootfs/. /out/") {
+		t.Errorf("buildScript() = %q, want the parent rootfs copy before the flake copy", got)
+	}
+
+	cacheNC := NixBuildContext{StoreCache: true}
+	got = cacheNC.buildScript("x86_64-linux", false)
+	if want := "nix --store /nix-cache --extra-experimental-features"; !strings.Contains(got, want) {
+		t.Errorf("buildScript() = %q, want the build against the chroot store %q", got, want)
+	}
+	if want := "nix --store /nix-cache --extra-experimental-features 'nix-command flakes' copy"; !strings.Contains(got, want) {
+		t.Errorf("buildScript() = %q, want the copy from the chroot store %q", got, want)
+	}
+	if strings.Count(got, "--store /nix-cache") != 2 {
+		t.Errorf("buildScript() = %q, want both nix invocations against the chroot store", got)
 	}
 }
 
@@ -152,6 +171,7 @@ func TestNixBuildContext_buildGraphMarshal(t *testing.T) {
 		"x86_64-linux",
 		[]string{"PATH=/nix/var/nix/profiles/default/bin:/usr/bin"},
 		"nixos/nix@sha256:b75cca259b5e7c1f8a5a36ff9d0a29c10bb67a4b2e96e08caaffb7b77a99c352",
+		nil, false,
 	)
 
 	if _, err := state.Marshal(context.Background()); err != nil {
@@ -172,6 +192,7 @@ func TestNixBuildContext_buildGraphExcludesBuildOutputs(t *testing.T) {
 		"x86_64-linux",
 		[]string{"PATH=/nix/var/nix/profiles/default/bin:/usr/bin"},
 		"nixos/nix@sha256:b75cca259b5e7c1f8a5a36ff9d0a29c10bb67a4b2e96e08caaffb7b77a99c352",
+		nil, false,
 	)
 	def, err := state.Marshal(context.Background())
 	if err != nil {
@@ -200,4 +221,86 @@ func TestNixBuildContext_buildGraphExcludesBuildOutputs(t *testing.T) {
 	if !excluded {
 		t.Error("the flake context mount does not exclude */image.tar; build outputs would invalidate the cache key on every build")
 	}
+}
+
+func TestNixBuildContext_buildGraphParentMount(t *testing.T) {
+	dir := t.TempDir()
+	flake := filepath.Join(dir, "flake.nix")
+	if err := os.WriteFile(flake, []byte("{ }\n"), 0o600); err != nil {
+		t.Fatal(err)
+	}
+
+	parent := llb.Image("example.com/base:1.0")
+	nc := NixBuildContext{Root: dir}
+	state := nc.buildGraph(
+		ocispecs.Platform{OS: "linux", Architecture: "amd64"},
+		"x86_64-linux",
+		nil,
+		"nixos/nix@sha256:b75cca259b5e7c1f8a5a36ff9d0a29c10bb67a4b2e96e08caaffb7b77a99c352",
+		&parent, true,
+	)
+	if !hasMount(t, state, parentMountPath) {
+		t.Errorf("buildGraph has no %s mount; the parent rootfs would not reach the build", parentMountPath)
+	}
+}
+
+func TestNixBuildContext_buildGraphStoreCacheMount(t *testing.T) {
+	dir := t.TempDir()
+	flake := filepath.Join(dir, "flake.nix")
+	if err := os.WriteFile(flake, []byte("{ }\n"), 0o600); err != nil {
+		t.Fatal(err)
+	}
+
+	nc := NixBuildContext{Root: dir, StoreCache: true}
+	state := nc.buildGraph(
+		ocispecs.Platform{OS: "linux", Architecture: "amd64"},
+		"x86_64-linux",
+		nil,
+		"nixos/nix@sha256:b75cca259b5e7c1f8a5a36ff9d0a29c10bb67a4b2e96e08caaffb7b77a99c352",
+		nil, false,
+	)
+	mount, found := findMount(t, state, nixStoreCachePath)
+	if !found {
+		t.Fatalf("buildGraph has no %s mount; the nix store cache would not persist", nixStoreCachePath)
+	}
+	if mount.MountType != pb.MountType_CACHE {
+		t.Errorf("mount %s type = %d, want a cache mount (%d)", nixStoreCachePath, mount.MountType, pb.MountType_CACHE)
+	}
+	if mount.CacheOpt == nil || mount.CacheOpt.ID != nixStoreCacheKey {
+		t.Errorf("mount %s cache id = %v, want %q", nixStoreCachePath, mount.CacheOpt, nixStoreCacheKey)
+	}
+	if mount.CacheOpt != nil && mount.CacheOpt.Sharing != pb.CacheSharingOpt_SHARED {
+		t.Errorf("mount %s sharing = %d, want shared (%d)", nixStoreCachePath, mount.CacheOpt.Sharing, pb.CacheSharingOpt_SHARED)
+	}
+}
+
+// hasMount reports whether the marshalled exec graph mounts dest.
+func hasMount(t *testing.T, state llb.State, dest string) bool {
+	_, found := findMount(t, state, dest)
+	return found
+}
+
+// findMount returns the marshalled mount for dest.
+func findMount(t *testing.T, state llb.State, dest string) (*pb.Mount, bool) {
+	t.Helper()
+	def, err := state.Marshal(context.Background())
+	if err != nil {
+		t.Fatalf("state marshal failed: %v", err)
+	}
+	for _, dt := range def.ToPB().Def {
+		var op pb.Op
+		if err := proto.Unmarshal(dt, &op); err != nil {
+			t.Fatalf("failed to unmarshal llb op: %v", err)
+		}
+		exec := op.GetExec()
+		if exec == nil {
+			continue
+		}
+		for _, mount := range exec.Mounts {
+			if mount.Dest == dest {
+				return mount, true
+			}
+		}
+	}
+	return nil, false
 }

@@ -235,6 +235,82 @@ COPY --from=__hive__/util:1.0 /app /app
 	})
 }
 
+func TestResolveNixParent(t *testing.T) {
+	t.Run("plain image reference", func(t *testing.T) {
+		result, err := ResolveNixParent("ubuntu:22.04", HiveDepsOpts{
+			DistPath:    t.TempDir(),
+			PlatformStr: "linux/amd64",
+		})
+		if err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
+		if result.Parent.RegistryRef != "ubuntu:22.04" {
+			t.Errorf("RegistryRef = %q, want ubuntu:22.04", result.Parent.RegistryRef)
+		}
+		if result.Parent.OCIStoreID != "" || result.Parent.OCIDigestRef != "" {
+			t.Errorf("expected the registry path, got %+v", result.Parent)
+		}
+		if result.Deps != nil {
+			t.Error("expected nil Deps for a plain reference")
+		}
+	})
+
+	t.Run("hive reference not built yet", func(t *testing.T) {
+		result, err := ResolveNixParent("__hive__/base:latest", HiveDepsOpts{
+			DistPath:    t.TempDir(),
+			PlatformStr: "linux/amd64",
+		})
+		if err == nil {
+			t.Fatal("expected error, got nil")
+		}
+		if result != nil {
+			t.Errorf("expected nil result, got %v", result)
+		}
+		if !strings.Contains(err.Error(), "not built yet") {
+			t.Errorf("expected error to contain 'not built yet', got: %v", err)
+		}
+	})
+
+	t.Run("hive reference falls back to registry", func(t *testing.T) {
+		result, err := ResolveNixParent("__hive__/base:1.0", HiveDepsOpts{
+			DistPath:        t.TempDir(),
+			PlatformStr:     "linux/amd64",
+			RegistryAddress: "ghcr.io/myorg",
+			BuildID:         "42",
+		})
+		if err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
+		if result.Parent.RegistryRef != "ghcr.io/myorg/base:1.0-build.42" {
+			t.Errorf("RegistryRef = %q, want ghcr.io/myorg/base:1.0-build.42", result.Parent.RegistryRef)
+		}
+		if result.Parent.OCIStoreID != "" {
+			t.Errorf("expected the registry path, got %+v", result.Parent)
+		}
+		result.Deps.Cleanup()
+	})
+
+	t.Run("invalid hive reference", func(t *testing.T) {
+		result, err := ResolveNixParent("__hive__/no-tag", HiveDepsOpts{
+			DistPath:    t.TempDir(),
+			PlatformStr: "linux/amd64",
+		})
+		if err == nil {
+			t.Fatal("expected error, got nil")
+		}
+		if result != nil {
+			t.Errorf("expected nil result, got %v", result)
+		}
+	})
+
+	t.Run("splits name and tag at the last colon", func(t *testing.T) {
+		name, tag := splitHiveRef("base:1.0-build.22")
+		if name != "base" || tag != "1.0-build.22" {
+			t.Errorf("splitHiveRef = %q, %q; want base, 1.0-build.22", name, tag)
+		}
+	})
+}
+
 func TestRewriteDockerfile(t *testing.T) {
 	t.Run("rewrites hive prefixes correctly", func(t *testing.T) {
 		// Create a temporary Dockerfile
