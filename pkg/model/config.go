@@ -29,6 +29,9 @@ type SecretValue struct {
 type VariantConfig struct {
 	Name      string            `yaml:"name" json:"name" jsonschema:"Name of the variant"`
 	TagSuffix string            `yaml:"tag_suffix" json:"tag_suffix" jsonschema:"Suffix to append to the tag name for this variant"`
+	Build     string            `yaml:"build,omitempty" json:"build,omitempty" jsonschema:"Build backend for this variant (dockerfile, nix). Omit to auto-detect from the variant build entrypoint."`
+	Nix       *NixConfig        `yaml:"nix,omitempty" json:"nix,omitempty" jsonschema:"Nix flake build configuration for this variant, applies when build is nix"`
+	Config    *ImageRunConfig   `yaml:"config,omitempty" json:"config,omitempty" jsonschema:"Runtime configuration of the built image for this variant (nix backend)"`
 	Versions  Versions          `yaml:"versions" json:"versions,omitempty" jsonschema:"Versions to use for this variant"`
 	BuildArgs BuildArgs         `yaml:"build_args" json:"build_args,omitempty" jsonschema:"Build args to add for this variant"`
 	Platforms []string          `yaml:"platforms,omitempty" json:"platforms,omitempty" jsonschema:"Target platforms for this variant (e.g. linux/amd64)"`
@@ -47,9 +50,36 @@ type LatestAliasConfig struct {
 	OnMissing string `yaml:"on_missing,omitempty" json:"on_missing,omitempty" jsonschema:"Behaviour when no semantic tags are found: error (default), warning, silent"`
 }
 
+// NixConfig configures the Nix flake build backend for an image or variant.
+// It only applies when Build is nix.
+//
+// ContainerHive builds the installable by convention: packages.<system>.default
+// with system mapped from the target platform. Flakes must define that
+// attribute.
+type NixConfig struct {
+	// BuilderImage is the container image that provides nix for the build.
+	// Empty uses the built-in default builder image.
+	BuilderImage string `yaml:"builder_image,omitempty" json:"builder_image,omitempty" jsonschema:"Container image providing nix for the build (e.g. nixos/nix:2.31). Empty uses the default builder image."`
+	// ExtraArgs holds additional arguments passed to nix build.
+	ExtraArgs []string `yaml:"extra_args,omitempty" json:"extra_args,omitempty" jsonschema:"Additional arguments passed to nix build (e.g. --impure)"`
+}
+
+// ImageRunConfig captures the runtime configuration applied to the image
+// built by the Nix backend, since flakes do not carry Dockerfile instructions.
+type ImageRunConfig struct {
+	Entrypoint []string          `yaml:"entrypoint,omitempty" json:"entrypoint,omitempty" jsonschema:"Entrypoint of the built image"`
+	Cmd        []string          `yaml:"cmd,omitempty" json:"cmd,omitempty" jsonschema:"Default command of the built image"`
+	Env        map[string]string `yaml:"env,omitempty" json:"env,omitempty" jsonschema:"Environment variables of the built image"`
+	User       string            `yaml:"user,omitempty" json:"user,omitempty" jsonschema:"User of the built image, as uid[:gid]"`
+	WorkingDir string            `yaml:"working_dir,omitempty" json:"working_dir,omitempty" jsonschema:"Workdir of the built image"`
+}
+
 // ImageDefinitionConfig is the parsed content of an image definition YAML file.
 type ImageDefinitionConfig struct {
 	Description string             `yaml:"description" json:"description,omitempty" jsonschema:"Description of the image"`
+	Build       string             `yaml:"build,omitempty" json:"build,omitempty" jsonschema:"Build backend (dockerfile, nix). Omit to auto-detect from the build entrypoint."`
+	Nix         *NixConfig         `yaml:"nix,omitempty" json:"nix,omitempty" jsonschema:"Nix flake build configuration, applies when build is nix"`
+	Config      *ImageRunConfig    `yaml:"config,omitempty" json:"config,omitempty" jsonschema:"Runtime configuration of the built image (nix backend)"`
 	Tags        []*Tag             `yaml:"tags" json:"tags" jsonschema:"Tags to create for this image"`
 	TagRanges   []*TagRange        `yaml:"tag_ranges,omitempty" json:"tag_ranges,omitempty" jsonschema:"Tag ranges generating tags from external version sources at discovery time"`
 	Variants    []VariantConfig    `yaml:"variants" json:"variants,omitempty" jsonschema:"Variants to create for this image"`

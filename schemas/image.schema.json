@@ -5,6 +5,79 @@
       "type": "string",
       "description": "Description of the image"
     },
+    "build": {
+      "type": "string",
+      "description": "Build backend (dockerfile, nix). Omit to auto-detect from the build entrypoint."
+    },
+    "nix": {
+      "type": [
+        "null",
+        "object"
+      ],
+      "properties": {
+        "builder_image": {
+          "type": "string",
+          "description": "Container image providing nix for the build (e.g. nixos/nix:2.31). Empty uses the default builder image."
+        },
+        "extra_args": {
+          "type": [
+            "null",
+            "array"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "description": "Additional arguments passed to nix build (e.g. --impure)"
+        }
+      },
+      "description": "Nix flake build configuration, applies when build is nix",
+      "additionalProperties": false
+    },
+    "config": {
+      "type": [
+        "null",
+        "object"
+      ],
+      "properties": {
+        "entrypoint": {
+          "type": [
+            "null",
+            "array"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "description": "Entrypoint of the built image"
+        },
+        "cmd": {
+          "type": [
+            "null",
+            "array"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "description": "Default command of the built image"
+        },
+        "env": {
+          "type": "object",
+          "description": "Environment variables of the built image",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "user": {
+          "type": "string",
+          "description": "User of the built image, as uid[:gid]"
+        },
+        "working_dir": {
+          "type": "string",
+          "description": "Workdir of the built image"
+        }
+      },
+      "description": "Runtime configuration of the built image (nix backend)",
+      "additionalProperties": false
+    },
     "tags": {
       "type": [
         "null",
@@ -323,6 +396,79 @@
           "tag_suffix": {
             "type": "string",
             "description": "Suffix to append to the tag name for this variant"
+          },
+          "build": {
+            "type": "string",
+            "description": "Build backend for this variant (dockerfile, nix). Omit to auto-detect from the variant build entrypoint."
+          },
+          "nix": {
+            "type": [
+              "null",
+              "object"
+            ],
+            "properties": {
+              "builder_image": {
+                "type": "string",
+                "description": "Container image providing nix for the build (e.g. nixos/nix:2.31). Empty uses the default builder image."
+              },
+              "extra_args": {
+                "type": [
+                  "null",
+                  "array"
+                ],
+                "items": {
+                  "type": "string"
+                },
+                "description": "Additional arguments passed to nix build (e.g. --impure)"
+              }
+            },
+            "description": "Nix flake build configuration for this variant, applies when build is nix",
+            "additionalProperties": false
+          },
+          "config": {
+            "type": [
+              "null",
+              "object"
+            ],
+            "properties": {
+              "entrypoint": {
+                "type": [
+                  "null",
+                  "array"
+                ],
+                "items": {
+                  "type": "string"
+                },
+                "description": "Entrypoint of the built image"
+              },
+              "cmd": {
+                "type": [
+                  "null",
+                  "array"
+                ],
+                "items": {
+                  "type": "string"
+                },
+                "description": "Default command of the built image"
+              },
+              "env": {
+                "type": "object",
+                "description": "Environment variables of the built image",
+                "additionalProperties": {
+                  "type": "string"
+                }
+              },
+              "user": {
+                "type": "string",
+                "description": "User of the built image, as uid[:gid]"
+              },
+              "working_dir": {
+                "type": "string",
+                "description": "Workdir of the built image"
+              }
+            },
+            "description": "Runtime configuration of the built image for this variant (nix backend)",
+            "additionalProperties": false
           },
           "versions": {
             "type": "object",
