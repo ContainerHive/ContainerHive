@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"os"
 	"path/filepath"
+	"slices"
 	"strings"
 	"testing"
 
@@ -914,5 +915,30 @@ func TestGenerator_GenerateHTMLFromAssets_StyleSheet(t *testing.T) {
 				t.Error("output does not contain injected generatedAt value")
 			}
 		})
+	}
+}
+
+func TestParseSBOMFile_DeduplicatesPackages(t *testing.T) {
+	sbom := `{"components":[
+		{"name":"zlib","version":"1.3"},
+		{"name":"curl","version":"8.0"},
+		{"name":"zlib","version":"1.3"},
+		{"name":"curl","version":"8.1"},
+		{"name":"curl","version":"8.0"},
+		{"name":"empty","version":"UNKNOWN"}
+	]}`
+	path := filepath.Join(t.TempDir(), "sbom.json")
+	if err := os.WriteFile(path, []byte(sbom), 0o644); err != nil {
+		t.Fatal(err)
+	}
+
+	got, err := parseSBOMFile(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	want := []SBOMPackage{{"curl", "8.0"}, {"curl", "8.1"}, {"zlib", "1.3"}}
+	if !slices.Equal(got, want) {
+		t.Errorf("got %v, want %v", got, want)
 	}
 }
