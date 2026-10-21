@@ -10,6 +10,7 @@ import (
 	"github.com/ContainerHive/ContainerHive/internal/dependency"
 	"github.com/ContainerHive/ContainerHive/internal/ocistore"
 	"github.com/containerd/containerd/v2/core/content"
+	"github.com/distribution/reference"
 )
 
 // namedContextPrefix replaces __hive__/ in the rewritten Dockerfile. It must be
@@ -163,8 +164,16 @@ func ResolveNixParent(parentRef string, opts HiveDepsOpts) (*NixParentDeps, erro
 	parent := &build_context.NixParent{}
 	for _, contextValue := range d.NamedContexts {
 		if storeID, digest, found := parseOCILayoutRef(contextValue); found {
+			named, err := reference.ParseNormalizedNamed(storeID)
+			if err != nil {
+				d.Cleanup()
+				return nil, fmt.Errorf("normalizing parent store id %q: %w", storeID, err)
+			}
+			// The OCI source parser requires a host-qualified name: an
+			// unqualified "store@sha256:..." puts the digest into the URL
+			// authority and fails to parse.
 			parent.OCIStoreID = storeID
-			parent.OCIDigestRef = fmt.Sprintf("%s@%s", storeID, digest)
+			parent.OCIDigestRef = named.String() + "@" + digest
 		}
 		if strings.HasPrefix(contextValue, "docker-image://") {
 			parent.RegistryRef = strings.TrimPrefix(contextValue, "docker-image://")
