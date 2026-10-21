@@ -329,31 +329,24 @@ func (d NixBuildContext) buildScript(system string, hasParent bool) string {
 		b.WriteString(" ")
 		b.WriteString(shellQuote(arg))
 	}
-	if hasParent {
-		// The parent rootfs goes in first: the flake output overlays it.
-		// The parent nix store content moves into /out/nix/store, and the
-		// parent nix metadata stays out: a carried over store database and
-		// dangling gcroot symlinks corrupt the destination store, and the
-		// child closure copy brings the shared store paths anyway. The cp
-		// chain needs the trailing true: unmatched shell globs produce a
-		// literal entry and the test fails under set -e.
-		b.WriteString(" && mkdir -p /out/nix/store")
-		b.WriteString(" && cp -RL --preserve=links " + parentMountPath + "/nix/store/. /out/nix/store/")
-		b.WriteString(" && for entry in " + parentMountPath + "/* " + parentMountPath + "/.[!.]* " + parentMountPath + "/..?*;")
-		b.WriteString(" do [ \"$entry\" != " + parentMountPath + "/nix ] && [ -e \"$entry\" ] && cp -RL --preserve=links \"$entry\" /out/ || true; done")
-	}
+	b.WriteString("\n")
 	// Rootfs copy plus the full store closure: dereferenced symlinks point
 	// into the nix store, and dynamically linked binaries need their
 	// interpreter (ld.so) at the exact store path. Copy the closure of the
 	// build output into the image under the same absolute paths so the
 	// references resolve inside the container. A scheme-less destination is a
-	// chroot store: nix unpacks the closure below /out/nix/store.
-	b.WriteString(" && cp -RL --preserve=links /tmp/hive-rootfs/. /out/")
-	b.WriteString(" && ")
+	// chroot store: nix unpacks the closure below /out/nix/store. Statements
+	// stand on separate lines so set -e aborts on any failure; the best effort
+	// cache export is the only one allowed to fail.
+	if hasParent {
+		b.WriteString(parentOverlayScript(parentMountPath, "/tmp/hive-rootfs", "/out"))
+	} else {
+		b.WriteString("cp -RL --preserve=links /tmp/hive-rootfs/. /out/\n")
+	}
 	gnix()
 	b.WriteString(" copy --no-check-sigs --to /out /tmp/hive-rootfs")
 	if d.StoreCache {
-		b.WriteString(" && ")
+		b.WriteString("\n")
 		gnix()
 		b.WriteString(" copy --no-check-sigs --to local?root=" + nixStoreCachePath + " \"$drv\" || true")
 	}
@@ -498,4 +491,47 @@ func (d NixBuildContext) FrontendType() string {
 // as one literal word.
 func shellQuote(arg string) string {
 	return "'" + strings.ReplaceAll(arg, "'", `'\''`) + "'"
+}
+
+// parentOverlayScript returns the shell statements that lay the parent rootfs
+// into out and overlay the flake output (rootfs) on top of it.
+//
+// The parent keeps its symlinks (cp -a): dereferencing them would flatten
+// merged /usr layouts, and an absolute link resolves against the builder
+// filesystem instead of the parent. The parent nix store moves into
+// out/nix/store when it has one, so a non nix parent works too. The rest of
+// the parent nix tree stays out: a carried over store database and dangling
+// gcroot symlinks corrupt the destination store, and the child closure copy
+// brings the shared store paths anyway.
+//
+// The flake output dereferences its store symlinks. A top level directory of
+// it that meets a parent symlink, like bin over a merged /usr layout, merges
+// into the link target instead of failing on the type mismatch.
+func parentOverlayScript(parent, rootfs, out string) string {
+	script := `if [ -d PARENT/nix/store ]; then
+  mkdir -p OUT/nix/store
+  cp -a PARENT/nix/store/. OUT/nix/store/
+fi
+for entry in PARENT/* PARENT/.[!.]* PARENT/..?*; do
+  [ "$entry" = PARENT/nix ] && continue
+  [ -e "$entry" ] || [ -L "$entry" ] || continue
+  cp -a "$entry" OUT/
+done
+for entry in ROOTFS/* ROOTFS/.[!.]* ROOTFS/..?*; do
+  [ -e "$entry" ] || [ -L "$entry" ] || continue
+  name="${entry##*/}"
+  if [ -d "$entry" ] && [ -L "OUT/$name" ]; then
+    link="$(readlink "OUT/$name")"
+    case "$link" in
+      /*) dest="OUT$link" ;;
+      *) dest="OUT/$link" ;;
+    esac
+    mkdir -p "$dest"
+    cp -RL --preserve=links "$entry/." "$dest/"
+    continue
+  fi
+  cp -RL --preserve=links "$entry" OUT/
+done
+`
+	return strings.NewReplacer("PARENT", parent, "ROOTFS", rootfs, "OUT", out).Replace(script)
 }
