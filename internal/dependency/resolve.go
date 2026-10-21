@@ -2,6 +2,7 @@ package dependency
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/ContainerHive/ContainerHive/pkg/model"
 )
@@ -28,8 +29,49 @@ func BuildDependencyGraph(scannedGraph *Graph, project *model.ContainerHiveProje
 				}
 				graph.AddDependency(name, dep)
 			}
+			if err := addNixParentDependency(graph, project, name, img.Nix.Parent); err != nil {
+				return nil, err
+			}
+			for _, variant := range img.Variants {
+				parent := ""
+				if variant.Nix != nil {
+					parent = variant.Nix.Parent
+				}
+				if err := addNixParentDependency(graph, project, name, parent); err != nil {
+					return nil, err
+				}
+			}
 		}
 	}
 
 	return graph, nil
+}
+
+// addNixParentDependency records the implicit build order edge from a
+// nix.parent hive reference, so a flake build with a parent depends on it
+// without an explicit depends_on. Plain image references and the parent
+// placeholder carry no build order edge.
+func addNixParentDependency(graph *Graph, project *model.ContainerHiveProject, from, parent string) error {
+	if parent == "" || parent == model.HiveParentPlaceholder {
+		return nil
+	}
+	if !strings.HasPrefix(parent, HivePrefix) {
+		return nil
+	}
+	name, tag := parent, ""
+	if rest := strings.TrimPrefix(parent, HivePrefix); rest != "" {
+		if idx := strings.LastIndex(rest, ":"); idx > -1 {
+			name, tag = rest[:idx], rest[idx+1:]
+		}
+	}
+	if name == "" || tag == "" {
+		return fmt.Errorf("image %q sets nix.parent %q, want %s<name>:<tag>", from, parent, HivePrefix)
+	}
+	if _, exists := project.ImagesByName[name]; !exists {
+		return fmt.Errorf("image %q sets nix.parent %q, but no image with that name exists in the project", from, parent)
+	}
+	if name != from {
+		graph.AddDependency(from, name)
+	}
+	return nil
 }
