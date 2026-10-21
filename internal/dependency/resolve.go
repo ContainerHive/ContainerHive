@@ -29,14 +29,7 @@ func BuildDependencyGraph(scannedGraph *Graph, project *model.ContainerHiveProje
 				}
 				graph.AddDependency(name, dep)
 			}
-			if err := addNixParentDependency(graph, project, name, img.Nix.Parent); err != nil {
-				return nil, err
-			}
-			for _, variant := range img.Variants {
-				parent := ""
-				if variant.Nix != nil {
-					parent = variant.Nix.Parent
-				}
+			for _, parent := range nixParentRefs(img) {
 				if err := addNixParentDependency(graph, project, name, parent); err != nil {
 					return nil, err
 				}
