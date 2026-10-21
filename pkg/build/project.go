@@ -251,10 +251,11 @@ func buildWithoutDeps(ctx context.Context, client *Client, opts *ProjectBuildOpt
 }
 
 func buildTag(ctx context.Context, client *Client, opts *ProjectBuildOpts, imageDef *model.Image, tagName, platformStr string) error {
-	dockerfilePath := filepath.Join(opts.DistPath, imageDef.Name, tagName, "Dockerfile")
-	if _, err := os.Stat(dockerfilePath); os.IsNotExist(err) {
-		return fmt.Errorf("Dockerfile not found for %s:%s at %s", imageDef.Name, tagName, dockerfilePath)
+	entrypointPath := filepath.Join(opts.DistPath, imageDef.Name, tagName, entrypointFileName(imageDef.BuildBackend))
+	if _, err := os.Stat(entrypointPath); os.IsNotExist(err) {
+		return fmt.Errorf("build entrypoint not found for %s:%s at %s", imageDef.Name, tagName, entrypointPath)
 	}
+	dockerfilePath := entrypointPath
 
 	hiveDeps, err := ResolveHiveDeps(HiveDepsOpts{
 		DockerfilePath:  dockerfilePath,
@@ -287,11 +288,11 @@ func buildTag(ctx context.Context, client *Client, opts *ProjectBuildOpts, image
 	if hiveDeps != nil {
 		builtDockerfilePath = hiveDeps.Dockerfile
 	}
-	dockerfileContent, err := os.ReadFile(builtDockerfilePath)
+	hashContent, err := hashSource(builtDockerfilePath)
 	if err != nil {
-		return fmt.Errorf("failed to read Dockerfile for %s:%s: %w", imageDef.Name, tagName, err)
+		return fmt.Errorf("failed to read build entrypoint for %s:%s: %w", imageDef.Name, tagName, err)
 	}
-	contentHash := cache.ComputeContentHash(dockerfileContent, config.BuildArgs, platformStr)
+	contentHash := cache.ComputeContentHash(hashContent, config.BuildArgs, platformStr)
 
 	scope := fmt.Sprintf("%s.%s.%s.%s", imageDef.Name, tagName, platformStr, contentHash)
 	scopedCache := opts.Cache
@@ -321,6 +322,9 @@ func buildTag(ctx context.Context, client *Client, opts *ProjectBuildOpts, image
 		DockerMediaTypes: opts.useDockerMediaTypes(),
 		ProgressConfig:   opts.ProgressConfig,
 	}
+	if imageDef.BuildBackend == model.BuildBackendNix {
+		buildOpts.BuildContext = nixBuildContext(root, imageDef.Nix, imageDef.RunConfig)
+	}
 	if hiveDeps != nil {
 		buildOpts.OCIStores = hiveDeps.OCIStores
 		buildOpts.NamedContexts = hiveDeps.NamedContexts
@@ -341,9 +345,9 @@ func buildTag(ctx context.Context, client *Client, opts *ProjectBuildOpts, image
 
 func buildVariant(ctx context.Context, client *Client, opts *ProjectBuildOpts, imageDef *model.Image, tagName, variantName string, variantDef *model.ImageVariant, platformStr string) error {
 	variantTagName := tagName + variantDef.TagSuffix
-	variantDockerfilePath := filepath.Join(opts.DistPath, imageDef.Name, variantTagName, "Dockerfile")
+	variantDockerfilePath := filepath.Join(opts.DistPath, imageDef.Name, variantTagName, entrypointFileName(variantBackend(imageDef, variantDef)))
 	if _, err := os.Stat(variantDockerfilePath); os.IsNotExist(err) {
-		slog.Warn("Dockerfile not found for variant", "image", imageDef.Name, "tag", tagName, "variant", variantName, "path", variantDockerfilePath)
+		slog.Warn("Build entrypoint not found for variant", "image", imageDef.Name, "tag", tagName, "variant", variantName, "path", variantDockerfilePath)
 		return nil
 	}
 
@@ -378,9 +382,9 @@ func buildVariant(ctx context.Context, client *Client, opts *ProjectBuildOpts, i
 	if hiveDeps != nil {
 		builtVariantDockerfilePath = hiveDeps.Dockerfile
 	}
-	variantDockerfileContent, err := os.ReadFile(builtVariantDockerfilePath)
+	variantDockerfileContent, err := hashSource(builtVariantDockerfilePath)
 	if err != nil {
-		return fmt.Errorf("failed to read Dockerfile for variant %s:%s:%s: %w", imageDef.Name, tagName, variantName, err)
+		return fmt.Errorf("failed to read build entrypoint for variant %s:%s:%s: %w", imageDef.Name, tagName, variantName, err)
 	}
 	variantContentHash := cache.ComputeContentHash(variantDockerfileContent, config.BuildArgs, platformStr)
 
@@ -412,6 +416,9 @@ func buildVariant(ctx context.Context, client *Client, opts *ProjectBuildOpts, i
 		RegistryInsecure: opts.registryInsecure(),
 		DockerMediaTypes: opts.useDockerMediaTypes(),
 		ProgressConfig:   opts.ProgressConfig,
+	}
+	if variantBackend(imageDef, variantDef) == model.BuildBackendNix {
+		buildOpts.BuildContext = nixBuildContext(root, nixConfigFor(imageDef, variantDef), runConfigFor(imageDef, variantDef))
 	}
 	if hiveDeps != nil {
 		buildOpts.OCIStores = hiveDeps.OCIStores

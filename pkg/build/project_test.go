@@ -224,10 +224,37 @@ func TestBuildTag_DockerfileNotFound(t *testing.T) {
 
 	err := buildTag(context.Background(), client, opts, imageDef, "1.0", "linux/amd64")
 	if err == nil {
-		t.Fatal("expected error when Dockerfile not found, got nil")
+		t.Fatal("expected error when build entrypoint not found, got nil")
 	}
-	if !strings.Contains(err.Error(), "Dockerfile not found") {
-		t.Errorf("expected error to contain 'Dockerfile not found', got: %v", err)
+	if !strings.Contains(err.Error(), "build entrypoint not found") {
+		t.Errorf("expected error to contain 'build entrypoint not found', got: %v", err)
+	}
+}
+
+func TestBuildTag_NixEntrypointNotFound(t *testing.T) {
+	distPath := t.TempDir()
+	client := &Client{inner: nil}
+	imageDef := &model.Image{
+		Name:         "myimg",
+		BuildBackend: model.BuildBackendNix,
+		Tags: map[string]*model.Tag{
+			"1.0": {Name: "1.0"},
+		},
+	}
+	opts := &ProjectBuildOpts{
+		Project: &model.ContainerHiveProject{
+			ImagesByIdentifier: map[string]*model.Image{"myimg": imageDef},
+			ImagesByName:       map[string][]*model.Image{"myimg": {imageDef}},
+		},
+		DistPath: distPath,
+	}
+
+	err := buildTag(context.Background(), client, opts, imageDef, "1.0", "linux/amd64")
+	if err == nil {
+		t.Fatal("expected error when flake.nix not found, got nil")
+	}
+	if !strings.Contains(err.Error(), "build entrypoint not found") || !strings.Contains(err.Error(), "flake.nix") {
+		t.Errorf("expected a flake.nix entrypoint lookup, got: %v", err)
 	}
 }
 

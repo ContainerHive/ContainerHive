@@ -210,6 +210,9 @@ func setupImageTagDir(tagPath string, image *model.Image, tag *model.Tag) error 
 		if err := file_resolver.CopyAndRenderFile(tmplCtx, image.BuildEntryPointPath, fixUpEntrypoint(tagPath, image.BuildEntryPointPath)); err != nil {
 			return errors.Join(errors.New("failed to copy build entrypoint"), err)
 		}
+		if err := copyFlakeLock(tagPath, image.BuildEntryPointPath); err != nil {
+			return errors.Join(errors.New("failed to copy flake.lock"), err)
+		}
 	}
 
 	if image.ReadmePath != "" {
@@ -254,6 +257,9 @@ func setupVariantDir(variantPath string, image *model.Image, tagName string, tag
 		entrypoint := fixUpEntrypoint(variantPath, variantDef.BuildEntryPointPath)
 		if err := file_resolver.CopyAndRenderFile(tmplCtx, variantDef.BuildEntryPointPath, entrypoint); err != nil {
 			return errors.Join(errors.New("failed to copy build entrypoint"), err)
+		}
+		if err := copyFlakeLock(variantPath, variantDef.BuildEntryPointPath); err != nil {
+			return errors.Join(errors.New("failed to copy flake.lock for variant"), err)
 		}
 		if err := replaceHiveParent(entrypoint, image.Name, tagName); err != nil {
 			return errors.Join(errors.New("failed to resolve __hive_parent__ in variant entrypoint"), err)

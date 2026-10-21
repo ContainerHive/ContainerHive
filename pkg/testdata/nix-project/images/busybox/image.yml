@@ -1,0 +1,8 @@
+description: "Busybox image built from a Nix flake (nix build backend)"
+build: nix
+
+tags:
+  - name: 1.36.0
+
+platforms:
+  - linux/amd64

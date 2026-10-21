@@ -35,6 +35,7 @@ func TestDiscoverProject(t *testing.T) {
 				ImagesByIdentifier: map[string]*model.Image{
 					"dotnet/8": {
 						BuildEntryPointPath: mustAbs(t, "../testdata/simple-project/images/dotnet/8/Dockerfile"),
+						BuildBackend:        model.BuildBackendDockerfile,
 						ReadmePath:          mustAbs(t, "../testdata/simple-project/images/dotnet/8/README.md"),
 						RootDir:             mustAbs(t, "../testdata/simple-project/images/dotnet/8"),
 						RootFSDir:           mustAbs(t, "../testdata/simple-project/images/dotnet/8/rootfs"),
@@ -46,6 +47,7 @@ func TestDiscoverProject(t *testing.T) {
 							"node": {
 								Name:                "node",
 								BuildEntryPointPath: mustAbs(t, "../testdata/simple-project/images/dotnet/8/node/Dockerfile"),
+								BuildBackend:        model.BuildBackendDockerfile,
 								ReadmePath:          mustAbs(t, "../testdata/simple-project/images/dotnet/8/node/README.md.gotpl"),
 								RootDir:             mustAbs(t, "../testdata/simple-project/images/dotnet/8/node"),
 								RootFSDir:           mustAbs(t, "../testdata/simple-project/images/dotnet/8/node/rootfs"),
@@ -83,6 +85,7 @@ func TestDiscoverProject(t *testing.T) {
 					"python": {
 						RootDir:             mustAbs(t, "../testdata/simple-project/images/python"),
 						BuildEntryPointPath: mustAbs(t, "../testdata/simple-project/images/python/Dockerfile"),
+						BuildBackend:        model.BuildBackendDockerfile,
 						ReadmePath:          mustAbs(t, "../testdata/simple-project/images/python/README.md"),
 						RootFSDir:           mustAbs(t, "../testdata/simple-project/images/python/rootfs"),
 						Identifier:          "python",
@@ -122,6 +125,7 @@ func TestDiscoverProject(t *testing.T) {
 							Identifier:          "dotnet/8",
 							Name:                "dotnet",
 							BuildEntryPointPath: mustAbs(t, "../testdata/simple-project/images/dotnet/8/Dockerfile"),
+							BuildBackend:        model.BuildBackendDockerfile,
 							ReadmePath:          mustAbs(t, "../testdata/simple-project/images/dotnet/8/README.md"),
 							RootDir:             mustAbs(t, "../testdata/simple-project/images/dotnet/8"),
 							RootFSDir:           mustAbs(t, "../testdata/simple-project/images/dotnet/8/rootfs"),
@@ -132,6 +136,7 @@ func TestDiscoverProject(t *testing.T) {
 								"node": {
 									Name:                "node",
 									BuildEntryPointPath: mustAbs(t, "../testdata/simple-project/images/dotnet/8/node/Dockerfile"),
+									BuildBackend:        model.BuildBackendDockerfile,
 									ReadmePath:          mustAbs(t, "../testdata/simple-project/images/dotnet/8/node/README.md.gotpl"),
 									RootDir:             mustAbs(t, "../testdata/simple-project/images/dotnet/8/node"),
 									RootFSDir:           mustAbs(t, "../testdata/simple-project/images/dotnet/8/node/rootfs"),
@@ -171,6 +176,7 @@ func TestDiscoverProject(t *testing.T) {
 							Identifier:          "python",
 							Name:                "python",
 							BuildEntryPointPath: mustAbs(t, "../testdata/simple-project/images/python/Dockerfile"),
+							BuildBackend:        model.BuildBackendDockerfile,
 							ReadmePath:          mustAbs(t, "../testdata/simple-project/images/python/README.md"),
 							RootDir:             mustAbs(t, "../testdata/simple-project/images/python"),
 							RootFSDir:           mustAbs(t, "../testdata/simple-project/images/python/rootfs"),

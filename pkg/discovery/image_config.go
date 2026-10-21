@@ -2,11 +2,11 @@ package discovery
 
 import (
 	"errors"
+	"log/slog"
 	"os"
 	"path/filepath"
 	"strings"
 
-	"github.com/ContainerHive/ContainerHive/internal/file_resolver"
 	"github.com/ContainerHive/ContainerHive/pkg/model"
 	"gopkg.in/yaml.v3"
 )
@@ -16,6 +16,15 @@ func ensureSecretsInitialized(secrets model.Secrets) model.Secrets {
 		return make(model.Secrets)
 	}
 	return secrets
+}
+
+// ensureNixConfig dereferences an optional NixConfig for the value-typed field
+// on model.Image. Zero values mean the build applies its own defaults.
+func ensureNixConfig(cfg *model.NixConfig) model.NixConfig {
+	if cfg == nil {
+		return model.NixConfig{}
+	}
+	return *cfg
 }
 
 const rootFsDirName = "rootfs"
@@ -100,9 +109,16 @@ func processImageConfig(projectRoot, configFilePath string) (*model.Image, error
 		return nil, err
 	}
 
-	dockerfilePath, err := getBuildEntrypointPath(imageRoot)
+	entrypoint, err := resolveBuildEntrypoint(parsedImageDef.Build, imageRoot)
 	if err != nil {
-		return nil, errors.Join(errors.New("failed to discover Dockerfile"), err)
+		return nil, errors.Join(errors.New("failed to discover build entrypoint"), err)
+	}
+
+	if entrypoint.Backend == model.BuildBackendNix {
+		_, lockErr := os.Stat(filepath.Join(imageRoot, "flake.lock"))
+		if os.IsNotExist(lockErr) {
+			slog.Warn("No flake.lock: builds resolve inputs at build time and are not reproducible — run nix flake lock and commit flake.lock", "image", relativeRoot)
+		}
 	}
 
 	readmePath, err := getReadmePath(imageRoot)
@@ -112,7 +128,10 @@ func processImageConfig(projectRoot, configFilePath string) (*model.Image, error
 
 	return &model.Image{
 		RootDir:             filepath.Join(projectRoot, relativeRoot),
-		BuildEntryPointPath: dockerfilePath,
+		BuildEntryPointPath: entrypoint.Path,
+		BuildBackend:        entrypoint.Backend,
+		Nix:                 ensureNixConfig(parsedImageDef.Nix),
+		RunConfig:           parsedImageDef.Config,
 		ReadmePath:          readmePath,
 		RootFSDir:           rootFsPath,
 		Identifier:          relativeRoot,
@@ -157,11 +176,10 @@ func processVariants(imageDef *model.ImageDefinitionConfig, imageRoot, parentIco
 			return nil, errors.Join(errors.New("failed to discover test config file for variant "+v.Name), err)
 		}
 
-		dockerfilePath, err := file_resolver.ResolveFirstExistingFile(variantRoot, dockerfileConfigFileNames...)
+		variantEntrypoint, err := resolveBuildEntrypoint(v.Build, variantRoot)
 		if err != nil {
-			return nil, errors.Join(errors.New("failed to discover Dockerfile for variant "+v.Name), err)
+			return nil, errors.Join(errors.New("failed to discover build entrypoint for variant "+v.Name), err)
 		}
-
 		readmePath, err := getReadmePath(variantRoot)
 		if err != nil {
 			return nil, errors.Join(errors.New("failed to discover README for variant "+v.Name), err)
@@ -174,7 +192,10 @@ func processVariants(imageDef *model.ImageDefinitionConfig, imageRoot, parentIco
 
 		variant := &model.ImageVariant{
 			Name:                v.Name,
-			BuildEntryPointPath: dockerfilePath,
+			BuildEntryPointPath: variantEntrypoint.Path,
+			BuildBackend:        variantEntrypoint.Backend,
+			Nix:                 v.Nix,
+			RunConfig:           v.Config,
 			ReadmePath:          readmePath,
 			TestConfigFilePath:  testConfigFilePath,
 			RootDir:             variantRoot,

@@ -6,6 +6,20 @@ type Versions map[string]string
 // BuildArgs maps Docker build argument names to their values.
 type BuildArgs map[string]string
 
+// Build backend identifiers for the backend of a build entrypoint.
+const (
+	// BuildBackendAuto lets discovery pick the backend from the present files.
+	BuildBackendAuto = ""
+	// BuildBackendDockerfile builds a Dockerfile with the dockerfile.v0
+	// frontend.
+	BuildBackendDockerfile = "dockerfile"
+	// BuildBackendNix builds a Nix flake with the nix.v0 frontend.
+	BuildBackendNix = "nix"
+)
+
+// FlakeFileName is the build entrypoint file name for the Nix build backend.
+const FlakeFileName = "flake.nix"
+
 // ReportModel holds report-related metadata for an image or variant.
 type ReportModel struct {
 	Icon string
@@ -41,6 +55,9 @@ type Image struct {
 	TestConfigFilePath  string
 	DefinitionFilePath  string
 	BuildEntryPointPath string
+	BuildBackend        string
+	Nix                 NixConfig
+	RunConfig           *ImageRunConfig
 	ReadmePath          string
 	Versions            Versions
 	BuildArgs           BuildArgs `yaml:"build_args"`
@@ -59,6 +76,9 @@ type Image struct {
 type ImageVariant struct {
 	Name                string
 	BuildEntryPointPath string
+	BuildBackend        string
+	Nix                 *NixConfig
+	RunConfig           *ImageRunConfig
 	ReadmePath          string
 	RootDir             string
 	RootFSDir           string
