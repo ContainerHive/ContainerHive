@@ -1,6 +1,7 @@
 package report
 
 import (
+	"cmp"
 	_ "embed"
 	"encoding/json"
 	"log/slog"
@@ -298,8 +299,10 @@ func parseSBOMFile(path string) ([]SBOMPackage, error) {
 		})
 	}
 	slices.SortFunc(packages, func(a, b SBOMPackage) int {
-		return strings.Compare(a.Name, b.Name)
+		return cmp.Or(strings.Compare(a.Name, b.Name), strings.Compare(a.Version, b.Version))
 	})
+	// Scanners list the same package once per file/layer it was found in.
+	packages = slices.Compact(packages)
 	return packages, nil
 }
 
