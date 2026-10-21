@@ -1,5 +1,10 @@
 # Build images with Nix flakes
 
+> [!WARNING]
+> The Nix build backend is highly experimental. It is tested with small sample images only. Real projects may hit
+> behaviors the samples do not cover. Try it, and file feedback at
+> [the issue tracker](https://github.com/ContainerHive/ContainerHive/issues) — any feedback is welcome.
+
 Images in a ContainerHive project can define their filesystem with a Nix flake instead of a Dockerfile. ContainerHive
 resolves the project, builds the flake through BuildKit, and pushes, tests, and documents the result like any other
 image.
