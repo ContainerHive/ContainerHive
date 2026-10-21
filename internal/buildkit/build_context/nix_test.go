@@ -75,8 +75,51 @@ func TestNixBuildContext_buildScript(t *testing.T) {
 	if want := "nix --extra-experimental-features 'nix-command flakes' copy --no-check-sigs --all --from local?root=/nix-cache || true\nnix"; !strings.Contains(got, want) {
 		t.Errorf("buildScript() = %q, want the store import before the build", got)
 	}
-	if want := "\nnix --extra-experimental-features 'nix-command flakes' copy --no-check-sigs --to local?root=/nix-cache \"$drv\" || true"; !strings.Contains(got, want) {
-		t.Errorf("buildScript() = %q, want the store export after the copy", got)
+	if want := "\n[ -z \"$drv\" ] || nix --extra-experimental-features 'nix-command flakes' copy --no-check-sigs --to local?root=/nix-cache \"$drv\" || true"; !strings.Contains(got, want) {
+		t.Errorf("buildScript() = %q, want the guarded store export after the copy", got)
+	}
+	if want := "drv=\"$(nix --extra-experimental-features 'nix-command flakes' eval --raw $lockmode \"$install.drvPath\")\" || drv=''\n"; !strings.Contains(got, want) {
+		t.Errorf("buildScript() = %q, want the best effort eval %q", got, want)
+	}
+
+	argsNC := NixBuildContext{StoreCache: true, ExtraArgs: []string{"--impure", "it's"}}
+	got = argsNC.buildScript("x86_64-linux", false)
+	if want := "eval --raw $lockmode \"$install.drvPath\" '--impure' 'it'\\''s')\" || drv=''\n"; !strings.Contains(got, want) {
+		t.Errorf("buildScript() = %q, want the eval to carry the quoted extra args %q", got, want)
+	}
+}
+
+func TestPinImageRef(t *testing.T) {
+	const dgst = "sha256:0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+	tests := []struct {
+		name      string
+		canonical string
+		want      string
+	}{
+		{"tagged", "docker.io/library/ubuntu:22.04", "docker.io/library/ubuntu:22.04@" + dgst},
+		{"untagged", "docker.io/library/ubuntu", "docker.io/library/ubuntu@" + dgst},
+		{"digest pinned", "docker.io/library/ubuntu@" + dgst, "docker.io/library/ubuntu@" + dgst},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := pinImageRef(tt.canonical, dgst); got != tt.want {
+				t.Errorf("pinImageRef(%q) = %q, want %q", tt.canonical, got, tt.want)
+			}
+		})
+	}
+}
+
+func TestNixBuildContext_resolveParentStateInvalidRef(t *testing.T) {
+	nc := NixBuildContext{Parent: &NixParent{RegistryRef: "Not A Ref"}}
+	_, _, err := nc.resolveParentState(context.Background(), nil, ocispecs.Platform{OS: "linux", Architecture: "amd64"})
+	if err == nil {
+		t.Fatal("resolveParentState() error = nil, want an invalid parent reference error")
+	}
+	if want := `invalid nix parent image reference "Not A Ref"`; !strings.Contains(err.Error(), want) {
+		t.Errorf("resolveParentState() error = %q, want it to contain %q", err, want)
+	}
+	if strings.Contains(err.Error(), "builder") {
+		t.Errorf("resolveParentState() error = %q, must not mention the builder image", err)
 	}
 }
 
