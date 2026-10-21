@@ -69,7 +69,7 @@ func TestBuildWithoutDeps_ShardBuildsOwnedBaseTag(t *testing.T) {
 	}
 
 	err := buildWithoutDeps(context.Background(), &Client{inner: nil}, opts)
-	if err == nil || !strings.Contains(err.Error(), "Dockerfile not found") {
+	if err == nil || !strings.Contains(err.Error(), "build entrypoint not found") {
 		t.Errorf("expected a Dockerfile-not-found error proving the base tag was attempted, got: %v", err)
 	}
 }
@@ -160,8 +160,8 @@ func TestBuildWithoutDeps_ShardBuildsBaseForOwnedVariant(t *testing.T) {
 	}
 
 	err := buildWithoutDeps(context.Background(), &Client{inner: nil}, opts)
-	if err == nil || !strings.Contains(err.Error(), "Dockerfile not found") || !strings.Contains(err.Error(), "1.0") {
-		t.Errorf("expected the base tag to be attempted (Dockerfile not found for 1.0), got: %v", err)
+	if err == nil || !strings.Contains(err.Error(), "build entrypoint not found") || !strings.Contains(err.Error(), "1.0") {
+		t.Errorf("expected the base tag to be attempted (build entrypoint not found for 1.0), got: %v", err)
 	}
 }
 

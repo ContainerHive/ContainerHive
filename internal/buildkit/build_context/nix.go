@@ -1,0 +1,355 @@
+package build_context
+
+import (
+	"context"
+	"encoding/json"
+	"fmt"
+	"sort"
+	"strings"
+
+	"github.com/containerd/platforms"
+	"github.com/distribution/reference"
+	"github.com/moby/buildkit/client/llb"
+	"github.com/moby/buildkit/client/llb/sourceresolver"
+	"github.com/moby/buildkit/exporter/containerimage/exptypes"
+	gatewayClient "github.com/moby/buildkit/frontend/gateway/client"
+	v1 "github.com/opencontainers/image-spec/specs-go/v1"
+	"github.com/tonistiigi/fsutil"
+
+	"github.com/ContainerHive/ContainerHive/pkg/model"
+)
+
+// DefaultNixBuilderImage provides nix when the image config does not set one.
+const DefaultNixBuilderImage = "nixos/nix:2.31.6"
+
+// nixContextKey is the local mount name the flake source resolves under. It
+// must match the key in ToLocalMounts.
+const nixContextKey = "context"
+
+// outMountPath is the internal mount the nix build writes the rootfs into.
+const outMountPath = "/out"
+
+// srcMountPath is the internal mount the flake source resolves under inside
+// the builder image.
+const srcMountPath = "/src"
+
+// nixContextSharedKeyHint keeps the local flake context cacheable across
+// solve sessions.
+const nixContextSharedKeyHint = "hive-nix-flake"
+
+// NixBuildContext implements BuildContext for Nix flake builds. RunBuild
+// executes `nix build` inside a builder image and uses the produced rootfs
+// output as the image filesystem on a scratch base.
+type NixBuildContext struct {
+	// Root is the build context directory containing the flake.
+	Root string
+	// BuilderImage provides the nix binary for the exec op. Empty uses
+	// DefaultNixBuilderImage.
+	BuilderImage string
+	// ExtraArgs appends to the nix build invocation.
+	ExtraArgs []string
+	// BuilderEnv maps environment variables applied to the nix build op.
+	BuilderEnv map[string]string
+	// Entrypoint, Cmd, Env, User and WorkingDir end up in the exported
+	// image config.
+	Entrypoint []string
+	Cmd        []string
+	Env        map[string]string
+	User       string
+	WorkingDir string
+}
+
+// RunBuild builds the LLB graph for the Nix build and solves it. The plugin
+// options (platform, labels) are read from the gateway build options.
+func (d NixBuildContext) RunBuild(ctx context.Context, client gatewayClient.Client) (*gatewayClient.Result, error) {
+	opts := client.BuildOpts().Opts
+
+	plat, err := parsePlatform(opts["platform"])
+	if err != nil {
+		return nil, err
+	}
+
+	system, err := nixSystemName(plat)
+	if err != nil {
+		return nil, err
+	}
+
+	build, err := d.resolveBuilder(ctx, client, plat)
+	if err != nil {
+		return nil, err
+	}
+
+	buildState := d.buildGraph(plat, system, build.env, build.digestRef)
+	def, err := buildState.Marshal(ctx, llb.Platform(plat))
+	if err != nil {
+		return nil, fmt.Errorf("failed to marshal nix build: %w", err)
+	}
+
+	solved, err := client.Solve(ctx, gatewayClient.SolveRequest{Definition: def.ToPB()})
+	if err != nil {
+		return nil, fmt.Errorf("nix build failed: %w", err)
+	}
+
+	config, err := d.imageConfig(plat, opts)
+	if err != nil {
+		return nil, fmt.Errorf("failed to marshal image config: %w", err)
+	}
+	solved.AddMeta(exptypes.ExporterImageConfigKey, config)
+	return solved, nil
+}
+
+// resolvedBuilder carries the resolved builder image state inputs.
+type resolvedBuilder struct {
+	digestRef string
+	env       []string
+}
+
+// resolveBuilder resolves the builder image config upfront and pins the
+// builder image by digest, mirroring what the dockerfile frontend does for a
+// `FROM` instruction. A plain image source does not carry its config env
+// into executor steps, so the resolution happens client-side.
+func (d NixBuildContext) resolveBuilder(ctx context.Context, client gatewayClient.Client, plat v1.Platform) (*resolvedBuilder, error) {
+	ref := d.BuilderImage
+	if ref == "" {
+		ref = DefaultNixBuilderImage
+	}
+	named, err := canonicalImageRef(ref)
+	if err != nil {
+		return nil, err
+	}
+	_, imageDigest, config, err := client.ResolveImageConfig(ctx, named, sourceresolver.Opt{
+		ImageOpt: &sourceresolver.ResolveImageOpt{Platform: &plat},
+	})
+	if err != nil {
+		return nil, fmt.Errorf("failed to resolve builder image %s: %w", named, err)
+	}
+
+	var img v1.Image
+	if err := json.Unmarshal(config, &img); err != nil {
+		return nil, fmt.Errorf("failed to parse builder image config for %s: %w", named, err)
+	}
+	return &resolvedBuilder{
+		digestRef: named + "@" + imageDigest.String(),
+		env:       img.Config.Env,
+	}, nil
+}
+
+// canonicalImageRef returns the fully qualified image reference. ResolveImage
+// config on the daemon side does not normalize shorthands: a blob like
+// "nixos/nix" reaches the resolver as registry host "nixos" and fails DNS.
+func canonicalImageRef(ref string) (string, error) {
+	named, err := reference.ParseNormalizedNamed(ref)
+	if err != nil {
+		return "", fmt.Errorf("invalid builder image reference %q: %w", ref, err)
+	}
+	return reference.TagNameOnly(named).String(), nil
+}
+
+// buildGraph assembles the LLB state for the Nix flake build. The exec op
+// runs `nix build` in the builder image; the getMount of the out mount
+// becomes the image rootfs.
+func (d NixBuildContext) buildGraph(plat v1.Platform, system string, builderEnv []string, digestRef string) llb.State {
+	script := d.buildScript(system)
+
+	runState := builderStateFor(digestRef, builderEnv)
+	for _, key := range sortedKeys(d.BuilderEnv) {
+		runState = runState.With(llb.AddEnv(key, d.BuilderEnv[key]))
+	}
+
+	run := runState.Run(
+		llb.Args([]string{"/bin/sh", "-euc", script}),
+		llb.Dir(srcMountPath),
+		// SharedKeyHint makes the local context cacheable across solve
+		// sessions: without it, the exec op cache key embeds the one-shot
+		// session id and every build re-runs the whole nix build.
+		// ExcludePatterns keeps build outputs out of the cache key: builds
+		// write the OCI image tar into the tag directory, which is also the
+		// context root. The tar is a build product, never a flake input, so
+		// an unfiltered tar invalidates the exec op key on every run.
+		llb.AddMount(srcMountPath, llb.Local(nixContextKey,
+			llb.SharedKeyHint(nixContextSharedKeyHint),
+			llb.ExcludePatterns([]string{"*/image.tar"}),
+		)),
+		llb.AddMount(outMountPath, llb.Scratch()),
+	)
+	return run.GetMount(outMountPath)
+}
+
+// builderStateFor builds the llb image state for a digest pinned ref and
+// applies the image config env.
+func builderStateFor(digestRef string, env []string) llb.State {
+	state := llb.Image(digestRef)
+	for _, envEntry := range env {
+		key, value, found := strings.Cut(envEntry, "=")
+		if !found {
+			continue
+		}
+		state = state.With(llb.AddEnv(key, value))
+	}
+	return state
+}
+
+// buildScript assembles the shell script the builder exec op runs. nix stores
+// the flake result as a symlink, so the script dereferences it and copies the
+// rootfs directory into the out mount.
+func (d NixBuildContext) buildScript(system string) string {
+	b := &strings.Builder{}
+	// Respect a committed flake.lock and fail when it no longer matches the
+	// flake inputs. Without a lockfile the build resolves inputs freely, so
+	// the lock stays optional.
+	b.WriteString("lockmode=''; [ -f /src/flake.lock ] && lockmode='--no-update-lock-file'\n")
+	b.WriteString("nix --extra-experimental-features 'nix-command flakes' --option sandbox false")
+	// Syscall filtering breaks under emulation (qemu syscall translation), a
+	// known limitation. The build exec op already runs without the Nix chroot
+	// sandbox, so the filter is the remaining hardening to drop.
+	b.WriteString(" --option filter-syscalls false")
+	b.WriteString(" build $lockmode --show-trace -L --out-link /tmp/hive-rootfs .")
+	b.WriteString(d.installableAttr(system))
+	for _, arg := range d.ExtraArgs {
+		b.WriteString(" ")
+		b.WriteString(arg)
+	}
+	// Rootfs copy plus the full store closure: dereferenced symlinks point
+	// into the nix store, and dynamically linked binaries need their
+	// interpreter (ld.so) at the exact store path. Copy the closure of the
+	// build output into the image under the same absolute paths so the
+	// references resolve inside the container. A scheme-less destination is a
+	// chroot store: nix unpacks the closure below /out/nix/store.
+	b.WriteString(" && cp -RL --preserve=links /tmp/hive-rootfs/. /out/")
+	b.WriteString(" && nix --extra-experimental-features 'nix-command flakes' copy --no-check-sigs --to /out /tmp/hive-rootfs")
+	return b.String()
+}
+
+// installableAttr returns the flake attribute expression the build runs on,
+// prefixed with # for combination with the flake path. The installable is a
+// convention, never user configured: packages.<system>.default pinning the
+// mapped target system, so the result does not depend on the system of the
+// builder image.
+func (d NixBuildContext) installableAttr(system string) string {
+	return fmt.Sprintf("#packages.%s.default", system)
+}
+
+// nixSystemName maps a Docker target platform to a Nix system string. Only
+// Linux platforms known to the Nix system set are supported. Clear failures
+// matter: an unmapped platform otherwise builds for the builder system and
+// would reach the registry under the wrong architecture.
+func nixSystemName(plat v1.Platform) (string, error) {
+	if plat.OS != "linux" {
+		return "", fmt.Errorf("the nix build backend only builds linux images, got platform %s/%s", plat.OS, plat.Architecture)
+	}
+	switch plat.Architecture {
+	case "amd64":
+		return "x86_64-linux", nil
+	case "arm64":
+		return "aarch64-linux", nil
+	case "386":
+		return "i686-linux", nil
+	case "ppc64le":
+		return "powerpc64le-linux", nil
+	case "riscv64":
+		return "riscv64-linux", nil
+	case "arm":
+		switch plat.Variant {
+		case "", "v7", "v7a":
+			return "armv7l-linux", nil
+		case "v6", "v6l":
+			return "armv6l-linux", nil
+		}
+	}
+	return "", fmt.Errorf("no nix system mapping for platform %s (variant %q); set an explicit flake attribute via nix.output", plat.Architecture, plat.Variant)
+}
+
+// imageConfig marshals the image config metadata for the export. The value
+// must be an OCI image document (architecture, os and config), which the
+// containerimage exporter parses from the result metadata. Frontend label
+// options build the exported label map, matching Dockerfile builds.
+func (d NixBuildContext) imageConfig(plat v1.Platform, opts map[string]string) ([]byte, error) {
+	env := d.envSlice()
+	labels := d.labelMap(opts)
+
+	config := &v1.ImageConfig{
+		User:       d.User,
+		Env:        env,
+		Entrypoint: d.Entrypoint,
+		Cmd:        d.Cmd,
+		WorkingDir: d.WorkingDir,
+		Labels:     labels,
+	}
+
+	return json.Marshal(v1.Image{
+		Platform: v1.Platform{
+			Architecture: plat.Architecture,
+			OS:           plat.OS,
+			Variant:      plat.Variant,
+		},
+		Config: *config,
+	})
+}
+
+func (d NixBuildContext) envSlice() []string {
+	env := make([]string, 0, len(d.Env))
+	for _, key := range sortedKeys(d.Env) {
+		env = append(env, key+"="+d.Env[key])
+	}
+	if len(env) == 0 {
+		return nil
+	}
+	return env
+}
+
+func (d NixBuildContext) labelMap(opts map[string]string) map[string]string {
+	if len(opts) == 0 {
+		return nil
+	}
+	labels := map[string]string{}
+	for key, value := range opts {
+		if name, found := strings.CutPrefix(key, "label:"); found {
+			labels[name] = value
+		}
+	}
+	if len(labels) == 0 {
+		return nil
+	}
+	return labels
+}
+
+func sortedKeys(m map[string]string) []string {
+	keys := make([]string, 0, len(m))
+	for key := range m {
+		keys = append(keys, key)
+	}
+	sort.Strings(keys)
+	return keys
+}
+
+func parsePlatform(name string) (v1.Platform, error) {
+	if name == "" {
+		return platforms.DefaultSpec(), nil
+	}
+	plat, err := platforms.Parse(name)
+	if err != nil {
+		return v1.Platform{}, fmt.Errorf("invalid platform %q for nix build: %w", name, err)
+	}
+	return plat, nil
+}
+
+// ToLocalMounts exposes the flake source directory as the local context.
+func (d NixBuildContext) ToLocalMounts() (map[string]fsutil.FS, error) {
+	ctxFs, err := fsutil.NewFS(d.Root)
+	if err != nil {
+		return nil, fmt.Errorf("invalid nix build context path %q: %w", d.Root, err)
+	}
+	return map[string]fsutil.FS{
+		nixContextKey: ctxFs,
+	}, nil
+}
+
+// FileName returns the build entry point name inside the context.
+func (d NixBuildContext) FileName() string {
+	return model.FlakeFileName
+}
+
+// FrontendType returns the frontend identifier for nix flake builds.
+func (d NixBuildContext) FrontendType() string {
+	return "nix.v0"
+}

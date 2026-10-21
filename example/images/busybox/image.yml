@@ -1,0 +1,8 @@
+description: "Busybox base image built through the Nix flake backend"
+build: nix
+
+config:
+  entrypoint: ["/bin/sh"]
+
+tags:
+  - name: "1.36.0"

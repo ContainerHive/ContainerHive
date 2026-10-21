@@ -33,6 +33,11 @@ type BuildOpts struct {
 	// Defaults to "Dockerfile" if empty.
 	Dockerfile string
 
+	// BuildContext overrides the build context type. When nil, the build uses
+	// a DockerfileBuildContext built from ContextDir and Dockerfile. Nix flake
+	// builds set a NixBuildContext instead.
+	BuildContext build_context.BuildContext
+
 	// RegistryRef is the full image reference for direct registry push
 	// (e.g. "localhost:8500/ubuntu:22.04.linux-amd64").
 	RegistryRef string
@@ -99,6 +104,13 @@ func (c *Client) Build(ctx context.Context, opts *BuildOpts, w io.Writer) error 
 	}
 	statusHandler := progress.NewHandler(cfg)
 
+	buildContext := opts.BuildContext
+	if buildContext == nil {
+		buildContext = &build_context.DockerfileBuildContext{
+			Root:       opts.ContextDir,
+			Dockerfile: opts.Dockerfile,
+		}
+	}
 	return c.inner.Build(ctx, &buildkit.BuildOpts{
 		ImageName:        opts.ImageName,
 		Platform:         opts.Platform,
@@ -112,9 +124,6 @@ func (c *Client) Build(ctx context.Context, opts *BuildOpts, w io.Writer) error 
 		DockerMediaTypes: opts.DockerMediaTypes,
 		OCIStores:        opts.OCIStores,
 		NamedContexts:    opts.NamedContexts,
-		BuildContext: &build_context.DockerfileBuildContext{
-			Root:       opts.ContextDir,
-			Dockerfile: opts.Dockerfile,
-		},
+		BuildContext:     buildContext,
 	}, statusHandler)
 }
