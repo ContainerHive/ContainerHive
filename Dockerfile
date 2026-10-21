@@ -27,8 +27,11 @@ RUN apt update \
       curl \
       ca-certificates \
       unzip \
+      gnupg \
     && rm -rf /var/lib/apt/lists/* \
-    # AWS CLI v2 only ships x86_64 and aarch64 binaries, skip it everywhere else
+    # AWS CLI v2 only ships x86_64 and aarch64 binaries, skip it everywhere
+    # else. The installer verifies its package signature with gpg since
+    # v2.38.3, so gnupg stays a build requirement.
     && if [ "$(arch)" = "x86_64" ] || [ "$(arch)" = "aarch64" ]; then \
          curl -fsSL https://awscli.amazonaws.com/v2/install.sh | bash -s -- --system; \
        else \
