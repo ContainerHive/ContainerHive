@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<interface xmlns="http://zero-install.sourceforge.net/2004/injector/interface" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://zero-install.sourceforge.net/2004/injector/interface https://docs.0install.net/specifications/feed.xsd">
+  <name>ContainerHive</name>
+  <summary>command line tool for managing container image builds with dependency resolution</summary>
+  <description>ContainerHive resolves the dependency graph between container images and builds them in the right order. It generates CI pipelines, runs structure tests, and produces SBOMs for the built images.</description>
+  <homepage>https://container-hive.timo-reymann.de</homepage>
+  <category>Development</category>
+
+  <icon href="https://containerhive.github.io/0install/containerhive.png" type="image/png"/>
+
+  <feed-for interface="https://containerhive.github.io/0install/containerhive.xml"/>
+
+  <entry-point binary-name="ch" command="run"/>
+
+  <!-- One group with one run command: all archives share the single 'ch' entry. -->
+  <group>
+    <command name="run" path="ch"/>
+    <implementation arch="Linux-x86_64" version="{version}" released="{released}">
+      <manifest-digest/>
+      <archive href="https://github.com/ContainerHive/ContainerHive/releases/download/v{version}/linux-amd64.tar.zst" type="application/x-zstd-compressed-tar"/>
+    </implementation>
+    <implementation arch="Linux-aarch64" version="{version}" released="{released}">
+      <manifest-digest/>
+      <archive href="https://github.com/ContainerHive/ContainerHive/releases/download/v{version}/linux-arm64.tar.zst" type="application/x-zstd-compressed-tar"/>
+    </implementation>
+    <implementation arch="MacOSX-x86_64" version="{version}" released="{released}">
+      <manifest-digest/>
+      <archive href="https://github.com/ContainerHive/ContainerHive/releases/download/v{version}/darwin-amd64.tar.zst" type="application/x-zstd-compressed-tar"/>
+    </implementation>
+    <implementation arch="MacOSX-aarch64" version="{version}" released="{released}">
+      <manifest-digest/>
+      <archive href="https://github.com/ContainerHive/ContainerHive/releases/download/v{version}/darwin-arm64.tar.zst" type="application/x-zstd-compressed-tar"/>
+    </implementation>
+  </group>
+</interface>
