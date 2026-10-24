@@ -1,3 +1,9 @@
+## [1.16.0](https://github.com/ContainerHive/ContainerHive/compare/v1.15.1...v1.16.0) (2026-10-24)
+
+### Features
+
+* add GitHub issue templates for bugs and feature requests ([#323](https://github.com/ContainerHive/ContainerHive/issues/323)) ([5e6b3bd](https://github.com/ContainerHive/ContainerHive/commit/5e6b3bd6960e8483fe3b7b433c32075f4db9ac8d))
+
 ## [1.15.1](https://github.com/ContainerHive/ContainerHive/compare/v1.15.0...v1.15.1) (2026-10-24)
 
 ### Bug Fixes
