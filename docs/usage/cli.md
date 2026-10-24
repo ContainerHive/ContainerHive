@@ -16,6 +16,9 @@ ch --help
 | `--build-id` | Build ID appended to tags as `-build.<id>` |
 | `--log-level` | Log level (`debug`, `info`, `warn`, `error`) — sourced from `LOG_LEVEL` env (default: `info`) |
 | `--generate`, `-g` | Run `ch generate` before the command |
+| `--refresh-versions` | Ignore the [`tag_ranges`](../configuration/image.md#tag_ranges) version cache TTL and refetch every external version source — sourced from `CH_REFRESH_VERSIONS` env |
+
+See [Environment variables](../configuration/environment.md) for everything `ch` reads from the environment.
 
 ## Commands
 
@@ -83,6 +86,7 @@ ch sbom [image:tag patterns...]
 |:-----|:------------|
 | `--platform` | Target platform(s) to generate SBOMs for (e.g. `linux/amd64`), overrides `hive.yml` |
 | `--workers` | Number of concurrent workers for SBOM generation (default: 4) |
+| `--no-cpe` | Skip CPE generation to reduce SBOM size (may reduce vulnerability match accuracy for CPE-based scanners) |
 | `--max-shards` | Total number of shards to split work across — sourced from `CI_NODE_TOTAL` env (default: `1`) |
 | `--current-shard` | This shard's 1-based index — sourced from `CI_NODE_INDEX` env (default: `1`) |
 
@@ -291,7 +295,7 @@ Generates a report containing information about all configured images, including
 
 #### Customizing the report
 
-To customize the look of the HTML report, set `report.styleSheet` in your `hive.yml` to a path pointing at a CSS file. The contents of that file are embedded verbatim into the generated HTML via a `<style>` block. See [Theme CSS variables](../configuration/hive.md#theme-css-variables) for the full list of overridable variables.
+To customize the look of the HTML report, set `report.styleSheet` in your `hive.yml` to a path pointing at a CSS file. The contents of that file are embedded verbatim into the generated HTML via a `<style>` block. See [Report theme](../configuration/report-theme.md) for the full list of overridable variables.
 
 #### URL parameters
 
