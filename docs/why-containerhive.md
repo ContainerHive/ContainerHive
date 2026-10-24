@@ -3,6 +3,10 @@ Why use ContainerHive?
 
 Whether you're an individual maintaining a personal image catalog or a platform team providing base and runtime images across an organization — once you manage more than a handful of container images, the "simple" approach stops working.
 
+## Where it comes from
+
+ContainerHive grew out of [poc-container-image-manager](https://github.com/timo-reymann/poc-container-image-manager), a Python-based proof of concept that validated the core idea: declarative, YAML-driven image management with dependency resolution, templating, and CI generation. Being Python-based, it required a runtime and wasn't practical to distribute. ContainerHive is the production-grade successor, rewritten in Go as a single static binary with no dependencies beyond BuildKit.
+
 ## Who is this for?
 
 ContainerHive is built for individuals and teams that maintain a set of container images. Think:

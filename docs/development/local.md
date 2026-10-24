@@ -64,3 +64,7 @@ Preview the properdocs documentation locally with hot-reload for changes.
 pip install -r requirements-docs.txt
 properdocs serve
 ```
+
+## AI usage
+
+This project uses AI tooling (Claude Code and Mistral AI models) to assist with development. All AI-generated or AI-assisted changes are **human-reviewed** and applied responsibly — this is not AI slop. Contributors are expected to uphold the same standard: AI tools are welcome, but every change must be understood, reviewed, and owned by the person submitting it.
