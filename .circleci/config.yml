@@ -269,7 +269,9 @@ jobs:
       - run:
           name: Create new Homebrew formula
           command: |
-            git clone https://${GITHUB_TOKEN}@github.com/ContainerHive/homebrew-ContainerHive.git
+            test -n "${GITHUB_TOKEN}" || { echo "GITHUB_TOKEN is not set"; exit 1; }
+            TAP_URL="https://x-access-token:${GITHUB_TOKEN}@github.com/ContainerHive/homebrew-ContainerHive.git"
+            git clone "${TAP_URL}"
             cd homebrew-ContainerHive
 
             python3 ./generate.py \
@@ -280,7 +282,8 @@ jobs:
             git config --global user.email no-reply@circleci.com
             git add .
             git commit -m "chore: Update formula for version $CIRCLE_TAG" || true
-            git push
+            git remote set-url origin "${TAP_URL}"
+            git push origin main
 
   update_pre_commit_repo:
     executor: python
