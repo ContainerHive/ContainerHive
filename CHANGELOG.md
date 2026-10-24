@@ -1,3 +1,9 @@
+## [1.15.1](https://github.com/ContainerHive/ContainerHive/compare/v1.15.0...v1.15.1) (2026-10-24)
+
+### Bug Fixes
+
+* **ci:** authenticate the Homebrew tap push explicitly ([#321](https://github.com/ContainerHive/ContainerHive/issues/321)) ([490ff20](https://github.com/ContainerHive/ContainerHive/commit/490ff2017d707e713de768f6228f9bde7bf27c2e))
+
 ## [1.15.0](https://github.com/ContainerHive/ContainerHive/compare/v1.14.0...v1.15.0) (2026-10-24)
 
 ### Features
