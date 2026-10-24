@@ -1,3 +1,21 @@
+## [1.14.0](https://github.com/ContainerHive/ContainerHive/compare/v1.13.3...v1.14.0) (2026-10-24)
+
+### Features
+
+* add Nix flake build backend ([008aae6](https://github.com/ContainerHive/ContainerHive/commit/008aae61b562869f77635559d7d408c4ca0bfab1))
+* add nix parent images and nix store caching ([1a91ab2](https://github.com/ContainerHive/ContainerHive/commit/1a91ab272afd5099a06fab99296464fc9d456246))
+* auto build order, parent config inheritance and flake templating ([81d6c70](https://github.com/ContainerHive/ContainerHive/commit/81d6c70b6a419283877308b7cf1cc84f5d9fa018))
+
+### Bug Fixes
+
+* add gnupg for the aws cli installer signature check ([94093f5](https://github.com/ContainerHive/ContainerHive/commit/94093f5002913f5f2ce998898e2806c6f794850b))
+* address review findings on the nix flake backend ([64326eb](https://github.com/ContainerHive/ContainerHive/commit/64326eb7acf85eb5c531d6faaff62ca1be8b1aeb))
+* **dependency:** only derive nix.parent edges for Nix-backend builds ([91961fc](https://github.com/ContainerHive/ContainerHive/commit/91961fceb04d14814dddd7154ea0955630ad2f00))
+* harden nix parent resolution and the store cache eval step ([99e83b6](https://github.com/ContainerHive/ContainerHive/commit/99e83b63216e692bb062261c2e51398421a1fcec))
+* keep nix metadata out of the parent merge ([921b359](https://github.com/ContainerHive/ContainerHive/commit/921b3593eaed42c2b2911c874883b114f92b3285))
+* keep parent symlinks and surface copy failures in the nix build script ([191bd2a](https://github.com/ContainerHive/ContainerHive/commit/191bd2a689322c0aeaf00b2214259a737fe97ec7))
+* normalize the OCI parent reference for the daemon-side parser ([01f1453](https://github.com/ContainerHive/ContainerHive/commit/01f1453bd874b8b24d3025517eeb97468dfda27f))
+
 ## [1.13.3](https://github.com/ContainerHive/ContainerHive/compare/v1.13.2...v1.13.3) (2026-10-21)
 
 ### Bug Fixes
