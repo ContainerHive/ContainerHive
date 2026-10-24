@@ -1,5 +1,5 @@
 # Contributing to ContainerHive
-I love your input! I want to make contributing to this project as easy and transparent as possible, whether it's:
+We love your input! We want to make contributing to this project as easy and transparent as possible, whether it's:
 
 - Reporting a bug
 - Discussing the current state of the code
@@ -7,11 +7,11 @@ I love your input! I want to make contributing to this project as easy and trans
 - Proposing new features
 - Becoming a maintainer
 
-## I develop with Github
-I use github to host code, to track issues and feature requests, as well as accept pull requests.
+## We develop with Github
+We use github to host code, to track issues and feature requests, as well as accept pull requests.
 
-## I Use [CircleCI](https://circleci.com/product/), So All Code Changes Happen Through Pull Requests
-Pull requests are the best way to propose changes to the codebase (I use [CircleCI](https://circleci.com/product/)). I actively welcome your pull requests:
+## We Use [CircleCI](https://circleci.com/product/), So All Code Changes Happen Through Pull Requests
+Pull requests are the best way to propose changes to the codebase (we use [CircleCI](https://circleci.com/product/)). We actively welcome your pull requests:
 
 1. Fork the repo and create your branch from `main`.
 2. If you've added code that should be tested, add tests.
@@ -24,7 +24,7 @@ Pull requests are the best way to propose changes to the codebase (I use [Circle
 In short, when you submit code changes, your submissions are understood to be under the same [AGPL-3.0](https://github.com/ContainerHive/ContainerHive/blob/main/LICENSE) that covers the project. Feel free to contact the maintainers if that's a concern.
 
 ## Report bugs using Github's issues
-I use GitHub issues to track public bugs. Report a bug by opening a new issue, it's that easy!
+We use GitHub issues to track public bugs. Report a bug by opening a new issue, it's that easy!
 
 ## Write bug reports with detail, background, and sample code
 
@@ -38,7 +38,7 @@ I use GitHub issues to track public bugs. Report a bug by opening a new issue, i
 - What actually happens
 - Notes (possibly including why you think this might be happening, or stuff you tried that didn't work)
 
-People *love* thorough bug reports. I'm not even kidding.
+People *love* thorough bug reports. We're not even kidding.
 
 To make your life easier there is also a handy template available so feel free to use it.
 
@@ -51,7 +51,7 @@ By contributing, you agree that your contributions will be licensed under its GP
 
 ## AI-Generated Contributions Policy
 
-I accept AI-generated contributions to my projects, but with the following important conditions:
+We accept AI-generated contributions to our projects, but with the following important conditions:
 
 1. **Understanding Requirement**: The human user authoring the change must have a clear conceptual understanding of what the code does and how it works.
 
@@ -61,7 +61,7 @@ I accept AI-generated contributions to my projects, but with the following impor
    - Using "Co-Authored-By" attribution in the commit message
    - Explicitly mentioning in the GitHub pull request description that AI assistance was used and that they understand and take responsibility for the changes
 
-4. **Right to Decline**: If these conditions are not clearly met in the contribution, I reserve the right to decline the pull request without further explanation.
+4. **Right to Decline**: If these conditions are not clearly met in the contribution, we reserve the right to decline the pull request without further explanation.
 
 5. **Quality Standards**: All contributions, whether AI-assisted or not, must meet the same quality standards and will be evaluated on their technical merit.
 
