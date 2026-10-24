@@ -13,7 +13,7 @@ or set `BUILDKIT_HOST`, or `buildkit.address` in [`hive.yml`](configuration/hive
 ## `failed to connect to BuildKit at ...`
 
 - `buildkit.address` in `hive.yml` **overrides** `$BUILDKIT_HOST`. Remove it if you want the environment variable to win.
-- Check the daemon is reachable with `ch wait --buildkitd --timeout 30s`. `wait` reads only `$BUILDKIT_HOST` and ignores `buildkit.address`.
+- Check the daemon is reachable with `ch wait --buildkitd --timeout 30s`. `wait` reads only `$BUILDKIT_HOST` and ignores `buildkit.address`, so if you configure the address in `hive.yml`, export it first: `BUILDKIT_HOST=<your buildkit.address> ch wait --buildkitd`.
 - `ch dev buildkitd status` and `ch dev buildkitd logs` show the state of the local daemon.
 
 ## `dist/ not found — run 'ch generate' first`
