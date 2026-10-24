@@ -1,3 +1,9 @@
+## [1.17.0](https://github.com/ContainerHive/ContainerHive/compare/v1.16.0...v1.17.0) (2026-10-24)
+
+### Features
+
+* add vulnerability report issue template ([#327](https://github.com/ContainerHive/ContainerHive/issues/327)) ([4dbfb07](https://github.com/ContainerHive/ContainerHive/commit/4dbfb0751264feb370575d93071bb552dcc5dcfb))
+
 ## [1.16.0](https://github.com/ContainerHive/ContainerHive/compare/v1.15.1...v1.16.0) (2026-10-24)
 
 ### Features
