@@ -13,7 +13,7 @@ or set `BUILDKIT_HOST`, or `buildkit.address` in [`hive.yml`](configuration/hive
 ## `failed to connect to BuildKit at ...`
 
 - `buildkit.address` in `hive.yml` **overrides** `$BUILDKIT_HOST`. Remove it if you want the environment variable to win.
-- Check the daemon is reachable with `ch wait --buildkitd --timeout 30s`.
+- Check the daemon is reachable with `ch wait --buildkitd --timeout 30s`. `wait` reads only `$BUILDKIT_HOST` and ignores `buildkit.address`.
 - `ch dev buildkitd status` and `ch dev buildkitd logs` show the state of the local daemon.
 
 ## `dist/ not found — run 'ch generate' first`
@@ -22,7 +22,7 @@ or set `BUILDKIT_HOST`, or `buildkit.address` in [`hive.yml`](configuration/hive
 
 ## An image is built before its parent / a parent isn't found
 
-Check the `FROM __hive__/<image>` name matches the parent's directory name, or declare the relationship with [`depends_on`](configuration/image.md#depends_on). See [How dependency resolution works](how-it-works/dependency-resolution.md).
+Check the `FROM __hive__/<image>:<tag>` reference names the parent's directory and one of its tags, or declare the relationship with [`depends_on`](configuration/image.md#depends_on). See [How dependency resolution works](how-it-works/dependency-resolution.md).
 
 ## More logs
 
