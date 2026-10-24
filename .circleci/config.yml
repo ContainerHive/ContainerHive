@@ -34,6 +34,10 @@ executors:
   schema-nest-cli:
     docker:
       - image: timoreymann/schemanest-cli:v0.8.9
+  zero-install:
+    # Bundles 0install, 0template, gpg and git for the feed pipeline.
+    docker:
+      - image: 0installnet/0repo
 
 jobs:
   test:
@@ -196,6 +200,13 @@ jobs:
               --version "$CIRCLE_TAG" \
               --path schemas/structure-test.schema.json \
               --identifier containerhive-structure-test || true
+  publish-0install-feed:
+    executor: zero-install
+    steps:
+      - checkout
+      - run:
+          name: Publish feed to the feed repository
+          command: ./scripts/publish-0install-feed.sh "${CIRCLE_TAG#v}"
   build-gh-pages:
     executor: node
     environment:
@@ -336,6 +347,10 @@ workflows:
           <<: *only_tags
       - upload-schema:
           <<: *only_tags
+      - publish-0install-feed:
+          <<: *only_tags
+          requires:
+            - attach-binaries-to-release
       - update_homebrew_formula:
           <<: *only_tags
           requires:
