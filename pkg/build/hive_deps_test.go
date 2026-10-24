@@ -235,9 +235,9 @@ COPY --from=__hive__/util:1.0 /app /app
 	})
 }
 
-func TestResolveNixParent(t *testing.T) {
+func TestResolveParentImage(t *testing.T) {
 	t.Run("plain image reference", func(t *testing.T) {
-		result, err := ResolveNixParent("ubuntu:22.04", HiveDepsOpts{
+		result, err := ResolveParentImage("ubuntu:22.04", HiveDepsOpts{
 			DistPath:    t.TempDir(),
 			PlatformStr: "linux/amd64",
 		})
@@ -256,7 +256,7 @@ func TestResolveNixParent(t *testing.T) {
 	})
 
 	t.Run("hive reference not built yet", func(t *testing.T) {
-		result, err := ResolveNixParent("__hive__/base:latest", HiveDepsOpts{
+		result, err := ResolveParentImage("__hive__/base:latest", HiveDepsOpts{
 			DistPath:    t.TempDir(),
 			PlatformStr: "linux/amd64",
 		})
@@ -272,7 +272,7 @@ func TestResolveNixParent(t *testing.T) {
 	})
 
 	t.Run("hive reference falls back to registry", func(t *testing.T) {
-		result, err := ResolveNixParent("__hive__/base:1.0", HiveDepsOpts{
+		result, err := ResolveParentImage("__hive__/base:1.0", HiveDepsOpts{
 			DistPath:        t.TempDir(),
 			PlatformStr:     "linux/amd64",
 			RegistryAddress: "ghcr.io/myorg",
@@ -291,7 +291,7 @@ func TestResolveNixParent(t *testing.T) {
 	})
 
 	t.Run("invalid hive reference", func(t *testing.T) {
-		result, err := ResolveNixParent("__hive__/no-tag", HiveDepsOpts{
+		result, err := ResolveParentImage("__hive__/no-tag", HiveDepsOpts{
 			DistPath:    t.TempDir(),
 			PlatformStr: "linux/amd64",
 		})

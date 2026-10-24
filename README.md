@@ -57,6 +57,8 @@ diagrams.
 - **Bring your own BuildKit**: Connect to any BuildKit instance — local daemon, shared cluster service, or sidecar in a
   hardened Kubernetes environment.
 - **Enterprise-ready**: Built for scale, compliance, and integration with enterprise workflows.
+- **Nix and Chisel backends (experimental)**: Define the filesystem with a Nix flake, or cut minimal Ubuntu package
+  slices with chisel — no Dockerfile needed.
 
 ## Supported platforms
 

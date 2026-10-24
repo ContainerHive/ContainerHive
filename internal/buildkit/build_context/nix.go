@@ -2,18 +2,13 @@ package build_context
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
-	"sort"
 	"strings"
 
-	"github.com/containerd/platforms"
-	"github.com/distribution/reference"
 	"github.com/moby/buildkit/client/llb"
-	"github.com/moby/buildkit/client/llb/sourceresolver"
 	"github.com/moby/buildkit/exporter/containerimage/exptypes"
 	gatewayClient "github.com/moby/buildkit/frontend/gateway/client"
-	v1 "github.com/opencontainers/image-spec/specs-go/v1"
+	ocispecs "github.com/opencontainers/image-spec/specs-go/v1"
 	"github.com/tonistiigi/fsutil"
 )
 
@@ -28,20 +23,9 @@ const DefaultNixBuilderImage = "nixos/nix:2.31.6"
 // must match the key in ToLocalMounts.
 const nixContextKey = "context"
 
-// outMountPath is the internal mount the nix build writes the rootfs into.
-const outMountPath = "/out"
-
-// srcMountPath is the internal mount the flake source resolves under inside
-// the builder image.
-const srcMountPath = "/src"
-
 // nixContextSharedKeyHint keeps the local flake context cacheable across
 // solve sessions.
 const nixContextSharedKeyHint = "hive-nix-flake"
-
-// parentMountPath is the internal mount the parent image rootfs resolves
-// under inside the builder image.
-const parentMountPath = "/parent"
 
 // nixStoreCachePath is the internal mount for the persistent nix store
 // closure cache.
@@ -72,28 +56,17 @@ type NixBuildContext struct {
 	WorkingDir string
 	// Parent mounts a parent image rootfs into the build. Nil builds on an
 	// empty base.
-	Parent *NixParent
+	Parent *ParentImage
 	// StoreCache keeps the nix store across builds in a persistent cache
 	// mount.
 	StoreCache bool
 }
 
-// NixParent describes the resolved parent image source for a nix build.
-// A local build resolves through an OCI layout store; the registry fallback
-// resolves as a plain image reference.
-type NixParent struct {
-	// OCIStoreID is the SolveOpt.OCIStores id of the local parent tar.
-	// Empty with OCIDigestRef set means the registry path applies.
-	OCIStoreID string
-	// OCIDigestRef is the "<store-id>@<digest>" reference inside the OCI
-	// layout store.
-	OCIDigestRef string
-	// RegistryRef is the plain image reference for the registry path.
-	RegistryRef string
-}
+// resolvedBuilder carries the resolved builder image state inputs. It lives
+// in shared.go for the entrypoint-less backends.
 
-// RunBuild builds the LLB graph for the Nix build and solves it. The plugin
-// options (platform, labels) are read from the gateway build options.
+// RunBuild builds the LLB graph for the Nix flake build and solves it. The
+// plugin options (platform, labels) are read from the gateway build options.
 func (d NixBuildContext) RunBuild(ctx context.Context, client gatewayClient.Client) (*gatewayClient.Result, error) {
 	opts := client.BuildOpts().Opts
 
@@ -107,12 +80,12 @@ func (d NixBuildContext) RunBuild(ctx context.Context, client gatewayClient.Clie
 		return nil, err
 	}
 
-	build, err := d.resolveBuilder(ctx, client, plat)
+	build, err := resolveBuilderImage(ctx, client, plat, d.BuilderImage, DefaultNixBuilderImage)
 	if err != nil {
 		return nil, err
 	}
 
-	parentState, parentConfig, err := d.resolveParentState(ctx, client, plat)
+	parentState, parentConfig, err := resolveParentState(ctx, client, plat, d.Parent)
 	if err != nil {
 		return nil, err
 	}
@@ -128,7 +101,13 @@ func (d NixBuildContext) RunBuild(ctx context.Context, client gatewayClient.Clie
 		return nil, fmt.Errorf("nix build failed: %w", err)
 	}
 
-	config, err := d.imageConfig(plat, opts, parentConfig)
+	config, err := exportImageConfig(plat, opts, parentConfig, runConfig{
+		Entrypoint: d.Entrypoint,
+		Cmd:        d.Cmd,
+		Env:        d.Env,
+		User:       d.User,
+		WorkingDir: d.WorkingDir,
+	})
 	if err != nil {
 		return nil, fmt.Errorf("failed to marshal image config: %w", err)
 	}
@@ -136,134 +115,12 @@ func (d NixBuildContext) RunBuild(ctx context.Context, client gatewayClient.Clie
 	return solved, nil
 }
 
-// resolvedBuilder carries the resolved builder image state inputs.
-type resolvedBuilder struct {
-	digestRef string
-	env       []string
-}
-
-// resolveBuilder resolves the builder image config upfront and pins the
-// builder image by digest, mirroring what the dockerfile frontend does for a
-// `FROM` instruction. A plain image source does not carry its config env
-// into executor steps, so the resolution happens client-side.
-func (d NixBuildContext) resolveBuilder(ctx context.Context, client gatewayClient.Client, plat v1.Platform) (*resolvedBuilder, error) {
-	ref := d.BuilderImage
-	if ref == "" {
-		ref = DefaultNixBuilderImage
-	}
-	named, err := canonicalImageRef(ref)
-	if err != nil {
-		return nil, fmt.Errorf("invalid builder image reference %q: %w", ref, err)
-	}
-	_, imageDigest, config, err := client.ResolveImageConfig(ctx, named, sourceresolver.Opt{
-		ImageOpt: &sourceresolver.ResolveImageOpt{Platform: &plat},
-	})
-	if err != nil {
-		return nil, fmt.Errorf("failed to resolve builder image %s: %w", named, err)
-	}
-
-	var img v1.Image
-	if err := json.Unmarshal(config, &img); err != nil {
-		return nil, fmt.Errorf("failed to parse builder image config for %s: %w", named, err)
-	}
-	return &resolvedBuilder{
-		digestRef: pinImageRef(named, imageDigest.String()),
-		env:       img.Config.Env,
-	}, nil
-}
-
-// resolveParentState resolves the parent image into an LLB state. A local
-// build resolves the parent through the OCI layout store attached to the
-// solve session; the registry path resolves as a plain image reference. The
-// state applies the parent image config, matching BuildKit named contexts.
-func (d NixBuildContext) resolveParentState(ctx context.Context, client gatewayClient.Client, plat v1.Platform) (*llb.State, *v1.ImageConfig, error) {
-	if d.Parent == nil {
-		return nil, nil, nil
-	}
-
-	if d.Parent.OCIStoreID != "" {
-		sessionID := client.BuildOpts().SessionID
-		_, _, config, err := client.ResolveImageConfig(ctx, d.Parent.OCIDigestRef, sourceresolver.Opt{
-			OCILayoutOpt: &sourceresolver.ResolveOCILayoutOpt{
-				Platform: &plat,
-				Store: sourceresolver.ResolveImageConfigOptStore{
-					SessionID: sessionID,
-					StoreID:   d.Parent.OCIStoreID,
-				},
-			},
-		})
-		if err != nil {
-			return nil, nil, fmt.Errorf("failed to resolve parent image %s: %w", d.Parent.OCIDigestRef, err)
-		}
-		st := llb.OCILayout(d.Parent.OCIDigestRef,
-			llb.OCIStore(sessionID, d.Parent.OCIStoreID),
-			llb.Platform(plat),
-		)
-		var img v1.Image
-		if err := json.Unmarshal(config, &img); err != nil {
-			return nil, nil, fmt.Errorf("failed to parse parent image config for %s: %w", d.Parent.OCIDigestRef, err)
-		}
-		st, err = st.WithImageConfig(config)
-		if err != nil {
-			return nil, nil, fmt.Errorf("failed to apply parent image config for %s: %w", d.Parent.OCIDigestRef, err)
-		}
-		return &st, &img.Config, nil
-	}
-
-	named, err := canonicalImageRef(d.Parent.RegistryRef)
-	if err != nil {
-		return nil, nil, fmt.Errorf("invalid nix parent image reference %q: %w", d.Parent.RegistryRef, err)
-	}
-	_, imageDigest, config, err := client.ResolveImageConfig(ctx, named, sourceresolver.Opt{
-		ImageOpt: &sourceresolver.ResolveImageOpt{Platform: &plat},
-	})
-	if err != nil {
-		return nil, nil, fmt.Errorf("failed to resolve parent image %s: %w", named, err)
-	}
-	var img v1.Image
-	if err := json.Unmarshal(config, &img); err != nil {
-		return nil, nil, fmt.Errorf("failed to parse parent image config for %s: %w", named, err)
-	}
-	digestRef := pinImageRef(named, imageDigest.String())
-	st := llb.Image(digestRef)
-	st, err = st.WithImageConfig(config)
-	if err != nil {
-		return nil, nil, fmt.Errorf("failed to apply parent image config for %s: %w", digestRef, err)
-	}
-	return &st, &img.Config, nil
-}
-
-// canonicalImageRef returns the fully qualified image reference. ResolveImage
-// config on the daemon side does not normalize shorthands: a blob like
-// "nixos/nix" reaches the resolver as registry host "nixos" and fails DNS.
-func canonicalImageRef(ref string) (string, error) {
-	named, err := reference.ParseNormalizedNamed(ref)
-	if err != nil {
-		return "", err
-	}
-	return reference.TagNameOnly(named).String(), nil
-}
-
-// pinImageRef appends the resolved digest to a canonical image reference. A
-// reference that already carries a digest is returned unchanged: appending a
-// second digest yields a reference llb.Image cannot parse.
-func pinImageRef(canonical, imageDigest string) string {
-	named, err := reference.ParseNormalizedNamed(canonical)
-	if err != nil {
-		return canonical + "@" + imageDigest
-	}
-	if _, ok := named.(reference.Digested); ok {
-		return canonical
-	}
-	return canonical + "@" + imageDigest
-}
-
 // buildGraph assembles the LLB state for the Nix flake build. The exec op
 // runs `nix build` in the builder image; the getMount of the out mount
 // becomes the image rootfs. A parent rootfs mounts at /parent and the flake
 // output overlays it. StoreCache keeps the nix store in a persistent cache
 // mount across builds.
-func (d NixBuildContext) buildGraph(plat v1.Platform, system string, builderEnv []string, digestRef string, parentState *llb.State, hasParent bool) llb.State {
+func (d NixBuildContext) buildGraph(plat ocispecs.Platform, system string, builderEnv []string, digestRef string, parentState *llb.State, hasParent bool) llb.State {
 	script := d.buildScript(system, hasParent)
 
 	runState := builderStateFor(digestRef, builderEnv)
@@ -298,19 +155,9 @@ func (d NixBuildContext) buildGraph(plat v1.Platform, system string, builderEnv 
 	return run.GetMount(outMountPath)
 }
 
-// builderStateFor builds the llb image state for a digest pinned ref and
-// applies the image config env.
-func builderStateFor(digestRef string, env []string) llb.State {
-	state := llb.Image(digestRef)
-	for _, envEntry := range env {
-		key, value, found := strings.Cut(envEntry, "=")
-		if !found {
-			continue
-		}
-		state = state.With(llb.AddEnv(key, value))
-	}
-	return state
-}
+// builderStateFor, exportImageConfig, parentOverlayScript, shellQuote and
+// the small shared helpers live in shared.go for the entrypoint-less
+// backends.
 
 // buildScript assembles the shell script the builder exec op runs. nix stores
 // the flake result as a symlink, so the script dereferences it and copies the
@@ -359,7 +206,7 @@ func (d NixBuildContext) buildScript(system string, hasParent bool) string {
 	// stand on separate lines so set -e aborts on any failure; the best effort
 	// cache export is the only one allowed to fail.
 	if hasParent {
-		b.WriteString(parentOverlayScript(parentMountPath, "/tmp/hive-rootfs", "/out"))
+		b.WriteString(parentOverlayScript(parentMountPath, "/tmp/hive-rootfs", "/out", true))
 	} else {
 		b.WriteString("cp -RL --preserve=links /tmp/hive-rootfs/. /out/\n")
 	}
@@ -394,7 +241,7 @@ func (d NixBuildContext) installableAttr(system string) string {
 // Linux platforms known to the Nix system set are supported. Clear failures
 // matter: an unmapped platform otherwise builds for the builder system and
 // would reach the registry under the wrong architecture.
-func nixSystemName(plat v1.Platform) (string, error) {
+func nixSystemName(plat ocispecs.Platform) (string, error) {
 	if plat.OS != "linux" {
 		return "", fmt.Errorf("the nix build backend only builds linux images, got platform %s/%s", plat.OS, plat.Architecture)
 	}
@@ -420,115 +267,16 @@ func nixSystemName(plat v1.Platform) (string, error) {
 	return "", fmt.Errorf("no nix system mapping for platform linux/%s (variant %q); remove it from the image platforms", plat.Architecture, plat.Variant)
 }
 
-// imageConfig marshals the image config metadata for the export. The value
-// must be an OCI image document (architecture, os and config), which the
-// containerimage exporter parses from the result metadata. Frontend label
-// options build the exported label map, matching Dockerfile builds. A parent
-// config backs the unset fields: the parent entrypoint, cmd, user and
-// workingdir flow in, and the parent env entries merge with the config
-// block on top.
-func (d NixBuildContext) imageConfig(plat v1.Platform, opts map[string]string, parentConfig *v1.ImageConfig) ([]byte, error) {
-	env := d.envSlice(parentConfig)
-	labels := d.labelMap(opts)
-
-	entrypoint := d.Entrypoint
-	cmd := d.Cmd
-	user := d.User
-	workingDir := d.WorkingDir
-	if parentConfig != nil {
-		if entrypoint == nil {
-			entrypoint = parentConfig.Entrypoint
-		}
-		if cmd == nil {
-			cmd = parentConfig.Cmd
-		}
-		if user == "" {
-			user = parentConfig.User
-		}
-		if workingDir == "" {
-			workingDir = parentConfig.WorkingDir
-		}
-	}
-
-	config := &v1.ImageConfig{
-		User:       user,
-		Env:        env,
-		Entrypoint: entrypoint,
-		Cmd:        cmd,
-		WorkingDir: workingDir,
-		Labels:     labels,
-	}
-
-	return json.Marshal(v1.Image{
-		Platform: v1.Platform{
-			Architecture: plat.Architecture,
-			OS:           plat.OS,
-			Variant:      plat.Variant,
-		},
-		Config: *config,
+// imageConfig marshals the image config metadata for the export. It
+// delegates to the shared exportImageConfig of the entrypoint-less backends.
+func (d NixBuildContext) imageConfig(plat ocispecs.Platform, opts map[string]string, parentConfig *ocispecs.ImageConfig) ([]byte, error) {
+	return exportImageConfig(plat, opts, parentConfig, runConfig{
+		Entrypoint: d.Entrypoint,
+		Cmd:        d.Cmd,
+		Env:        d.Env,
+		User:       d.User,
+		WorkingDir: d.WorkingDir,
 	})
-}
-
-// envSlice merges the parent environment entries with the config block.
-// The config block wins per key.
-func (d NixBuildContext) envSlice(parentConfig *v1.ImageConfig) []string {
-	merged := map[string]string{}
-	if parentConfig != nil {
-		for _, entry := range parentConfig.Env {
-			key, value, found := strings.Cut(entry, "=")
-			if !found {
-				continue
-			}
-			merged[key] = value
-		}
-	}
-	for key, value := range d.Env {
-		merged[key] = value
-	}
-	if len(merged) == 0 {
-		return nil
-	}
-	env := make([]string, 0, len(merged))
-	for _, key := range sortedKeys(merged) {
-		env = append(env, key+"="+merged[key])
-	}
-	return env
-}
-
-func (d NixBuildContext) labelMap(opts map[string]string) map[string]string {
-	if len(opts) == 0 {
-		return nil
-	}
-	labels := map[string]string{}
-	for key, value := range opts {
-		if name, found := strings.CutPrefix(key, "label:"); found {
-			labels[name] = value
-		}
-	}
-	if len(labels) == 0 {
-		return nil
-	}
-	return labels
-}
-
-func sortedKeys(m map[string]string) []string {
-	keys := make([]string, 0, len(m))
-	for key := range m {
-		keys = append(keys, key)
-	}
-	sort.Strings(keys)
-	return keys
-}
-
-func parsePlatform(name string) (v1.Platform, error) {
-	if name == "" {
-		return platforms.DefaultSpec(), nil
-	}
-	plat, err := platforms.Parse(name)
-	if err != nil {
-		return v1.Platform{}, fmt.Errorf("invalid platform %q for nix build: %w", name, err)
-	}
-	return plat, nil
 }
 
 // ToLocalMounts exposes the flake source directory as the local context.
@@ -550,53 +298,4 @@ func (d NixBuildContext) FileName() string {
 // FrontendType returns the frontend identifier for nix flake builds.
 func (d NixBuildContext) FrontendType() string {
 	return "nix.v0"
-}
-
-// shellQuote wraps arg in single quotes so the build script passes it to nix
-// as one literal word.
-func shellQuote(arg string) string {
-	return "'" + strings.ReplaceAll(arg, "'", `'\''`) + "'"
-}
-
-// parentOverlayScript returns the shell statements that lay the parent rootfs
-// into out and overlay the flake output (rootfs) on top of it.
-//
-// The parent keeps its symlinks (cp -a): dereferencing them would flatten
-// merged /usr layouts, and an absolute link resolves against the builder
-// filesystem instead of the parent. The parent nix store moves into
-// out/nix/store when it has one, so a non nix parent works too. The rest of
-// the parent nix tree stays out: a carried over store database and dangling
-// gcroot symlinks corrupt the destination store, and the child closure copy
-// brings the shared store paths anyway.
-//
-// The flake output dereferences its store symlinks. A top level directory of
-// it that meets a parent symlink, like bin over a merged /usr layout, merges
-// into the link target instead of failing on the type mismatch.
-func parentOverlayScript(parent, rootfs, out string) string {
-	script := `if [ -d PARENT/nix/store ]; then
-  mkdir -p OUT/nix/store
-  cp -a PARENT/nix/store/. OUT/nix/store/
-fi
-for entry in PARENT/* PARENT/.[!.]* PARENT/..?*; do
-  [ "$entry" = PARENT/nix ] && continue
-  [ -e "$entry" ] || [ -L "$entry" ] || continue
-  cp -a "$entry" OUT/
-done
-for entry in ROOTFS/* ROOTFS/.[!.]* ROOTFS/..?*; do
-  [ -e "$entry" ] || [ -L "$entry" ] || continue
-  name="${entry##*/}"
-  if [ -d "$entry" ] && [ -L "OUT/$name" ]; then
-    link="$(readlink "OUT/$name")"
-    case "$link" in
-      /*) dest="OUT$link" ;;
-      *) dest="OUT/$link" ;;
-    esac
-    mkdir -p "$dest"
-    cp -RL --preserve=links "$entry/." "$dest/"
-    continue
-  fi
-  cp -RL --preserve=links "$entry" OUT/
-done
-`
-	return strings.NewReplacer("PARENT", parent, "ROOTFS", rootfs, "OUT", out).Replace(script)
 }

@@ -1,0 +1,6 @@
+# ContainerHive cut spec for the chisel build backend. This is NOT the
+# chisel-releases release manifest format.
+release: ubuntu-24.04
+slices:
+  - base-files_base
+  - hello_bins

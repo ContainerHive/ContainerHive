@@ -15,10 +15,17 @@ const (
 	BuildBackendDockerfile = "dockerfile"
 	// BuildBackendNix builds a Nix flake with the nix.v0 frontend.
 	BuildBackendNix = "nix"
+	// BuildBackendChisel cuts a chisel.yaml cut spec into a rootfs with the
+	// chisel.v0 frontend.
+	BuildBackendChisel = "chisel"
 )
 
 // FlakeFileName is the build entrypoint file name for the Nix build backend.
 const FlakeFileName = "flake.nix"
+
+// ChiselFileName is the build entrypoint file name for the Chisel build
+// backend.
+const ChiselFileName = "chisel.yaml"
 
 // ReportModel holds report-related metadata for an image or variant.
 type ReportModel struct {
@@ -57,6 +64,7 @@ type Image struct {
 	BuildEntryPointPath string
 	BuildBackend        string
 	Nix                 NixConfig
+	Chisel              ChiselConfig
 	RunConfig           *ImageRunConfig
 	ReadmePath          string
 	Versions            Versions
@@ -78,6 +86,7 @@ type ImageVariant struct {
 	BuildEntryPointPath string
 	BuildBackend        string
 	Nix                 *NixConfig
+	Chisel              *ChiselConfig
 	RunConfig           *ImageRunConfig
 	ReadmePath          string
 	RootDir             string
