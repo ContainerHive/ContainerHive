@@ -1,6 +1,7 @@
 ---
-name: 🐛 Bug Report
-description: File a bug report for ContainerHive
+name: "🐛 Bug Report"
+description: File a bug report
+title: "[Bug]: "
 labels:
   - bug
 assignees:
@@ -10,112 +11,108 @@ body:
     attributes:
       value: |
         Thanks for taking the time to fill out this bug report!
+
+        A small, complete report helps us find the cause faster. Include the
+        exact command, the configuration, and the full error output.
   - type: textarea
     id: what-happened
     attributes:
       label: What happened?
-      description: Also tell us, what did you expect to happen?
-      placeholder: Tell us what you see!
+      description: Tell us what you saw and what you expected to happen.
+      placeholder: Tell us what you saw.
     validations:
       required: true
   - type: textarea
-    id: problem
+    id: reproduce
     attributes:
-      label: Problem description
-      description: Provide some details about the error, for example what you
-        have done before it occurred.
+      label: Steps to reproduce
+      description: List the exact commands. Include the full `ch` command and
+        all flags.
+      placeholder: |
+        1. Run `ch build <image> --<flag>`
+        2. See error
     validations:
       required: true
   - type: textarea
     id: expected-behaviour
     attributes:
-      label: Expected behaviour
+      label: Expected behavior
       description: What should have happened?
     validations:
       required: true
   - type: textarea
     id: actual-behaviour
     attributes:
-      label: Actual behaviour
-      description: What actually happened?
-    validations:
-      required: true
-  - type: textarea
-    id: reproduce
-    attributes:
-      label: Steps to Reproduce
-      description: List the steps required to reproduce the issue. Include the
-        hive configuration and Dockerfiles, if possible.
-      placeholder: |
-        1. Run `ch ...` with this `hive.yaml` ...
-        2. See error
+      label: Actual behavior
+      description: What happened instead?
     validations:
       required: true
   - type: input
-    id: version
+    id: ch-version
     attributes:
       label: ContainerHive version
-      description: Output of `ch --version` or the version of the CI image you use.
-      placeholder: "ch version 1.2.3 (commit abc1234, built 2026-01-01)"
+      description: Paste the output of `ch version`.
+      placeholder: 1.15.1
     validations:
       required: true
   - type: dropdown
-    id: platform
+    id: os
     attributes:
-      label: Platform / environment
-      description: Where did the issue occur?
+      label: Operating system
+      description: Where did the problem occur?
       options:
-        - pre-commit
-        - CI - GitHub Actions
-        - CI - GitLab CI
-        - CI - CircleCI
-        - CLI - Linux
-        - CLI - macOS
-        - CLI - Windows
-        - Container image
+        - Linux (amd64)
+        - Linux (arm64)
+        - macOS (Intel)
+        - macOS (Apple Silicon)
+        - Windows
+        - Docker container
     validations:
       required: true
   - type: dropdown
-    id: container-runtime
+    id: backend
     attributes:
-      label: Container runtime / BuildKit
-      description: Which runtime or BuildKit setup did you use?
+      label: Build backend
+      description: Which build backend did you use?
       options:
-        - Docker (desktop)
-        - Docker Engine
-        - Podman
-        - nerdctl / containerd
-        - BuildKit standalone or rootless
-        - Not applicable
+        - dockerfile
+        - nix
+        - chisel
+        - not sure
     validations:
-      required: true
+      required: false
+  - type: textarea
+    id: config
+    attributes:
+      label: Configuration
+      description: Paste the relevant `hive.yml` or `image.yml` snippets.
+        Redact secrets.
+      render: yaml
+    validations:
+      required: false
   - type: textarea
     id: logs
     attributes:
       label: Logs
-      description: Paste the relevant output or error message. Set
-        `CH_LOG_LEVEL=debug` to get debug logs.
+      description: Paste the relevant logs or error output.
       render: shell
-  - type: textarea
-    id: more-info
-    attributes:
-      label: Important Factoids
-      description: Is there anything atypical or special about your setup or example?
+    validations:
+      required: false
   - type: textarea
     id: references
     attributes:
       label: References
-      description: |
-        Are there any other GitHub issues (open or closed) or pull requests
-        that should be linked here? Vendor documentation?
+      description: Link related issues, pull requests, or vendor documentation.
       placeholder: "You can reference issues with #"
+    validations:
+      required: false
   - type: checkboxes
     id: terms
     attributes:
-      label: I read and agree to the contribution guidelines
+      label: Contribution guidelines
       description: |
-        By submitting this issue, you read and agree to the
-        [contribution guidelines](https://github.com/ContainerHive/ContainerHive/blob/main/CONTRIBUTING.md).
+        Read the [contribution guidelines](https://github.com/ContainerHive/ContainerHive/blob/main/CONTRIBUTING.md)
+        before you submit this issue.
       options:
         - label: I read and agree to the contribution guidelines
           required: true

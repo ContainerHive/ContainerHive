@@ -1,6 +1,7 @@
 ---
-name: 🚀 Feature Request
-description: I have a suggestion (and might want to implement myself 🙂)!
+name: "🚀 Feature Request"
+description: "I have a suggestion (and might want to implement it myself 🙂)"
+title: "[Feature]: "
 labels:
   - enhancement
 assignees:
@@ -10,19 +11,22 @@ body:
     id: description
     attributes:
       label: Description
-      description: Please leave a helpful description of the feature request here.
+      description: Describe the feature and the problem it solves.
+      placeholder: I want to ...
     validations:
       required: true
   - type: textarea
-    id: problem
+    id: alternatives
     attributes:
-      label: Problem it solves
-      description: Which problem do you hit today, that this feature would solve?
+      label: Alternatives
+      description: Describe workarounds or alternatives that you considered.
+    validations:
+      required: false
   - type: textarea
     id: references
     attributes:
       label: References
-      description: |
-        Are there any other GitHub issues (open or closed) or pull requests
-        that should be linked here? Vendor documentation?
+      description: Link related issues, pull requests, or vendor documentation.
       placeholder: "You can reference issues with #"
+    validations:
+      required: false
