@@ -1,0 +1,28 @@
+---
+name: 🚀 Feature Request
+description: I have a suggestion (and might want to implement myself 🙂)!
+labels:
+  - enhancement
+assignees:
+  - timo-reymann
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: Please leave a helpful description of the feature request here.
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem it solves
+      description: Which problem do you hit today, that this feature would solve?
+  - type: textarea
+    id: references
+    attributes:
+      label: References
+      description: |
+        Are there any other GitHub issues (open or closed) or pull requests
+        that should be linked here? Vendor documentation?
+      placeholder: "You can reference issues with #"
