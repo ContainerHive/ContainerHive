@@ -63,10 +63,10 @@ func ScanProjectSource(project *model.ContainerHiveProject) *Graph {
 
 	for name, images := range project.ImagesByName {
 		for _, img := range images {
-			// A nix parent hive ref implies a build order edge; missing
+			// A backend parent hive ref implies a build order edge; missing
 			// parents stay silent here: the build reports them.
-			for _, parent := range nixParentRefs(img) {
-				dependOnNixParent(graph, name, parent)
+			for _, parent := range backendParentRefs(img) {
+				dependOnBackendParent(graph, name, parent)
 			}
 		}
 	}
@@ -74,9 +74,9 @@ func ScanProjectSource(project *model.ContainerHiveProject) *Graph {
 	return graph
 }
 
-// dependOnNixParent records the build order edge of a nix.parent hive
-// reference when the target image exists.
-func dependOnNixParent(graph *Graph, from, parent string) {
+// dependOnBackendParent records the build order edge of a backend parent
+// hive reference when the target image exists.
+func dependOnBackendParent(graph *Graph, from, parent string) {
 	if parent == "" || parent == model.HiveParentPlaceholder || !strings.HasPrefix(parent, HivePrefix) {
 		return
 	}

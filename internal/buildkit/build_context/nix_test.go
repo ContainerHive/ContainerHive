@@ -56,7 +56,7 @@ func TestNixBuildContext_buildScript(t *testing.T) {
 		t.Errorf("buildScript() = %q, want the mapped system attr", got)
 	}
 
-	parentNC := NixBuildContext{Parent: &NixParent{RegistryRef: "example.com/base:1.0"}}
+	parentNC := NixBuildContext{Parent: &ParentImage{RegistryRef: "example.com/base:1.0"}}
 	got = parentNC.buildScript("x86_64-linux", true)
 	if want := "if [ -d /parent/nix/store ]; then\n  mkdir -p /out/nix/store\n  cp -a /parent/nix/store/. /out/nix/store/\nfi\n"; !strings.Contains(got, want) {
 		t.Errorf("buildScript() = %q, want the guarded parent store copy %q", got, want)
@@ -111,12 +111,12 @@ func TestPinImageRef(t *testing.T) {
 }
 
 func TestNixBuildContext_resolveParentStateInvalidRef(t *testing.T) {
-	nc := NixBuildContext{Parent: &NixParent{RegistryRef: "Not A Ref"}}
-	_, _, err := nc.resolveParentState(context.Background(), nil, ocispecs.Platform{OS: "linux", Architecture: "amd64"})
+	nc := NixBuildContext{Parent: &ParentImage{RegistryRef: "Not A Ref"}}
+	_, _, err := resolveParentState(context.Background(), nil, ocispecs.Platform{OS: "linux", Architecture: "amd64"}, nc.Parent)
 	if err == nil {
 		t.Fatal("resolveParentState() error = nil, want an invalid parent reference error")
 	}
-	if want := `invalid nix parent image reference "Not A Ref"`; !strings.Contains(err.Error(), want) {
+	if want := `invalid parent image reference "Not A Ref"`; !strings.Contains(err.Error(), want) {
 		t.Errorf("resolveParentState() error = %q, want it to contain %q", err, want)
 	}
 	if strings.Contains(err.Error(), "builder") {
@@ -169,7 +169,7 @@ func TestParentOverlayScript(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	script := "set -eu\n" + parentOverlayScript(parent, rootfs, out)
+	script := "set -eu\n" + parentOverlayScript(parent, rootfs, out, true)
 	if combined, err := exec.Command("sh", "-c", script).CombinedOutput(); err != nil {
 		t.Fatalf("script failed: %v\n%s", err, combined)
 	}

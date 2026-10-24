@@ -129,21 +129,21 @@ func resolveDepContext(d *HiveDeps, imageName, tag string, opts HiveDepsOpts) er
 	return nil
 }
 
-// NixParentDeps couples the resolved nix parent source with its cleanup
+// ParentDeps couples the resolved parent image source with its cleanup
 // handle. Deps is nil for plain image references.
-type NixParentDeps struct {
-	Parent *build_context.NixParent
+type ParentDeps struct {
+	Parent *build_context.ParentImage
 	Deps   *HiveDeps
 }
 
-// ResolveNixParent resolves the nix parent image reference. A __hive__/
+// ResolveParentImage resolves a backend parent image reference. A __hive__/
 // reference resolves through the local build cache or the registry, like a
 // Dockerfile dependency. Any other value is a plain image reference for the
 // registry path.
-func ResolveNixParent(parentRef string, opts HiveDepsOpts) (*NixParentDeps, error) {
+func ResolveParentImage(parentRef string, opts HiveDepsOpts) (*ParentDeps, error) {
 	if !strings.HasPrefix(parentRef, dependency.HivePrefix) {
-		return &NixParentDeps{
-			Parent: &build_context.NixParent{RegistryRef: parentRef},
+		return &ParentDeps{
+			Parent: &build_context.ParentImage{RegistryRef: parentRef},
 		}, nil
 	}
 
@@ -161,7 +161,7 @@ func ResolveNixParent(parentRef string, opts HiveDepsOpts) (*NixParentDeps, erro
 		return nil, err
 	}
 
-	parent := &build_context.NixParent{}
+	parent := &build_context.ParentImage{}
 	for _, contextValue := range d.NamedContexts {
 		if storeID, digest, found := parseOCILayoutRef(contextValue); found {
 			named, err := reference.ParseNormalizedNamed(storeID)
@@ -179,7 +179,7 @@ func ResolveNixParent(parentRef string, opts HiveDepsOpts) (*NixParentDeps, erro
 			parent.RegistryRef = strings.TrimPrefix(contextValue, "docker-image://")
 		}
 	}
-	return &NixParentDeps{Parent: parent, Deps: d}, nil
+	return &ParentDeps{Parent: parent, Deps: d}, nil
 }
 
 // splitHiveRef splits an image name and tag at the last colon.

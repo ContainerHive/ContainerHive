@@ -29,8 +29,8 @@ func BuildDependencyGraph(scannedGraph *Graph, project *model.ContainerHiveProje
 				}
 				graph.AddDependency(name, dep)
 			}
-			for _, parent := range nixParentRefs(img) {
-				if err := addNixParentDependency(graph, project, name, parent); err != nil {
+			for _, parent := range backendParentRefs(img) {
+				if err := addParentDependency(graph, project, name, parent); err != nil {
 					return nil, err
 				}
 			}
@@ -40,11 +40,11 @@ func BuildDependencyGraph(scannedGraph *Graph, project *model.ContainerHiveProje
 	return graph, nil
 }
 
-// addNixParentDependency records the implicit build order edge from a
-// nix.parent hive reference, so a flake build with a parent depends on it
-// without an explicit depends_on. Plain image references and the parent
-// placeholder carry no build order edge.
-func addNixParentDependency(graph *Graph, project *model.ContainerHiveProject, from, parent string) error {
+// addParentDependency records the implicit build order edge from a backend
+// parent hive reference, so a build with a parent depends on it without an
+// explicit depends_on. Plain image references and the parent placeholder
+// carry no build order edge.
+func addParentDependency(graph *Graph, project *model.ContainerHiveProject, from, parent string) error {
 	if parent == "" || parent == model.HiveParentPlaceholder {
 		return nil
 	}
@@ -58,10 +58,10 @@ func addNixParentDependency(graph *Graph, project *model.ContainerHiveProject, f
 		}
 	}
 	if name == "" || tag == "" {
-		return fmt.Errorf("image %q sets nix.parent %q, want %s<name>:<tag>", from, parent, HivePrefix)
+		return fmt.Errorf("image %q sets parent %q, want %s<name>:<tag>", from, parent, HivePrefix)
 	}
 	if _, exists := project.ImagesByName[name]; !exists {
-		return fmt.Errorf("image %q sets nix.parent %q, but no image with that name exists in the project", from, parent)
+		return fmt.Errorf("image %q sets parent %q, but no image with that name exists in the project", from, parent)
 	}
 	if name != from {
 		graph.AddDependency(from, name)

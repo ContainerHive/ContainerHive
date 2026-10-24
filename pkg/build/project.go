@@ -328,7 +328,7 @@ func buildTag(ctx context.Context, client *Client, opts *ProjectBuildOpts, image
 		if err != nil {
 			return fmt.Errorf("failed to resolve nix parent for %s:%s: %w", imageDef.Name, tagName, err)
 		}
-		parentDeps, err := resolveNixParent(nixConfig.Parent, opts, platformStr)
+		parentDeps, err := resolveParentImage(nixConfig.Parent, opts, platformStr)
 		if err != nil {
 			return fmt.Errorf("failed to resolve nix parent for %s:%s: %w", imageDef.Name, tagName, err)
 		}
@@ -338,11 +338,40 @@ func buildTag(ctx context.Context, client *Client, opts *ProjectBuildOpts, image
 				buildOpts.OCIStores = parentDeps.Deps.OCIStores
 			}
 		}
-		var parent *build_context.NixParent
+		var parent *build_context.ParentImage
 		if parentDeps != nil {
 			parent = parentDeps.Parent
 		}
 		buildOpts.BuildContext = nixBuildContext(root, nixConfig, imageDef.RunConfig, parent)
+	}
+	if imageDef.BuildBackend == model.BuildBackendChisel {
+		chiselConfig, err := chiselParentForBuild(imageDef.Chisel, imageDef, "")
+		if err != nil {
+			return fmt.Errorf("failed to resolve chisel parent for %s:%s: %w", imageDef.Name, tagName, err)
+		}
+		spec, err := parseChiselCutSpec(root)
+		if err != nil {
+			return err
+		}
+		parentDeps, err := resolveParentImage(chiselConfig.Parent, opts, platformStr)
+		if err != nil {
+			return fmt.Errorf("failed to resolve chisel parent for %s:%s: %w", imageDef.Name, tagName, err)
+		}
+		if parentDeps != nil && parentDeps.Deps != nil {
+			defer parentDeps.Deps.Cleanup()
+			if buildOpts.OCIStores == nil {
+				buildOpts.OCIStores = parentDeps.Deps.OCIStores
+			}
+		}
+		var parent *build_context.ParentImage
+		if parentDeps != nil {
+			parent = parentDeps.Parent
+		}
+		buildCtx, err := chiselBuildContext(root, spec, chiselConfig, imageDef.RunConfig, parent)
+		if err != nil {
+			return fmt.Errorf("failed to assemble chisel build context for %s:%s: %w", imageDef.Name, tagName, err)
+		}
+		buildOpts.BuildContext = buildCtx
 	}
 	if hiveDeps != nil {
 		buildOpts.OCIStores = hiveDeps.OCIStores
@@ -442,7 +471,7 @@ func buildVariant(ctx context.Context, client *Client, opts *ProjectBuildOpts, i
 		if err != nil {
 			return fmt.Errorf("failed to resolve nix parent for %s:%s.%s: %w", imageDef.Name, tagName, variantName, err)
 		}
-		parentDeps, err := resolveNixParent(nixConfig.Parent, opts, platformStr)
+		parentDeps, err := resolveParentImage(nixConfig.Parent, opts, platformStr)
 		if err != nil {
 			return fmt.Errorf("failed to resolve nix parent for %s:%s.%s: %w", imageDef.Name, tagName, variantName, err)
 		}
@@ -452,11 +481,41 @@ func buildVariant(ctx context.Context, client *Client, opts *ProjectBuildOpts, i
 				buildOpts.OCIStores = parentDeps.Deps.OCIStores
 			}
 		}
-		var parent *build_context.NixParent
+		var parent *build_context.ParentImage
 		if parentDeps != nil {
 			parent = parentDeps.Parent
 		}
 		buildOpts.BuildContext = nixBuildContext(root, nixConfig, runConfigFor(imageDef, variantDef), parent)
+	}
+	if variantBackend(imageDef, variantDef) == model.BuildBackendChisel {
+		chiselConfig := chiselConfigFor(imageDef, variantDef)
+		chiselConfig, err := chiselParentForBuild(chiselConfig, imageDef, tagName)
+		if err != nil {
+			return fmt.Errorf("failed to resolve chisel parent for %s:%s.%s: %w", imageDef.Name, tagName, variantName, err)
+		}
+		spec, err := parseChiselCutSpec(root)
+		if err != nil {
+			return err
+		}
+		parentDeps, err := resolveParentImage(chiselConfig.Parent, opts, platformStr)
+		if err != nil {
+			return fmt.Errorf("failed to resolve chisel parent for %s:%s.%s: %w", imageDef.Name, tagName, variantName, err)
+		}
+		if parentDeps != nil && parentDeps.Deps != nil {
+			defer parentDeps.Deps.Cleanup()
+			if buildOpts.OCIStores == nil {
+				buildOpts.OCIStores = parentDeps.Deps.OCIStores
+			}
+		}
+		var parent *build_context.ParentImage
+		if parentDeps != nil {
+			parent = parentDeps.Parent
+		}
+		buildCtx, err := chiselBuildContext(root, spec, chiselConfig, runConfigFor(imageDef, variantDef), parent)
+		if err != nil {
+			return fmt.Errorf("failed to assemble chisel build context for %s:%s.%s: %w", imageDef.Name, tagName, variantName, err)
+		}
+		buildOpts.BuildContext = buildCtx
 	}
 	if hiveDeps != nil {
 		buildOpts.OCIStores = hiveDeps.OCIStores

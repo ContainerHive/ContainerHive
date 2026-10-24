@@ -84,6 +84,7 @@ generate-json-schema: ## Generate the json schemas
 	@go run tools/generate-image-schema.go
 	@go run tools/generate-project-schema.go
 	@go run tools/generate-structure-test-schema.go
+	@go run tools/generate-chisel-schema.go
 	@cp schemas/image.schema.json pkg/mcp/image.schema.json
 	@cp schemas/project.schema.json pkg/mcp/hive.schema.json
 	@cp schemas/structure-test.schema.json pkg/mcp/structure-test.schema.json
