@@ -1,3 +1,9 @@
+## [1.15.0](https://github.com/ContainerHive/ContainerHive/compare/v1.14.0...v1.15.0) (2026-10-24)
+
+### Features
+
+* Publish a signed 0install feed for the ch CLI ([#320](https://github.com/ContainerHive/ContainerHive/issues/320)) ([f3b05fb](https://github.com/ContainerHive/ContainerHive/commit/f3b05fbf5a5bce86d0ebde6f9d1c507f048fd358))
+
 ## [1.14.0](https://github.com/ContainerHive/ContainerHive/compare/v1.13.3...v1.14.0) (2026-10-24)
 
 ### Features
