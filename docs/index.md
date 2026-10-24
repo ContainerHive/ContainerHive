@@ -21,8 +21,27 @@ ch generate && ch build && ch test
 
 <div class="grid cards" markdown>
 
-- **New here?** Follow [Get started](./getting-started.md) and have a first build running in minutes. Wondering if this is for you? Read [Why use ContainerHive?](./why-containerhive.md)
-- **Already using it?** Jump to the [CLI reference](./usage/cli.md), [`hive.yml`](./configuration/hive.md), [`image.yml`](./configuration/image.md) or [CI integration](./usage/ci-integration.md).
+- :material-rocket-launch:{ .lg .middle } **New here?**
+
+    ---
+
+    Go from an empty directory to a first tested build in a few minutes. Not sure ContainerHive fits your use case? Read why it exists first.
+
+    [:octicons-arrow-right-24: Get started](./getting-started.md)
+
+    [:octicons-arrow-right-24: Why ContainerHive?](./why-containerhive.md)
+
+- :material-book-open-variant:{ .lg .middle } **Already using it?**
+
+    ---
+
+    Look up commands and flags, `hive.yml` and `image.yml` fields, or how to wire ContainerHive into your CI provider.
+
+    [:octicons-arrow-right-24: CLI reference](./usage/cli.md)
+
+    [:octicons-arrow-right-24: Configuration](./configuration/hive.md)
+
+    [:octicons-arrow-right-24: CI integration](./usage/ci-integration.md)
 
 </div>
 
