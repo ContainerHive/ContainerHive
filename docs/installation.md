@@ -9,6 +9,17 @@ brew tap ContainerHive/ContainerHive
 brew install ContainerHive
 ```
 
+## 0install
+
+Installation and updates run through a signed [0install](https://0install.net) feed.
+
+```sh
+0install add ch https://containerhive.github.io/0install/containerhive.xml
+0install run ch
+```
+
+On the first run, 0install asks once to trust the release key. After that, `0install run ch` starts the newest release.
+
 ## Containerized
 
 If you prefer to use containerized workflows, use the provided OCI image.
