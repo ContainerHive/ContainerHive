@@ -3,6 +3,7 @@ nav:
   - why-containerhive.md
   - installation.md
   - getting-started.md
+  - concepts.md
   - Usage:
       - usage/cli.md
       - usage/mcp.md
@@ -18,17 +19,19 @@ nav:
       - usage/local-development.md
       - usage/renovate.md
       - usage/pre-commit.md
-      - usage/*.md
+      - usage/nix.md
+      - usage/registry-retention.md
   - Configuration:
       - configuration/hive.md
       - configuration/image.md
       - configuration/test.md
-      - configuration/*.md
+      - configuration/report-theme.md
+      - configuration/environment.md
   - How it works:
       - how-it-works/build-process.md
       - how-it-works/dependency-resolution.md
       - how-it-works/sbom-generation.md
-      - how-it-works/*.md
+  - troubleshooting.md
   - Development:
       - development/*.md
       - Architecture Decision Records:

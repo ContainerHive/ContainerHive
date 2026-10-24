@@ -7,13 +7,43 @@ Home
 
 Swarm it. Build it. Run it. — Managing container base and library images has never been easier.
 
-## Motivation
+ContainerHive turns a directory of Dockerfiles into a dependency-aware build: it works out the build order, builds with BuildKit, runs your tests, generates SBOMs and writes the CI pipeline.
 
-Managing container base images and library images at scale is surprisingly painful. Teams end up with scattered Dockerfiles, manual build scripts, inconsistent tagging, and no dependency tracking between images. CI pipelines are hand-rolled per project, caching is an afterthought, and reproducibility is a dream.
+```
+images/
+├── base/      # Dockerfile: FROM ubuntu:24.04
+└── node/      # Dockerfile: FROM __hive__/base:1.0.0
+```
 
-ContainerHive grew out of [poc-container-image-manager](https://github.com/timo-reymann/poc-container-image-manager), a Python-based proof of concept that validated the core idea: declarative, YAML-driven image management with dependency resolution, templating, and CI generation. The PoC proved the concept works — but being Python-based, it required a runtime, bundled platform-specific binaries, and wasn't practical to distribute as a single portable tool.
+```bash
+ch generate && ch build && ch test
+```
 
-ContainerHive is the production-grade successor, rewritten in Go as a single static binary with no external dependencies beyond BuildKit. It takes the validated ideas from the PoC and packages them into something you can drop into any CI pipeline or developer workstation without setup overhead.
+<div class="grid cards" markdown>
+
+- :material-rocket-launch:{ .lg .middle } **New here?**
+
+    ---
+
+    Go from an empty directory to a first tested build in a few minutes. Not sure ContainerHive fits your use case? Read why it exists first.
+
+    [:octicons-arrow-right-24: Get started](./getting-started.md)
+
+    [:octicons-arrow-right-24: Why ContainerHive?](./why-containerhive.md)
+
+- :material-book-open-variant:{ .lg .middle } **Already using it?**
+
+    ---
+
+    Look up commands and flags, `hive.yml` and `image.yml` fields, or how to wire ContainerHive into your CI provider.
+
+    [:octicons-arrow-right-24: CLI reference](./usage/cli.md)
+
+    [:octicons-arrow-right-24: Configuration](./configuration/hive.md)
+
+    [:octicons-arrow-right-24: CI integration](./usage/ci-integration.md)
+
+</div>
 
 ## Features
 
@@ -26,29 +56,10 @@ ContainerHive is the production-grade successor, rewritten in Go as a single sta
 - **SBOM generation**: Generate CycloneDX SBOMs for all built images using Syft.
 - **CI pipeline generation**: Generate GitLab CI and GitHub Actions pipelines from your project definition.
 - **Bring your own BuildKit**: Connect to any BuildKit instance — local daemon, shared cluster service, or sidecar in a hardened Kubernetes environment.
-- **Enterprise-ready**: Built for scale, compliance, and integration with enterprise workflows.
-
-## Supported platforms
-
-The following platforms have prebuilt binaries:
-
-- Linux
-    - 64-bit
-    - ARM 64-bit
-- Darwin
-    - 64-bit (Intel)
-    - ARM 64-bit (Apple Silicon)
-- Docker (x86 & ARM)
-
-!!! info
-
-    New to ContainerHive? Start with the [Get started](./getting-started.md) guide.
 
 ## Requirements
 
-- [BuildKit](https://github.com/moby/buildkit) daemon
+- [BuildKit](https://github.com/moby/buildkit) daemon (`ch dev buildkitd start` can run one for you)
 - S3-compatible storage for caching (optional)
 
-## AI Usage
-
-This project uses AI tooling (Claude Code and Mistral AI models) to assist with development. All AI-generated or AI-assisted changes are **human-reviewed** and applied responsibly — this is not AI slop. Contributors are expected to uphold the same standard: AI tools are welcome, but every change must be understood, reviewed, and owned by the person submitting it.
+Prebuilt binaries are available for Linux and macOS (64-bit and ARM 64-bit), plus a Docker image. See [Install ContainerHive](./installation.md).

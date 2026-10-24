@@ -28,59 +28,22 @@ If you prefer to use containerized workflows, use the provided OCI image.
 docker run --rm -it -v $PWD:/workspace containerhive/containerhive
 ```
 
-## Pre-commit
-
-ContainerHive provides [pre-commit](https://pre-commit.com) hooks for generating CI pipelines, verifying project structure, and running arbitrary ContainerHive commands.
-
-```yaml
-# .pre-commit-config.yaml
-repos:
-  - repo: https://github.com/ContainerHive/pre-commit
-    rev: main # use tag or commit hash for your projects
-    hooks:
-      - id: template
-        args: [ci, --provider, github, --output, .github/workflows/main.yml]
-```
-
-See the [pre-commit usage guide](usage/pre-commit.md) for all available hooks and configuration options.
-
 ## Manual
 
-### Linux (64-bit)
+Pick your platform (`linux-amd64`, `linux-arm64`, `darwin-amd64` or `darwin-arm64`) and run:
 
 ```bash
-curl -LO https://github.com/ContainerHive/ContainerHive/releases/download/$(curl -Lso /dev/null -w %{url_effective} https://github.com/ContainerHive/ContainerHive/releases/latest | grep -o '[^/]*$')/linux-amd64.tar.zst && \
-tar --zstd -xf linux-amd64.tar.zst ch && \
+PLATFORM=linux-amd64  # or linux-arm64, darwin-amd64, darwin-arm64
+VERSION=$(curl -Lso /dev/null -w %{url_effective} https://github.com/ContainerHive/ContainerHive/releases/latest | grep -o '[^/]*$')
+curl -LO "https://github.com/ContainerHive/ContainerHive/releases/download/${VERSION}/${PLATFORM}.tar.zst" && \
+tar --zstd -xf "${PLATFORM}.tar.zst" ch && \
 chmod +x ch && \
 sudo mv ch /usr/local/bin/ch
 ```
 
-### Linux (ARM 64-bit)
+## Next steps
 
-```bash
-curl -LO https://github.com/ContainerHive/ContainerHive/releases/download/$(curl -Lso /dev/null -w %{url_effective} https://github.com/ContainerHive/ContainerHive/releases/latest | grep -o '[^/]*$')/linux-arm64.tar.zst && \
-tar --zstd -xf linux-arm64.tar.zst ch && \
-chmod +x ch && \
-sudo mv ch /usr/local/bin/ch
-```
-
-### Darwin (Intel)
-
-```bash
-curl -LO https://github.com/ContainerHive/ContainerHive/releases/download/$(curl -Lso /dev/null -w %{url_effective} https://github.com/ContainerHive/ContainerHive/releases/latest | grep -o '[^/]*$')/darwin-amd64.tar.zst && \
-tar --zstd -xf darwin-amd64.tar.zst ch && \
-chmod +x ch && \
-sudo mv ch /usr/local/bin/ch
-```
-
-### Darwin (Apple Silicon)
-
-```bash
-curl -LO https://github.com/ContainerHive/ContainerHive/releases/download/$(curl -Lso /dev/null -w %{url_effective} https://github.com/ContainerHive/ContainerHive/releases/latest | grep -o '[^/]*$')/darwin-arm64.tar.zst && \
-tar --zstd -xf darwin-arm64.tar.zst ch && \
-chmod +x ch && \
-sudo mv ch /usr/local/bin/ch
-```
+Continue with [Get started](./getting-started.md). To run ContainerHive from pre-commit, see the [pre-commit guide](usage/pre-commit.md).
 
 ## Where to find the latest release
 

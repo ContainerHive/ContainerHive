@@ -1,6 +1,6 @@
 # Build Process Overview
 
-ContainerHive builds container images through a sequential pipeline:
+ContainerHive builds container images through a pipeline of five steps:
 
 ```plantuml {display-align=center}
 @startuml build-pipeline
@@ -22,18 +22,20 @@ build -> post
 
 ## Pipeline Steps
 
-1. **Discovery** - Find and validate configuration files
-2. **Dependency Resolution** - Build dependency graph combining implicit (Dockerfile FROM) and explicit (`depends_on`) dependencies
-3. **Preparation** - Apply templates and prepare build contexts
-4. **Execution** - Build images sequentially using BuildKit
-5. **Post-Processing** - Generate SBOMs, run tests, push to registry
-6. **Cleanup** - Remove temporary artifacts and report results
+1. **Discovery** (`ch generate`) - Find and validate `hive.yml` and image definitions.
+2. **Dependency Resolution** - Build the dependency graph from `FROM __hive__/<image>:<tag>` references and explicit `depends_on` entries.
+3. **Preparation** (`ch generate`) - Apply templates and render build contexts to `dist/`.
+4. **Execution** (`ch build`) - Build images with BuildKit in dependency order.
+5. **Post-Processing** (`ch test`, `ch sbom`, `ch finalize`) - Run tests, generate SBOMs, create multi-arch manifests and alias tags.
 
-## Key Features
+## Execution model
 
-- **Sequential execution** for reliability and predictability
-- **Dependency-aware ordering** using topological sorting
-- **Template processing** with Go templates
-- **Secure secret handling** via BuildKit secret mounting
-- **RootFS copying** for derived image scenarios
-- **Comprehensive error handling** with detailed reporting
+- A single `ch build` run builds images one after another in dependency order, so a parent always exists before its children.
+- To build in parallel, split the work across jobs. The generated CI pipeline has one stage per dependency depth, and [sharding](../usage/sharding.md) spreads the images of a stage across parallel jobs. See [How dependency resolution works](dependency-resolution.md).
+- Within one `ch build` run, parent images are passed to children as OCI layout named contexts, so no registry push is needed between steps. With sharding, a parent built by another shard is not in the local layout: it resolves via the registry and must already be pushed there.
+
+## Other behavior
+
+- Templates are processed with Go templates, see [Write your Dockerfiles](../usage/dockerfiles.md).
+- Secrets are passed through BuildKit secret mounts, see [Secrets and versions](../usage/secrets-and-versions.md).
+- A failed build stops the run with a non-zero exit code. Nothing is pushed for images that were not built.

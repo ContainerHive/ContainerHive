@@ -15,18 +15,10 @@ ContainerHive
 
 ## Motivation
 
-Managing container base images and library images at scale is surprisingly painful. Teams end up with scattered
-Dockerfiles, manual build scripts, inconsistent tagging, and no dependency tracking between images. CI pipelines are
-hand-rolled per project, caching is an afterthought, and reproducibility is a dream.
-
-ContainerHive grew out of [poc-container-image-manager](https://github.com/timo-reymann/poc-container-image-manager), a
-Python-based proof of concept that validated the core idea: declarative, YAML-driven image management with dependency
-resolution, templating, and CI generation. The PoC proved the concept works — but being Python-based, it required a
-runtime, bundled platform-specific binaries, and wasn't practical to distribute as a single portable tool.
-
-ContainerHive is the production-grade successor, rewritten in Go as a single static binary with no external dependencies
-beyond BuildKit. It takes the validated ideas from the PoC and packages them into something you can drop into any CI
-pipeline or developer workstation without setup overhead.
+Managing container base and library images at scale is painful: scattered Dockerfiles, hand-rolled CI, inconsistent
+tagging and no dependency tracking. ContainerHive is a single static Go binary that resolves the dependency graph
+between your images, builds them with BuildKit, tests them and generates the CI pipeline. It is the production-grade
+successor of [poc-container-image-manager](https://github.com/timo-reymann/poc-container-image-manager).
 
 ## Why not just do it manually?
 
@@ -45,7 +37,7 @@ handling tagging and pushing so children find the right parent, writing tests an
 and updating all of it whenever an image is added or re-parented.
 
 With ContainerHive you drop flat image directories into your project, and each Dockerfile references its parent with
-`FROM __hive__/<image>`. ContainerHive resolves the dependency graph, generates the CI pipeline with the right build
+`FROM __hive__/<image>:<tag>`. ContainerHive resolves the dependency graph, generates the CI pipeline with the right build
 order and parallelism, detects which images have a `test.yml` and adds the test steps for them, and passes parent
 images to children without a registry round trip.
 
@@ -91,7 +83,8 @@ Use [0install](https://0install.net) for automatic updates or install the binari
 0install add ch https://containerhive.github.io/0install/containerhive.xml
 ```
 
-See the [installation guide](https://container-hive.timo-reymann.de/installation.html) for detailed instructions.
+See the [installation guide](https://container-hive.timo-reymann.de/installation.html), then follow
+[Get started](https://container-hive.timo-reymann.de/getting-started/).
 
 ## Documentation
 
