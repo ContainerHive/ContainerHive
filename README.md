@@ -37,7 +37,7 @@ handling tagging and pushing so children find the right parent, writing tests an
 and updating all of it whenever an image is added or re-parented.
 
 With ContainerHive you drop flat image directories into your project, and each Dockerfile references its parent with
-`FROM __hive__/<image>`. ContainerHive resolves the dependency graph, generates the CI pipeline with the right build
+`FROM __hive__/<image>:<tag>`. ContainerHive resolves the dependency graph, generates the CI pipeline with the right build
 order and parallelism, detects which images have a `test.yml` and adds the test steps for them, and passes parent
 images to children without a registry round trip.
 

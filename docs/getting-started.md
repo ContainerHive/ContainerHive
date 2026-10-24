@@ -62,7 +62,7 @@ Versions defined in `image.yml` are automatically passed as Docker build argumen
 
 ### Build on top of another image
 
-Images reference each other with `FROM __hive__/<image>`. Add a second image that builds on `my-app`:
+Images reference each other with `FROM __hive__/<image>:<tag>`. Add a second image that builds on `my-app`:
 
 ```
 images/my-app-debug/
@@ -71,11 +71,11 @@ images/my-app-debug/
 ```
 
 ```dockerfile
-FROM __hive__/my-app
+FROM __hive__/my-app:1.0.0
 RUN apt-get update && apt-get install -y --no-install-recommends strace
 ```
 
-ContainerHive detects the dependency from the `FROM` line, builds `my-app` first and passes it to `my-app-debug` without a registry round trip. See [How dependency resolution works](./how-it-works/dependency-resolution.md).
+The tag must be one of the parent's tags (`1.0.0` here). ContainerHive detects the dependency from the `FROM` line, builds `my-app` first and passes it to `my-app-debug` without a registry round trip. See [How dependency resolution works](./how-it-works/dependency-resolution.md).
 
 ## 5. Add tests (optional)
 

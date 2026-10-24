@@ -12,7 +12,7 @@ ContainerHive turns a directory of Dockerfiles into a dependency-aware build: it
 ```
 images/
 ├── base/      # Dockerfile: FROM ubuntu:24.04
-└── node/      # Dockerfile: FROM __hive__/base
+└── node/      # Dockerfile: FROM __hive__/base:1.0.0
 ```
 
 ```bash

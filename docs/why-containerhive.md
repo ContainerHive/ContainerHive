@@ -126,7 +126,7 @@ tag --> reg
 
 ### With ContainerHive
 
-You drop flat image directories into your project. Each image references its parent with `FROM __hive__/<image>`. ContainerHive does the rest.
+You drop flat image directories into your project. Each image references its parent with `FROM __hive__/<image>:<tag>`. ContainerHive does the rest.
 
 ```
 images/
@@ -136,17 +136,17 @@ images/
 │   └── test.yml
 ├── node/
 │   ├── image.yml
-│   └── Dockerfile          # FROM __hive__/ubuntu-base
+│   └── Dockerfile          # FROM __hive__/ubuntu-base:1.0.0
 ├── node-browsers/
 │   ├── image.yml
-│   ├── Dockerfile          # FROM __hive__/node
+│   ├── Dockerfile          # FROM __hive__/node:1.0.0
 │   └── test.yml
 ├── python/
 │   ├── image.yml
-│   └── Dockerfile          # FROM __hive__/ubuntu-base
+│   └── Dockerfile          # FROM __hive__/ubuntu-base:1.0.0
 └── pre-commit/
     ├── image.yml
-    ├── Dockerfile          # FROM __hive__/python
+    ├── Dockerfile          # FROM __hive__/python:1.0.0
     └── test.yml
 ```
 
@@ -178,7 +178,7 @@ ch --> tests
 @enduml
 ```
 
-Adding a new image, say a `go` image on top of `ubuntu-base`, means adding a directory with a Dockerfile that starts with `FROM __hive__/ubuntu-base`. The pipeline, the ordering, and the test steps follow from that.
+Adding a new image, say a `go` image on top of `ubuntu-base`, means adding a directory with a Dockerfile that starts with `FROM __hive__/ubuntu-base:<tag>`. The pipeline, the ordering, and the test steps follow from that.
 
 ## What ContainerHive does instead
 
