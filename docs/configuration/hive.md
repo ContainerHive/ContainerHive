@@ -35,7 +35,7 @@ Configuration for the BuildKit daemon.
 
 | Field | Type | Description |
 |:------|:-----|:------------|
-| `address` | string | BuildKit daemon address (e.g. `tcp://127.0.0.1:8372`). Takes precedence over `$BUILDKIT_HOST`; leave it unset to use the environment variable |
+| `address` | string | BuildKit daemon address (e.g. `tcp://127.0.0.1:8372`). Takes precedence over `$BUILDKIT_HOST` for `build`, `test` and `sbom`; leave it unset to use the environment variable. `ch wait` reads only `$BUILDKIT_HOST` |
 
 ### `platforms`
 
