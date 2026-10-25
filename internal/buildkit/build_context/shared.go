@@ -62,6 +62,7 @@ type runConfig struct {
 type resolvedBuilder struct {
 	digestRef string
 	env       []string
+	labels    map[string]string
 }
 
 // resolveBuilderImage resolves a builder image config upfront and pins the
@@ -92,6 +93,7 @@ func resolveBuilderImage(ctx context.Context, client gatewayClient.Client, plat 
 	return &resolvedBuilder{
 		digestRef: pinImageRef(named, imageDigest.String()),
 		env:       img.Config.Env,
+		labels:    img.Config.Labels,
 	}, nil
 }
 
