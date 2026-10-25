@@ -14,7 +14,7 @@ brew install ContainerHive
 Installation and updates run through a signed [0install](https://0install.net) feed.
 
 ```sh
-0install add ch https://containerhive.github.io/0install/containerhive.xml
+0install add ch https://0install.container-hive.timo-reymann.de/containerhive.xml
 0install run ch
 ```
 
