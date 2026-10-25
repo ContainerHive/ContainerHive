@@ -19,15 +19,15 @@ ContainerHive runs `chisel cut` inside a builder image through a custom BuildKit
    backend.
 2. `generate` renders the image directory, copying the cut spec, the custom `slices/` directory, the `rootfs/`
    directory, and the test config into `dist/`.
-3. `build` prepares a cached toolchain stage: git, ca-certificates, and a pinned chisel release binary on top of the
-   builder image. A second stage then runs `chisel cut --release <local-checkout>` in `/src`; the cut rootfs
+3. `build` prepares a cached toolchain stage on top of the builder image: git, ca-certificates, and the chisel binary,
+   each only when the image lacks it. A second stage then runs `chisel cut --release <local-checkout>` in `/src`; the cut rootfs
    becomes the image filesystem on an empty base.
 4. Everything else is unchanged: OCI labels, the S3 or registry build cache, multi-arch pushes, SBOMs, and
    structure tests run like on Dockerfile builds.
 
 Only the BuildKit worker pulls the builder image and the chisel tool binary. Neither `ch` nor the CI pipeline needs
-Chisel or git installed. ContainerHive ships no builder image; a plain base image plus the downloads keeps the
-maintenance overhead at zero.
+Chisel or git installed. ContainerHive does not bundle a builder image; the default one comes from the helper-images
+project.
 
 ## The cut spec contract
 
@@ -115,13 +115,25 @@ The `chisel` block configures the backend:
 build: chisel
 
 chisel:
-  builder_image: "ubuntu:24.04"  # Debian/Ubuntu base image for the build stages
-  chisel_version: "v1.5.1"       # pinned chisel tool version from GitHub releases
+  builder_image: "ghcr.io/containerhive/helper-images/chisel:1.5"  # base image for the build stages (default)
+  chisel_version: "v1.5.1"       # chisel tool version, only downloaded when the builder image ships another one
   extra_args: []                 # extra chisel cut arguments
 ```
 
-The builder image must be Debian or Ubuntu based: the toolchain stage installs git and ca-certificates with
-`apt-get`. A plain `ubuntu:24.04` is enough; the chisel binary comes from the pinned GitHub release.
+The default builder image is the `chisel` image of
+[ContainerHive/helper-images](https://github.com/ContainerHive/helper-images). It ships chisel, git and
+ca-certificates, so the toolchain stage installs and downloads nothing. That repository is itself a ContainerHive
+project and publishes one tag per chisel release series (`1.5`, `1.4`, ...).
+
+The toolchain stage adds only what the builder image lacks:
+
+- **git** and **ca-certificates** are installed with `apt-get` when missing, so such an image has to be Debian or
+  Ubuntu based. An image that already contains both needs no package manager.
+- **chisel** is downloaded from the GitHub release when the image ships no chisel, or ships another version than
+  `chisel_version`. An image declares the chisel it ships with the `chisel.version` label. Without
+  `chisel_version`, a shipped chisel is used as is; without a label, the default version is downloaded.
+
+A plain `ubuntu:24.04` still works as builder image.
 
 Because a cut spec carries no Dockerfile instructions, the runtime configuration of the image looks like this:
 
