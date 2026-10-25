@@ -2,6 +2,12 @@ coverage:
   precision: 2
   round: down
   range: "50...75"
+  status:
+    # New code only needs a 70% patch coverage; the project status stays at
+    # the Codecov default (auto).
+    patch:
+      default:
+        target: 70%
 ignore:
   # Only glue code should be tested by e2e tests using bats
   - cmd/**
