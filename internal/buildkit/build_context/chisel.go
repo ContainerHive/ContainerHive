@@ -26,8 +26,9 @@ import (
 const chiselFileName = "chisel.yaml"
 
 // DefaultChiselBuilderImage provides the base for the build stages. The
-// build installs git, ca-certificates and the pinned chisel release on top,
-// so the image only needs a shell and standard tools.
+// build installs git and ca-certificates with apt-get and extracts the
+// pinned chisel release on top, so a custom builder image must be Debian or
+// Ubuntu based and provide apt-get.
 const DefaultChiselBuilderImage = "ubuntu:24.04"
 
 // DefaultChiselVersion pins the chisel tool fetched for the build.
