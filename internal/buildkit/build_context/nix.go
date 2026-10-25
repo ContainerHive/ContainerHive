@@ -17,7 +17,7 @@ import (
 const flakeFileName = "flake.nix"
 
 // DefaultNixBuilderImage provides nix when the image config does not set one.
-const DefaultNixBuilderImage = "nixos/nix:2.31.6"
+const DefaultNixBuilderImage = "ghcr.io/containerhive/helper-images/nix:2.35"
 
 // nixContextKey is the local mount name the flake source resolves under. It
 // must match the key in ToLocalMounts.
