@@ -293,6 +293,7 @@ func (d ChiselBuildContext) cutScript(packageArch string, hasParent bool) string
 	b.WriteString("  release_dir=/tmp/hive-release\n")
 	b.WriteString("fi\n")
 
+	b.WriteString("mkdir -p " + chiselRootfsPath + "\n")
 	b.WriteString("chisel cut --release \"$release_dir\" --root " + chiselRootfsPath)
 	b.WriteString(" --arch " + shellQuote(packageArch))
 	for _, cond := range d.Ignore {

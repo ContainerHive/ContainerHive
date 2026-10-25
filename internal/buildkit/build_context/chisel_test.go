@@ -176,6 +176,7 @@ func TestChiselBuildContext_cutScript(t *testing.T) {
 				"git clone '" + CanonicalChiselReleasesRepo + "' \"$release_dir\"",
 				"git -C \"$release_dir\" fetch --force --prune --tags origin",
 				"git -C \"$release_dir\" checkout --force --detach 'origin/ubuntu-24.04'",
+				"mkdir -p " + chiselRootfsPath,
 				"chisel cut --release \"$release_dir\" --root " + chiselRootfsPath,
 				"--arch 'amd64'",
 				"'base-files_base' 'libc6_libs'",
