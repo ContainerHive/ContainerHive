@@ -7,6 +7,7 @@ package buildkit
 
 import (
 	"archive/tar"
+	"fmt"
 	"io"
 	"os"
 	"path/filepath"
@@ -36,7 +37,13 @@ func extractOCIArchive(tarFile, dir string) error {
 		if err != nil {
 			return err
 		}
-		target := filepath.Join(dir, filepath.FromSlash(header.Name))
+		// Entry names come from the archive. Reject absolute paths and
+		// traversal so an entry cannot escape the target directory.
+		rel := filepath.FromSlash(header.Name)
+		if !filepath.IsLocal(rel) {
+			return fmt.Errorf("archive entry %q escapes the extraction directory", header.Name)
+		}
+		target := filepath.Join(dir, rel)
 		switch header.Typeflag {
 		case tar.TypeDir:
 			if err := os.MkdirAll(target, 0o755); err != nil {
@@ -229,5 +236,40 @@ func TestIntegrationNixFrontend(t *testing.T) {
 	}
 	if _, found := files["etc/hive-e2e"]; !found {
 		t.Errorf("flake output missing from image rootfs (files: %d)", len(files))
+	}
+}
+
+func TestExtractOCIArchiveRejectsTraversal(t *testing.T) {
+	tarFile := filepath.Join(t.TempDir(), "archive.tar")
+	f, err := os.Create(tarFile)
+	if err != nil {
+		t.Fatal(err)
+	}
+	tw := tar.NewWriter(f)
+	if err := tw.WriteHeader(&tar.Header{Name: "index.json", Typeflag: tar.TypeReg, Mode: 0o644, Size: 2}); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := tw.Write([]byte("{}")); err != nil {
+		t.Fatal(err)
+	}
+	if err := tw.WriteHeader(&tar.Header{Name: "../escape", Typeflag: tar.TypeReg, Mode: 0o644, Size: 1}); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := tw.Write([]byte("x")); err != nil {
+		t.Fatal(err)
+	}
+	if err := tw.Close(); err != nil {
+		t.Fatal(err)
+	}
+	if err := f.Close(); err != nil {
+		t.Fatal(err)
+	}
+
+	err = extractOCIArchive(tarFile, t.TempDir())
+	if err == nil {
+		t.Fatal("extractOCIArchive() = nil, want a traversal error")
+	}
+	if !strings.Contains(err.Error(), "escapes the extraction directory") {
+		t.Errorf("error = %v, want it to name the traversal", err)
 	}
 }
