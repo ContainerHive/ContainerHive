@@ -4,8 +4,10 @@ description: File a bug report
 title: "[Bug]: "
 labels:
   - bug
+  - priority: low
 assignees:
   - timo-reymann
+type: bug
 body:
   - type: markdown
     attributes:
