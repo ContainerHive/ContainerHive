@@ -21,6 +21,7 @@ import (
 
 type Client struct {
 	buildkit *client.Client
+	endpoint string
 }
 
 type BuildOpts struct {
@@ -56,7 +57,7 @@ func NewClient(ctx context.Context, endpoint string) (*Client, error) {
 	if err != nil {
 		return nil, err
 	}
-	return &Client{buildkit}, nil
+	return &Client{buildkit: buildkit, endpoint: endpoint}, nil
 }
 
 func (c *Client) Close() error {
@@ -139,6 +140,16 @@ func (c *Client) Build(ctx context.Context, opts *BuildOpts, statusUpdateHandler
 		FrontendAttrs: frontendAttrs,
 	}
 
+	build := func() error {
+		return c.buildOnce(ctx, solveOpts, opts.BuildContext, statusUpdateHandler)
+	}
+	return retryTransient(ctx, build, func() {
+		c.resetConnection(ctx)
+	})
+}
+
+// buildOnce runs one full solve and drains the status stream.
+func (c *Client) buildOnce(ctx context.Context, solveOpts client.SolveOpt, buildContext build_context.BuildContext, statusUpdateHandler func(chan *client.SolveStatus) error) error {
 	statusUpdates := make(chan *client.SolveStatus)
 	eg, ctx := errgroup.WithContext(ctx)
 	eg.Go(func() error {
@@ -146,7 +157,7 @@ func (c *Client) Build(ctx context.Context, opts *BuildOpts, statusUpdateHandler
 	})
 
 	eg.Go(func() error {
-		_, err = c.buildkit.Build(ctx, solveOpts, "ContainerHive", opts.BuildContext.RunBuild, statusUpdates)
+		_, err := c.buildkit.Build(ctx, solveOpts, "ContainerHive", buildContext.RunBuild, statusUpdates)
 		return err
 	})
 
