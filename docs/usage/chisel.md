@@ -47,6 +47,11 @@ slices:
 - **slices** lists the slices to cut in chisel notation `<package>_<slice>`. Chisel resolves slice dependencies (the
   `essential` edges) automatically.
 
+A JSON schema for the cut spec is published to
+[SchemaNest](https://schema-nest.timo-reymann.de/schemas/json-schema/containerhive-chisel/latest?tab=setup) and can be
+referenced directly at
+[schema-nest.timo-reymann.de/api/schema/json-schema/containerhive-chisel/latest](https://schema-nest.timo-reymann.de/api/schema/json-schema/containerhive-chisel/latest).
+
 An optional `ignore` field lets chisel cut unstable or unmaintained releases, same behavior as `chisel cut
 --ignore`. See the [cut command reference](https://github.com/canonical/chisel).
 
