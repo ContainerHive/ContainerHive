@@ -1,3 +1,10 @@
+## [1.20.1](https://github.com/ContainerHive/ContainerHive/compare/v1.20.0...v1.20.1) (2026-10-25)
+
+### Bug Fixes
+
+* **security:** confine tar extraction with os.Root ([f56a435](https://github.com/ContainerHive/ContainerHive/commit/f56a435cbb69efe52cc517b6cb1a466f36979cdd))
+* **web:** use a native button for the copy-to-clipboard block ([ea01911](https://github.com/ContainerHive/ContainerHive/commit/ea01911732c4d05baab0e85b526f9ac12504cd69))
+
 ## [1.20.0](https://github.com/ContainerHive/ContainerHive/compare/v1.19.0...v1.20.0) (2026-10-25)
 
 ### Features
