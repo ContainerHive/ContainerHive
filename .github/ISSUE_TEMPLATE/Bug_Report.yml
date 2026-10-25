@@ -59,16 +59,29 @@ body:
     id: os
     attributes:
       label: Operating system
-      description: Where did the problem occur?
+      description: Which operating system and architecture do you run `ch` on?
       options:
         - Linux (amd64)
         - Linux (arm64)
         - macOS (Intel)
         - macOS (Apple Silicon)
         - Windows
-        - Docker container
     validations:
       required: true
+  - type: dropdown
+    id: container-runtime
+    attributes:
+      label: How do you run BuildKit?
+      description: Which runtime provides your BuildKit daemon?
+      options:
+        - Docker
+        - Podman
+        - Kubernetes
+        - Native buildkitd
+        - Other
+        - not sure
+    validations:
+      required: false
   - type: dropdown
     id: backend
     attributes:
