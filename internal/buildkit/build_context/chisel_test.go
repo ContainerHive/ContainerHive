@@ -391,3 +391,66 @@ func TestParentOverlayScriptRootfsDereferenceMode(t *testing.T) {
 		t.Error("no-dereference mode lost the parent symlink merge handling")
 	}
 }
+
+func TestChiselBuildContext_needsChiselDownload(t *testing.T) {
+	tests := []struct {
+		name   string
+		pinned string
+		labels map[string]string
+		want   bool
+	}{
+		{"no label downloads", "", nil, true},
+		{"no label with pin downloads", "v1.5.1", nil, true},
+		{"shipped chisel without pin is used", "", map[string]string{chiselVersionLabel: "1.5.1"}, false},
+		{"shipped chisel matching pin is used", "v1.5.1", map[string]string{chiselVersionLabel: "1.5.1"}, false},
+		{"pin without v prefix matches", "1.5.1", map[string]string{chiselVersionLabel: "v1.5.1"}, false},
+		{"shipped chisel differing from pin downloads", "v1.4.2", map[string]string{chiselVersionLabel: "1.5.1"}, true},
+	}
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			got := (ChiselBuildContext{ChiselVersion: tc.pinned}).needsChiselDownload(tc.labels)
+			if got != tc.want {
+				t.Errorf("needsChiselDownload() = %v, want %v", got, tc.want)
+			}
+		})
+	}
+}
+
+func TestToolchainScript(t *testing.T) {
+	without := toolchainScript(false)
+	with := toolchainScript(true)
+
+	for _, want := range []string{"command -v git", "/etc/ssl/certs/ca-certificates.crt", "apt-get install"} {
+		if !strings.Contains(without, want) {
+			t.Errorf("script without download missing %q:\n%s", want, without)
+		}
+	}
+	if strings.Contains(without, "tar -xzf") {
+		t.Errorf("script without download must not extract chisel:\n%s", without)
+	}
+	if !strings.Contains(with, "tar -xzf /tmp/chisel/chisel.tar.gz") {
+		t.Errorf("script with download must extract chisel:\n%s", with)
+	}
+	// apt-get only runs inside the missing-tools guard.
+	if !strings.Contains(without, "if [ -n \"$missing\" ]; then\n  apt-get update") {
+		t.Errorf("apt-get must be guarded by the missing check:\n%s", without)
+	}
+}
+
+func TestChiselBuildContext_toolchainStateMarshal(t *testing.T) {
+	plat := ocispecs.Platform{OS: "linux", Architecture: "amd64"}
+	for name, labels := range map[string]map[string]string{
+		"download":  nil,
+		"preloaded": {chiselVersionLabel: "1.5.1"},
+	} {
+		t.Run(name, func(t *testing.T) {
+			state := (ChiselBuildContext{}).toolchainState(plat, "amd64", &resolvedBuilder{
+				digestRef: "docker.io/library/ubuntu@sha256:b75cca259b5e7c1f8a5a36ff9d0a29c10bb67a4b2e96e08caaffb7b77a99c352",
+				labels:    labels,
+			})
+			if _, err := state.Marshal(context.Background(), llb.Platform(plat)); err != nil {
+				t.Fatalf("Marshal() error = %v", err)
+			}
+		})
+	}
+}
