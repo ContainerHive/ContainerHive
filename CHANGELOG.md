@@ -1,3 +1,10 @@
+## [1.21.0](https://github.com/ContainerHive/ContainerHive/compare/v1.20.1...v1.21.0) (2026-10-25)
+
+### Features
+
+* **chisel:** install git, ca-certificates and chisel only when the builder image lacks them ([200af96](https://github.com/ContainerHive/ContainerHive/commit/200af962be4bd6c362c6d4f01f99b74e62c9c082))
+* **nix:** default to the helper-images nix builder image ([7bf2744](https://github.com/ContainerHive/ContainerHive/commit/7bf2744a64fe087045e71b074c454d363ea65e8b))
+
 ## [1.20.1](https://github.com/ContainerHive/ContainerHive/compare/v1.20.0...v1.20.1) (2026-10-25)
 
 ### Bug Fixes
