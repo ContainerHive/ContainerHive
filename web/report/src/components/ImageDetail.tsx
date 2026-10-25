@@ -171,14 +171,15 @@ function ImageDetail({ data, imageName, kind }: Readonly<ImageDetailProps>) {
           {registryAddress && (
             <div className="docker-pull-section">
               <h2>Pull Command</h2>
-              <div
+              <button
+                type="button"
                 className={`code-block ${copied ? 'copied' : ''}`}
                 onClick={handleCopyPull}
                 title="Click to copy"
               >
                 <code>docker pull {registryAddress}/{displayName}:{currentTag}</code>
                 <span className="copy-indicator">{copied ? 'Copied!' : 'Copy'}</span>
-              </div>
+              </button>
             </div>
           )}
 
