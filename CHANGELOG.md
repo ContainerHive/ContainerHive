@@ -1,3 +1,14 @@
+## [1.20.0](https://github.com/ContainerHive/ContainerHive/compare/v1.19.0...v1.20.0) (2026-10-25)
+
+### Features
+
+* add experimental chisel build backend ([490cdc0](https://github.com/ContainerHive/ContainerHive/commit/490cdc039957fb69eb2acbd16dc94081389fcf86))
+* **buildkit:** retry builds on transient connection failures ([b085db5](https://github.com/ContainerHive/ContainerHive/commit/b085db583d561ae826972b3583ec794886001eef))
+
+### Bug Fixes
+
+* **chisel:** create the cut root directory before chisel cut ([731e537](https://github.com/ContainerHive/ContainerHive/commit/731e53728c315b6be602e5a5bfc47c0b96b4f3a3))
+
 ## [1.19.0](https://github.com/ContainerHive/ContainerHive/compare/v1.18.0...v1.19.0) (2026-10-25)
 
 ### Features
