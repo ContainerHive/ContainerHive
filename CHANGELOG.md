@@ -1,3 +1,13 @@
+## [1.18.0](https://github.com/ContainerHive/ContainerHive/compare/v1.17.0...v1.18.0) (2026-10-25)
+
+### Features
+
+* set issue types and default low priority label ([#328](https://github.com/ContainerHive/ContainerHive/issues/328)) ([40fb596](https://github.com/ContainerHive/ContainerHive/commit/40fb5966007a8a385ccd535ceb71264478346911))
+
+### Bug Fixes
+
+* collect BuildKit runtime separately from OS in bug report ([#329](https://github.com/ContainerHive/ContainerHive/issues/329)) ([5496e5d](https://github.com/ContainerHive/ContainerHive/commit/5496e5df779fd62a5c295793628acc4be3049b9a))
+
 ## [1.17.0](https://github.com/ContainerHive/ContainerHive/compare/v1.16.0...v1.17.0) (2026-10-24)
 
 ### Features
