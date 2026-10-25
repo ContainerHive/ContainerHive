@@ -4,7 +4,7 @@ Describe what is broken or missing, or what was added.
 
 ## Changes
 
-- `path/file.go:12` — what changed there and why
+- `path/to/file` — what changed there and why
 
 ## Verification
 
