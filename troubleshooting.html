@@ -796,6 +796,62 @@
   
   
     <li class="md-nav__item">
+      <a href="usage/nix.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Build images with Nix flakes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="usage/chisel.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Build images with Chisel
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="usage/multi-platform.html" class="md-nav__link">
         
   
@@ -1028,34 +1084,6 @@
     
   
     Pre-commit integration
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="usage/nix.html" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Build images with Nix flakes
   
 
     
@@ -1553,6 +1581,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#the-build-fails-with-a-buildkit-connection-error" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The build fails with a BuildKit connection error
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#more-logs" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1944,6 +1983,41 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="adr/008-chisel-build-backend.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    008 - Native Chisel build backend
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--accepted"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -2030,6 +2104,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#the-build-fails-with-a-buildkit-connection-error" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The build fails with a BuildKit connection error
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#more-logs" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2084,6 +2169,8 @@
 <p><code>build</code>, <code>test</code> and <code>sbom</code> work on the output of <code>ch generate</code>. Run it first, or pass <code>--generate</code>.</p>
 <h2 id="an-image-is-built-before-its-parent-a-parent-isnt-found">An image is built before its parent / a parent isn't found</h2>
 <p>Check the <code>FROM __hive__/&lt;image&gt;:&lt;tag&gt;</code> reference names the parent's directory and one of its tags, or declare the relationship with <a href="configuration/image.html#depends_on"><code>depends_on</code></a>. See <a href="how-it-works/dependency-resolution.html">How dependency resolution works</a>.</p>
+<h2 id="the-build-fails-with-a-buildkit-connection-error">The build fails with a BuildKit connection error</h2>
+<p>Transient connection failures (<code>broken pipe</code>, <code>connection reset by peer</code>, <code>Unavailable</code>, worker listing timeouts) are retried up to three times on a fresh connection. Each retry waits 2, 5, then 10 seconds. Genuine build failures are never retried. If all retries fail, check that the BuildKit daemon is alive; for a remote daemon, check the network path and the proxy or load balancer timeouts. See <a href="configuration/hive.html#buildkit">BuildKit setup</a>.</p>
 <h2 id="more-logs">More logs</h2>
 <p>Run with <code>--log-level debug</code> (or <code>LOG_LEVEL=debug</code>). Still stuck? Open an issue at the <a href="https://github.com/ContainerHive/ContainerHive/issues">issue tracker</a>.</p>
 
