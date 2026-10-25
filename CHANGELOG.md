@@ -1,3 +1,9 @@
+## [1.19.0](https://github.com/ContainerHive/ContainerHive/compare/v1.18.0...v1.19.0) (2026-10-25)
+
+### Features
+
+* add pull request template with AI assistance section ([#325](https://github.com/ContainerHive/ContainerHive/issues/325)) ([d6f865d](https://github.com/ContainerHive/ContainerHive/commit/d6f865d03de772b46e302640f68a8828f34fff44))
+
 ## [1.18.0](https://github.com/ContainerHive/ContainerHive/compare/v1.17.0...v1.18.0) (2026-10-25)
 
 ### Features
