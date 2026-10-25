@@ -47,6 +47,13 @@ Documentation is part of the change, not a follow-up. In the same PR:
 - GitHub PRs for all changes
 - CI runs on CircleCI
 
+### Commits and pushing
+
+- Never force-push. Do not amend or rebase commits that are already pushed. Add a follow-up commit instead.
+- Keep commits granular: one logical change per commit. A review fix, a new test, and a documentation update each get their own commit.
+- Answer review feedback with new commits on the same branch, so every round stays reviewable.
+- Add the `Co-Authored-By` trailer that names the model used to write the commit.
+
 ## Code Style
 
 - Always use early returns to reduce nesting and improve readability.
