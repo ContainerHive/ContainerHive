@@ -7,7 +7,9 @@ package buildkit
 
 import (
 	"archive/tar"
-	"fmt"
+	"bytes"
+	"compress/gzip"
+	"encoding/json"
 	"io"
 	"os"
 	"path/filepath"
@@ -16,57 +18,8 @@ import (
 	"testing"
 
 	"github.com/ContainerHive/ContainerHive/internal/buildkit/build_context"
-	"github.com/google/go-containerregistry/pkg/v1/layout"
+	ocispecs "github.com/opencontainers/image-spec/specs-go/v1"
 )
-
-// extractOCIArchive unpacks an OCI image archive tar into dir, so the
-// layout reader can load it. The archive only holds regular files.
-func extractOCIArchive(tarFile, dir string) error {
-	f, err := os.Open(tarFile)
-	if err != nil {
-		return err
-	}
-	defer f.Close()
-
-	tr := tar.NewReader(f)
-	for {
-		header, err := tr.Next()
-		if err == io.EOF {
-			return nil
-		}
-		if err != nil {
-			return err
-		}
-		// Entry names come from the archive. Reject absolute paths and
-		// traversal so an entry cannot escape the target directory.
-		rel := filepath.FromSlash(header.Name)
-		if !filepath.IsLocal(rel) {
-			return fmt.Errorf("archive entry %q escapes the extraction directory", header.Name)
-		}
-		target := filepath.Join(dir, rel)
-		switch header.Typeflag {
-		case tar.TypeDir:
-			if err := os.MkdirAll(target, 0o755); err != nil {
-				return err
-			}
-		case tar.TypeReg:
-			if err := os.MkdirAll(filepath.Dir(target), 0o755); err != nil {
-				return err
-			}
-			out, err := os.OpenFile(target, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, os.FileMode(header.Mode))
-			if err != nil {
-				return err
-			}
-			if _, err := io.Copy(out, tr); err != nil {
-				out.Close()
-				return err
-			}
-			if err := out.Close(); err != nil {
-				return err
-			}
-		}
-	}
-}
 
 // requireIntegration skips in short mode and without a usable Docker daemon.
 func requireIntegration(t *testing.T) {
@@ -76,49 +29,31 @@ func requireIntegration(t *testing.T) {
 	}
 }
 
-// exportedImage loads the exported OCI tar into a go-containerregistry image.
-func exportedImage(t *testing.T, tarFile string) (entrypoint []string, layers int, files map[string]byte) {
+// exportedImage reads the exported OCI archive in memory and returns the
+// image entrypoint, the layer count, and the file type flags of all layers.
+// Reading from memory avoids unpacking archive entry names to disk.
+func exportedImage(t *testing.T, tarFile string) (entrypoint []string, layerCount int, files map[string]byte) {
 	t.Helper()
 
-	layoutDir := t.TempDir()
-	if err := extractOCIArchive(tarFile, layoutDir); err != nil {
-		t.Fatalf("extracting exported OCI archive failed: %v", err)
-	}
-	exported, err := layout.FromPath(layoutDir)
-	if err != nil {
-		t.Fatalf("loading exported OCI layout failed: %v", err)
-	}
-	index, err := exported.ImageIndex()
-	if err != nil {
-		t.Fatalf("reading exported image index failed: %v", err)
-	}
-	manifest, err := index.IndexManifest()
-	if err != nil {
-		t.Fatalf("reading exported manifest failed: %v", err)
-	}
-	if len(manifest.Manifests) == 0 {
+	entries := readOCIArchive(t, tarFile)
+
+	var index ocispecs.Index
+	unmarshalOCIEntry(t, entries, "index.json", &index)
+	if len(index.Manifests) == 0 {
 		t.Fatal("exported OCI archive contains no manifests")
 	}
-	img, err := index.Image(manifest.Manifests[0].Digest)
-	if err != nil {
-		t.Fatalf("loading exported image failed: %v", err)
-	}
-	cfg, err := img.ConfigFile()
-	if err != nil {
-		t.Fatalf("reading exported image config failed: %v", err)
-	}
-	imageLayers, err := img.Layers()
-	if err != nil {
-		t.Fatalf("reading exported image layers failed: %v", err)
-	}
+	var manifest ocispecs.Manifest
+	unmarshalOCIEntry(t, entries, ociBlobPath(index.Manifests[0].Digest.String()), &manifest)
+	var config ocispecs.Image
+	unmarshalOCIEntry(t, entries, ociBlobPath(manifest.Config.Digest.String()), &config)
 
 	files = map[string]byte{}
-	for _, layer := range imageLayers {
-		reader, err := layer.Uncompressed()
-		if err != nil {
-			t.Fatalf("opening layer failed: %v", err)
+	for _, layer := range manifest.Layers {
+		data, ok := entries[ociBlobPath(layer.Digest.String())]
+		if !ok {
+			t.Fatalf("layer blob %s missing from the archive", layer.Digest)
 		}
-		tr := tar.NewReader(reader)
+		tr := tar.NewReader(bytes.NewReader(decompressLayer(t, data, layer.MediaType)))
 		for {
 			header, err := tr.Next()
 			if err == io.EOF {
@@ -129,10 +64,82 @@ func exportedImage(t *testing.T, tarFile string) (entrypoint []string, layers in
 			}
 			files[strings.TrimPrefix(header.Name, "./")] = header.Typeflag
 		}
-		reader.Close()
 	}
 
-	return cfg.Config.Entrypoint, len(imageLayers), files
+	return config.Config.Entrypoint, len(manifest.Layers), files
+}
+
+// readOCIArchive reads all regular files of an OCI image archive into memory.
+func readOCIArchive(t *testing.T, tarFile string) map[string][]byte {
+	t.Helper()
+
+	f, err := os.Open(tarFile)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer f.Close()
+
+	entries := map[string][]byte{}
+	tr := tar.NewReader(f)
+	for {
+		header, err := tr.Next()
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			t.Fatalf("reading OCI archive failed: %v", err)
+		}
+		if header.Typeflag != tar.TypeReg {
+			continue
+		}
+		data, err := io.ReadAll(tr)
+		if err != nil {
+			t.Fatalf("reading OCI archive entry %q failed: %v", header.Name, err)
+		}
+		entries[header.Name] = data
+	}
+	return entries
+}
+
+// unmarshalOCIEntry decodes a JSON document from the in-memory archive.
+func unmarshalOCIEntry(t *testing.T, entries map[string][]byte, name string, target any) {
+	t.Helper()
+	data, ok := entries[name]
+	if !ok {
+		t.Fatalf("OCI archive misses %q", name)
+	}
+	if err := json.Unmarshal(data, target); err != nil {
+		t.Fatalf("decoding %q failed: %v", name, err)
+	}
+}
+
+// ociBlobPath maps a digest to its blobs/ path inside an OCI archive.
+func ociBlobPath(digest string) string {
+	algorithm, encoded, ok := strings.Cut(digest, ":")
+	if !ok {
+		return "blobs/" + digest
+	}
+	return "blobs/" + algorithm + "/" + encoded
+}
+
+// decompressLayer returns the plain layer tar, decompressing gzip layers.
+func decompressLayer(t *testing.T, data []byte, mediaType string) []byte {
+	t.Helper()
+	if !strings.Contains(mediaType, "gzip") {
+		return data
+	}
+	reader, err := gzip.NewReader(bytes.NewReader(data))
+	if err != nil {
+		t.Fatalf("decompressing layer failed: %v", err)
+	}
+	out, err := io.ReadAll(reader)
+	if err != nil {
+		t.Fatalf("reading decompressed layer failed: %v", err)
+	}
+	if err := reader.Close(); err != nil {
+		t.Fatalf("closing layer reader failed: %v", err)
+	}
+	return out
 }
 
 func TestIntegrationChiselFrontend(t *testing.T) {
@@ -236,40 +243,5 @@ func TestIntegrationNixFrontend(t *testing.T) {
 	}
 	if _, found := files["etc/hive-e2e"]; !found {
 		t.Errorf("flake output missing from image rootfs (files: %d)", len(files))
-	}
-}
-
-func TestExtractOCIArchiveRejectsTraversal(t *testing.T) {
-	tarFile := filepath.Join(t.TempDir(), "archive.tar")
-	f, err := os.Create(tarFile)
-	if err != nil {
-		t.Fatal(err)
-	}
-	tw := tar.NewWriter(f)
-	if err := tw.WriteHeader(&tar.Header{Name: "index.json", Typeflag: tar.TypeReg, Mode: 0o644, Size: 2}); err != nil {
-		t.Fatal(err)
-	}
-	if _, err := tw.Write([]byte("{}")); err != nil {
-		t.Fatal(err)
-	}
-	if err := tw.WriteHeader(&tar.Header{Name: "../escape", Typeflag: tar.TypeReg, Mode: 0o644, Size: 1}); err != nil {
-		t.Fatal(err)
-	}
-	if _, err := tw.Write([]byte("x")); err != nil {
-		t.Fatal(err)
-	}
-	if err := tw.Close(); err != nil {
-		t.Fatal(err)
-	}
-	if err := f.Close(); err != nil {
-		t.Fatal(err)
-	}
-
-	err = extractOCIArchive(tarFile, t.TempDir())
-	if err == nil {
-		t.Fatal("extractOCIArchive() = nil, want a traversal error")
-	}
-	if !strings.Contains(err.Error(), "escapes the extraction directory") {
-		t.Errorf("error = %v, want it to name the traversal", err)
 	}
 }
