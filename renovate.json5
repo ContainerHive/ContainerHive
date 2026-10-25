@@ -19,6 +19,18 @@
       "matchManagers": ["npm"],
       "matchUpdateTypes": ["major"],
       "groupName": "frontend major updates"
+    },
+    {
+      "description": "Group nix and chisel backend toolchain updates into one feat PR every two weeks",
+      "matchFileNames": [
+        "internal/buildkit/build_context/nix.go",
+        "internal/buildkit/build_context/chisel.go"
+      ],
+      "groupName": "nix and chisel backend toolchain",
+      "semanticCommits": "enabled",
+      "semanticCommitType": "feat",
+      "semanticCommitScope": "deps",
+      "schedule": ["* 4 1,15 * *"]
     }
   ],
   "regexManagers": [
@@ -28,6 +40,32 @@
       "matchStrings": [
         "=\\s*\"(?<currentValue>[^\"]+)\"\\s+//\\s+renovate:\\s+datasource=(?<datasource>\\S+)\\s+depName=(?<depName>\\S+)"
       ]
+    },
+    {
+      "description": "Nix builder image used by the nix build backend",
+      "fileMatch": ["internal/buildkit/build_context/nix\\.go$"],
+      "matchStrings": [
+        "DefaultNixBuilderImage\\s*=\\s*\"(?<depName>[^:\"]+):(?<currentValue>[^\"]+)\""
+      ],
+      "datasourceTemplate": "docker"
+    },
+    {
+      "description": "Builder image used by the chisel build backend",
+      "fileMatch": ["internal/buildkit/build_context/chisel\\.go$"],
+      "matchStrings": [
+        "DefaultChiselBuilderImage\\s*=\\s*\"(?<depName>[^:\"]+):(?<currentValue>[^\"]+)\""
+      ],
+      "datasourceTemplate": "docker"
+    },
+    {
+      "description": "Chisel tool release used by the chisel build backend",
+      "fileMatch": ["internal/buildkit/build_context/chisel\\.go$"],
+      "matchStrings": [
+        "DefaultChiselVersion\\s*=\\s*\"(?<currentValue>v[0-9][^\"]*)\""
+      ],
+      "datasourceTemplate": "github-releases",
+      "depNameTemplate": "canonical/chisel",
+      "versioningTemplate": "semver"
     }
   ]
 }
