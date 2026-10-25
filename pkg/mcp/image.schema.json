@@ -17,7 +17,7 @@
       "properties": {
         "builder_image": {
           "type": "string",
-          "description": "Container image providing nix for the build (e.g. nixos/nix:2.31). Empty uses the default builder image."
+          "description": "Container image providing nix for the build (e.g. nixos/nix:2.31). Empty uses the ContainerHive nix helper image."
         },
         "extra_args": {
           "type": [
@@ -52,11 +52,11 @@
       "properties": {
         "builder_image": {
           "type": "string",
-          "description": "Debian or Ubuntu based container image providing the build base for the chisel build (e.g. ubuntu:24.04). Empty uses the default builder image."
+          "description": "Container image providing the build base for the chisel build (e.g. ubuntu:24.04). Missing git, ca-certificates and chisel are added on top, so apt-get is needed unless the image ships them. Empty uses the ContainerHive chisel helper image."
         },
         "chisel_version": {
           "type": "string",
-          "description": "Chisel tool version fetched for the build (e.g. v1.5.1). Empty uses the default version."
+          "description": "Chisel tool version for the build (e.g. v1.5.1). Downloaded unless the builder image already ships that version. Empty uses the version shipped by the builder image, or the default version."
         },
         "extra_args": {
           "type": [
@@ -459,7 +459,7 @@
             "properties": {
               "builder_image": {
                 "type": "string",
-                "description": "Container image providing nix for the build (e.g. nixos/nix:2.31). Empty uses the default builder image."
+                "description": "Container image providing nix for the build (e.g. nixos/nix:2.31). Empty uses the ContainerHive nix helper image."
               },
               "extra_args": {
                 "type": [
@@ -494,11 +494,11 @@
             "properties": {
               "builder_image": {
                 "type": "string",
-                "description": "Debian or Ubuntu based container image providing the build base for the chisel build (e.g. ubuntu:24.04). Empty uses the default builder image."
+                "description": "Container image providing the build base for the chisel build (e.g. ubuntu:24.04). Missing git, ca-certificates and chisel are added on top, so apt-get is needed unless the image ships them. Empty uses the ContainerHive chisel helper image."
               },
               "chisel_version": {
                 "type": "string",
-                "description": "Chisel tool version fetched for the build (e.g. v1.5.1). Empty uses the default version."
+                "description": "Chisel tool version for the build (e.g. v1.5.1). Downloaded unless the builder image already ships that version. Empty uses the version shipped by the builder image, or the default version."
               },
               "extra_args": {
                 "type": [

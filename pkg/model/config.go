@@ -60,7 +60,7 @@ type LatestAliasConfig struct {
 type NixConfig struct {
 	// BuilderImage is the container image that provides nix for the build.
 	// Empty uses the built-in default builder image.
-	BuilderImage string `yaml:"builder_image,omitempty" json:"builder_image,omitempty" jsonschema:"Container image providing nix for the build (e.g. nixos/nix:2.31). Empty uses the default builder image."`
+	BuilderImage string `yaml:"builder_image,omitempty" json:"builder_image,omitempty" jsonschema:"Container image providing nix for the build (e.g. nixos/nix:2.31). Empty uses the ContainerHive nix helper image."`
 	// ExtraArgs holds additional arguments passed to nix build.
 	ExtraArgs []string `yaml:"extra_args,omitempty" json:"extra_args,omitempty" jsonschema:"Additional arguments passed to nix build (e.g. --impure)"`
 	// Parent mounts a parent image rootfs into the build. Hive references
@@ -88,14 +88,16 @@ func (c NixConfig) StoreCacheEnabled() bool {
 // The slice selection and the release live in the chisel.yaml cut spec next
 // to image.yml; this block configures how the build runs.
 type ChiselConfig struct {
-	// BuilderImage is the container image the build stages run in. It must
-	// be Debian or Ubuntu based: the build installs git, ca-certificates and
-	// a pinned chisel release from GitHub on top with apt-get.
-	// Empty uses the built-in default builder image.
-	BuilderImage string `yaml:"builder_image,omitempty" json:"builder_image,omitempty" jsonschema:"Debian or Ubuntu based container image providing the build base for the chisel build (e.g. ubuntu:24.04). Empty uses the default builder image."`
+	// BuilderImage is the container image the build stages run in. The build
+	// installs only what the image lacks: git and ca-certificates with
+	// apt-get (so Debian or Ubuntu based), and the pinned chisel release
+	// from GitHub when the image ships no chisel.
+	// Empty uses the ContainerHive chisel helper image, which ships all three.
+	BuilderImage string `yaml:"builder_image,omitempty" json:"builder_image,omitempty" jsonschema:"Container image providing the build base for the chisel build (e.g. ubuntu:24.04). Missing git, ca-certificates and chisel are added on top, so apt-get is needed unless the image ships them. Empty uses the ContainerHive chisel helper image."`
 	// ChiselVersion pins the chisel release fetched for the build, e.g.
-	// v1.5.1. Empty uses the built-in default version.
-	ChiselVersion string `yaml:"chisel_version,omitempty" json:"chisel_version,omitempty" jsonschema:"Chisel tool version fetched for the build (e.g. v1.5.1). Empty uses the default version."`
+	// v1.5.1. Empty uses the chisel shipped by the builder image, or the
+	// built-in default version when the image ships none.
+	ChiselVersion string `yaml:"chisel_version,omitempty" json:"chisel_version,omitempty" jsonschema:"Chisel tool version for the build (e.g. v1.5.1). Downloaded unless the builder image already ships that version. Empty uses the version shipped by the builder image, or the default version."`
 	// ExtraArgs holds additional arguments passed to chisel cut.
 	ExtraArgs []string `yaml:"extra_args,omitempty" json:"extra_args,omitempty" jsonschema:"Additional arguments passed to chisel cut"`
 	// Parent mounts a parent image rootfs into the build. Hive references
