@@ -4,8 +4,10 @@ description: "I have a suggestion (and might want to implement it myself 🙂)"
 title: "[Feature]: "
 labels:
   - enhancement
+  - priority: low
 assignees:
   - timo-reymann
+type: feature
 body:
   - type: textarea
     id: description
