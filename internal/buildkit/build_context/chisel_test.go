@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/moby/buildkit/client/llb"
+	"github.com/moby/buildkit/solver/pb"
 	ocispecs "github.com/opencontainers/image-spec/specs-go/v1"
 )
 
@@ -300,8 +301,20 @@ func TestChiselBuildContext_buildGraphParentMount(t *testing.T) {
 func TestChiselBuildContext_buildGraphCacheMount(t *testing.T) {
 	ctx := ChiselBuildContext{Release: ChiselRelease{Name: "ubuntu-24.04"}, Slices: []string{"base-files_base"}, Cache: true}
 	state := ctx.buildGraph("amd64", llb.Image("example.com/tool@sha256:b75cca259b5e7c1f8a5a36ff9d0a29c10bb67a4b2e96e08caaffb7b77a99c352"), nil, false)
-	if _, found := findMount(t, state, chiselCachePath); !found {
-		t.Errorf("buildGraph has no %s mount; the chisel cache would not persist", chiselCachePath)
+	mount, found := findMount(t, state, chiselCachePath)
+	if !found {
+		t.Fatalf("buildGraph has no %s mount; the chisel cache would not persist", chiselCachePath)
+	}
+	if mount.CacheOpt == nil {
+		t.Fatal("cache mount has no cache options")
+	}
+	// Locked sharing serializes the git checkout: concurrent builds of the
+	// same release must not fetch or check out in one worktree.
+	if mount.CacheOpt.Sharing != pb.CacheSharingOpt_LOCKED {
+		t.Errorf("cache sharing = %v, want LOCKED", mount.CacheOpt.Sharing)
+	}
+	if mount.CacheOpt.ID != chiselCacheKey {
+		t.Errorf("cache ID = %q, want %q", mount.CacheOpt.ID, chiselCacheKey)
 	}
 
 	ctx.Cache = false
