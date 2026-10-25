@@ -2327,15 +2327,15 @@ like any other image.</p>
    backend.</li>
 <li><code>generate</code> renders the image directory, copying the cut spec, the custom <code>slices/</code> directory, the <code>rootfs/</code>
    directory, and the test config into <code>dist/</code>.</li>
-<li><code>build</code> prepares a cached toolchain stage: git, ca-certificates, and a pinned chisel release binary on top of the
-   builder image. A second stage then runs <code>chisel cut --release &lt;local-checkout&gt;</code> in <code>/src</code>; the cut rootfs
+<li><code>build</code> prepares a cached toolchain stage on top of the builder image: git, ca-certificates, and the chisel binary,
+   each only when the image lacks it. A second stage then runs <code>chisel cut --release &lt;local-checkout&gt;</code> in <code>/src</code>; the cut rootfs
    becomes the image filesystem on an empty base.</li>
 <li>Everything else is unchanged: OCI labels, the S3 or registry build cache, multi-arch pushes, SBOMs, and
    structure tests run like on Dockerfile builds.</li>
 </ol>
 <p>Only the BuildKit worker pulls the builder image and the chisel tool binary. Neither <code>ch</code> nor the CI pipeline needs
-Chisel or git installed. ContainerHive ships no builder image; a plain base image plus the downloads keeps the
-maintenance overhead at zero.</p>
+Chisel or git installed. ContainerHive does not bundle a builder image; the default one comes from the helper-images
+project.</p>
 <h2 id="the-cut-spec-contract">The cut spec contract</h2>
 <p>The build entrypoint is <code>chisel.yaml</code> next to <code>image.yml</code>:</p>
 <div class="language-yaml highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nt">release</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ubuntu-24.04</span>
@@ -2404,12 +2404,23 @@ and fails discovery; set <code>build</code> in that case.</p>
 <div class="language-yaml highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="nt">build</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">chisel</span>
 </span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>
 </span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="nt">chisel</span><span class="p">:</span>
-</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="w">  </span><span class="nt">builder_image</span><span class="p">:</span><span class="w"> </span><span class="s">"ubuntu:24.04"</span><span class="w">  </span><span class="c1"># Debian/Ubuntu base image for the build stages</span>
-</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="w">  </span><span class="nt">chisel_version</span><span class="p">:</span><span class="w"> </span><span class="s">"v1.5.1"</span><span class="w">       </span><span class="c1"># pinned chisel tool version from GitHub releases</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="w">  </span><span class="nt">builder_image</span><span class="p">:</span><span class="w"> </span><span class="s">"ghcr.io/containerhive/helper-images/chisel:1.5"</span><span class="w">  </span><span class="c1"># base image for the build stages (default)</span>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="w">  </span><span class="nt">chisel_version</span><span class="p">:</span><span class="w"> </span><span class="s">"v1.5.1"</span><span class="w">       </span><span class="c1"># chisel tool version, only downloaded when the builder image ships another one</span>
 </span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="w">  </span><span class="nt">extra_args</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[]</span><span class="w">                 </span><span class="c1"># extra chisel cut arguments</span>
 </span></code></pre></div>
-<p>The builder image must be Debian or Ubuntu based: the toolchain stage installs git and ca-certificates with
-<code>apt-get</code>. A plain <code>ubuntu:24.04</code> is enough; the chisel binary comes from the pinned GitHub release.</p>
+<p>The default builder image is the <code>chisel</code> image of
+<a href="https://github.com/ContainerHive/helper-images">ContainerHive/helper-images</a>. It ships chisel, git and
+ca-certificates, so the toolchain stage installs and downloads nothing. That repository is itself a ContainerHive
+project and publishes one tag per chisel release series (<code>1.5</code>, <code>1.4</code>, ...).</p>
+<p>The toolchain stage adds only what the builder image lacks:</p>
+<ul>
+<li><strong>git</strong> and <strong>ca-certificates</strong> are installed with <code>apt-get</code> when missing, so such an image has to be Debian or
+  Ubuntu based. An image that already contains both needs no package manager.</li>
+<li><strong>chisel</strong> is downloaded from the GitHub release when the image ships no chisel, or ships another version than
+  <code>chisel_version</code>. An image declares the chisel it ships with the <code>chisel.version</code> label. Without
+  <code>chisel_version</code>, a shipped chisel is used as is; without a label, the default version is downloaded.</li>
+</ul>
+<p>A plain <code>ubuntu:24.04</code> still works as builder image.</p>
 <p>Because a cut spec carries no Dockerfile instructions, the runtime configuration of the image looks like this:</p>
 <div class="language-yaml highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="nt">config</span><span class="p">:</span>
 </span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="w">  </span><span class="nt">entrypoint</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="w"> </span><span class="s">"/bin/hello"</span><span class="w"> </span><span class="p p-Indicator">]</span>

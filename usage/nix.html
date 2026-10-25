@@ -2286,6 +2286,10 @@ image.</p>
    tests run like on Dockerfile builds.</li>
 </ol>
 <p>Only the BuildKit worker needs to pull the builder image. Neither <code>ch</code> nor the CI pipeline needs Nix installed.</p>
+<p>The default builder image is the <code>nix</code> image of
+<a href="https://github.com/ContainerHive/helper-images">ContainerHive/helper-images</a>, the official <code>nixos/nix</code> image with
+flakes enabled. That repository is itself a ContainerHive project and publishes one tag per Nix release series
+(<code>2.35</code>, <code>2.34</code>, ...), so you can pin the Nix version your flakes need with a plain tag.</p>
 <h2 id="the-flake-contract">The flake contract</h2>
 <p>The build produces a <strong>rootfs directory</strong>. The installed attribute is a convention, never user configured:</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>.#packages.&lt;nix-system&gt;.default
@@ -2383,7 +2387,7 @@ backend automatically. When both files exist, set <code>build</code> explicitly 
 <div class="language-yaml highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="nt">build</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nix</span>
 </span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>
 </span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="nt">nix</span><span class="p">:</span>
-</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="w">  </span><span class="nt">builder_image</span><span class="p">:</span><span class="w"> </span><span class="s">"nixos/nix:2.31.6"</span><span class="w">  </span><span class="c1"># image providing the nix binary</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="w">  </span><span class="nt">builder_image</span><span class="p">:</span><span class="w"> </span><span class="s">"ghcr.io/containerhive/helper-images/nix:2.35"</span><span class="w">  </span><span class="c1"># image providing the nix binary (default)</span>
 </span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="w">  </span><span class="nt">extra_args</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="w"> </span><span class="s">"--impure"</span><span class="w"> </span><span class="p p-Indicator">]</span><span class="w">       </span><span class="c1"># extra nix build arguments</span>
 </span></code></pre></div>
 <p>Because a flake has no Dockerfile instructions, the runtime configuration of the image looks like this:</p>
