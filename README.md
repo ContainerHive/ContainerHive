@@ -44,7 +44,7 @@ With ContainerHive you drop flat image directories into your project, and each D
 order and parallelism, detects which images have a `test.yml` and adds the test steps for them, and passes parent
 images to children without a registry round trip.
 
-See [Why use ContainerHive?](https://container-hive.timo-reymann.de/why-containerhive/) for the full walkthrough with
+See [Why use ContainerHive?](https://container-hive.timo-reymann.de/why-containerhive.html) for the full walkthrough with
 diagrams.
 
 ## Features
@@ -85,11 +85,11 @@ The following platforms have prebuilt binaries:
 Use [0install](https://0install.net) for automatic updates or install the binaries directly:
 
 ```sh
-0install add ch https://containerhive.github.io/0install/containerhive.xml
+0install add ch https://0install.container-hive.timo-reymann.de/containerhive.xml
 ```
 
 See the [installation guide](https://container-hive.timo-reymann.de/installation.html), then follow
-[Get started](https://container-hive.timo-reymann.de/getting-started/).
+[Get started](https://container-hive.timo-reymann.de/getting-started.html).
 
 ## Documentation
 
