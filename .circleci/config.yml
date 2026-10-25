@@ -200,6 +200,15 @@ jobs:
               --version "$CIRCLE_TAG" \
               --path schemas/structure-test.schema.json \
               --identifier containerhive-structure-test || true
+      - run:
+          name: Upload chisel cut spec schema to SchemaNest
+          command: |
+            schema-nest-cli upload-json-schema \
+              --base-url https://schema-nest.timo-reymann.de \
+              --api-key "$SCHEMA_NEST_UPLOAD_KEY" \
+              --version "$CIRCLE_TAG" \
+              --path schemas/chisel.schema.json \
+              --identifier containerhive-chisel
   publish-0install-feed:
     executor: zero-install
     steps:
