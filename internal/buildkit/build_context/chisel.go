@@ -26,13 +26,20 @@ import (
 const chiselFileName = "chisel.yaml"
 
 // DefaultChiselBuilderImage provides the base for the build stages. The
-// build installs git and ca-certificates with apt-get and extracts the
-// pinned chisel release on top, so a custom builder image must be Debian or
-// Ubuntu based and provide apt-get.
-const DefaultChiselBuilderImage = "ubuntu:24.04"
+// ContainerHive helper image ships chisel, git and ca-certificates, so the
+// toolchain stage installs nothing. A custom builder image only has to
+// provide what it lacks: missing git or ca-certificates are installed with
+// apt-get (Debian or Ubuntu based images), a missing chisel binary is
+// downloaded from the pinned release.
+const DefaultChiselBuilderImage = "ghcr.io/containerhive/helper-images/chisel:1.5"
 
-// DefaultChiselVersion pins the chisel tool fetched for the build.
+// DefaultChiselVersion pins the chisel tool fetched for the build when the
+// builder image does not ship chisel itself.
 const DefaultChiselVersion = "v1.5.1"
+
+// chiselVersionLabel is the label of a builder image that ships the chisel
+// tool, set to the chisel version without v prefix (the helper image does).
+const chiselVersionLabel = "chisel.version"
 
 // chiselReleaseURLFormat downloads a chisel release tarball from GitHub.
 // The version appears twice: once in the release tag, once in the asset
@@ -155,7 +162,7 @@ func (d ChiselBuildContext) RunBuild(ctx context.Context, client gatewayClient.C
 		return nil, err
 	}
 
-	toolchain := d.toolchainState(plat, toolchainArch, build.digestRef, build.env)
+	toolchain := d.toolchainState(plat, toolchainArch, build)
 
 	parentState, parentConfig, err := resolveParentState(ctx, client, plat, d.Parent)
 	if err != nil {
@@ -187,23 +194,53 @@ func (d ChiselBuildContext) RunBuild(ctx context.Context, client gatewayClient.C
 	return solved, nil
 }
 
-// toolchainState assembles the cached toolchain stage: it installs git and
-// ca-certificates into the builder image and extracts the pinned chisel
-// release tarball into /usr/local/bin. BuildKit caches the stage on the
-// builder image digest and the tarball content, so later builds skip the
-// installs and the download.
-func (d ChiselBuildContext) toolchainState(plat ocispecs.Platform, toolchainArch, digestRef string, env []string) llb.State {
-	http := llb.HTTP(fmt.Sprintf(chiselReleaseURLFormat, d.version(), d.version(), toolchainArch),
-		llb.Filename("chisel.tar.gz"),
-		llb.Platform(plat),
-	)
-	script := "apt-get update" +
-		" && apt-get install -y --no-install-recommends ca-certificates git" +
-		" && tar -xzf /tmp/chisel/chisel.tar.gz -C /usr/local/bin/"
-	return builderStateFor(digestRef, env).Run(
-		llb.Args([]string{"/bin/sh", "-euc", script}),
-		llb.AddMount("/tmp/chisel", http),
-	).Root()
+// toolchainState assembles the cached toolchain stage on top of the builder
+// image. It installs git and ca-certificates only when the image lacks them
+// and extracts the pinned chisel release tarball into /usr/local/bin only
+// when the image does not ship the wanted chisel version. BuildKit caches
+// the stage on the builder image digest and the tarball content, so later
+// builds skip the installs and the download.
+func (d ChiselBuildContext) toolchainState(plat ocispecs.Platform, toolchainArch string, build *resolvedBuilder) llb.State {
+	download := d.needsChiselDownload(build.labels)
+	runOpts := []llb.RunOption{llb.Args([]string{"/bin/sh", "-euc", toolchainScript(download)})}
+	if download {
+		http := llb.HTTP(fmt.Sprintf(chiselReleaseURLFormat, d.version(), d.version(), toolchainArch),
+			llb.Filename("chisel.tar.gz"),
+			llb.Platform(plat),
+		)
+		runOpts = append(runOpts, llb.AddMount("/tmp/chisel", http))
+	}
+	return builderStateFor(build.digestRef, build.env).Run(runOpts...).Root()
+}
+
+// toolchainScript returns the toolchain stage script. Each tool installs
+// only when it is missing from the builder image, so an image that carries
+// everything runs no package manager and needs no network.
+func toolchainScript(download bool) string {
+	b := &strings.Builder{}
+	b.WriteString("missing=''\n")
+	b.WriteString("command -v git >/dev/null 2>&1 || missing=\"$missing git\"\n")
+	b.WriteString("[ -e /etc/ssl/certs/ca-certificates.crt ] || missing=\"$missing ca-certificates\"\n")
+	b.WriteString("if [ -n \"$missing\" ]; then\n")
+	b.WriteString("  apt-get update && apt-get install -y --no-install-recommends $missing\n")
+	b.WriteString("fi\n")
+	if download {
+		b.WriteString("tar -xzf /tmp/chisel/chisel.tar.gz -C /usr/local/bin/\n")
+	}
+	return b.String()
+}
+
+// needsChiselDownload reports whether the toolchain stage has to fetch the
+// chisel release: the builder image ships no chisel, or ships another
+// version than the one the image config pins. Without a pin, a shipped
+// chisel is used as is.
+func (d ChiselBuildContext) needsChiselDownload(labels map[string]string) bool {
+	shipped := strings.TrimPrefix(strings.TrimSpace(labels[chiselVersionLabel]), "v")
+	if shipped == "" {
+		return true
+	}
+	pinned := strings.TrimPrefix(strings.TrimSpace(d.ChiselVersion), "v")
+	return pinned != "" && pinned != shipped
 }
 
 // version returns the pinned chisel tool version with a v prefix.
