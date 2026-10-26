@@ -1,3 +1,9 @@
+## [1.23.0](https://github.com/ContainerHive/ContainerHive/compare/v1.22.0...v1.23.0) (2026-10-26)
+
+### Features
+
+* mirror release images to GHCR ([#338](https://github.com/ContainerHive/ContainerHive/issues/338)) ([aa17402](https://github.com/ContainerHive/ContainerHive/commit/aa174023a16c7e17889a6abc5902a749089d6156))
+
 ## [1.22.0](https://github.com/ContainerHive/ContainerHive/compare/v1.21.0...v1.22.0) (2026-10-26)
 
 ### Features
