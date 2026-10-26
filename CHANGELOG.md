@@ -1,3 +1,9 @@
+## [1.22.0](https://github.com/ContainerHive/ContainerHive/compare/v1.21.0...v1.22.0) (2026-10-26)
+
+### Features
+
+* snapshot release helper — consume fixes straight from PRs or release internally ([#336](https://github.com/ContainerHive/ContainerHive/issues/336)) ([73ce29e](https://github.com/ContainerHive/ContainerHive/commit/73ce29e95a9c7109a3eef377da2fe4cf72ce8e92))
+
 ## [1.21.0](https://github.com/ContainerHive/ContainerHive/compare/v1.20.1...v1.21.0) (2026-10-25)
 
 ### Features
