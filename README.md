@@ -96,6 +96,18 @@ See the [installation guide](https://container-hive.timo-reymann.de/installation
 Documentation is available at [container-hive.timo-reymann.de](https://container-hive.timo-reymann.de/), hosted on
 GitHub Pages.
 
+> **Note:** The project is moving to its own domain, [container-hive.eu](https://container-hive.eu/) (work in progress).
+> Documentation links will move there when it is ready.
+
+## Maintainers wanted
+
+ContainerHive currently has a single maintainer ([Timo Reymann](https://github.com/timo-reymann)). To keep development
+healthy — reviews, releases, and urgent fixes even when the maintainer is unavailable — additional maintainers are
+welcome. You do not take over the project; responsibilities and expectations are discussed first, and shared
+ownership is the goal.
+
+If you are interested, reach out to <oss@timo-reymann.de> to talk details.
+
 ## Contributing
 
 I love your input! I want to make contributing to this project as easy and transparent as possible, whether it's:

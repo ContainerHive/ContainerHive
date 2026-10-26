@@ -63,3 +63,16 @@ ch generate && ch build && ch test
 - S3-compatible storage for caching (optional)
 
 Prebuilt binaries are available for Linux and macOS (64-bit and ARM 64-bit), plus a Docker image. See [Install ContainerHive](./installation.md).
+
+## AI Usage
+
+This project uses AI tooling (Claude Code and Mistral AI models) to assist with development. All AI-generated or AI-assisted changes are **human-reviewed** and applied responsibly — this is not AI slop. Contributors are expected to uphold the same standard: AI tools are welcome, but every change must be understood, reviewed, and owned by the person submitting it.
+
+## Maintainers wanted
+
+ContainerHive currently has a single maintainer: Timo Reymann. To keep reviews, releases, and urgent fixes going even
+when that one person is unavailable, additional maintainers are welcome. You do not take over the project, and the
+responsibilities and expectations are discussed first.
+
+If you are interested, reach out to [oss@timo-reymann.de](mailto:oss@timo-reymann.de) to talk details.
+
