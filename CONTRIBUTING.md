@@ -1,4 +1,11 @@
 # Contributing to ContainerHive
+
+## Maintainers wanted
+
+This project currently has a sole maintainer: Timo Reymann. To make reviews, releases, and urgent fixes independent of
+one person's availability, additional maintainers are welcome. Responsibilities are small and shared, and everything is
+discussed before you commit to anything. Reach out to <oss@timo-reymann.de> to talk details.
+
 We love your input! We want to make contributing to this project as easy and transparent as possible, whether it's:
 
 - Reporting a bug
@@ -43,6 +50,11 @@ People *love* thorough bug reports. We're not even kidding.
 To make your life easier there is also a handy template available so feel free to use it.
 
 > ATTENTION: If you DONT provide steps to reproduce the ticket will be closed WITHOUT FURTHER NOTICE!
+
+## Keeping upstream synced inside a company network
+
+Use `./hack/release-snapshot.sh` to publish a snapshot image from any git ref or pull request to a registry of your
+choice — for example your company registry. See the [snapshot release guide](./docs/development/snapshot-release.md).
 
 ## License
 By contributing, you agree that your contributions will be licensed under its GPL-3.0.

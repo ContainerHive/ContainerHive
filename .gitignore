@@ -21,3 +21,6 @@ internal/buildkit/version_generated.go
 # Test and temporary files
 test-project/
 pkg/cli/NOTICE
+
+# Snapshot builds from hack/release-snapshot.sh
+dist-snapshot/

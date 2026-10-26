@@ -78644,3 +78644,20 @@ Apache license:
 
 
 
+
+
+===============================================================================
+Third-Party Components
+===============================================================================
+
+bash-tui-toolkit
+----------------
+
+Version: 1.10.3
+Source: https://github.com/timo-reymann/bash-tui-toolkit
+License: Apache License 2.0
+
+Used as a vendored bundle (hack/lib/bash-tui-toolkit.bash) by
+hack/release-snapshot.sh for interactive terminal prompts. The full Apache 2.0
+license text is available in the source repository linked above.
+
