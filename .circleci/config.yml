@@ -147,6 +147,7 @@ jobs:
           name: Build and publish images
           command: |
             export CONTAINER_REGISTRY="ghcr.io/containerhive"
+            export CONTAINER_FLOATING_TAG="edge"
             export VERSION="$(git rev-parse --short HEAD)"
             echo $GITHUB_TOKEN | docker login ghcr.io -u $GITHUB_USER --password-stdin
             docker buildx create --use
@@ -165,6 +166,16 @@ jobs:
             echo "$DOCKER_TOKEN" | docker login -u "$DOCKER_USERNAME" --password-stdin
             docker buildx create --use
             make build-docker
+      - run:
+          name: Mirror images to GHCR
+          command: |
+            echo "$GITHUB_TOKEN" | docker login ghcr.io -u "$GITHUB_USER" --password-stdin
+            VERSION="$(git describe --tags --always)"
+            for tag in "$VERSION" latest; do
+              docker buildx imagetools create \
+                --tag "ghcr.io/containerhive/containerhive:$tag" \
+                "docker.io/containerhive/containerhive:$tag"
+            done
       - docker/update-description:
           image: containerhive/containerhive
           docker-username: DOCKER_USERNAME
