@@ -961,6 +961,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#selecting-platforms-with-platform" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Selecting platforms with --platform
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -2146,6 +2157,41 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../adr/009-platform-flag-selects-within-configured.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    009 - `--platform` selects within the configured platforms
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--accepted"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -2226,6 +2272,17 @@
     <span class="md-ellipsis">
       
         Variant-level (override for a specific variant)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#selecting-platforms-with-platform" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Selecting platforms with --platform
       
     </span>
   </a>
@@ -2412,6 +2469,11 @@
 </span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">linux/amd64</span>
 </span></code></pre></div>
 <p>The resolution order is: <strong>variant &gt; image &gt; project</strong>. If a variant defines platforms, those are used. Otherwise the image-level platforms are used, falling back to the project-level default.</p>
+<h3 id="selecting-platforms-with-platform">Selecting platforms with <code>--platform</code></h3>
+<p><code>ch build</code>, <code>ch test</code> and <code>ch sbom</code> accept <code>--platform</code> to work on a subset of platforms, for example one platform per CI job. The flag selects within the resolved list, it does not replace it. A tag or variant whose resolved platforms do not include the requested platform is skipped.</p>
+<p>With the <code>slim</code> variant above restricted to <code>linux/amd64</code>, <code>ch build --platform linux/arm64</code> builds the arm64 base tags but skips <code>-slim</code>. Each skipped tag is logged. If no tag selected by the filters (and shard) supports the platform, the command logs a warning, does nothing and exits successfully.</p>
+<p>Requesting a platform that no project, image or variant configures (for example a typo such as <code>arm</code> for <code>linux/arm/v7</code>) fails with an error.</p>
+<p>An image that depends on another image (<code>FROM __hive__/base:1.0</code> or a <code>__hive__/</code> parent) can only be built for platforms that dependency configures. Building it for any other platform fails with an error naming the dependency and the platform. Add the platform to the dependency, or remove it from the dependent image.</p>
 <h2 id="how-multi-platform-builds-work">How multi-platform builds work</h2>
 <p>When you run <code>ch build</code>, ContainerHive builds each image once per platform. The output is a platform-specific OCI tar file:</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>dist/my-image/1.0.0/

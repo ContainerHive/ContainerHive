@@ -2324,6 +2324,41 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../adr/009-platform-flag-selects-within-configured.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    009 - `--platform` selects within the configured platforms
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--accepted"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -2953,7 +2988,7 @@ directories in the output path are created automatically.</p>
 <tr>
 <td style="text-align: left;"><code>Platforms</code></td>
 <td style="text-align: left;">list</td>
-<td style="text-align: left;">Target platforms</td>
+<td style="text-align: left;">Target platforms: union of the base tag and variant platforms. Plain linux platforms are shortened to the architecture (<code>amd64</code>), others keep their full value (<code>linux/arm/v7</code>); use <code>platform_id</code> for identifiers</td>
 </tr>
 <tr>
 <td style="text-align: left;"><code>ReadmePath</code></td>
@@ -3096,6 +3131,18 @@ directories in the output path are created automatically.</p>
 <td style="text-align: left;">Returns the value of a template option from <code>hive.yml</code>, or empty string if not set</td>
 </tr>
 <tr>
+<td style="text-align: left;"><code>platform_id(platform)</code></td>
+<td style="text-align: left;">Turns a platform into a value safe for job IDs and artifact names: <code>amd64</code> stays <code>amd64</code>, <code>linux/arm/v7</code> becomes <code>linux-arm-v7</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>platform_dir(platform)</code></td>
+<td style="text-align: left;">Returns the <code>dist/</code> directory name of a platform, e.g. <code>linux-amd64</code> for <code>amd64</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>platform_arch(platform)</code></td>
+<td style="text-align: left;">Returns the architecture of a platform, e.g. <code>arm64</code> for <code>linux/arm64/v8</code></td>
+</tr>
+<tr>
 <td style="text-align: left;"><code>read_file(path)</code></td>
 <td style="text-align: left;">Returns the content of a file, or an empty string for an empty path — e.g. <code>{{ .Image.ReadmePath \| read_file }}</code>. Fails if the file does not exist</td>
 </tr>
@@ -3195,8 +3242,12 @@ superseded pipeline. There is no clean way to restrict cancellation to the defau
 actual value is capped per image to the number of shard units (base + variant tags) that image has, so images with fewer
 tags than the configured value never spawn empty jobs that no-op. See <a href="sharding.html">Split work across shards</a> for the
 full picture; the template option is set the same way as <code>ci_lint</code> above:</p>
-<p>Generated test jobs are split by platform and run on matching architecture runners. In GitLab, each job extends a shared
-<code>.test-amd64</code> or <code>.test-arm64</code> base, which can be extended in your root <code>.gitlab-ci.yml</code> to add runner tags:</p>
+<p>Generated build and test jobs are split by platform and pass <code>--platform</code> to <code>ch</code>, which skips tags and variants that do
+not support that platform (see <a href="multi-platform.html#selecting-platforms-with-platform">Selecting platforms</a>).
+Generated test jobs run on matching architecture runners. In GitLab, each job extends a shared
+<code>.test-&lt;platform&gt;</code> (and <code>.build-&lt;platform&gt;</code>) base, which can be extended in your root <code>.gitlab-ci.yml</code> to add runner
+tags. <code>&lt;platform&gt;</code> is the platform with <code>linux/</code> dropped for plain architectures and <code>/</code> replaced by <code>-</code> otherwise:
+<code>amd64</code>, <code>arm64</code>, <code>linux-arm-v7</code>, <code>windows-amd64</code>. Job IDs and artifact names use the same form.</p>
 <div class="language-yaml highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="nt">.test-arm64</span><span class="p">:</span>
 </span><span id="__span-13-2"><a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a><span class="w">  </span><span class="nt">tags</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">my-arm64-runner</span><span class="p p-Indicator">]</span>
 </span></code></pre></div>

@@ -2290,6 +2290,41 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../adr/009-platform-flag-selects-within-configured.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    009 - `--platform` selects within the configured platforms
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--accepted"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -2737,7 +2772,7 @@
 </tr>
 <tr>
 <td style="text-align: left;"><code>--platform</code></td>
-<td style="text-align: left;">Target platform(s) to build (e.g. <code>linux/amd64</code>), overrides <code>hive.yml</code></td>
+<td style="text-align: left;">Target platform(s) to build (e.g. <code>linux/amd64</code>). Selects within the platforms configured in <code>hive.yml</code>/<code>image.yml</code>; tags and variants that support none of them are skipped. A platform that nothing configures is an error</td>
 </tr>
 <tr>
 <td style="text-align: left;"><code>--max-shards</code></td>
@@ -2768,7 +2803,7 @@
 </tr>
 <tr>
 <td style="text-align: left;"><code>--platform</code></td>
-<td style="text-align: left;">Target platform(s) to test (e.g. <code>linux/amd64</code>), overrides <code>hive.yml</code>; also applies to <code>--build</code></td>
+<td style="text-align: left;">Target platform(s) to test (e.g. <code>linux/amd64</code>). Selects within the configured platforms like <code>build --platform</code>; also applies to <code>--build</code></td>
 </tr>
 <tr>
 <td style="text-align: left;"><code>--max-shards</code></td>
@@ -2799,7 +2834,7 @@
 <tbody>
 <tr>
 <td style="text-align: left;"><code>--platform</code></td>
-<td style="text-align: left;">Target platform(s) to generate SBOMs for (e.g. <code>linux/amd64</code>), overrides <code>hive.yml</code></td>
+<td style="text-align: left;">Target platform(s) to generate SBOMs for (e.g. <code>linux/amd64</code>). Selects within the configured platforms like <code>build --platform</code></td>
 </tr>
 <tr>
 <td style="text-align: left;"><code>--workers</code></td>
