@@ -86,8 +86,9 @@ before_script:
     name: {{ .ImageName }}:{{ .Version }}
     entrypoint: [""]
   services:
-    - name: docker:dind
+    - name: {{ option "ci_dind_image" }}
       alias: dind
+      command: ["dockerd", "--host=tcp://0.0.0.0:2375"]
 {{- if and .HasTagRanges (ne (option "ci_version_cache") "false") }}
   cache:
     key: ch-versions

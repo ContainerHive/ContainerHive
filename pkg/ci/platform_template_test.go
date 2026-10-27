@@ -51,6 +51,42 @@ func TestGitlabTemplate_TestJobsPerPlatform(t *testing.T) {
 	}
 }
 
+func TestGitlabTemplate_DindService(t *testing.T) {
+	tests := []struct {
+		name    string
+		options map[string]string
+		want    string
+	}{
+		{
+			name: "default is the rootless helper image",
+			want: "- name: " + DefaultDindImage + "\n      alias: dind\n      command: [\"dockerd\", \"--host=tcp://0.0.0.0:2375\"]",
+		},
+		{
+			name:    "ci_dind_image overrides the image",
+			options: map[string]string{"ci_dind_image": "docker:dind"},
+			want:    "- name: docker:dind\n      alias: dind",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			project := singleImageProjectForTemplate()
+			project.Config.TemplateOptions = tt.options
+			ctx, err := BuildCIContext(project, false)
+			if err != nil {
+				t.Fatal(err)
+			}
+			output, err := Generate("gitlab", ctx, "")
+			if err != nil {
+				t.Fatal(err)
+			}
+			if !strings.Contains(string(output), tt.want) {
+				t.Errorf("expected GitLab output to contain %q, got:\n%s", tt.want, output)
+			}
+		})
+	}
+}
+
 func TestGithubTemplate_TestJobsPerPlatform(t *testing.T) {
 	rendered := multiPlatformTemplateOutput(t, "github", false)
 

@@ -239,6 +239,9 @@ func TestBuildCIContext_DefaultTemplateOptions(t *testing.T) {
 	if ctx.TemplateOptions["ci_buildkit_version"] == "" {
 		t.Error("expected ci_buildkit_version to have a default value")
 	}
+	if ctx.TemplateOptions["ci_dind_image"] != DefaultDindImage {
+		t.Errorf("expected default ci_dind_image %q, got %q", DefaultDindImage, ctx.TemplateOptions["ci_dind_image"])
+	}
 	if ctx.TemplateOptions["ci_lint"] != "true" {
 		t.Errorf("expected default ci_lint 'true', got %q", ctx.TemplateOptions["ci_lint"])
 	}
