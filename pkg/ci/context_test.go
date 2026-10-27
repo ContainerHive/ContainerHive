@@ -129,7 +129,7 @@ func TestBuildCIContext_Stages(t *testing.T) {
 func TestResolvePlatforms(t *testing.T) {
 	t.Run("strips linux prefix", func(t *testing.T) {
 		img := &model.Image{Platforms: []string{"linux/amd64", "linux/arm64"}}
-		result := resolvePlatforms(img, nil)
+		result := resolvePlatforms([]*model.Image{img}, nil)
 		if !reflect.DeepEqual(result, []string{"amd64", "arm64"}) {
 			t.Errorf("expected [amd64 arm64], got %v", result)
 		}
@@ -137,7 +137,7 @@ func TestResolvePlatforms(t *testing.T) {
 
 	t.Run("falls back to project defaults", func(t *testing.T) {
 		img := &model.Image{}
-		result := resolvePlatforms(img, []string{"linux/amd64"})
+		result := resolvePlatforms([]*model.Image{img}, []string{"linux/amd64"})
 		if !reflect.DeepEqual(result, []string{"amd64"}) {
 			t.Errorf("expected [amd64], got %v", result)
 		}
@@ -145,9 +145,45 @@ func TestResolvePlatforms(t *testing.T) {
 
 	t.Run("platform without prefix", func(t *testing.T) {
 		img := &model.Image{Platforms: []string{"amd64"}}
-		result := resolvePlatforms(img, nil)
+		result := resolvePlatforms([]*model.Image{img}, nil)
 		if !reflect.DeepEqual(result, []string{"amd64"}) {
 			t.Errorf("expected [amd64], got %v", result)
+		}
+	})
+
+	t.Run("includes variant-only platforms", func(t *testing.T) {
+		img := &model.Image{
+			Platforms: []string{"linux/amd64"},
+			Variants: map[string]*model.ImageVariant{
+				"riscv": {Name: "riscv", TagSuffix: "-riscv", Platforms: []string{"linux/riscv64"}},
+			},
+		}
+		result := resolvePlatforms([]*model.Image{img}, nil)
+		if !reflect.DeepEqual(result, []string{"amd64", "riscv64"}) {
+			t.Errorf("expected [amd64 riscv64], got %v", result)
+		}
+	})
+
+	t.Run("restricting variant does not drop base platforms", func(t *testing.T) {
+		img := &model.Image{
+			Variants: map[string]*model.ImageVariant{
+				"aspire": {Name: "aspire", TagSuffix: "-aspire", Platforms: []string{"linux/amd64"}},
+			},
+		}
+		result := resolvePlatforms([]*model.Image{img}, []string{"linux/amd64", "linux/arm64"})
+		if !reflect.DeepEqual(result, []string{"amd64", "arm64"}) {
+			t.Errorf("expected [amd64 arm64], got %v", result)
+		}
+	})
+
+	t.Run("deduplicates across images with the same name", func(t *testing.T) {
+		images := []*model.Image{
+			{Platforms: []string{"linux/amd64"}},
+			{Platforms: []string{"linux/amd64", "linux/arm64"}},
+		}
+		result := resolvePlatforms(images, nil)
+		if !reflect.DeepEqual(result, []string{"amd64", "arm64"}) {
+			t.Errorf("expected [amd64 arm64], got %v", result)
 		}
 	})
 }
