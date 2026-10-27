@@ -23,7 +23,7 @@ func testCmd() *cli.Command {
 			},
 			&cli.StringSliceFlag{
 				Name:  "platform",
-				Usage: "Target platform(s) to test (e.g. linux/amd64), overrides hive.yml",
+				Usage: "Target platform(s) to test (e.g. linux/amd64), selects within the configured platforms",
 			},
 		),
 		Action: func(ctx context.Context, cmd *cli.Command) error {
