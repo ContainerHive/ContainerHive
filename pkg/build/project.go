@@ -276,6 +276,7 @@ func buildTag(ctx context.Context, client *Client, opts *ProjectBuildOpts, image
 		PlatformStr:     platformStr,
 		RegistryAddress: opts.registryAddress(),
 		BuildID:         opts.BuildID,
+		Project:         opts.Project,
 	})
 	if err != nil {
 		return fmt.Errorf("failed to resolve hive deps for %s:%s: %w", imageDef.Name, tagName, err)
@@ -417,6 +418,7 @@ func buildVariant(ctx context.Context, client *Client, opts *ProjectBuildOpts, i
 		PlatformStr:     platformStr,
 		RegistryAddress: opts.registryAddress(),
 		BuildID:         opts.BuildID,
+		Project:         opts.Project,
 	})
 	if err != nil {
 		return fmt.Errorf("failed to resolve hive deps for variant %s:%s:%s: %w", imageDef.Name, tagName, variantName, err)
