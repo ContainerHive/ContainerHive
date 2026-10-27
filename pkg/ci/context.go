@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"sort"
 	"strconv"
-	"strings"
 
 	"github.com/ContainerHive/ContainerHive/internal/actions"
 	"github.com/ContainerHive/ContainerHive/internal/buildkit"
@@ -368,12 +367,7 @@ func resolvePlatforms(images []*model.Image, projectPlatforms []string) []string
 	var result []string
 	add := func(platforms []string) {
 		for _, p := range platforms {
-			// Strip the default os prefix only when a bare arch remains
-			// (e.g. "linux/amd64" -> "amd64"), so platform.Normalize maps the
-			// value back. Others like "linux/arm/v7" are kept as is.
-			if arch, ok := strings.CutPrefix(p, "linux/"); ok && !strings.Contains(arch, "/") {
-				p = arch
-			}
+			p = platform.Short(p)
 			if seen[p] {
 				continue
 			}
