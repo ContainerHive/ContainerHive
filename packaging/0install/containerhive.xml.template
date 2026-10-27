@@ -6,9 +6,9 @@
   <homepage>https://container-hive.timo-reymann.de</homepage>
   <category>Development</category>
 
-  <icon href="https://containerhive.github.io/0install/containerhive.png" type="image/png"/>
+  <icon href="https://0install.container-hive.eu/containerhive.png" type="image/png"/>
 
-  <feed-for interface="https://containerhive.github.io/0install/containerhive.xml"/>
+  <feed-for interface="https://0install.container-hive.eu/containerhive.xml"/>
 
   <entry-point binary-name="ch" command="run"/>
 
