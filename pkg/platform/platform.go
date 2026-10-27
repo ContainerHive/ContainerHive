@@ -76,3 +76,23 @@ func Resolve(override, global, image, variant []string) []string {
 	}
 	return selected
 }
+
+// Unsupported returns the requested platforms that none of the configured
+// lists contain, in requested order. Both sides are normalized before
+// comparing, the returned values are kept as requested.
+func Unsupported(requested []string, configured ...[]string) []string {
+	known := make(map[string]bool)
+	for _, list := range configured {
+		for _, p := range list {
+			known[Normalize(p)] = true
+		}
+	}
+
+	var unsupported []string
+	for _, p := range requested {
+		if !known[Normalize(p)] {
+			unsupported = append(unsupported, p)
+		}
+	}
+	return unsupported
+}

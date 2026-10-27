@@ -75,6 +75,35 @@ func TestShort(t *testing.T) {
 	}
 }
 
+func TestUnsupported(t *testing.T) {
+	tests := []struct {
+		name       string
+		requested  []string
+		configured [][]string
+		want       []string
+	}{
+		{"all supported", []string{"amd64", "linux/arm64"}, [][]string{{"linux/amd64"}, {"arm64"}}, nil},
+		{"none requested", nil, [][]string{{"linux/amd64"}}, nil},
+		{"typo", []string{"arm"}, [][]string{{"linux/arm/v7"}}, []string{"arm"}},
+		{"only in variant", []string{"riscv64"}, [][]string{{"linux/amd64"}, nil, {"linux/riscv64"}}, nil},
+		{"keeps requested order", []string{"s390x", "amd64", "ppc64le"}, [][]string{{"linux/amd64"}}, []string{"s390x", "ppc64le"}},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := Unsupported(tt.requested, tt.configured...)
+			if len(got) != len(tt.want) {
+				t.Fatalf("Unsupported() = %v, want %v", got, tt.want)
+			}
+			for i := range got {
+				if got[i] != tt.want[i] {
+					t.Errorf("Unsupported() = %v, want %v", got, tt.want)
+				}
+			}
+		})
+	}
+}
+
 func TestResolve(t *testing.T) {
 	t.Run("override selects within variant platforms", func(t *testing.T) {
 		got := Resolve(
