@@ -43,7 +43,7 @@ ch build [image:tag patterns...]
 | Flag | Description |
 |:-----|:------------|
 | `--registry` | Use registry from config (auto-enabled in CI) |
-| `--platform` | Target platform(s) to build (e.g. `linux/amd64`), overrides `hive.yml` |
+| `--platform` | Target platform(s) to build (e.g. `linux/amd64`). Selects within the platforms configured in `hive.yml`/`image.yml`; tags and variants that support none of them are skipped |
 | `--max-shards` | Total number of shards to split work across — sourced from `CI_NODE_TOTAL` env (default: `1`) |
 | `--current-shard` | This shard's 1-based index — sourced from `CI_NODE_INDEX` env (default: `1`) |
 
@@ -60,7 +60,7 @@ ch test [image:tag patterns...]
 | Flag | Description |
 |:-----|:------------|
 | `--build` | Run build before tests |
-| `--platform` | Target platform(s) to test (e.g. `linux/amd64`), overrides `hive.yml`; also applies to `--build` |
+| `--platform` | Target platform(s) to test (e.g. `linux/amd64`). Selects within the configured platforms like `build --platform`; also applies to `--build` |
 | `--max-shards` | Total number of shards to split work across — sourced from `CI_NODE_TOTAL` env (default: `1`) |
 | `--current-shard` | This shard's 1-based index — sourced from `CI_NODE_INDEX` env (default: `1`) |
 
@@ -84,7 +84,7 @@ ch sbom [image:tag patterns...]
 
 | Flag | Description |
 |:-----|:------------|
-| `--platform` | Target platform(s) to generate SBOMs for (e.g. `linux/amd64`), overrides `hive.yml` |
+| `--platform` | Target platform(s) to generate SBOMs for (e.g. `linux/amd64`). Selects within the configured platforms like `build --platform` |
 | `--workers` | Number of concurrent workers for SBOM generation (default: 4) |
 | `--no-cpe` | Skip CPE generation to reduce SBOM size (may reduce vulnerability match accuracy for CPE-based scanners) |
 | `--max-shards` | Total number of shards to split work across — sourced from `CI_NODE_TOTAL` env (default: `1`) |
