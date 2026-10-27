@@ -47,8 +47,9 @@ type ProjectBuildOpts struct {
 	BuildID        string   // if set, registry push/retag uses tags suffixed with -build.<BuildID>
 	Shard          shard.Shard
 
-	// CLIPlatforms, when set (from --platform), overrides the platform list
-	// for every image/tag/variant regardless of what hive.yml configures.
+	// CLIPlatforms, when set (from --platform), selects which of the
+	// platforms configured in hive.yml/image.yml are built. Tags and variants
+	// that support none of them are skipped.
 	CLIPlatforms []string
 
 	// OnBuild is called after each successful build with the image tag and tar path.

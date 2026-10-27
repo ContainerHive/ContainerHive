@@ -20,27 +20,39 @@ func Sanitize(p string) string {
 	return strings.ReplaceAll(p, "/", "-")
 }
 
-// Resolve returns the platform list to use, in precedence order:
-// override > variant > image > global. override represents an explicit
-// CLI --platform flag and, when set, always wins regardless of what
-// hive.yml configures at the variant/image/global level.
-// If the most specific level is empty, it falls back to the next level.
+// Resolve returns the platform list to use. The configured list is the most
+// specific non-empty level: variant > image > global. override represents an
+// explicit CLI --platform flag and, when set, selects within the configured
+// list: platforms the variant/image/project does not support are dropped, so
+// the result may be empty. The configured order is preserved.
 // All returned platform strings are normalized to canonical os/arch form.
 func Resolve(override, global, image, variant []string) []string {
-	var result []string
-	if len(override) > 0 {
-		result = override
-	} else if len(variant) > 0 {
-		result = variant
+	var configured []string
+	if len(variant) > 0 {
+		configured = variant
 	} else if len(image) > 0 {
-		result = image
+		configured = image
 	} else {
-		result = global
+		configured = global
 	}
 
-	normalized := make([]string, len(result))
-	for i, p := range result {
+	normalized := make([]string, len(configured))
+	for i, p := range configured {
 		normalized[i] = Normalize(p)
 	}
-	return normalized
+	if len(override) == 0 {
+		return normalized
+	}
+
+	requested := make(map[string]bool, len(override))
+	for _, p := range override {
+		requested[Normalize(p)] = true
+	}
+	selected := make([]string, 0, len(normalized))
+	for _, p := range normalized {
+		if requested[p] {
+			selected = append(selected, p)
+		}
+	}
+	return selected
 }
