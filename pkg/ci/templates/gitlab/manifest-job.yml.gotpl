@@ -7,7 +7,7 @@ manifest-{{ .Image.Name }}:
   needs:
     - generate
 {{- range .Image.Platforms }}
-    - test-{{ $.Image.Name }}-{{ . }}
-    - build-{{ $.Image.Name }}-{{ . }}
+    - test-{{ $.Image.Name }}-{{ platform_id . }}
+    - build-{{ $.Image.Name }}-{{ platform_id . }}
 {{- end }}
 {{- end }}

@@ -62,7 +62,7 @@ before_script:
     - {{ .ChCmd }} build ${IMAGE_NAME} --platform ${PLATFORM} --build-id "$SNAPSHOT_ID"
     - {{ .ChCmd }} sbom ${IMAGE_NAME} --platform ${PLATFORM} --build-id "$SNAPSHOT_ID"{{ if eq (option "ci_sbom_generate_cpes") "false" }} --no-cpe{{ end }}
 {{ range .Platforms }}
-.build-{{ . }}:
+.build-{{ platform_id . }}:
   extends: .build
 {{ end }}
 .manifest:
@@ -105,7 +105,7 @@ before_script:
     - {{ .ChCmd }} wait --docker-socket
     - {{ .ChCmd }} test ${IMAGE_NAME} --platform ${PLATFORM} --build-id "$SNAPSHOT_ID"
 {{ range .Platforms }}
-.test-{{ . }}:
+.test-{{ platform_id . }}:
   extends: .test
 {{ end }}
 
@@ -159,7 +159,7 @@ report:
     - generate
   {{- range $img := .Images }}
   {{- range $p := $img.Platforms }}
-    - build-{{ $img.Name }}-{{ $p }}
+    - build-{{ $img.Name }}-{{ platform_id $p }}
   {{- end }}
   {{- end }}
   script:
