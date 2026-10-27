@@ -1,3 +1,10 @@
+## [1.23.2](https://github.com/ContainerHive/ContainerHive/compare/v1.23.1...v1.23.2) (2026-10-27)
+
+### Bug Fixes
+
+* **mcp:** search docs on container-hive.eu ([207a168](https://github.com/ContainerHive/ContainerHive/commit/207a1686000cae54e4624f129557296717ecb9f9))
+* sync feed homepage and icon from the template on merge ([3868c8b](https://github.com/ContainerHive/ContainerHive/commit/3868c8b50e454c076ca8181b4131a284aa0bbd37))
+
 ## [1.23.1](https://github.com/ContainerHive/ContainerHive/compare/v1.23.0...v1.23.1) (2026-10-27)
 
 ### Bug Fixes
