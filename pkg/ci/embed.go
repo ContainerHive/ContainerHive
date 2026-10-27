@@ -16,6 +16,9 @@ func init() {
 		Name:       "gitlab",
 		TemplateFS: mustSub(gitlabTemplates, "templates/gitlab"),
 		Entrypoint: "pipeline.yml.gotpl",
+		// GitLab runners pull anonymously from Docker Hub and hit its rate
+		// limits, the GitLab registry is the closest mirror.
+		DefaultImageName: GitLabImageName,
 	})
 	RegisterProvider(&Provider{
 		Name:       "github",

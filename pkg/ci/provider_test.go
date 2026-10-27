@@ -96,7 +96,7 @@ func TestResolveDefaultImageName(t *testing.T) {
 		want     string
 	}{
 		{provider: "github", want: "ghcr.io/containerhive/containerhive"},
-		{provider: "gitlab", want: "containerhive/containerhive"},
+		{provider: "gitlab", want: "registry.gitlab.com/containerhive/containerhive"},
 		{provider: "does-not-exist", want: "containerhive/containerhive"},
 	}
 
