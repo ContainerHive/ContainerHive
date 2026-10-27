@@ -75,6 +75,28 @@ func TestShort(t *testing.T) {
 	}
 }
 
+func TestArch(t *testing.T) {
+	tests := []struct {
+		input string
+		want  string
+	}{
+		{"linux/amd64", "amd64"},
+		{"arm64", "arm64"},
+		{"linux/arm64/v8", "arm64"},
+		{"linux/arm/v7", "arm"},
+		{"windows/amd64", "amd64"},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.input, func(t *testing.T) {
+			got := Arch(tt.input)
+			if got != tt.want {
+				t.Errorf("Arch(%q) = %q, want %q", tt.input, got, tt.want)
+			}
+		})
+	}
+}
+
 func TestUnsupported(t *testing.T) {
 	tests := []struct {
 		name       string

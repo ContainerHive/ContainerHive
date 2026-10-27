@@ -1,7 +1,7 @@
 {{ define "test-job.yml.gotpl" }}
 {{- range .Image.Platforms }}
-test-{{ $.Image.Name }}-{{ . }}:
-  extends: .test-{{ . }}
+test-{{ $.Image.Name }}-{{ platform_id . }}:
+  extends: .test-{{ platform_id . }}
   stage: test-{{ $.Image.Name }}
   variables:
     IMAGE_NAME: {{ $.Image.Name }}
@@ -11,7 +11,7 @@ test-{{ $.Image.Name }}-{{ . }}:
 {{- end }}
   needs:
     - generate
-    - build-{{ $.Image.Name }}-{{ . }}
+    - build-{{ $.Image.Name }}-{{ platform_id . }}
   artifacts:
     when: always
     paths:

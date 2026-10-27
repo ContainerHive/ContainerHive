@@ -7,6 +7,7 @@ import (
 	"os"
 	"text/template"
 
+	"github.com/ContainerHive/ContainerHive/pkg/platform"
 	sprig "github.com/Masterminds/sprig/v3"
 )
 
@@ -16,6 +17,15 @@ func funcMap() template.FuncMap {
 		return fmt.Sprintf("__hive__/%s:%s", name, tag)
 	}
 	funcs["read_file"] = readFile
+	// platform_id turns a platform into a value safe for job IDs and
+	// artifact names ("amd64" stays "amd64", "linux/arm/v7" -> "linux-arm-v7").
+	funcs["platform_id"] = platform.Sanitize
+	// platform_dir returns the dist/ directory name of a platform
+	// ("amd64" -> "linux-amd64").
+	funcs["platform_dir"] = func(p string) string {
+		return platform.Sanitize(platform.Normalize(p))
+	}
+	funcs["platform_arch"] = platform.Arch
 	return funcs
 }
 

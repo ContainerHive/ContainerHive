@@ -3,8 +3,8 @@
     runs-on: ubuntu-latest
     needs:
 {{- range .Image.Platforms }}
-      - test-{{ $.Image.Name }}-{{ . }}
-      - build-{{ $.Image.Name }}-{{ . }}
+      - test-{{ $.Image.Name }}-{{ platform_id . }}
+      - build-{{ $.Image.Name }}-{{ platform_id . }}
 {{- end }}
     steps:
       - name: Checkout code
@@ -21,7 +21,7 @@
       - name: Download build artifacts for {{ . }}
         uses: actions/download-artifact@{{ option "actions_download_artifact_version" }}
         with:
-          name: {{ $.Image.Name }}-{{ . }}
+          name: {{ $.Image.Name }}-{{ platform_id . }}
           path: {{ $.Ctx.Dist }}/
 {{- end }}
 {{- end }}

@@ -28,6 +28,13 @@ func Short(p string) string {
 	return arch
 }
 
+// Arch returns the architecture component of a platform, e.g. "arm64" for
+// "linux/arm64", "linux/arm64/v8" and "arm64".
+func Arch(p string) string {
+	parts := strings.Split(Normalize(p), "/")
+	return parts[1]
+}
+
 // Sanitize converts a platform string like "linux/amd64" to "linux-amd64".
 func Sanitize(p string) string {
 	return strings.ReplaceAll(p, "/", "-")
