@@ -14,6 +14,26 @@ type Provider struct {
 	Name       string
 	TemplateFS fs.FS
 	Entrypoint string
+	// DefaultImageName is the ContainerHive CLI image used when --image-name is
+	// not set. Falls back to DockerHubImageName.
+	DefaultImageName string
+}
+
+const (
+	// DockerHubImageName is the ContainerHive CLI image on Docker Hub.
+	DockerHubImageName = "containerhive/containerhive"
+	// GHCRImageName is the ContainerHive CLI image on the GitHub Container Registry.
+	GHCRImageName = "ghcr.io/containerhive/containerhive"
+)
+
+// ResolveDefaultImageName returns the default ContainerHive CLI image for the
+// given provider.
+func ResolveDefaultImageName(providerName string) string {
+	p, err := GetProvider(providerName)
+	if err != nil || p.DefaultImageName == "" {
+		return DockerHubImageName
+	}
+	return p.DefaultImageName
 }
 
 var (
