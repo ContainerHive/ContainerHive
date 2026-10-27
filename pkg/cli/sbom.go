@@ -8,6 +8,7 @@ import (
 	"path/filepath"
 	"sync"
 
+	"github.com/ContainerHive/ContainerHive/pkg/build"
 	"github.com/ContainerHive/ContainerHive/pkg/model"
 	"github.com/ContainerHive/ContainerHive/pkg/platform"
 	"github.com/ContainerHive/ContainerHive/pkg/sbom"
@@ -84,57 +85,12 @@ func sbomCmd() *cli.Command {
 				workers = 4
 			}
 
-			type workItem struct {
-				img         *model.Image
-				tagName     string
-				platformStr string
-				tarFile     string
-				platDir     string
+			workItems, err := collectSBOMWorkItems(project, distPath, filters, owns, cliPlatforms, s)
+			if err != nil {
+				return err
 			}
-
-			var workItems []workItem
-			matchedUnits := false
-			enqueue := func(img *model.Image, tagName string, platforms []string) {
-				if !utils.MatchesFilter(filters, img.Name, tagName) {
-					return
-				}
-				if !owns(img.Identifier, tagName) {
-					return
-				}
-				matchedUnits = true
-				for _, platformStr := range platforms {
-					platDir := filepath.Join(distPath, img.Name, tagName, platform.Sanitize(platformStr))
-					tarFile := filepath.Join(platDir, "image.tar")
-					if _, err := os.Stat(tarFile); err != nil {
-						slog.Warn("Skipping, no image.tar found", "image", img.Name, "tag", tagName, "platform", platformStr)
-						continue
-					}
-					workItems = append(workItems, workItem{
-						img:         img,
-						tagName:     tagName,
-						platformStr: platformStr,
-						tarFile:     tarFile,
-						platDir:     platDir,
-					})
-				}
-			}
-
-			for _, img := range project.ImagesByIdentifier {
-				for tagName := range img.Tags {
-					enqueue(img, tagName, platform.Resolve(cliPlatforms, project.Config.Platforms, img.Platforms, nil))
-					for _, variantDef := range img.Variants {
-						variantPlatforms := platform.Resolve(cliPlatforms, project.Config.Platforms, img.Platforms, variantDef.Platforms)
-						enqueue(img, tagName+variantDef.TagSuffix, variantPlatforms)
-					}
-				}
-			}
-
 			if len(workItems) == 0 {
-				if s.Enabled() && !matchedUnits {
-					slog.Warn("Nothing to do for this shard", "shard", s.Current, "of", s.Max)
-					return nil
-				}
-				return fmt.Errorf("no images found to generate SBOMs for")
+				return nil
 			}
 
 			sbomGen, err := sbom.NewGenerator(sbom.WithGenerateCPEs(!cmd.Bool("no-cpe")))
@@ -150,11 +106,11 @@ func sbomCmd() *cli.Command {
 			for i := 0; i < workers; i++ {
 				eg.Go(func() error {
 					for {
-						item, ok := func() (workItem, bool) {
+						item, ok := func() (sbomWorkItem, bool) {
 							mu.Lock()
 							defer mu.Unlock()
 							if len(workItems) == 0 {
-								return workItem{}, false
+								return sbomWorkItem{}, false
 							}
 							item := workItems[0]
 							workItems = workItems[1:]
@@ -205,4 +161,83 @@ func sbomCmd() *cli.Command {
 			return nil
 		},
 	}
+}
+
+type sbomWorkItem struct {
+	img         *model.Image
+	tagName     string
+	platformStr string
+	tarFile     string
+	platDir     string
+}
+
+// collectSBOMWorkItems returns one work item per built image tar of the tags
+// selected by filters, shard and --platform. An empty result without error
+// means there is nothing to do: the shard owns no matching tag, or none of
+// the matched tags supports the requested platform(s).
+func collectSBOMWorkItems(
+	project *model.ContainerHiveProject,
+	distPath string,
+	filters []build.Filter,
+	owns func(identifier, tagName string) bool,
+	cliPlatforms []string,
+	s shard.Shard,
+) ([]sbomWorkItem, error) {
+	var workItems []sbomWorkItem
+	matchedUnits := false
+	matchedPlatforms := false
+	enqueue := func(img *model.Image, tagName string, platforms []string) {
+		if !utils.MatchesFilter(filters, img.Name, tagName) {
+			return
+		}
+		if !owns(img.Identifier, tagName) {
+			return
+		}
+		matchedUnits = true
+		if len(platforms) == 0 {
+			slog.Info("Skipping, platform not supported", "image", img.Name, "tag", tagName, "platform", cliPlatforms)
+			return
+		}
+		matchedPlatforms = true
+		for _, platformStr := range platforms {
+			platDir := filepath.Join(distPath, img.Name, tagName, platform.Sanitize(platformStr))
+			tarFile := filepath.Join(platDir, "image.tar")
+			if _, err := os.Stat(tarFile); err != nil {
+				slog.Warn("Skipping, no image.tar found", "image", img.Name, "tag", tagName, "platform", platformStr)
+				continue
+			}
+			workItems = append(workItems, sbomWorkItem{
+				img:         img,
+				tagName:     tagName,
+				platformStr: platformStr,
+				tarFile:     tarFile,
+				platDir:     platDir,
+			})
+		}
+	}
+
+	for _, img := range project.ImagesByIdentifier {
+		for tagName := range img.Tags {
+			enqueue(img, tagName, platform.Resolve(cliPlatforms, project.Config.Platforms, img.Platforms, nil))
+			for _, variantDef := range img.Variants {
+				variantPlatforms := platform.Resolve(cliPlatforms, project.Config.Platforms, img.Platforms, variantDef.Platforms)
+				enqueue(img, tagName+variantDef.TagSuffix, variantPlatforms)
+			}
+		}
+	}
+
+	if len(workItems) > 0 {
+		return workItems, nil
+	}
+	if s.Enabled() && !matchedUnits {
+		slog.Warn("Nothing to do for this shard", "shard", s.Current, "of", s.Max)
+		return nil, nil
+	}
+	// --platform selected none of the matched tags' platforms, so nothing was
+	// built for them either.
+	if matchedUnits && !matchedPlatforms {
+		slog.Warn("No selected tag supports the requested platform(s), nothing to do", "platform", cliPlatforms)
+		return nil, nil
+	}
+	return nil, fmt.Errorf("no images found to generate SBOMs for")
 }
