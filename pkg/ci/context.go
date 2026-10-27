@@ -9,6 +9,7 @@ import (
 	"github.com/ContainerHive/ContainerHive/internal/buildkit"
 	"github.com/ContainerHive/ContainerHive/internal/dependency"
 	"github.com/ContainerHive/ContainerHive/pkg/model"
+	"github.com/ContainerHive/ContainerHive/pkg/platform"
 	"github.com/ContainerHive/ContainerHive/pkg/rendering"
 	"github.com/ContainerHive/ContainerHive/pkg/shard"
 )
@@ -196,8 +197,8 @@ func BuildCIContext(project *model.ContainerHiveProject, artifacts bool) (*CICon
 		}
 		sort.Strings(tags)
 
-		// Resolve platforms: image-level or project default
-		platforms := resolvePlatforms(images[0], project.Config.Platforms)
+		// Resolve platforms: union over base tags and variants
+		platforms := resolvePlatforms(images, project.Config.Platforms)
 		for _, p := range platforms {
 			allPlatforms[p] = true
 		}
@@ -353,25 +354,43 @@ func calculateDepths(imageNames map[string]bool, dependencies map[string][]strin
 	return depths
 }
 
-// resolvePlatforms returns the effective platforms for an image.
-// Uses image-level platforms if set, otherwise falls back to project defaults.
+// resolvePlatforms returns the effective platforms for an image: the union of
+// the platforms its base tags (image-level, falling back to project defaults)
+// and its variants (variant-level, falling back to the base tag platforms)
+// resolve to, in order of first appearance. This way a platform only a
+// variant supports still gets a job.
 // Platform prefixes like "linux/" are stripped for CI use (e.g. "linux/amd64" -> "amd64").
-func resolvePlatforms(img *model.Image, projectPlatforms []string) []string {
-	platforms := img.Platforms
-	if len(platforms) == 0 {
-		platforms = projectPlatforms
+func resolvePlatforms(images []*model.Image, projectPlatforms []string) []string {
+	seen := make(map[string]bool)
+	var result []string
+	add := func(platforms []string) {
+		for _, p := range platforms {
+			// Strip os prefix (e.g. "linux/amd64" -> "amd64")
+			for i := len(p) - 1; i >= 0; i-- {
+				if p[i] == '/' {
+					p = p[i+1:]
+					break
+				}
+			}
+			if seen[p] {
+				continue
+			}
+			seen[p] = true
+			result = append(result, p)
+		}
 	}
 
-	result := make([]string, 0, len(platforms))
-	for _, p := range platforms {
-		// Strip os prefix (e.g. "linux/amd64" -> "amd64")
-		for i := len(p) - 1; i >= 0; i-- {
-			if p[i] == '/' {
-				p = p[i+1:]
-				break
-			}
+	for _, img := range images {
+		add(platform.Resolve(nil, projectPlatforms, img.Platforms, nil))
+
+		variantNames := make([]string, 0, len(img.Variants))
+		for name := range img.Variants {
+			variantNames = append(variantNames, name)
 		}
-		result = append(result, p)
+		sort.Strings(variantNames)
+		for _, name := range variantNames {
+			add(platform.Resolve(nil, projectPlatforms, img.Platforms, img.Variants[name].Platforms))
+		}
 	}
 	return result
 }
