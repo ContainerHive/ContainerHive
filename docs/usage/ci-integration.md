@@ -307,6 +307,9 @@ template_options:
   ci_dind_image: docker:dind
 ```
 
+`docker:dind` needs the runner to allow a privileged Docker-in-Docker service. Setting the option does not replace
+`hostUsers: false` on a runner that forbids privileged pods; there the daemon does not start.
+
 The generated GitHub Actions workflow starts the same image as a container on the runner VM, with `--privileged`.
 
 ## Sharding build and test jobs
