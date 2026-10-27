@@ -1,3 +1,20 @@
+## [1.23.1](https://github.com/ContainerHive/ContainerHive/compare/v1.23.0...v1.23.1) (2026-10-27)
+
+### Bug Fixes
+
+* **build:** fail clearly when a dependency lacks the target platform ([f0e964f](https://github.com/ContainerHive/ContainerHive/commit/f0e964faa09361537970de6a5cf04bd26bfc4943))
+* **build:** warn when --platform leaves nothing to build ([1fde9b4](https://github.com/ContainerHive/ContainerHive/commit/1fde9b4d4d80c2d88c1f470419586508224ca408))
+* **ci:** include variant platforms in generated pipeline jobs ([5c0e2aa](https://github.com/ContainerHive/ContainerHive/commit/5c0e2aad41eff5e79e007b2998e0994b7577e17a)), closes [#339](https://github.com/ContainerHive/ContainerHive/issues/339)
+* **ci:** keep multi-component platforms intact in CI values ([2e73608](https://github.com/ContainerHive/ContainerHive/commit/2e736085b28f4630d2b615362ac7d8f671b588d6))
+* **ci:** use identifier-safe platform names in generated pipelines ([8676c4b](https://github.com/ContainerHive/ContainerHive/commit/8676c4b96dacfb24af2bd34807784932ee12cb32))
+* **cli:** describe --platform as selecting within configured platforms ([4d9e521](https://github.com/ContainerHive/ContainerHive/commit/4d9e52157e5593f76bd49354f11110cb4079cb8d))
+* **cli:** reject --platform values no level configures ([7c3c34f](https://github.com/ContainerHive/ContainerHive/commit/7c3c34f07a3520db49cab98bac346a46171dd456))
+* **platform:** drop duplicate platforms when resolving ([9085cc0](https://github.com/ContainerHive/ContainerHive/commit/9085cc0b911fa65a3d3c3b4fcc3a154294fad03f))
+* **platform:** log tags skipped by --platform and warn on empty test runs ([2f4e362](https://github.com/ContainerHive/ContainerHive/commit/2f4e362221403d9f8d600783b2feb2af6bd59fa0))
+* **platform:** make --platform select within configured platforms ([7979e07](https://github.com/ContainerHive/ContainerHive/commit/7979e0781f2a61731ed3030fdc0253fd4c65d939)), closes [#339](https://github.com/ContainerHive/ContainerHive/issues/339)
+* **sbom:** skip instead of failing when no tag supports --platform ([e09a6f9](https://github.com/ContainerHive/ContainerHive/commit/e09a6f9ee5dfa0c1cda431528dc247a2eee03400))
+* **test:** warn about an empty run only when --platform caused it ([648c71a](https://github.com/ContainerHive/ContainerHive/commit/648c71a11ba0f875af3d82713dc33dcdf0a51deb))
+
 ## [1.23.0](https://github.com/ContainerHive/ContainerHive/compare/v1.22.0...v1.23.0) (2026-10-26)
 
 ### Features
