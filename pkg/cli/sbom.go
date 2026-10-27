@@ -62,6 +62,9 @@ func sbomCmd() *cli.Command {
 			}
 
 			cliPlatforms := cmd.StringSlice("platform")
+			if err := validatePlatforms(project, cliPlatforms); err != nil {
+				return err
+			}
 
 			owns := shard.NewTagSharder(project, s)
 			if s.Enabled() {

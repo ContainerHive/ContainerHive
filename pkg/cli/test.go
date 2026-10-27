@@ -47,6 +47,10 @@ func testCmd() *cli.Command {
 				return err
 			}
 
+			if err := validatePlatforms(project, cmd.StringSlice("platform")); err != nil {
+				return err
+			}
+
 			if cmd.Bool("build") {
 				if err := buildProject(ctx, project, distPath, filters, cmd.String("build-id"), cmd.StringSlice("platform"), false, s); err != nil {
 					return err
