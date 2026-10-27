@@ -28,7 +28,8 @@ version="$1"
 released="$(date -u +%F)"
 feed_owner=ContainerHive
 feed_repo=0install
-feed_base="https://containerhive.github.io/${feed_repo}"
+feed_domain=0install.container-hive.eu
+feed_base="https://${feed_domain}"
 feed_url="${feed_base}/containerhive.xml"
 feed_repo_url="https://x-access-token:${GITHUB_TOKEN}@github.com/${feed_owner}/${feed_repo}.git"
 
@@ -83,6 +84,10 @@ fi
 
 # Keep the old local versions findable: 0install resolves a version check
 # against the master feed only, so per-version side feeds are not required.
+
+# Serve the feed branch from the custom domain. GitHub Pages redirects the
+# containerhive.github.io URL to it.
+echo "$feed_domain" > "$work/feedpages/CNAME"
 
 # Publish the icon next to the feed. The icon shows up in 0install launchers.
 cp docs/images/logo.png "$work/feedpages/containerhive.png"
