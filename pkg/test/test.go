@@ -88,6 +88,11 @@ func RunProjectTests(ctx context.Context, opts *Opts) (tested, failed int, err e
 // runTestsForTag runs container structure tests for a single tag directory
 // across all given platforms. Returns the number of images tested and failed.
 func runTestsForTag(ctx context.Context, opts *Opts, imageName, tagName string, platforms []string) (tested, failed int, _ error) {
+	if len(platforms) == 0 && len(opts.Platforms) > 0 {
+		slog.Info("Skipping, platform not supported", "image", imageName, "tag", tagName, "platform", opts.Platforms)
+		return 0, 0, nil
+	}
+
 	tagDir := filepath.Join(opts.DistPath, imageName, tagName)
 	testDefs := cst.CollectTestDefinitions(tagDir)
 	if len(testDefs) == 0 {

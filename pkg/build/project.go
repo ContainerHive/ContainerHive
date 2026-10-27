@@ -132,6 +132,17 @@ func matchesFilters(filters []Filter, imageName, tagName string) bool {
 	return false
 }
 
+// platformsFor resolves the platforms to build for one tag. When --platform
+// selects none of the tag's configured platforms, the skip is logged so an
+// empty build is visible.
+func (o *ProjectBuildOpts) platformsFor(imageDef *model.Image, tagName string, variantPlatforms []string) []string {
+	platforms := platform.Resolve(o.CLIPlatforms, o.Project.Config.Platforms, imageDef.Platforms, variantPlatforms)
+	if len(platforms) == 0 && len(o.CLIPlatforms) > 0 {
+		slog.Info("Skipping, platform not supported", "image", imageDef.Name, "tag", tagName, "platform", o.CLIPlatforms)
+	}
+	return platforms
+}
+
 // buildPlatforms builds every platform for a single image tag. A failing
 // platform does not stop the remaining ones, so a single broken or unsupported
 // platform cannot silently skip the others. All failures are joined.
@@ -187,7 +198,7 @@ func buildWithDeps(ctx context.Context, client *Client, opts *ProjectBuildOpts) 
 				buildBase := matchesFilters(opts.Filters, imgName, tagName) && opts.ownsBase(imageDef.Identifier, tagName)
 
 				if buildBase {
-					platforms := platform.Resolve(opts.CLIPlatforms, opts.Project.Config.Platforms, imageDef.Platforms, nil)
+					platforms := opts.platformsFor(imageDef, tagName, nil)
 					if err := buildPlatforms(platforms, func(platformStr string) error {
 						return buildTag(ctx, client, opts, imageDef, tagName, platformStr)
 					}); err != nil {
@@ -205,7 +216,7 @@ func buildWithDeps(ctx context.Context, client *Client, opts *ProjectBuildOpts) 
 						continue
 					}
 
-					platforms := platform.Resolve(opts.CLIPlatforms, opts.Project.Config.Platforms, imageDef.Platforms, variantDef.Platforms)
+					platforms := opts.platformsFor(imageDef, variantTagName, variantDef.Platforms)
 					if err := buildPlatforms(platforms, func(platformStr string) error {
 						return buildVariant(ctx, client, opts, imageDef, tagName, variantName, variantDef, platformStr)
 					}); err != nil {
@@ -223,7 +234,7 @@ func buildWithoutDeps(ctx context.Context, client *Client, opts *ProjectBuildOpt
 		for _, imageDef := range images {
 			for tagName := range imageDef.Tags {
 				if matchesFilters(opts.Filters, imageDef.Name, tagName) && opts.ownsBase(imageDef.Identifier, tagName) {
-					platforms := platform.Resolve(opts.CLIPlatforms, opts.Project.Config.Platforms, imageDef.Platforms, nil)
+					platforms := opts.platformsFor(imageDef, tagName, nil)
 					if err := buildPlatforms(platforms, func(platformStr string) error {
 						return buildTag(ctx, client, opts, imageDef, tagName, platformStr)
 					}); err != nil {
@@ -239,7 +250,7 @@ func buildWithoutDeps(ctx context.Context, client *Client, opts *ProjectBuildOpt
 					if !opts.ownsVariant(imageDef.Identifier, variantTag) {
 						continue
 					}
-					platforms := platform.Resolve(opts.CLIPlatforms, opts.Project.Config.Platforms, imageDef.Platforms, variantDef.Platforms)
+					platforms := opts.platformsFor(imageDef, variantTag, variantDef.Platforms)
 					if err := buildPlatforms(platforms, func(platformStr string) error {
 						return buildVariant(ctx, client, opts, imageDef, tagName, variantName, variantDef, platformStr)
 					}); err != nil {
