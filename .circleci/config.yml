@@ -255,7 +255,7 @@ jobs:
       - run:
           name: Set up CNAME
           command: |
-            echo "container-hive.timo-reymann.de" > gh-pages/CNAME
+            echo "container-hive.eu" > gh-pages/CNAME
       - github-utils/publish_github_pages:
           folder: gh-pages/
           git_commit_author_email: "no-reply@timo-reymann.de"
