@@ -28,7 +28,7 @@ Go CLI tool for managing container image builds with dependency resolution.
 - Verify before pushing: `properdocs build --strict` (catches broken links and nav problems)
 - Navigation managed via `docs/.nav.yml` (awesome-nav plugin). Pages are listed explicitly, so add every new page there.
 - ADRs managed via mkdocs-decision-records plugin
-- Hosted at [container-hive.timo-reymann.de](https://container-hive.timo-reymann.de/)
+- Hosted at [container-hive.eu](https://container-hive.eu/)
 - JSON schemas in `schemas/`, published to the docs site
 
 ### Keep docs in sync with the code
