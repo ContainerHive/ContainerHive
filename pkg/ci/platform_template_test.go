@@ -95,12 +95,12 @@ func TestGithubTemplate_DindService(t *testing.T) {
 	}{
 		{
 			name: "default is the rootless helper image",
-			want: "--network ch-net " + DefaultDindImage + " dockerd --host=tcp://0.0.0.0:2375",
+			want: "--network ch-net -e DOCKER_TLS_CERTDIR=\"\" " + DefaultDindImage + " dockerd --host=tcp://0.0.0.0:2375",
 		},
 		{
 			name:    "ci_dind_image overrides the image",
 			options: map[string]string{"ci_dind_image": "docker:dind"},
-			want:    "--network ch-net docker:dind dockerd --host=tcp://0.0.0.0:2375",
+			want:    "--network ch-net -e DOCKER_TLS_CERTDIR=\"\" docker:dind dockerd --host=tcp://0.0.0.0:2375",
 		},
 	}
 
