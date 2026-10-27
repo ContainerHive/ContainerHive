@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"sort"
 	"strconv"
+	"strings"
 
 	"github.com/ContainerHive/ContainerHive/internal/actions"
 	"github.com/ContainerHive/ContainerHive/internal/buildkit"
@@ -359,18 +360,19 @@ func calculateDepths(imageNames map[string]bool, dependencies map[string][]strin
 // and its variants (variant-level, falling back to the base tag platforms)
 // resolve to, in order of first appearance. This way a platform only a
 // variant supports still gets a job.
-// Platform prefixes like "linux/" are stripped for CI use (e.g. "linux/amd64" -> "amd64").
+// The "linux/" prefix is stripped for CI use when only an arch remains
+// (e.g. "linux/amd64" -> "amd64"); multi-component or non-linux platforms
+// such as "linux/arm/v7" or "windows/amd64" keep their full value.
 func resolvePlatforms(images []*model.Image, projectPlatforms []string) []string {
 	seen := make(map[string]bool)
 	var result []string
 	add := func(platforms []string) {
 		for _, p := range platforms {
-			// Strip os prefix (e.g. "linux/amd64" -> "amd64")
-			for i := len(p) - 1; i >= 0; i-- {
-				if p[i] == '/' {
-					p = p[i+1:]
-					break
-				}
+			// Strip the default os prefix only when a bare arch remains
+			// (e.g. "linux/amd64" -> "amd64"), so platform.Normalize maps the
+			// value back. Others like "linux/arm/v7" are kept as is.
+			if arch, ok := strings.CutPrefix(p, "linux/"); ok && !strings.Contains(arch, "/") {
+				p = arch
 			}
 			if seen[p] {
 				continue
