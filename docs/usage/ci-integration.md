@@ -102,7 +102,7 @@ Each image in `Images` provides:
 | `Aliases`      | map    | Alias name to the exact tag it points at: semantic version series aliases (`1.2.3` → `1.2`, `1`) and `latest_alias`, including variant-suffixed ones. Same resolution as the registry retagging step |
 | `Dependencies` | list   | Names of images this image depends on                          |
 | `Depth`        | int    | Dependency depth (0 = no dependencies)                         |
-| `Platforms`    | list   | Target platforms                                               |
+| `Platforms`    | list   | Target platforms: union of the base tag and variant platforms  |
 | `ReadmePath`   | string | Path to the image's `README.md`, empty if it has none. Load the content with `read_file` |
 | `ShardUnits`   | int    | Number of shard units (base + variant tags) — the useful max   |
 | `BuildShards`  | int    | Effective parallel for build jobs (min(ci_build_shards, ShardUnits)) |
@@ -296,7 +296,9 @@ actual value is capped per image to the number of shard units (base + variant ta
 tags than the configured value never spawn empty jobs that no-op. See [Split work across shards](sharding.md) for the
 full picture; the template option is set the same way as `ci_lint` above:
 
-Generated test jobs are split by platform and run on matching architecture runners. In GitLab, each job extends a shared
+Generated build and test jobs are split by platform and pass `--platform` to `ch`, which skips tags and variants that do
+not support that platform (see [Selecting platforms](multi-platform.md#selecting-platforms-with-platform)).
+Generated test jobs run on matching architecture runners. In GitLab, each job extends a shared
 `.test-amd64` or `.test-arm64` base, which can be extended in your root `.gitlab-ci.yml` to add runner tags:
 
 ```yaml
