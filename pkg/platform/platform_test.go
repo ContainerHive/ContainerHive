@@ -49,6 +49,32 @@ func TestSanitize(t *testing.T) {
 	}
 }
 
+func TestShort(t *testing.T) {
+	tests := []struct {
+		input string
+		want  string
+	}{
+		{"linux/amd64", "amd64"},
+		{"linux/arm64", "arm64"},
+		{"amd64", "amd64"},
+		{"linux/arm/v7", "linux/arm/v7"},
+		{"linux/arm64/v8", "linux/arm64/v8"},
+		{"windows/amd64", "windows/amd64"},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.input, func(t *testing.T) {
+			got := Short(tt.input)
+			if got != tt.want {
+				t.Errorf("Short(%q) = %q, want %q", tt.input, got, tt.want)
+			}
+			if Normalize(got) != Normalize(tt.input) {
+				t.Errorf("Normalize(Short(%q)) = %q, want %q", tt.input, Normalize(got), Normalize(tt.input))
+			}
+		})
+	}
+}
+
 func TestResolve(t *testing.T) {
 	t.Run("override selects within variant platforms", func(t *testing.T) {
 		got := Resolve(

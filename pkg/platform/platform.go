@@ -15,6 +15,19 @@ func Normalize(p string) string {
 	return p
 }
 
+// Short returns the shortest form of a platform that Normalize maps back to
+// the same value: the default "linux/" prefix is dropped when only an
+// architecture remains (e.g. "linux/amd64" -> "amd64"). Multi-component or
+// non-linux platforms such as "linux/arm/v7" or "windows/amd64" are returned
+// unchanged.
+func Short(p string) string {
+	arch, ok := strings.CutPrefix(p, "linux/")
+	if !ok || strings.Contains(arch, "/") {
+		return p
+	}
+	return arch
+}
+
 // Sanitize converts a platform string like "linux/amd64" to "linux-amd64".
 func Sanitize(p string) string {
 	return strings.ReplaceAll(p, "/", "-")
