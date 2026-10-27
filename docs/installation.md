@@ -54,4 +54,5 @@ the [latest release page](https://github.com/ContainerHive/ContainerHive/release
 
 ### Docker
 
-For the Docker image, check [Docker Hub](https://hub.docker.com/r/containerhive/containerhive).
+The Docker image is published to [Docker Hub](https://hub.docker.com/r/containerhive/containerhive) and mirrored to
+`ghcr.io/containerhive/containerhive` and `registry.gitlab.com/containerhive/containerhive`.

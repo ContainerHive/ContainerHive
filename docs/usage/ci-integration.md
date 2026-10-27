@@ -40,7 +40,7 @@ ch template ci --provider github --output .github/workflows/build.yml
 | `--template-dir` | Custom template directory to override built-in templates     |
 | `--artifacts`    | Upload/download build artifacts between jobs                 |
 | `--version`      | ContainerHive CLI version to use (default: current version)  |
-| `--image-name`   | Container image name for the CLI (default: `ghcr.io/containerhive/containerhive` for `github`, `containerhive/containerhive` for `gitlab`) |
+| `--image-name`   | Container image name for the CLI (default: `ghcr.io/containerhive/containerhive` for `github`, `registry.gitlab.com/containerhive/containerhive` for `gitlab`) |
 
 ### Example with custom image
 
