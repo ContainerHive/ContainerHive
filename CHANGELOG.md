@@ -1,3 +1,16 @@
+## [1.24.0](https://github.com/ContainerHive/ContainerHive/compare/v1.23.2...v1.24.0) (2026-10-27)
+
+### Features
+
+* **ci:** default GitLab dind service to the rootless helper image ([cb15687](https://github.com/ContainerHive/ContainerHive/commit/cb15687bc5835d4486b0965dbd5b95fd62cb3102))
+* **ci:** run GitHub Actions dind service from the rootless helper image ([ca4e07a](https://github.com/ContainerHive/ContainerHive/commit/ca4e07a5fc761be39527f81487cf00ce2997a69d))
+* **ci:** use the ghcr.io ContainerHive image for GitHub Actions ([3508129](https://github.com/ContainerHive/ContainerHive/commit/35081295ce7d80c013617bfee973f529766fb0c5))
+* **ci:** use the GitLab registry ContainerHive image for GitLab CI ([8785e53](https://github.com/ContainerHive/ContainerHive/commit/8785e531b37a6d48e1e98555d3fb4b4319e12fae))
+
+### Bug Fixes
+
+* **ci:** clear DOCKER_TLS_CERTDIR for the GitHub dind container ([a5f2279](https://github.com/ContainerHive/ContainerHive/commit/a5f2279bafed47cec49690349413667d2194d1f8))
+
 ## [1.23.2](https://github.com/ContainerHive/ContainerHive/compare/v1.23.1...v1.23.2) (2026-10-27)
 
 ### Bug Fixes
