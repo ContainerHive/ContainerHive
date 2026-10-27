@@ -176,6 +176,16 @@ jobs:
                 --tag "ghcr.io/containerhive/containerhive:$tag" \
                 "docker.io/containerhive/containerhive:$tag"
             done
+      - run:
+          name: Mirror images to GitLab registry
+          command: |
+            echo "$GITLAB_TOKEN" | docker login registry.gitlab.com -u "$GITLAB_USER" --password-stdin
+            VERSION="$(git describe --tags --always)"
+            for tag in "$VERSION" latest; do
+              docker buildx imagetools create \
+                --tag "registry.gitlab.com/containerhive/containerhive:$tag" \
+                "docker.io/containerhive/containerhive:$tag"
+            done
       - docker/update-description:
           image: containerhive/containerhive
           docker-username: DOCKER_USERNAME
