@@ -24,7 +24,8 @@ func Sanitize(p string) string {
 // specific non-empty level: variant > image > global. override represents an
 // explicit CLI --platform flag and, when set, selects within the configured
 // list: platforms the variant/image/project does not support are dropped, so
-// the result may be empty. The configured order is preserved.
+// the result may be empty. The configured order is preserved and duplicates
+// (e.g. "amd64" and "linux/amd64") are dropped.
 // All returned platform strings are normalized to canonical os/arch form.
 func Resolve(override, global, image, variant []string) []string {
 	var configured []string
@@ -36,9 +37,15 @@ func Resolve(override, global, image, variant []string) []string {
 		configured = global
 	}
 
-	normalized := make([]string, len(configured))
-	for i, p := range configured {
-		normalized[i] = Normalize(p)
+	normalized := make([]string, 0, len(configured))
+	seen := make(map[string]bool, len(configured))
+	for _, p := range configured {
+		p = Normalize(p)
+		if seen[p] {
+			continue
+		}
+		seen[p] = true
+		normalized = append(normalized, p)
 	}
 	if len(override) == 0 {
 		return normalized
