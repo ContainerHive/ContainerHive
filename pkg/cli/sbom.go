@@ -26,7 +26,7 @@ func sbomCmd() *cli.Command {
 		Flags: append(shardFlags(),
 			&cli.StringSliceFlag{
 				Name:  "platform",
-				Usage: "Target platform(s) to generate SBOMs for (e.g. linux/amd64), overrides hive.yml",
+				Usage: "Target platform(s) to generate SBOMs for (e.g. linux/amd64), selects within the configured platforms",
 			},
 			&cli.IntFlag{
 				Name:  "workers",
