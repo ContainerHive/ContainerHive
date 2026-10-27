@@ -96,9 +96,6 @@ See the [installation guide](https://container-hive.eu/installation.html), then 
 Documentation is available at [container-hive.eu](https://container-hive.eu/), hosted on
 GitHub Pages.
 
-> **Note:** The project is moving to its own domain, [container-hive.eu](https://container-hive.eu/) (work in progress).
-> Documentation links will move there when it is ready.
-
 ## Maintainers wanted
 
 ContainerHive currently has a single maintainer ([Timo Reymann](https://github.com/timo-reymann)). To keep development
