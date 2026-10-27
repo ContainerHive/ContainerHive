@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/ContainerHive/ContainerHive/pkg/model"
+	"github.com/ContainerHive/ContainerHive/pkg/platform"
 )
 
 func TestBuildCIContext_NoDeps(t *testing.T) {
@@ -148,6 +149,20 @@ func TestResolvePlatforms(t *testing.T) {
 		result := resolvePlatforms([]*model.Image{img}, nil)
 		if !reflect.DeepEqual(result, []string{"amd64"}) {
 			t.Errorf("expected [amd64], got %v", result)
+		}
+	})
+
+	t.Run("keeps full value when more than an arch remains", func(t *testing.T) {
+		img := &model.Image{Platforms: []string{"linux/amd64", "linux/arm/v7", "windows/amd64"}}
+		result := resolvePlatforms([]*model.Image{img}, nil)
+		want := []string{"amd64", "linux/arm/v7", "windows/amd64"}
+		if !reflect.DeepEqual(result, want) {
+			t.Errorf("expected %v, got %v", want, result)
+		}
+		for i, p := range result {
+			if got := platform.Normalize(p); got != img.Platforms[i] {
+				t.Errorf("Normalize(%q) = %q, want %q", p, got, img.Platforms[i])
+			}
 		}
 	})
 
