@@ -102,7 +102,7 @@ Each image in `Images` provides:
 | `Aliases`      | map    | Alias name to the exact tag it points at: semantic version series aliases (`1.2.3` → `1.2`, `1`) and `latest_alias`, including variant-suffixed ones. Same resolution as the registry retagging step |
 | `Dependencies` | list   | Names of images this image depends on                          |
 | `Depth`        | int    | Dependency depth (0 = no dependencies)                         |
-| `Platforms`    | list   | Target platforms: union of the base tag and variant platforms  |
+| `Platforms`    | list   | Target platforms: union of the base tag and variant platforms. Plain linux platforms are shortened to the architecture (`amd64`), others keep their full value (`linux/arm/v7`); use `platform_id` for identifiers |
 | `ReadmePath`   | string | Path to the image's `README.md`, empty if it has none. Load the content with `read_file` |
 | `ShardUnits`   | int    | Number of shard units (base + variant tags) — the useful max   |
 | `BuildShards`  | int    | Effective parallel for build jobs (min(ci_build_shards, ShardUnits)) |
@@ -146,6 +146,9 @@ Templates have access to [Sprig](http://masterminds.github.io/sprig/) functions 
 |:--------------------------|:----------------------------------------------------------------------------------------|
 | `resolve_base(name, tag)` | Produces an internal image reference (`__hive__/name:tag`) for inter-image dependencies |
 | `option(key)`             | Returns the value of a template option from `hive.yml`, or empty string if not set      |
+| `platform_id(platform)`   | Turns a platform into a value safe for job IDs and artifact names: `amd64` stays `amd64`, `linux/arm/v7` becomes `linux-arm-v7` |
+| `platform_dir(platform)`  | Returns the `dist/` directory name of a platform, e.g. `linux-amd64` for `amd64` |
+| `platform_arch(platform)` | Returns the architecture of a platform, e.g. `arm64` for `linux/arm64/v8` |
 | `read_file(path)`         | Returns the content of a file, or an empty string for an empty path — e.g. `{{ .Image.ReadmePath \| read_file }}`. Fails if the file does not exist |
 
 ### Example custom template
@@ -299,7 +302,9 @@ full picture; the template option is set the same way as `ci_lint` above:
 Generated build and test jobs are split by platform and pass `--platform` to `ch`, which skips tags and variants that do
 not support that platform (see [Selecting platforms](multi-platform.md#selecting-platforms-with-platform)).
 Generated test jobs run on matching architecture runners. In GitLab, each job extends a shared
-`.test-amd64` or `.test-arm64` base, which can be extended in your root `.gitlab-ci.yml` to add runner tags:
+`.test-<platform>` (and `.build-<platform>`) base, which can be extended in your root `.gitlab-ci.yml` to add runner
+tags. `<platform>` is the platform with `linux/` dropped for plain architectures and `/` replaced by `-` otherwise:
+`amd64`, `arm64`, `linux-arm-v7`, `windows-amd64`. Job IDs and artifact names use the same form.
 
 ```yaml
 .test-arm64:
