@@ -84,6 +84,9 @@ func testCmd() *cli.Command {
 				return err
 			}
 
+			if tested == 0 {
+				slog.Warn("No images were tested, check filters, shard and --platform")
+			}
 			slog.Info("Test results", "tested", tested, "failed", failed)
 			if failed > 0 {
 				return fmt.Errorf("%d test(s) failed", failed)
