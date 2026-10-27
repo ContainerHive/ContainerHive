@@ -50,6 +50,14 @@
       "datasourceTemplate": "docker"
     },
     {
+      "description": "Docker-in-Docker service image used by the generated GitLab test jobs",
+      "fileMatch": ["pkg/ci/context\\.go$"],
+      "matchStrings": [
+        "DefaultDindImage\\s*=\\s*\"(?<depName>[^:\"]+):(?<currentValue>[^\"]+)\""
+      ],
+      "datasourceTemplate": "docker"
+    },
+    {
       "description": "Builder image used by the chisel build backend",
       "fileMatch": ["internal/buildkit/build_context/chisel\\.go$"],
       "matchStrings": [

@@ -101,12 +101,18 @@ func (c *CIConfigContext) RegistryHost() string {
 	return addr
 }
 
+// DefaultDindImage is the Docker-in-Docker service image used by the generated
+// GitLab test jobs. The ContainerHive helper image runs rootless, so it works
+// in unprivileged Kubernetes pods (no privileged security context needed).
+const DefaultDindImage = "ghcr.io/containerhive/helper-images/dind-rootless:29.9"
+
 // defaultTemplateOptions returns the built-in template option defaults.
 func defaultTemplateOptions() map[string]string {
 	return map[string]string{
 		"ci_buildkit_image":                     buildkit.DefaultImage,
 		"ci_buildkit_version":                   buildkit.Version,
 		"ci_cancel_outdated":                    "true",
+		"ci_dind_image":                         DefaultDindImage,
 		"ci_lint":                               "true",
 		"ci_report":                             "true",
 		"ci_sbom_generate_cpes":                 "true",
