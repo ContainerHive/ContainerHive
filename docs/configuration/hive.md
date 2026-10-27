@@ -158,7 +158,7 @@ All values must be strings. Keys prefixed with `ci_` have built-in defaults:
 |:-----------------------------------|:------------------------------|:---------------------------------------------------------------------------|
 | `ci_buildkit_image`                | `moby/buildkit`               | BuildKit container image                                                   |
 | `ci_buildkit_version`              | *(matches go.mod dependency)* | BuildKit image tag                                                         |
-| `ci_dind_image`                    | `ghcr.io/containerhive/helper-images/dind-rootless:29.9` | Docker-in-Docker service image for the GitLab test jobs. The default runs rootless, so it works in unprivileged Kubernetes pods. Set `docker:dind` to restore the previous privileged image |
+| `ci_dind_image`                    | `ghcr.io/containerhive/helper-images/dind-rootless:29.9` | Docker-in-Docker image for the test jobs (GitLab and GitHub Actions). The default runs rootless, so it works in unprivileged Kubernetes pods. Set `docker:dind` to restore the previous privileged image |
 | `ci_lint`                          | `true`                        | Run hadolint linting in CI pipeline before builds                         |
 | `ci_build_shards`                  | `1`                           | Upper bound on parallel build instances per image (capped to shard unit count) |
 | `ci_test_shards`                   | `1`                           | Upper bound on parallel test instances per image (capped to shard unit count)  |

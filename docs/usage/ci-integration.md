@@ -294,7 +294,7 @@ template_options:
 
 ## Docker-in-Docker for test jobs
 
-[`ch test`](cli.md#test) needs a Docker daemon. The generated GitLab test jobs start it as a `dind` service using the
+[`ch test`](cli.md#test) needs a Docker daemon. The generated test jobs start it as a `dind` service using the
 rootless [`dind-rootless`](https://github.com/ContainerHive/helper-images/blob/main/images/dind-rootless/README.md)
 helper image, so the service runs without a privileged security context. This is what makes the pipeline work on
 Kubernetes runners that forbid privileged pods.
@@ -307,7 +307,7 @@ template_options:
   ci_dind_image: docker:dind
 ```
 
-The generated GitHub Actions workflow is not affected: it starts `docker:dind` with `--privileged` on the runner VM.
+The generated GitHub Actions workflow starts the same image as a container on the runner VM, with `--privileged`.
 
 ## Sharding build and test jobs
 
