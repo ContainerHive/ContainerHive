@@ -300,7 +300,7 @@ helper image, so the service runs without a privileged security context. This is
 Kubernetes runners that forbid privileged pods.
 
 On the Kubernetes executor the rootless daemon needs a user mapping that fits the pod (`hostUsers: false`), which is a
-cluster-side setting. Switch back to the privileged image, or to your own mirror, with `ci_dind_image`:
+cluster-side setting. Use the privileged `docker:dind` image, or your own mirror, with `ci_dind_image`:
 
 ```yaml
 template_options:
