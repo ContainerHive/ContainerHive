@@ -31,7 +31,7 @@ type Opts struct {
 	Registry  Registry // if set, use registry refs when no local tar exists
 	BuildID   string
 	Shard     shard.Shard
-	Platforms []string // when set, overrides configured project/image platforms
+	Platforms []string // when set, selects within the configured project/image/variant platforms
 }
 
 // RunProjectTests executes container structure tests for all images in a project

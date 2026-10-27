@@ -50,15 +50,63 @@ func TestSanitize(t *testing.T) {
 }
 
 func TestResolve(t *testing.T) {
-	t.Run("override wins over everything", func(t *testing.T) {
+	t.Run("override selects within variant platforms", func(t *testing.T) {
+		got := Resolve(
+			[]string{"linux/arm64"},
+			[]string{"linux/amd64", "linux/arm64"},
+			[]string{"linux/amd64", "linux/arm64"},
+			[]string{"linux/amd64", "linux/arm64"},
+		)
+		if len(got) != 1 || got[0] != "linux/arm64" {
+			t.Errorf("expected [linux/arm64], got %v", got)
+		}
+	})
+
+	t.Run("override not supported by variant yields empty", func(t *testing.T) {
+		got := Resolve(
+			[]string{"linux/arm64"},
+			[]string{"linux/amd64", "linux/arm64"},
+			nil,
+			[]string{"linux/amd64"},
+		)
+		if len(got) != 0 {
+			t.Errorf("expected empty slice, got %v", got)
+		}
+	})
+
+	t.Run("override not supported by image yields empty", func(t *testing.T) {
+		got := Resolve(
+			[]string{"linux/arm64"},
+			[]string{"linux/amd64", "linux/arm64"},
+			[]string{"linux/amd64"},
+			nil,
+		)
+		if len(got) != 0 {
+			t.Errorf("expected empty slice, got %v", got)
+		}
+	})
+
+	t.Run("override not configured anywhere yields empty", func(t *testing.T) {
 		got := Resolve(
 			[]string{"linux/riscv64"},
 			[]string{"linux/amd64"},
-			[]string{"linux/arm64"},
-			[]string{"linux/amd64", "linux/arm64"},
+			nil,
+			nil,
 		)
-		if len(got) != 1 || got[0] != "linux/riscv64" {
-			t.Errorf("expected override platforms, got %v", got)
+		if len(got) != 0 {
+			t.Errorf("expected empty slice, got %v", got)
+		}
+	})
+
+	t.Run("override keeps configured order and normalizes", func(t *testing.T) {
+		got := Resolve(
+			[]string{"arm64", "amd64"},
+			[]string{"amd64", "linux/arm64", "linux/riscv64"},
+			nil,
+			nil,
+		)
+		if len(got) != 2 || got[0] != "linux/amd64" || got[1] != "linux/arm64" {
+			t.Errorf("expected [linux/amd64 linux/arm64], got %v", got)
 		}
 	})
 
