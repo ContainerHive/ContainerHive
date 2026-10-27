@@ -60,6 +60,11 @@ type ProjectBuildOpts struct {
 	// only once per run rather than once per tag.
 	baseOwns    func(identifier, baseTagName string) bool
 	variantOwns func(identifier, tagName string) bool
+
+	// platformMatched/platformSkipped count the tags platformsFor selected
+	// or skipped, so BuildProject can warn when --platform selects nothing.
+	platformMatched int
+	platformSkipped int
 }
 
 func (o *ProjectBuildOpts) pushTag(tagName, platformStr string) string {
@@ -137,10 +142,24 @@ func matchesFilters(filters []Filter, imageName, tagName string) bool {
 // empty build is visible.
 func (o *ProjectBuildOpts) platformsFor(imageDef *model.Image, tagName string, variantPlatforms []string) []string {
 	platforms := platform.Resolve(o.CLIPlatforms, o.Project.Config.Platforms, imageDef.Platforms, variantPlatforms)
-	if len(platforms) == 0 && len(o.CLIPlatforms) > 0 {
+	if len(platforms) > 0 {
+		o.platformMatched++
+		return platforms
+	}
+	if len(o.CLIPlatforms) > 0 {
+		o.platformSkipped++
 		slog.Info("Skipping, platform not supported", "image", imageDef.Name, "tag", tagName, "platform", o.CLIPlatforms)
 	}
 	return platforms
+}
+
+// warnIfNothingSelected warns when every tag selected by the filters (and
+// shard) was skipped by --platform, so an empty build does not pass silently.
+func (o *ProjectBuildOpts) warnIfNothingSelected() {
+	if o.platformMatched > 0 || o.platformSkipped == 0 {
+		return
+	}
+	slog.Warn("No selected tag supports the requested platform(s), nothing was built", "platform", o.CLIPlatforms)
 }
 
 // buildPlatforms builds every platform for a single image tag. A failing
@@ -179,10 +198,15 @@ func BuildProject(ctx context.Context, client *Client, opts *ProjectBuildOpts) e
 	opts.baseOwns = shard.NewBaseTagSharder(opts.Project, opts.Shard)
 	opts.variantOwns = shard.NewTagSharder(opts.Project, opts.Shard)
 
+	build := buildWithoutDeps
 	if opts.BuildOrder.HasDependencies() {
-		return buildWithDeps(ctx, client, opts)
+		build = buildWithDeps
 	}
-	return buildWithoutDeps(ctx, client, opts)
+	if err := build(ctx, client, opts); err != nil {
+		return err
+	}
+	opts.warnIfNothingSelected()
+	return nil
 }
 
 func buildWithDeps(ctx context.Context, client *Client, opts *ProjectBuildOpts) error {
