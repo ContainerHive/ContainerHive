@@ -292,6 +292,23 @@ template_options:
   ci_cancel_outdated: "false"
 ```
 
+## Docker-in-Docker for test jobs
+
+[`ch test`](cli.md#test) needs a Docker daemon. The generated GitLab test jobs start it as a `dind` service using the
+rootless [`dind-rootless`](https://github.com/ContainerHive/helper-images/blob/main/images/dind-rootless/README.md)
+helper image, so the service runs without a privileged security context. This is what makes the pipeline work on
+Kubernetes runners that forbid privileged pods.
+
+On the Kubernetes executor the rootless daemon needs a user mapping that fits the pod (`hostUsers: false`), which is a
+cluster-side setting. Switch back to the privileged image, or to your own mirror, with `ci_dind_image`:
+
+```yaml
+template_options:
+  ci_dind_image: docker:dind
+```
+
+The generated GitHub Actions workflow is not affected: it starts `docker:dind` with `--privileged` on the runner VM.
+
 ## Sharding build and test jobs
 
 For GitLab CI, `ci_build_shards` and `ci_test_shards` set an upper bound on `parallel: N` for each build/test job. The
