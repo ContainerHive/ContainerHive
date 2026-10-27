@@ -153,6 +153,30 @@ func TestResolve(t *testing.T) {
 		}
 	})
 
+	t.Run("drops duplicates across short and full forms", func(t *testing.T) {
+		got := Resolve(
+			nil,
+			[]string{"amd64", "linux/amd64", "arm64"},
+			nil,
+			nil,
+		)
+		if len(got) != 2 || got[0] != "linux/amd64" || got[1] != "linux/arm64" {
+			t.Errorf("expected [linux/amd64 linux/arm64], got %v", got)
+		}
+	})
+
+	t.Run("override does not duplicate mixed forms", func(t *testing.T) {
+		got := Resolve(
+			[]string{"amd64"},
+			[]string{"amd64", "linux/amd64"},
+			nil,
+			nil,
+		)
+		if len(got) != 1 || got[0] != "linux/amd64" {
+			t.Errorf("expected [linux/amd64], got %v", got)
+		}
+	})
+
 	t.Run("normalizes short platform names", func(t *testing.T) {
 		got := Resolve(
 			nil,
