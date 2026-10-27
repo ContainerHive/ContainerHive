@@ -41,5 +41,5 @@ Components:
 * A CircleCI `publish-0install-feed` job runs it on tags after the artifacts are attached to the release
 
 The feed lives in `ContainerHive/0install` and is served at
-`https://containerhive.github.io/0install/containerhive.xml`. Installation and updates need no bootstrapper; users
+`https://0install.container-hive.eu/containerhive.xml` through a GitHub Pages custom domain. Installation and updates need no bootstrapper; users
 install through `0install add ch <feed-url>` and trust the release key once.
