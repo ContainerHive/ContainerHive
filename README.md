@@ -85,7 +85,7 @@ The following platforms have prebuilt binaries:
 Use [0install](https://0install.net) for automatic updates or install the binaries directly:
 
 ```sh
-0install add ch https://0install.container-hive.timo-reymann.de/containerhive.xml
+0install add ch https://0install.container-hive.eu/containerhive.xml
 ```
 
 See the [installation guide](https://container-hive.timo-reymann.de/installation.html), then follow
