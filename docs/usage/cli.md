@@ -43,7 +43,7 @@ ch build [image:tag patterns...]
 | Flag | Description |
 |:-----|:------------|
 | `--registry` | Use registry from config (auto-enabled in CI) |
-| `--platform` | Target platform(s) to build (e.g. `linux/amd64`). Selects within the platforms configured in `hive.yml`/`image.yml`; tags and variants that support none of them are skipped |
+| `--platform` | Target platform(s) to build (e.g. `linux/amd64`). Selects within the platforms configured in `hive.yml`/`image.yml`; tags and variants that support none of them are skipped. A platform that nothing configures is an error |
 | `--max-shards` | Total number of shards to split work across — sourced from `CI_NODE_TOTAL` env (default: `1`) |
 | `--current-shard` | This shard's 1-based index — sourced from `CI_NODE_INDEX` env (default: `1`) |
 
