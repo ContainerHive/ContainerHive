@@ -14,7 +14,7 @@ import (
 )
 
 const (
-	baseURL            = "https://container-hive.timo-reymann.de"
+	baseURL            = "https://container-hive.eu"
 	searchIndexURL     = baseURL + "/search/search_index.json"
 	cacheTTL           = time.Hour
 	defaultSearchLimit = 10
