@@ -204,7 +204,7 @@ ch template ci --provider <provider> --output <path>
 | `--template-dir` | Custom template directory (overrides built-in templates) |
 | `--artifacts` | Upload/download build artifacts between jobs |
 | `--version` | CH CLI version to use in CI templates (default: current CLI version) |
-| `--image-name` | Container image name for the CH CLI (default: `containerhive/containerhive`) |
+| `--image-name` | Container image name for the CH CLI (default: `ghcr.io/containerhive/containerhive` for `--provider github`, `containerhive/containerhive` otherwise) |
 
 ### `template custom`
 
