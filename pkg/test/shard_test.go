@@ -7,6 +7,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/ContainerHive/ContainerHive/pkg/build"
 	"github.com/ContainerHive/ContainerHive/pkg/model"
 	"github.com/ContainerHive/ContainerHive/pkg/shard"
 )
@@ -135,5 +136,44 @@ func TestRunProjectTests_DisabledShardBehavesAsBefore(t *testing.T) {
 	}
 	if tested != 0 || failed != 0 {
 		t.Errorf("expected 0/0, got tested=%d failed=%d", tested, failed)
+	}
+}
+
+// TestRunProjectTests_WarnsOnlyWhenPlatformSelectsNothing ensures the empty
+// run warning points at --platform only when --platform caused it, not for
+// images without test definitions or runs without --platform.
+func TestRunProjectTests_WarnsOnlyWhenPlatformSelectsNothing(t *testing.T) {
+	tests := []struct {
+		name     string
+		platform []string
+		filters  []build.Filter
+		wantWarn bool
+	}{
+		{name: "platform skips every tag", platform: []string{"linux/arm64"}, wantWarn: true},
+		{name: "platform matches tags without tests", platform: []string{"linux/amd64"}, wantWarn: false},
+		{name: "no platform and no tests", wantWarn: false},
+		{name: "filters select nothing", platform: []string{"linux/arm64"}, filters: []build.Filter{{ImageName: "other"}}, wantWarn: false},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			buf := captureSlog(t)
+			tested, _, err := RunProjectTests(context.Background(), &Opts{
+				DistPath:  t.TempDir(),
+				Project:   twoImageProject(),
+				Filters:   tt.filters,
+				Platforms: tt.platform,
+			})
+			if err != nil {
+				t.Fatalf("unexpected error: %v", err)
+			}
+			if tested != 0 {
+				t.Errorf("tested = %d, want 0", tested)
+			}
+
+			gotWarn := strings.Contains(buf.String(), "nothing was tested")
+			if gotWarn != tt.wantWarn {
+				t.Errorf("warning logged = %v, want %v, log:\n%s", gotWarn, tt.wantWarn, buf.String())
+			}
+		})
 	}
 }
