@@ -148,6 +148,7 @@ func resolveParentImage(parentRef string, opts *ProjectBuildOpts, platformStr st
 		PlatformStr:     platformStr,
 		RegistryAddress: opts.registryAddress(),
 		BuildID:         opts.BuildID,
+		Project:         opts.Project,
 	})
 }
 
