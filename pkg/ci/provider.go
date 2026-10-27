@@ -22,6 +22,8 @@ type Provider struct {
 const (
 	// DockerHubImageName is the ContainerHive CLI image on Docker Hub.
 	DockerHubImageName = "containerhive/containerhive"
+	// GitLabImageName is the ContainerHive CLI image on the GitLab container registry.
+	GitLabImageName = "registry.gitlab.com/containerhive/containerhive"
 	// GHCRImageName is the ContainerHive CLI image on the GitHub Container Registry.
 	GHCRImageName = "ghcr.io/containerhive/containerhive"
 )
