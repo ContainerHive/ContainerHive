@@ -50,7 +50,7 @@ graph LR
   n1 --> n2
 ```
 
-A reference such as `FROM __hive__/base:1.0-slim`, or a `parent` of that value, points at the variant of `base` whose `tag_suffix` the tag ends with. When several suffixes match, the longest wins. A tag without a matching suffix points at the base image. `depends_on` is set per image, so it applies to the image and to each of its variants.
+A reference such as `FROM __hive__/base:1.0-slim`, or a `parent` of that value, points at the variant of `base` whose `tag_suffix` the tag ends with. When several suffixes match, the longest wins. A tag without a matching suffix points at the base image. `depends_on` is set per image, so it applies to the image and to each of its variants. A variant that builds `FROM __hive_parent__` (or sets that as its Nix or Chisel `parent`) points at its own base image.
 
 ## Inter-image dependencies
 
