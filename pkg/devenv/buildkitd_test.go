@@ -15,7 +15,7 @@ func TestResolveImage(t *testing.T) {
 		{
 			name: "defaults when opts is nil",
 			opts: nil,
-			want: buildkit.DefaultImage + ":" + buildkit.Version,
+			want: buildkit.DefaultImage + ":" + buildkit.DefaultTag,
 		},
 		{
 			name: "custom image from template opts",

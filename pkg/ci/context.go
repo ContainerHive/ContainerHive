@@ -101,18 +101,24 @@ func (c *CIConfigContext) RegistryHost() string {
 	return addr
 }
 
-// DefaultDindImage is the Docker-in-Docker service image used by the generated
-// GitLab test jobs. The ContainerHive helper image runs rootless, so it works
-// in unprivileged Kubernetes pods (no privileged security context needed).
-const DefaultDindImage = "ghcr.io/containerhive/helper-images/dind-rootless:29.9"
+const (
+	// GitLabDefaultDindImage is the Docker-in-Docker service image used by the
+	// generated GitLab test jobs. The ContainerHive helper image runs rootless,
+	// so it works in unprivileged Kubernetes pods (no privileged security
+	// context needed).
+	GitLabDefaultDindImage = "ghcr.io/containerhive/helper-images/dind-rootless:29.9"
+	// GitHubDefaultDindImage is the Docker-in-Docker image used by the generated
+	// GitHub Actions test jobs. GitHub-hosted runners allow privileged
+	// containers but not the user namespaces the rootless daemon needs.
+	GitHubDefaultDindImage = "ghcr.io/containerhive/helper-images/dind:29.9"
+)
 
 // defaultTemplateOptions returns the built-in template option defaults.
 func defaultTemplateOptions() map[string]string {
 	return map[string]string{
 		"ci_buildkit_image":                     buildkit.DefaultImage,
-		"ci_buildkit_version":                   buildkit.Version,
+		"ci_buildkit_version":                   buildkit.DefaultTag,
 		"ci_cancel_outdated":                    "true",
-		"ci_dind_image":                         DefaultDindImage,
 		"ci_lint":                               "true",
 		"ci_report":                             "true",
 		"ci_sbom_generate_cpes":                 "true",
@@ -247,6 +253,11 @@ func BuildCIContext(project *model.ContainerHiveProject, artifacts bool) (*CICon
 	opts := defaultTemplateOptions()
 	for k, v := range project.Config.TemplateOptions {
 		opts[k] = v
+	}
+	// Only the default image is tagged per release series, a custom image
+	// without an explicit version keeps the exact BuildKit version.
+	if _, ok := project.Config.TemplateOptions["ci_buildkit_version"]; !ok {
+		opts["ci_buildkit_version"] = buildkit.TagFor(opts["ci_buildkit_image"])
 	}
 
 	// The gotpl template coerces these with sprig's atoi, which returns 0 for

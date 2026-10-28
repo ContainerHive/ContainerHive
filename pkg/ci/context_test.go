@@ -4,6 +4,7 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/ContainerHive/ContainerHive/internal/buildkit"
 	"github.com/ContainerHive/ContainerHive/pkg/model"
 	"github.com/ContainerHive/ContainerHive/pkg/platform"
 )
@@ -233,14 +234,14 @@ func TestBuildCIContext_DefaultTemplateOptions(t *testing.T) {
 	if ctx.TemplateOptions["ci_cancel_outdated"] != "true" {
 		t.Errorf("expected default ci_cancel_outdated 'true', got %q", ctx.TemplateOptions["ci_cancel_outdated"])
 	}
-	if ctx.TemplateOptions["ci_buildkit_image"] != "moby/buildkit" {
-		t.Errorf("expected default ci_buildkit_image 'moby/buildkit', got %q", ctx.TemplateOptions["ci_buildkit_image"])
+	if ctx.TemplateOptions["ci_buildkit_image"] != buildkit.DefaultImage {
+		t.Errorf("expected default ci_buildkit_image %q, got %q", buildkit.DefaultImage, ctx.TemplateOptions["ci_buildkit_image"])
 	}
-	if ctx.TemplateOptions["ci_buildkit_version"] == "" {
-		t.Error("expected ci_buildkit_version to have a default value")
+	if ctx.TemplateOptions["ci_buildkit_version"] != buildkit.DefaultTag {
+		t.Errorf("expected default ci_buildkit_version %q, got %q", buildkit.DefaultTag, ctx.TemplateOptions["ci_buildkit_version"])
 	}
-	if ctx.TemplateOptions["ci_dind_image"] != DefaultDindImage {
-		t.Errorf("expected default ci_dind_image %q, got %q", DefaultDindImage, ctx.TemplateOptions["ci_dind_image"])
+	if v, ok := ctx.TemplateOptions["ci_dind_image"]; ok {
+		t.Errorf("expected no provider-independent ci_dind_image default, got %q", v)
 	}
 	if ctx.TemplateOptions["ci_lint"] != "true" {
 		t.Errorf("expected default ci_lint 'true', got %q", ctx.TemplateOptions["ci_lint"])
@@ -335,8 +336,8 @@ func TestBuildCIContext_UserOverridesTemplateOptions(t *testing.T) {
 	if ctx.TemplateOptions["ci_buildkit_image"] != "registry.io/buildkit" {
 		t.Errorf("expected user override 'registry.io/buildkit', got %q", ctx.TemplateOptions["ci_buildkit_image"])
 	}
-	if ctx.TemplateOptions["ci_buildkit_version"] == "" {
-		t.Error("expected ci_buildkit_version default to still be present")
+	if ctx.TemplateOptions["ci_buildkit_version"] != buildkit.Version {
+		t.Errorf("expected exact version %q for a custom image, got %q", buildkit.Version, ctx.TemplateOptions["ci_buildkit_version"])
 	}
 	if ctx.TemplateOptions["custom_var"] != "custom_value" {
 		t.Errorf("expected custom_var 'custom_value', got %q", ctx.TemplateOptions["custom_var"])

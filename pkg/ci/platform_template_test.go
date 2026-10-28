@@ -59,7 +59,7 @@ func TestGitlabTemplate_DindService(t *testing.T) {
 	}{
 		{
 			name: "default is the rootless helper image",
-			want: "- name: " + DefaultDindImage + "\n      alias: dind\n      command: [\"dockerd\", \"--host=tcp://0.0.0.0:2375\"]",
+			want: "- name: " + GitLabDefaultDindImage + "\n      alias: dind\n      command: [\"dockerd\", \"--host=tcp://0.0.0.0:2375\"]",
 		},
 		{
 			name:    "ci_dind_image overrides the image",
@@ -94,8 +94,8 @@ func TestGithubTemplate_DindService(t *testing.T) {
 		want    string
 	}{
 		{
-			name: "default is the rootless helper image",
-			want: "--network ch-net -e DOCKER_TLS_CERTDIR=\"\" " + DefaultDindImage + " dockerd --host=tcp://0.0.0.0:2375",
+			name: "default is the privileged helper image",
+			want: "--network ch-net -e DOCKER_TLS_CERTDIR=\"\" " + GitHubDefaultDindImage + " dockerd --host=tcp://0.0.0.0:2375",
 		},
 		{
 			name:    "ci_dind_image overrides the image",
