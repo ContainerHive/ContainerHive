@@ -7,35 +7,47 @@ import "github.com/ContainerHive/ContainerHive/pkg/model"
 // block inherit the image level parent.
 func backendParentRefs(img *model.Image) []string {
 	var refs []string
-	if img.BuildBackend == model.BuildBackendNix && img.Nix.Parent != "" {
-		refs = append(refs, img.Nix.Parent)
-	}
-	if img.BuildBackend == model.BuildBackendChisel && img.Chisel.Parent != "" {
-		refs = append(refs, img.Chisel.Parent)
+	if parent := imageParentRef(img); parent != "" {
+		refs = append(refs, parent)
 	}
 	for _, variant := range img.Variants {
-		backend := variant.BuildBackend
-		if backend == "" {
-			backend = img.BuildBackend
-		}
-		switch backend {
-		case model.BuildBackendNix:
-			parent := img.Nix.Parent
-			if variant.Nix != nil {
-				parent = variant.Nix.Parent
-			}
-			if parent != "" {
-				refs = append(refs, parent)
-			}
-		case model.BuildBackendChisel:
-			parent := img.Chisel.Parent
-			if variant.Chisel != nil {
-				parent = variant.Chisel.Parent
-			}
-			if parent != "" {
-				refs = append(refs, parent)
-			}
+		if parent := variantParentRef(img, variant); parent != "" {
+			refs = append(refs, parent)
 		}
 	}
 	return refs
+}
+
+// imageParentRef returns the backend parent of the image itself, or an empty
+// string for the Dockerfile backend.
+func imageParentRef(img *model.Image) string {
+	switch img.BuildBackend {
+	case model.BuildBackendNix:
+		return img.Nix.Parent
+	case model.BuildBackendChisel:
+		return img.Chisel.Parent
+	}
+	return ""
+}
+
+// variantParentRef returns the backend parent of a variant, falling back to
+// the image level backend and parent when the variant sets none.
+func variantParentRef(img *model.Image, variant *model.ImageVariant) string {
+	backend := variant.BuildBackend
+	if backend == "" {
+		backend = img.BuildBackend
+	}
+	switch backend {
+	case model.BuildBackendNix:
+		if variant.Nix != nil {
+			return variant.Nix.Parent
+		}
+		return img.Nix.Parent
+	case model.BuildBackendChisel:
+		if variant.Chisel != nil {
+			return variant.Chisel.Parent
+		}
+		return img.Chisel.Parent
+	}
+	return ""
 }
