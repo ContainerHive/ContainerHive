@@ -294,23 +294,33 @@ template_options:
 
 ## Docker-in-Docker for test jobs
 
-[`ch test`](cli.md#test) needs a Docker daemon. The generated test jobs start it as a `dind` service using the
-rootless [`dind-rootless`](https://github.com/ContainerHive/helper-images/blob/main/images/dind-rootless/README.md)
-helper image, so the service runs without a privileged security context. This is what makes the pipeline work on
-Kubernetes runners that forbid privileged pods.
+[`ch test`](cli.md#test) needs a Docker daemon. The default image depends on the provider, both come from the
+[ContainerHive helper images](https://github.com/ContainerHive/helper-images):
 
-On the Kubernetes executor the rootless daemon needs a user mapping that fits the pod (`hostUsers: false`), which is a
-cluster-side setting. Use the privileged `docker:dind` image, or your own mirror, with `ci_dind_image`:
+- **GitHub Actions** starts the privileged
+  [`dind`](https://github.com/ContainerHive/helper-images/blob/main/images/dind/README.md) image as a container on the
+  runner VM, with `--privileged`. The rootless image does not start on GitHub-hosted runners, because they restrict
+  unprivileged user namespaces.
+- **GitLab CI** starts the rootless
+  [`dind-rootless`](https://github.com/ContainerHive/helper-images/blob/main/images/dind-rootless/README.md) image as a
+  `dind` service, so the service runs without a privileged security context. This is what makes the pipeline work on
+  Kubernetes runners that forbid privileged pods.
+
+On the GitLab Kubernetes executor the rootless daemon needs a user mapping that fits the pod (`hostUsers: false`),
+which is a cluster-side setting. Use a privileged image, such as `docker:dind` or your own mirror, with
+`ci_dind_image`:
 
 ```yaml
 template_options:
   ci_dind_image: docker:dind
 ```
 
-`docker:dind` needs the runner to allow a privileged Docker-in-Docker service. Setting the option does not replace
-`hostUsers: false` on a runner that forbids privileged pods; there the daemon does not start.
+A privileged image needs the runner to allow a privileged Docker-in-Docker service. Setting the option does not
+replace `hostUsers: false` on a runner that forbids privileged pods; there the daemon does not start.
 
-The generated GitHub Actions workflow starts the same image as a container on the runner VM, with `--privileged`.
+The BuildKit daemon for the build jobs comes from the
+[`buildkit`](https://github.com/ContainerHive/helper-images/blob/main/images/buildkit/README.md) helper image. Use
+`ci_buildkit_image` and `ci_buildkit_version` to pin another one, for example the upstream `moby/buildkit`.
 
 ## Sharding build and test jobs
 
