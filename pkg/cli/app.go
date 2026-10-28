@@ -23,13 +23,11 @@ import (
 	"github.com/urfave/cli/v3"
 )
 
-func discoverProject(ctx context.Context, cmd *cli.Command) (*model.ContainerHiveProject, error) {
+func discoverProject(ctx context.Context, cmd *cli.Command, extra ...discovery.Option) (*model.ContainerHiveProject, error) {
 	projectRoot := cmd.String("project")
 
-	project, err := discovery.DiscoverProject(
-		ctx, projectRoot,
-		discovery.WithRefreshVersions(cmd.Bool("refresh-versions")),
-	)
+	opts := append([]discovery.Option{discovery.WithRefreshVersions(cmd.Bool("refresh-versions"))}, extra...)
+	project, err := discovery.DiscoverProject(ctx, projectRoot, opts...)
 	if err != nil {
 		return nil, fmt.Errorf("discovery failed: %w", err)
 	}
