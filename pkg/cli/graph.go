@@ -6,6 +6,7 @@ import (
 	"io"
 
 	"github.com/ContainerHive/ContainerHive/pkg/deps"
+	"github.com/ContainerHive/ContainerHive/pkg/discovery"
 	"github.com/urfave/cli/v3"
 )
 
@@ -31,7 +32,9 @@ func graphCmd() *cli.Command {
 				return err
 			}
 
-			project, err := discoverProject(ctx, cmd)
+			// The graph only needs Dockerfiles, depends_on, parents and tag
+			// suffixes, so it must not fail on an unreachable version source.
+			project, err := discoverProject(ctx, cmd, discovery.WithSkipTagRanges())
 			if err != nil {
 				return err
 			}
