@@ -19,6 +19,7 @@ func init() {
 		// GitLab runners pull anonymously from Docker Hub and hit its rate
 		// limits, the GitLab registry is the closest mirror.
 		DefaultImageName: GitLabImageName,
+		DefaultOptions:   map[string]string{"ci_dind_image": GitLabDefaultDindImage},
 	})
 	RegisterProvider(&Provider{
 		Name:       "github",
@@ -27,6 +28,7 @@ func init() {
 		// GitHub-hosted runners pull anonymously from Docker Hub and hit its
 		// rate limits, ghcr.io has none.
 		DefaultImageName: GHCRImageName,
+		DefaultOptions:   map[string]string{"ci_dind_image": GitHubDefaultDindImage},
 	})
 }
 

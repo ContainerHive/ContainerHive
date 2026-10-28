@@ -17,6 +17,9 @@ type Provider struct {
 	// DefaultImageName is the ContainerHive CLI image used when --image-name is
 	// not set. Falls back to DockerHubImageName.
 	DefaultImageName string
+	// DefaultOptions are template option defaults specific to this provider.
+	// They apply when the option is not set in the project's template_options.
+	DefaultOptions map[string]string
 }
 
 const (
@@ -76,5 +79,13 @@ func Generate(providerName string, ctx *CIContext, customTemplateDir string) ([]
 		templateFS = os.DirFS(customTemplateDir)
 	}
 
-	return templating.RenderWithOptions(templateFS, provider.Entrypoint, ctx, ctx.TemplateOptions)
+	options := make(map[string]string, len(provider.DefaultOptions)+len(ctx.TemplateOptions))
+	for k, v := range provider.DefaultOptions {
+		options[k] = v
+	}
+	for k, v := range ctx.TemplateOptions {
+		options[k] = v
+	}
+
+	return templating.RenderWithOptions(templateFS, provider.Entrypoint, ctx, options)
 }
