@@ -1,3 +1,18 @@
+## [1.25.0](https://github.com/ContainerHive/ContainerHive/compare/v1.24.3...v1.25.0) (2026-10-28)
+
+### Features
+
+* **cli:** add graph command for image and variant dependencies ([8b74e8a](https://github.com/ContainerHive/ContainerHive/commit/8b74e8a2fa18cbfa85e50580123b93a9078737c0))
+* **dependency:** scan image and variant dependency graph ([d5a72de](https://github.com/ContainerHive/ContainerHive/commit/d5a72de7f3f9bab9c50964adf83f5b31e3c4c1f5))
+* **deps:** expose project graph with mermaid and dot renderers ([9b4fce6](https://github.com/ContainerHive/ContainerHive/commit/9b4fce6c1400d5a52c6377be5bbe408b30b33fa4))
+
+### Bug Fixes
+
+* **cli:** skip tag range resolution in graph command ([9e77e24](https://github.com/ContainerHive/ContainerHive/commit/9e77e242e2a980ef7a5b59ad4371027f3852afc0))
+* **dependency:** detect __hive_parent__ behind FROM flags ([40e4c5b](https://github.com/ContainerHive/ContainerHive/commit/40e4c5b74b95cbea60446eaf924e0f1f450a03e1))
+* **dependency:** link variants to their base image via __hive_parent__ ([360adbe](https://github.com/ContainerHive/ContainerHive/commit/360adbe40731ac1d86f41c45305492fde06b1bb0))
+* **deps:** copy graph accessors and group nested image names ([7b0b76a](https://github.com/ContainerHive/ContainerHive/commit/7b0b76ac040bcf7af0e6fb0068297ca71355fb60))
+
 ## [1.24.3](https://github.com/ContainerHive/ContainerHive/compare/v1.24.2...v1.24.3) (2026-10-28)
 
 ### Bug Fixes
