@@ -1,10 +1,14 @@
 package dependency
 
 import (
+	"os"
+	"regexp"
 	"strings"
 
 	"github.com/ContainerHive/ContainerHive/pkg/model"
 )
+
+var hiveParentFromPattern = regexp.MustCompile(`(?im)^\s*FROM\s+__hive_parent__(\s|$)`)
 
 // VariantNodeID returns the graph node name of an image variant. The base
 // image keeps its plain name.
@@ -31,14 +35,14 @@ func ScanProjectVariants(project *model.ContainerHiveProject) *Graph {
 
 	for name, images := range project.ImagesByName {
 		for _, img := range images {
-			scanVariantNode(graph, project, name, name, img.BuildEntryPointPath, imageParentRef(img))
+			scanVariantNode(graph, project, name, name, "", img.BuildEntryPointPath, imageParentRef(img))
 			for _, dep := range img.DependsOn {
 				addVariantEdge(graph, name, dep)
 			}
 
 			for variantName, variant := range img.Variants {
 				node := VariantNodeID(name, variantName)
-				scanVariantNode(graph, project, name, node, variant.BuildEntryPointPath, variantParentRef(img, variant))
+				scanVariantNode(graph, project, name, node, name, variant.BuildEntryPointPath, variantParentRef(img, variant))
 				// depends_on is image level config and applies to every variant.
 				for _, dep := range img.DependsOn {
 					addVariantEdge(graph, node, dep)
@@ -51,8 +55,10 @@ func ScanProjectVariants(project *model.ContainerHiveProject) *Graph {
 }
 
 // scanVariantNode adds the edges of one node: its Dockerfile hive references
-// and its backend parent.
-func scanVariantNode(graph *Graph, project *model.ContainerHiveProject, imageName, node, entryPointPath, parent string) {
+// and its backend parent. baseNode is the base image of a variant node and
+// empty for a base image: only a variant can build on __hive_parent__, which
+// stands for its base image.
+func scanVariantNode(graph *Graph, project *model.ContainerHiveProject, imageName, node, baseNode, entryPointPath, parent string) {
 	if entryPointPath != "" {
 		refs, err := ScanDockerfileForHiveRefs(entryPointPath)
 		if err == nil {
@@ -60,6 +66,13 @@ func scanVariantNode(graph *Graph, project *model.ContainerHiveProject, imageNam
 				addTaggedEdge(graph, project, imageName, node, ref.ImageName, ref.Tag)
 			}
 		}
+		if baseNode != "" && usesHiveParent(entryPointPath) {
+			addVariantEdge(graph, node, baseNode)
+		}
+	}
+
+	if baseNode != "" && parent == model.HiveParentPlaceholder {
+		addVariantEdge(graph, node, baseNode)
 	}
 
 	if parent == "" || parent == model.HiveParentPlaceholder || !strings.HasPrefix(parent, HivePrefix) {
@@ -110,4 +123,13 @@ func resolveVariantTarget(imageName string, images []*model.Image, tag string) s
 		}
 	}
 	return target
+}
+
+// usesHiveParent reports whether the Dockerfile builds FROM __hive_parent__.
+func usesHiveParent(dockerfilePath string) bool {
+	content, err := os.ReadFile(dockerfilePath)
+	if err != nil {
+		return false
+	}
+	return hiveParentFromPattern.Match(content)
 }
