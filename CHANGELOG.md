@@ -1,3 +1,9 @@
+## [1.24.2](https://github.com/ContainerHive/ContainerHive/compare/v1.24.1...v1.24.2) (2026-10-28)
+
+### Bug Fixes
+
+* **ci:** default to the ContainerHive helper images for dind and BuildKit ([e164669](https://github.com/ContainerHive/ContainerHive/commit/e164669f2f636e903552f10f7c7fe4a7ef349d65))
+
 ## [1.24.1](https://github.com/ContainerHive/ContainerHive/compare/v1.24.0...v1.24.1) (2026-10-28)
 
 ### Bug Fixes
