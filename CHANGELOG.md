@@ -1,3 +1,9 @@
+## [1.25.1](https://github.com/ContainerHive/ContainerHive/compare/v1.25.0...v1.25.1) (2026-10-28)
+
+### Bug Fixes
+
+* **deps:** update module modernc.org/sqlite to v1.61.0 ([e3b8e13](https://github.com/ContainerHive/ContainerHive/commit/e3b8e139e1c0707f04b568861b6d0e0c02afa2ac))
+
 ## [1.25.0](https://github.com/ContainerHive/ContainerHive/compare/v1.24.3...v1.25.0) (2026-10-28)
 
 ### Features
