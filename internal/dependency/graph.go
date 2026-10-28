@@ -36,6 +36,28 @@ func (g *Graph) AddDependency(from, to string) {
 	g.edges[from] = append(g.edges[from], to)
 }
 
+// Nodes returns all registered node names in sorted order.
+func (g *Graph) Nodes() []string {
+	nodes := make([]string, 0, len(g.nodes))
+	for node := range g.nodes {
+		nodes = append(nodes, node)
+	}
+	slices.Sort(nodes)
+	return nodes
+}
+
+// Edges returns a copy of the dependency edges, with every dependency list
+// sorted. Edges read "key depends on each value".
+func (g *Graph) Edges() map[string][]string {
+	edges := make(map[string][]string, len(g.edges))
+	for from, deps := range g.edges {
+		sorted := slices.Clone(deps)
+		slices.Sort(sorted)
+		edges[from] = sorted
+	}
+	return edges
+}
+
 // Dependencies returns the list of images that the given image depends on.
 func (g *Graph) Dependencies(name string) []string {
 	return g.edges[name]
