@@ -1501,6 +1501,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#visualizing-the-graph" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Visualizing the graph
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#inter-image-dependencies" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2156,6 +2167,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#visualizing-the-graph" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Visualizing the graph
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#inter-image-dependencies" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2263,6 +2285,10 @@
 <li>This continues until all images are built.</li>
 </ol>
 <p>Images at the same depth can be built in parallel.</p>
+<h2 id="visualizing-the-graph">Visualizing the graph</h2>
+<p><code>ch graph</code> prints the graph as a <a href="https://mermaid.js.org/">Mermaid</a> flowchart, or as Graphviz DOT with <code>--format dot</code>. Unlike the build order, which works per image, it shows each variant as its own node (<code>&lt;image&gt;/&lt;variant&gt;</code>), grouped with its image.</p>
+<p><img alt="Kroki" src="kroki-generated-37d4b669-7b16-355b-a854-aeadd4a74c88.svg#only-light" /><img alt="Kroki" src="kroki-generated-ecf40fcb-b030-34cd-aef1-0e2f174a2279.svg#only-dark" /></p>
+<p>A reference such as <code>FROM __hive__/base:1.0-slim</code>, or a <code>parent</code> of that value, points at the variant of <code>base</code> whose <code>tag_suffix</code> the tag ends with. When several suffixes match, the longest wins. A tag without a matching suffix points at the base image. <code>depends_on</code> is set per image, so it applies to the image and to each of its variants. A variant that builds <code>FROM __hive_parent__</code> (or sets that as its Nix or Chisel <code>parent</code>) points at its own base image.</p>
 <h2 id="inter-image-dependencies">Inter-image dependencies</h2>
 <p>When an image depends on another image in the project, ContainerHive uses OCI layout named contexts to pass the built image as a build context. This avoids needing to push intermediate images to a remote registry.</p>
 <h2 id="ci-pipeline-generation">CI pipeline generation</h2>
