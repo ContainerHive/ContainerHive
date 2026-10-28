@@ -322,17 +322,7 @@ func buildTag(ctx context.Context, client *Client, opts *ProjectBuildOpts, image
 		return fmt.Errorf("failed to resolve build args for %s:%s: %w", imageDef.Name, tagName, err)
 	}
 
-	builtDockerfilePath := dockerfilePath
-	if hiveDeps != nil {
-		builtDockerfilePath = hiveDeps.Dockerfile
-	}
-	hashContent, err := hashSource(builtDockerfilePath)
-	if err != nil {
-		return fmt.Errorf("failed to read build entrypoint for %s:%s: %w", imageDef.Name, tagName, err)
-	}
-	contentHash := cache.ComputeContentHash(hashContent, config.BuildArgs, platformStr)
-
-	scope := fmt.Sprintf("%s.%s.%s.%s", imageDef.Name, tagName, platformStr, contentHash)
+	scope := fmt.Sprintf("%s.%s.%s", imageDef.Name, tagName, platformStr)
 	scopedCache := opts.Cache
 	if opts.Cache != nil {
 		scopedCache = opts.Cache.WithScope(scope)
@@ -464,17 +454,7 @@ func buildVariant(ctx context.Context, client *Client, opts *ProjectBuildOpts, i
 		return fmt.Errorf("failed to resolve build args for variant %s:%s:%s: %w", imageDef.Name, tagName, variantName, err)
 	}
 
-	builtVariantDockerfilePath := variantDockerfilePath
-	if hiveDeps != nil {
-		builtVariantDockerfilePath = hiveDeps.Dockerfile
-	}
-	variantDockerfileContent, err := hashSource(builtVariantDockerfilePath)
-	if err != nil {
-		return fmt.Errorf("failed to read build entrypoint for variant %s:%s:%s: %w", imageDef.Name, tagName, variantName, err)
-	}
-	variantContentHash := cache.ComputeContentHash(variantDockerfileContent, config.BuildArgs, platformStr)
-
-	variantScope := fmt.Sprintf("%s.%s.%s.%s", imageDef.Name, variantTagName, platformStr, variantContentHash)
+	variantScope := fmt.Sprintf("%s.%s.%s", imageDef.Name, variantTagName, platformStr)
 	scopedCache := opts.Cache
 	if opts.Cache != nil {
 		scopedCache = opts.Cache.WithScope(variantScope)

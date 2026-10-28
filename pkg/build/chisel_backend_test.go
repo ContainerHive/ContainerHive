@@ -16,60 +16,6 @@ func TestEntrypointFileNameChisel(t *testing.T) {
 	}
 }
 
-func TestHashSourceChiselSlices(t *testing.T) {
-	dir := t.TempDir()
-	path := filepath.Join(dir, model.ChiselFileName)
-	if err := os.WriteFile(path, []byte("spec"), 0o600); err != nil {
-		t.Fatal(err)
-	}
-
-	got, err := hashSource(path)
-	if err != nil {
-		t.Fatalf("hashSource failed: %v", err)
-	}
-	if string(got) != "spec" {
-		t.Errorf("hashSource() without slices/ = %q, want %q", got, "spec")
-	}
-
-	slicesDir := filepath.Join(dir, "slices")
-	if err := os.MkdirAll(slicesDir, 0o700); err != nil {
-		t.Fatal(err)
-	}
-	if err := os.WriteFile(filepath.Join(slicesDir, "hello.yaml"), []byte("custom"), 0o600); err != nil {
-		t.Fatal(err)
-	}
-
-	got, err = hashSource(path)
-	if err != nil {
-		t.Fatalf("hashSource failed: %v", err)
-	}
-	if string(got) != "speccustom" {
-		t.Errorf("hashSource() with slices/ = %q, want %q", got, "speccustom")
-	}
-}
-
-func TestHashSourceDockerfileIgnoresSlicesDir(t *testing.T) {
-	dir := t.TempDir()
-	path := filepath.Join(dir, "Dockerfile")
-	if err := os.WriteFile(path, []byte("entry"), 0o600); err != nil {
-		t.Fatal(err)
-	}
-	if err := os.MkdirAll(filepath.Join(dir, "slices"), 0o700); err != nil {
-		t.Fatal(err)
-	}
-	if err := os.WriteFile(filepath.Join(dir, "slices", "hello.yaml"), []byte("custom"), 0o600); err != nil {
-		t.Fatal(err)
-	}
-
-	got, err := hashSource(path)
-	if err != nil {
-		t.Fatalf("hashSource failed: %v", err)
-	}
-	if string(got) != "entry" {
-		t.Errorf("hashSource() = %q, want %q", got, "entry")
-	}
-}
-
 func TestChiselConfigFor(t *testing.T) {
 	imageDef := &model.Image{Name: "hello"}
 

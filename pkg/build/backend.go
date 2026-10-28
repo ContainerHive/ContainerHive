@@ -1,11 +1,9 @@
 package build
 
 import (
-	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
-	"sort"
 
 	"github.com/ContainerHive/ContainerHive/internal/buildkit/build_context"
 	"github.com/ContainerHive/ContainerHive/pkg/model"
@@ -30,74 +28,6 @@ func entrypointFileName(backend string) string {
 		return model.ChiselFileName
 	}
 	return "Dockerfile"
-}
-
-// hashSource returns the content bytes driving the cache scope hash. For Nix
-// flakes, flake.lock pins the flake resolution and belongs into the hash.
-// For chisel cut specs, the custom slices/ directory is part of the build
-// input and belongs into the hash. Dockerfile builds ignore both a stray
-// flake.lock and a stray slices dir, so the source reduces to the file
-// content alone.
-func hashSource(entrypointPath string) ([]byte, error) {
-	content, err := os.ReadFile(entrypointPath)
-	if err != nil {
-		return nil, err
-	}
-
-	switch filepath.Base(entrypointPath) {
-	case model.ChiselFileName:
-		return append(content, chiselSlicesHash(filepath.Join(filepath.Dir(entrypointPath), "slices"))...), nil
-	case model.FlakeFileName:
-		lock, err := os.ReadFile(filepath.Join(filepath.Dir(entrypointPath), "flake.lock"))
-		if errors.Is(err, os.ErrNotExist) {
-			return content, nil
-		}
-		if err != nil {
-			return nil, err
-		}
-		return append(content, lock...), nil
-	default:
-		return content, nil
-	}
-}
-
-// chiselSlicesHash returns the content bytes of the slices/ directory next to
-// a chisel cut spec, sorted by path for a stable hash. A missing or empty
-// directory returns nil.
-func chiselSlicesHash(slicesDir string) []byte {
-	files, err := slicesDirFiles(slicesDir)
-	if err != nil {
-		return nil
-	}
-
-	var hash []byte
-	for _, path := range files {
-		content, err := os.ReadFile(path)
-		if err != nil {
-			continue
-		}
-		hash = append(hash, content...)
-	}
-	return hash
-}
-
-// slicesDirFiles lists all files below a slices/ directory, sorted by path.
-func slicesDirFiles(slicesDir string) ([]string, error) {
-	var files []string
-	err := filepath.WalkDir(slicesDir, func(path string, d os.DirEntry, err error) error {
-		if err != nil {
-			return err
-		}
-		if !d.IsDir() {
-			files = append(files, path)
-		}
-		return nil
-	})
-	if err != nil {
-		return nil, err
-	}
-	sort.Strings(files)
-	return files, nil
 }
 
 // nixConfigFor merges a variant Nix config over the image level config.
