@@ -232,6 +232,7 @@ func NewApp() *cli.Command {
 			licenseCmd(),
 			devCmd(),
 			reportCmd(),
+			graphCmd(),
 			mcpCmd(),
 		},
 	}
