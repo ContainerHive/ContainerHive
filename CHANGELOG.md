@@ -1,3 +1,9 @@
+## [1.24.3](https://github.com/ContainerHive/ContainerHive/compare/v1.24.2...v1.24.3) (2026-10-28)
+
+### Bug Fixes
+
+* **cache:** drop content hash from build cache scope ([41339f8](https://github.com/ContainerHive/ContainerHive/commit/41339f8e7194f0e797a7f2d11772da87fb5d6b53))
+
 ## [1.24.2](https://github.com/ContainerHive/ContainerHive/compare/v1.24.1...v1.24.2) (2026-10-28)
 
 ### Bug Fixes
