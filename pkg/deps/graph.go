@@ -15,34 +15,63 @@ import (
 type Graph struct {
 	nodes []string
 	edges map[string][]string
+	// nodeImages maps a node to its image name. Image names can contain a
+	// slash, so the name cannot always be cut from the node ID; nodes missing
+	// here fall back to the part before the first slash.
+	nodeImages map[string]string
 }
 
 // ProjectGraph scans the project source and returns its image and variant
 // dependency graph. It does not need a rendered dist directory.
 func ProjectGraph(project *model.ContainerHiveProject) *Graph {
 	graph := dependency.ScanProjectVariants(project)
+
+	nodeImages := make(map[string]string)
+	for imageName, images := range project.ImagesByName {
+		nodeImages[imageName] = imageName
+		for _, img := range images {
+			for variantName := range img.Variants {
+				nodeImages[dependency.VariantNodeID(imageName, variantName)] = imageName
+			}
+		}
+	}
+
 	return &Graph{
-		nodes: graph.Nodes(),
-		edges: graph.Edges(),
+		nodes:      graph.Nodes(),
+		edges:      graph.Edges(),
+		nodeImages: nodeImages,
 	}
 }
 
 // Nodes returns all node names in sorted order.
 func (g *Graph) Nodes() []string {
-	return g.nodes
+	return slices.Clone(g.nodes)
 }
 
 // Edges returns the dependency edges: each key depends on every listed
-// value, so the values are built first.
+// value. The result is a copy.
 func (g *Graph) Edges() map[string][]string {
-	return g.edges
+	edges := make(map[string][]string, len(g.edges))
+	for from, deps := range g.edges {
+		edges[from] = slices.Clone(deps)
+	}
+	return edges
+}
+
+// imageOf returns the image name a node belongs to.
+func (g *Graph) imageOf(node string) string {
+	if image, ok := g.nodeImages[node]; ok {
+		return image
+	}
+	image, _, _ := strings.Cut(node, "/")
+	return image
 }
 
 // groups maps each image name to its node names, base image first.
 func (g *Graph) groups() (images []string, members map[string][]string) {
 	members = make(map[string][]string)
 	for _, node := range g.nodes {
-		image, _, _ := strings.Cut(node, "/")
+		image := g.imageOf(node)
 		if _, ok := members[image]; !ok {
 			images = append(images, image)
 		}
@@ -61,8 +90,8 @@ func (g *Graph) sortedSources() []string {
 	return sources
 }
 
-// Mermaid renders the graph as a Mermaid flowchart. An arrow points from an
-// image to the image it is built from, and the variants of an image share a
+// Mermaid renders the graph as a Mermaid flowchart. An arrow points from a
+// node to a node it depends on, and the variants of an image share a
 // subgraph.
 func (g *Graph) Mermaid() string {
 	var b strings.Builder
@@ -95,9 +124,8 @@ func (g *Graph) Mermaid() string {
 	return b.String()
 }
 
-// Dot renders the graph in Graphviz DOT format. An edge points from an image
-// to the image it is built from, and the variants of an image share a
-// cluster.
+// Dot renders the graph in Graphviz DOT format. An edge points from a node to
+// a node it depends on, and the variants of an image share a cluster.
 func (g *Graph) Dot() string {
 	var b strings.Builder
 	b.WriteString("digraph containerhive {\n")
