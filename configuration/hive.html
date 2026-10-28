@@ -2803,18 +2803,18 @@
 <tbody>
 <tr>
 <td style="text-align: left;"><code>ci_buildkit_image</code></td>
-<td style="text-align: left;"><code>moby/buildkit</code></td>
+<td style="text-align: left;"><code>ghcr.io/containerhive/helper-images/buildkit</code></td>
 <td style="text-align: left;">BuildKit container image</td>
 </tr>
 <tr>
 <td style="text-align: left;"><code>ci_buildkit_version</code></td>
-<td style="text-align: left;"><em>(matches go.mod dependency)</em></td>
-<td style="text-align: left;">BuildKit image tag</td>
+<td style="text-align: left;"><em>(release series of the go.mod dependency, e.g. <code>v0.34</code>)</em></td>
+<td style="text-align: left;">BuildKit image tag. With a custom <code>ci_buildkit_image</code> and no version, the exact go.mod version (e.g. <code>v0.34.0</code>) is used</td>
 </tr>
 <tr>
 <td style="text-align: left;"><code>ci_dind_image</code></td>
-<td style="text-align: left;"><code>ghcr.io/containerhive/helper-images/dind-rootless:29.9</code></td>
-<td style="text-align: left;">Docker-in-Docker image for the test jobs (GitLab and GitHub Actions). The default runs rootless, so it works in unprivileged Kubernetes pods. Set <code>docker:dind</code> to use the privileged image</td>
+<td style="text-align: left;">GitHub Actions: <code>ghcr.io/containerhive/helper-images/dind:29.9</code>, GitLab: <code>ghcr.io/containerhive/helper-images/dind-rootless:29.9</code></td>
+<td style="text-align: left;">Docker-in-Docker image for the test jobs. The GitHub default runs privileged, the GitLab default runs rootless so it works in unprivileged Kubernetes pods. Set <code>docker:dind</code> to use the upstream privileged image</td>
 </tr>
 <tr>
 <td style="text-align: left;"><code>ci_lint</code></td>

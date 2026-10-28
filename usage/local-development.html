@@ -2375,7 +2375,7 @@
 </table>
 <h3 id="image-version">Image version</h3>
 <p>By default the image is resolved from your project's <code>template_options</code> in <code>hive.yml</code>, using the same <code>ci_buildkit_image</code> and <code>ci_buildkit_version</code> keys that control the version used in generated CI pipelines. This keeps your local daemon in sync with CI.</p>
-<p>If no overrides are configured, the version is taken from the <code>github.com/moby/buildkit</code> dependency in <code>go.mod</code>.</p>
+<p>If no overrides are configured, the <a href="https://github.com/ContainerHive/helper-images/blob/main/images/buildkit/README.md"><code>buildkit</code> helper image</a> is used, in the release series of the <code>github.com/moby/buildkit</code> dependency in <code>go.mod</code> (for example <code>v0.34</code>).</p>
 <div class="language-yaml highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># hive.yml — pin the same version locally and in CI</span>
 </span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="nt">template_options</span><span class="p">:</span>
 </span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">  </span><span class="nt">ci_buildkit_version</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v0.19.0</span>

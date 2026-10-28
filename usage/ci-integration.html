@@ -3260,18 +3260,29 @@ superseded pipeline. There is no clean way to restrict cancellation to the defau
 </span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="w">  </span><span class="nt">ci_cancel_outdated</span><span class="p">:</span><span class="w"> </span><span class="s">"false"</span>
 </span></code></pre></div>
 <h2 id="docker-in-docker-for-test-jobs">Docker-in-Docker for test jobs</h2>
-<p><a href="cli.html#test"><code>ch test</code></a> needs a Docker daemon. The generated test jobs start it as a <code>dind</code> service using the
-rootless <a href="https://github.com/ContainerHive/helper-images/blob/main/images/dind-rootless/README.md"><code>dind-rootless</code></a>
-helper image, so the service runs without a privileged security context. This is what makes the pipeline work on
-Kubernetes runners that forbid privileged pods.</p>
-<p>On the Kubernetes executor the rootless daemon needs a user mapping that fits the pod (<code>hostUsers: false</code>), which is a
-cluster-side setting. Use the privileged <code>docker:dind</code> image, or your own mirror, with <code>ci_dind_image</code>:</p>
+<p><a href="cli.html#test"><code>ch test</code></a> needs a Docker daemon. The default image depends on the provider, both come from the
+<a href="https://github.com/ContainerHive/helper-images">ContainerHive helper images</a>:</p>
+<ul>
+<li><strong>GitHub Actions</strong> starts the privileged
+  <a href="https://github.com/ContainerHive/helper-images/blob/main/images/dind/README.md"><code>dind</code></a> image as a container on the
+  runner VM, with <code>--privileged</code>. The rootless image does not start on GitHub-hosted runners, because they restrict
+  unprivileged user namespaces.</li>
+<li><strong>GitLab CI</strong> starts the rootless
+  <a href="https://github.com/ContainerHive/helper-images/blob/main/images/dind-rootless/README.md"><code>dind-rootless</code></a> image as a
+  <code>dind</code> service, so the service runs without a privileged security context. This is what makes the pipeline work on
+  Kubernetes runners that forbid privileged pods.</li>
+</ul>
+<p>On the GitLab Kubernetes executor the rootless daemon needs a user mapping that fits the pod (<code>hostUsers: false</code>),
+which is a cluster-side setting. Use a privileged image, such as <code>docker:dind</code> or your own mirror, with
+<code>ci_dind_image</code>:</p>
 <div class="language-yaml highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="nt">template_options</span><span class="p">:</span>
 </span><span id="__span-13-2"><a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a><span class="w">  </span><span class="nt">ci_dind_image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">docker:dind</span>
 </span></code></pre></div>
-<p><code>docker:dind</code> needs the runner to allow a privileged Docker-in-Docker service. Setting the option does not replace
-<code>hostUsers: false</code> on a runner that forbids privileged pods; there the daemon does not start.</p>
-<p>The generated GitHub Actions workflow starts the same image as a container on the runner VM, with <code>--privileged</code>.</p>
+<p>A privileged image needs the runner to allow a privileged Docker-in-Docker service. Setting the option does not
+replace <code>hostUsers: false</code> on a runner that forbids privileged pods; there the daemon does not start.</p>
+<p>The BuildKit daemon for the build jobs comes from the
+<a href="https://github.com/ContainerHive/helper-images/blob/main/images/buildkit/README.md"><code>buildkit</code></a> helper image. Use
+<code>ci_buildkit_image</code> and <code>ci_buildkit_version</code> to pin another one, for example the upstream <code>moby/buildkit</code>.</p>
 <h2 id="sharding-build-and-test-jobs">Sharding build and test jobs</h2>
 <p>For GitLab CI, <code>ci_build_shards</code> and <code>ci_test_shards</code> set an upper bound on <code>parallel: N</code> for each build/test job. The
 actual value is capped per image to the number of shard units (base + variant tags) that image has, so images with fewer
