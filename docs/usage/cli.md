@@ -125,7 +125,7 @@ ch graph --format dot | dot -Tsvg > graph.svg
 |------|---------|-------------|
 | `--format` | `mermaid` | Output format: `mermaid` or `dot` |
 
-Every image and every variant is a node, named `<image>` or `<image>/<variant>`. Tags are not nodes. An arrow points from an image to the image it is built from. The graph is read from the project source, so `ch generate` is not needed first. See [Dependency resolution](../how-it-works/dependency-resolution.md#visualizing-the-graph) for how references map to variants.
+Every image and every variant is a node, named `<image>` or `<image>/<variant>`. Tags are not nodes. An arrow points from a node to a node it depends on, which is built first. A dependency comes from a `FROM` or `parent` reference or from `depends_on`, so it does not always mean the image is built from the other one. The graph is read from the project source, so `ch generate` is not needed first, and `tag_ranges` are not expanded, so no version source is contacted. See [Dependency resolution](../how-it-works/dependency-resolution.md#visualizing-the-graph) for how references map to variants.
 
 ### `lint`
 
