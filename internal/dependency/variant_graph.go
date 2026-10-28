@@ -8,7 +8,7 @@ import (
 	"github.com/ContainerHive/ContainerHive/pkg/model"
 )
 
-var hiveParentFromPattern = regexp.MustCompile(`(?im)^\s*FROM\s+__hive_parent__(\s|$)`)
+var hiveParentFromPattern = regexp.MustCompile(`(?im)^\s*FROM\s+(?:--\S+\s+)*__hive_parent__(\s|$)`)
 
 // VariantNodeID returns the graph node name of an image variant. The base
 // image keeps its plain name.
