@@ -35,6 +35,23 @@ depth1 --> depth2 : depends on
 
 Images at the same depth can be built in parallel.
 
+## Visualizing the graph
+
+`ch graph` prints the graph as a [Mermaid](https://mermaid.js.org/) flowchart, or as Graphviz DOT with `--format dot`. Unlike the build order, which works per image, it shows each variant as its own node (`<image>/<variant>`), grouped with its image.
+
+```mermaid
+graph LR
+  subgraph n0_group["app"]
+    n0["app"]
+    n1["app/slim"]
+  end
+  n2["base"]
+  n0 --> n2
+  n1 --> n2
+```
+
+A reference such as `FROM __hive__/base:1.0-slim`, or a `parent` of that value, points at the variant of `base` whose `tag_suffix` the tag ends with. When several suffixes match, the longest wins. A tag without a matching suffix points at the base image. `depends_on` is set per image, so it applies to the image and to each of its variants.
+
 ## Inter-image dependencies
 
 When an image depends on another image in the project, ContainerHive uses OCI layout named contexts to pass the built image as a build context. This avoids needing to push intermediate images to a remote registry.

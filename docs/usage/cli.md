@@ -112,6 +112,21 @@ ch verify
 
 Validates `hive.yml` and image definitions. Useful as a quick check before building.
 
+### `graph`
+
+Print the dependency graph of all images and variants.
+
+```bash
+ch graph
+ch graph --format dot | dot -Tsvg > graph.svg
+```
+
+| Flag | Default | Description |
+|------|---------|-------------|
+| `--format` | `mermaid` | Output format: `mermaid` or `dot` |
+
+Every image and every variant is a node, named `<image>` or `<image>/<variant>`. Tags are not nodes. An arrow points from an image to the image it is built from. The graph is read from the project source, so `ch generate` is not needed first. See [Dependency resolution](../how-it-works/dependency-resolution.md#visualizing-the-graph) for how references map to variants.
+
 ### `lint`
 
 Lint Dockerfiles in the project with [hadolint](https://github.com/hadolint/hadolint). The hadolint binary is embedded in `ch` — no separate install required.
