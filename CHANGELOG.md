@@ -1,3 +1,9 @@
+## [1.26.0](https://github.com/ContainerHive/ContainerHive/compare/v1.25.1...v1.26.0) (2026-10-29)
+
+### Features
+
+* **example:** use tag_ranges for dotnet images ([#350](https://github.com/ContainerHive/ContainerHive/issues/350)) ([ae7c4e8](https://github.com/ContainerHive/ContainerHive/commit/ae7c4e8036ea53ff98f84bd6daccfb640a74e3dc))
+
 ## [1.25.1](https://github.com/ContainerHive/ContainerHive/compare/v1.25.0...v1.25.1) (2026-10-28)
 
 ### Bug Fixes
