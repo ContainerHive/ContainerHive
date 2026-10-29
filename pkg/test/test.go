@@ -31,7 +31,7 @@ type Opts struct {
 	Registry  Registry // if set, use registry refs when no local tar exists
 	BuildID   string
 	Shard     shard.Shard
-	Platforms []string // when set, overrides configured project/image platforms
+	Platforms []string // when set, selects within the configured project/image/variant platforms
 }
 
 // RunProjectTests executes container structure tests for all images in a project
@@ -51,12 +51,14 @@ func RunProjectTests(ctx context.Context, opts *Opts) (tested, failed int, err e
 		slog.Info("Shard selected units", "shard", opts.Shard.Current, "of", opts.Shard.Max, "units", len(owned))
 	}
 	owns := shard.NewTagSharder(opts.Project, opts.Shard)
+	sel := &platformSelection{requested: opts.Platforms}
+	defer sel.warnIfNothingSelected()
 
 	for _, img := range opts.Project.ImagesByIdentifier {
 		for tagName := range img.Tags {
 			if utils.MatchesFilter(opts.Filters, img.Name, tagName) && owns(img.Identifier, tagName) {
 				t, f, err := runTestsForTag(ctx, opts, img.Name, tagName,
-					platform.Resolve(opts.Platforms, opts.Project.Config.Platforms, img.Platforms, nil))
+					sel.resolve(opts.Project.Config.Platforms, img.Platforms, nil))
 				if err != nil {
 					return tested, failed, err
 				}
@@ -73,7 +75,7 @@ func RunProjectTests(ctx context.Context, opts *Opts) (tested, failed int, err e
 					continue
 				}
 				t, f, err := runTestsForTag(ctx, opts, img.Name, variantTag,
-					platform.Resolve(opts.Platforms, opts.Project.Config.Platforms, img.Platforms, variantDef.Platforms))
+					sel.resolve(opts.Project.Config.Platforms, img.Platforms, variantDef.Platforms))
 				if err != nil {
 					return tested, failed, err
 				}
@@ -85,9 +87,41 @@ func RunProjectTests(ctx context.Context, opts *Opts) (tested, failed int, err e
 	return tested, failed, nil
 }
 
+// platformSelection counts the tags --platform selected or skipped, so an
+// empty test run caused by --platform is reported.
+type platformSelection struct {
+	requested []string
+	matched   int
+	skipped   int
+}
+
+func (s *platformSelection) resolve(global, image, variant []string) []string {
+	platforms := platform.Resolve(s.requested, global, image, variant)
+	if len(platforms) > 0 {
+		s.matched++
+	} else if len(s.requested) > 0 {
+		s.skipped++
+	}
+	return platforms
+}
+
+// warnIfNothingSelected warns when every tag selected by the filters (and
+// shard) was skipped by --platform.
+func (s *platformSelection) warnIfNothingSelected() {
+	if s.matched > 0 || s.skipped == 0 {
+		return
+	}
+	slog.Warn("No selected tag supports the requested platform(s), nothing was tested", "platform", s.requested)
+}
+
 // runTestsForTag runs container structure tests for a single tag directory
 // across all given platforms. Returns the number of images tested and failed.
 func runTestsForTag(ctx context.Context, opts *Opts, imageName, tagName string, platforms []string) (tested, failed int, _ error) {
+	if len(platforms) == 0 && len(opts.Platforms) > 0 {
+		slog.Info("Skipping, platform not supported", "image", imageName, "tag", tagName, "platform", opts.Platforms)
+		return 0, 0, nil
+	}
+
 	tagDir := filepath.Join(opts.DistPath, imageName, tagName)
 	testDefs := cst.CollectTestDefinitions(tagDir)
 	if len(testDefs) == 0 {

@@ -11,12 +11,12 @@ func TestImageRef(t *testing.T) {
 		{
 			name: "defaults when opts is nil",
 			opts: nil,
-			want: DefaultImage + ":" + Version,
+			want: DefaultImage + ":" + DefaultTag,
 		},
 		{
 			name: "defaults when opts is empty",
 			opts: map[string]string{},
-			want: DefaultImage + ":" + Version,
+			want: DefaultImage + ":" + DefaultTag,
 		},
 		{
 			name: "custom image",
@@ -42,7 +42,7 @@ func TestImageRef(t *testing.T) {
 				"ci_buildkit_image":   "",
 				"ci_buildkit_version": "",
 			},
-			want: DefaultImage + ":" + Version,
+			want: DefaultImage + ":" + DefaultTag,
 		},
 	}
 
@@ -53,5 +53,30 @@ func TestImageRef(t *testing.T) {
 				t.Errorf("ImageRef(%v) = %q, want %q", tc.opts, got, tc.want)
 			}
 		})
+	}
+}
+
+func TestReleaseSeries(t *testing.T) {
+	cases := map[string]string{
+		"v0.34.0": "v0.34",
+		"v1.2.3":  "v1.2",
+		"v0.34":   "v0.34",
+		"latest":  "latest",
+	}
+	for version, want := range cases {
+		t.Run(version, func(t *testing.T) {
+			if got := releaseSeries(version); got != want {
+				t.Errorf("releaseSeries(%q) = %q, want %q", version, got, want)
+			}
+		})
+	}
+}
+
+func TestTagFor(t *testing.T) {
+	if got := TagFor(DefaultImage); got != DefaultTag {
+		t.Errorf("TagFor(DefaultImage) = %q, want %q", got, DefaultTag)
+	}
+	if got := TagFor("moby/buildkit"); got != Version {
+		t.Errorf("TagFor(moby/buildkit) = %q, want %q", got, Version)
 	}
 }

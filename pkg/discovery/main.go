@@ -22,6 +22,7 @@ import (
 type discoverOptions struct {
 	resolver        *tagrange.Resolver
 	refreshVersions bool
+	skipTagRanges   bool
 }
 
 // Option configures optional DiscoverProject behavior.
@@ -40,6 +41,13 @@ func WithTagRangeResolver(r *tagrange.Resolver) Option {
 // and refetch every source, still recording the result for later calls.
 func WithRefreshVersions(refresh bool) Option {
 	return func(o *discoverOptions) { o.refreshVersions = refresh }
+}
+
+// WithSkipTagRanges leaves tag_ranges unexpanded, so discovery never touches
+// the version sources or their cache. For callers that do not need the
+// generated tags, such as printing the dependency graph.
+func WithSkipTagRanges() Option {
+	return func(o *discoverOptions) { o.skipTagRanges = true }
 }
 
 func verifyProjectRoot(root string) error {
@@ -154,8 +162,10 @@ func DiscoverProject(ctx context.Context, root string, opts ...Option) (*model.C
 		return nil, errors.Join(errors.New("failed to discover images"), err)
 	}
 
-	if err := resolveTagRanges(ctx, images, hiveConfig, absoluteRoot, options); err != nil {
-		return nil, errors.Join(errors.New("failed to resolve tag_ranges"), err)
+	if !options.skipTagRanges {
+		if err := resolveTagRanges(ctx, images, hiveConfig, absoluteRoot, options); err != nil {
+			return nil, errors.Join(errors.New("failed to resolve tag_ranges"), err)
+		}
 	}
 
 	for _, img := range images {

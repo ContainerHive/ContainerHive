@@ -14,7 +14,7 @@ brew install ContainerHive
 Installation and updates run through a signed [0install](https://0install.net) feed.
 
 ```sh
-0install add ch https://containerhive.github.io/0install/containerhive.xml
+0install add ch https://0install.container-hive.eu/containerhive.xml
 0install run ch
 ```
 
@@ -54,4 +54,5 @@ the [latest release page](https://github.com/ContainerHive/ContainerHive/release
 
 ### Docker
 
-For the Docker image, check [Docker Hub](https://hub.docker.com/r/containerhive/containerhive).
+The Docker image is published to [Docker Hub](https://hub.docker.com/r/containerhive/containerhive) and mirrored to
+`ghcr.io/containerhive/containerhive` and `registry.gitlab.com/containerhive/containerhive`.

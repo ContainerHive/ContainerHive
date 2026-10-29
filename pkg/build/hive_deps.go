@@ -4,11 +4,14 @@ import (
 	"fmt"
 	"log/slog"
 	"os"
+	"slices"
 	"strings"
 
 	"github.com/ContainerHive/ContainerHive/internal/buildkit/build_context"
 	"github.com/ContainerHive/ContainerHive/internal/dependency"
 	"github.com/ContainerHive/ContainerHive/internal/ocistore"
+	"github.com/ContainerHive/ContainerHive/pkg/model"
+	"github.com/ContainerHive/ContainerHive/pkg/platform"
 	"github.com/containerd/containerd/v2/core/content"
 	"github.com/distribution/reference"
 )
@@ -48,6 +51,10 @@ type HiveDepsOpts struct {
 	RegistryAddress string
 	// BuildID is appended to registry tags when resolving via registry.
 	BuildID string
+	// Project, when set, is used to reject a dependency that the project
+	// does not build for PlatformStr, so a dependent fails with a clear error
+	// instead of a missing named context or registry pull failure.
+	Project *model.ContainerHiveProject
 }
 
 // ResolveHiveDeps scans a Dockerfile for __hive__/ references and resolves each
@@ -92,6 +99,10 @@ func ResolveHiveDeps(opts HiveDepsOpts) (*HiveDeps, error) {
 // tar becomes an OCI layout content store; without a tar, a configured
 // registry provides the fallback reference.
 func resolveDepContext(d *HiveDeps, imageName, tag string, opts HiveDepsOpts) error {
+	if err := checkDepPlatform(opts, imageName, tag); err != nil {
+		return err
+	}
+
 	contextKey := fmt.Sprintf("context:%s%s:%s", namedContextPrefix, imageName, tag)
 
 	tarPath := TarFilePath(opts.DistPath, imageName, tag, opts.PlatformStr)
@@ -129,21 +140,54 @@ func resolveDepContext(d *HiveDeps, imageName, tag string, opts HiveDepsOpts) er
 	return nil
 }
 
-// NixParentDeps couples the resolved nix parent source with its cleanup
+// checkDepPlatform returns an error when the project defines the dependency
+// but does not configure it for opts.PlatformStr. Dependencies the project
+// does not define are left to the regular tar/registry resolution.
+func checkDepPlatform(opts HiveDepsOpts, imageName, tag string) error {
+	if opts.Project == nil || opts.PlatformStr == "" {
+		return nil
+	}
+	platforms, found := tagPlatforms(opts.Project, imageName, tag)
+	if !found || slices.Contains(platforms, platform.Normalize(opts.PlatformStr)) {
+		return nil
+	}
+	return fmt.Errorf("dependency %s:%s is not configured for platform %s (configured: %v), add the platform to its image.yml or remove it from the dependent image",
+		imageName, tag, platform.Normalize(opts.PlatformStr), platforms)
+}
+
+// tagPlatforms returns the configured platforms of a base or variant tag.
+// found is false when the project does not define the tag.
+func tagPlatforms(project *model.ContainerHiveProject, imageName, tag string) (platforms []string, found bool) {
+	for _, img := range project.ImagesByName[imageName] {
+		for tagName := range img.Tags {
+			if tagName == tag {
+				return platform.Resolve(nil, project.Config.Platforms, img.Platforms, nil), true
+			}
+			for _, variant := range img.Variants {
+				if tagName+variant.TagSuffix == tag {
+					return platform.Resolve(nil, project.Config.Platforms, img.Platforms, variant.Platforms), true
+				}
+			}
+		}
+	}
+	return nil, false
+}
+
+// ParentDeps couples the resolved parent image source with its cleanup
 // handle. Deps is nil for plain image references.
-type NixParentDeps struct {
-	Parent *build_context.NixParent
+type ParentDeps struct {
+	Parent *build_context.ParentImage
 	Deps   *HiveDeps
 }
 
-// ResolveNixParent resolves the nix parent image reference. A __hive__/
+// ResolveParentImage resolves a backend parent image reference. A __hive__/
 // reference resolves through the local build cache or the registry, like a
 // Dockerfile dependency. Any other value is a plain image reference for the
 // registry path.
-func ResolveNixParent(parentRef string, opts HiveDepsOpts) (*NixParentDeps, error) {
+func ResolveParentImage(parentRef string, opts HiveDepsOpts) (*ParentDeps, error) {
 	if !strings.HasPrefix(parentRef, dependency.HivePrefix) {
-		return &NixParentDeps{
-			Parent: &build_context.NixParent{RegistryRef: parentRef},
+		return &ParentDeps{
+			Parent: &build_context.ParentImage{RegistryRef: parentRef},
 		}, nil
 	}
 
@@ -161,7 +205,7 @@ func ResolveNixParent(parentRef string, opts HiveDepsOpts) (*NixParentDeps, erro
 		return nil, err
 	}
 
-	parent := &build_context.NixParent{}
+	parent := &build_context.ParentImage{}
 	for _, contextValue := range d.NamedContexts {
 		if storeID, digest, found := parseOCILayoutRef(contextValue); found {
 			named, err := reference.ParseNormalizedNamed(storeID)
@@ -179,7 +223,7 @@ func ResolveNixParent(parentRef string, opts HiveDepsOpts) (*NixParentDeps, erro
 			parent.RegistryRef = strings.TrimPrefix(contextValue, "docker-image://")
 		}
 	}
-	return &NixParentDeps{Parent: parent, Deps: d}, nil
+	return &ParentDeps{Parent: parent, Deps: d}, nil
 }
 
 // splitHiveRef splits an image name and tag at the last colon.

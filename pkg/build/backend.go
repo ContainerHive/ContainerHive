@@ -1,7 +1,6 @@
 package build
 
 import (
-	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -25,31 +24,10 @@ func entrypointFileName(backend string) string {
 	if backend == model.BuildBackendNix {
 		return model.FlakeFileName
 	}
+	if backend == model.BuildBackendChisel {
+		return model.ChiselFileName
+	}
 	return "Dockerfile"
-}
-
-// hashSource returns the content bytes driving the cache scope hash. For Nix
-// flakes, flake.lock pins the flake resolution and belongs into the hash.
-// Dockerfile builds ignore a stray flake.lock, so the source reduces to the
-// file content alone.
-func hashSource(entrypointPath string) ([]byte, error) {
-	content, err := os.ReadFile(entrypointPath)
-	if err != nil {
-		return nil, err
-	}
-
-	if filepath.Base(entrypointPath) != model.FlakeFileName {
-		return content, nil
-	}
-
-	lock, err := os.ReadFile(filepath.Join(filepath.Dir(entrypointPath), "flake.lock"))
-	if errors.Is(err, os.ErrNotExist) {
-		return content, nil
-	}
-	if err != nil {
-		return nil, err
-	}
-	return append(content, lock...), nil
 }
 
 // nixConfigFor merges a variant Nix config over the image level config.
@@ -60,6 +38,14 @@ func nixConfigFor(imageDef *model.Image, variantDef *model.ImageVariant) model.N
 	return imageDef.Nix
 }
 
+// chiselConfigFor merges a variant Chisel config over the image level config.
+func chiselConfigFor(imageDef *model.Image, variantDef *model.ImageVariant) model.ChiselConfig {
+	if variantDef != nil && variantDef.Chisel != nil {
+		return *variantDef.Chisel
+	}
+	return imageDef.Chisel
+}
+
 // runConfigFor merges a variant run config over the image level config.
 func runConfigFor(imageDef *model.Image, variantDef *model.ImageVariant) *model.ImageRunConfig {
 	if variantDef != nil && variantDef.RunConfig != nil {
@@ -68,37 +54,57 @@ func runConfigFor(imageDef *model.Image, variantDef *model.ImageVariant) *model.
 	return imageDef.RunConfig
 }
 
-// nixParentForBuild expands the __hive_parent__ placeholder for a variant
-// build into the image name and tag of the variant. The image level build
-// has no parent tag to resolve, so the placeholder errors there.
-func nixParentForBuild(config model.NixConfig, imageDef *model.Image, tagName string) (model.NixConfig, error) {
-	if config.Parent != model.HiveParentPlaceholder {
-		return config, nil
+// expandParentPlaceholder expands the __hive_parent__ placeholder of a
+// variant build into the image name and tag of the variant. The image level
+// build has no parent tag to resolve, so the placeholder errors there.
+func expandParentPlaceholder(parent, imageName, tagName string) (string, error) {
+	if parent != model.HiveParentPlaceholder {
+		return parent, nil
 	}
 	if tagName != "" {
-		config.Parent = fmt.Sprintf("__hive__/%s:%s", imageDef.Name, tagName)
-		return config, nil
+		return fmt.Sprintf("__hive__/%s:%s", imageName, tagName), nil
 	}
-	return model.NixConfig{}, fmt.Errorf("image %q cannot use the %s placeholder outside a variant: a nix build without a variant has no parent tag", imageDef.Name, model.HiveParentPlaceholder)
+	return "", fmt.Errorf("image %q cannot use the %s placeholder outside a variant: a build without a variant has no parent tag", imageName, model.HiveParentPlaceholder)
 }
 
-// resolveNixParent resolves the nix.parent config value for a build. An
-// empty parent returns nil.
-func resolveNixParent(parentRef string, opts *ProjectBuildOpts, platformStr string) (*NixParentDeps, error) {
+// resolveParentImage resolves a backend parent image reference for a build.
+// An empty ref returns nil.
+func resolveParentImage(parentRef string, opts *ProjectBuildOpts, platformStr string) (*ParentDeps, error) {
 	if parentRef == "" {
 		return nil, nil
 	}
-	return ResolveNixParent(parentRef, HiveDepsOpts{
+	return ResolveParentImage(parentRef, HiveDepsOpts{
 		DistPath:        opts.DistPath,
 		PlatformStr:     platformStr,
 		RegistryAddress: opts.registryAddress(),
 		BuildID:         opts.BuildID,
+		Project:         opts.Project,
 	})
+}
+
+// nixParentForBuild expands the parent placeholder of a Nix build.
+func nixParentForBuild(config model.NixConfig, imageDef *model.Image, tagName string) (model.NixConfig, error) {
+	parent, err := expandParentPlaceholder(config.Parent, imageDef.Name, tagName)
+	if err != nil {
+		return model.NixConfig{}, err
+	}
+	config.Parent = parent
+	return config, nil
+}
+
+// chiselParentForBuild expands the parent placeholder of a Chisel build.
+func chiselParentForBuild(config model.ChiselConfig, imageDef *model.Image, tagName string) (model.ChiselConfig, error) {
+	parent, err := expandParentPlaceholder(config.Parent, imageDef.Name, tagName)
+	if err != nil {
+		return model.ChiselConfig{}, err
+	}
+	config.Parent = parent
+	return config, nil
 }
 
 // nixBuildContext assembles the NixBuildContext for the backend from a
 // resolved Nix config, run config and parent source.
-func nixBuildContext(root string, nix model.NixConfig, run *model.ImageRunConfig, parent *build_context.NixParent) *build_context.NixBuildContext {
+func nixBuildContext(root string, nix model.NixConfig, run *model.ImageRunConfig, parent *build_context.ParentImage) *build_context.NixBuildContext {
 	buildCtx := &build_context.NixBuildContext{
 		Root:         root,
 		BuilderImage: nix.BuilderImage,
@@ -114,4 +120,51 @@ func nixBuildContext(root string, nix model.NixConfig, run *model.ImageRunConfig
 		buildCtx.WorkingDir = run.WorkingDir
 	}
 	return buildCtx
+}
+
+// chiselBuildContext assembles the ChiselBuildContext for the backend from a
+// parsed cut spec, a resolved Chisel config, a run config and a parent
+// source. The cut spec comes from the rendered chisel.yaml of the tag or
+// variant directory.
+func chiselBuildContext(root string, spec *model.ChiselCutSpec, chisel model.ChiselConfig, run *model.ImageRunConfig, parent *build_context.ParentImage) (*build_context.ChiselBuildContext, error) {
+	buildCtx := &build_context.ChiselBuildContext{
+		Root: root,
+		Release: build_context.ChiselRelease{
+			Name:   spec.Release.Name,
+			Git:    spec.Release.Git,
+			GitRef: spec.Release.GitRef,
+		},
+		Slices:        spec.Slices,
+		Ignore:        spec.Ignore,
+		BuilderImage:  chisel.BuilderImage,
+		ChiselVersion: chisel.ChiselVersion,
+		ExtraArgs:     chisel.ExtraArgs,
+		Parent:        parent,
+		Cache:         chisel.CacheEnabled(),
+	}
+	if run != nil {
+		buildCtx.Entrypoint = run.Entrypoint
+		buildCtx.Cmd = run.Cmd
+		buildCtx.Env = run.Env
+		buildCtx.User = run.User
+		buildCtx.WorkingDir = run.WorkingDir
+	}
+	if err := buildCtx.Validate(); err != nil {
+		return nil, err
+	}
+	return buildCtx, nil
+}
+
+// parseChiselCutSpec parses the rendered chisel.yaml of a tag or variant
+// directory into the build input fields.
+func parseChiselCutSpec(root string) (*model.ChiselCutSpec, error) {
+	data, err := os.ReadFile(filepath.Join(root, model.ChiselFileName))
+	if err != nil {
+		return nil, fmt.Errorf("failed to read %s in %s: %w", model.ChiselFileName, root, err)
+	}
+	spec, err := model.ParseChiselCutSpec(data)
+	if err != nil {
+		return nil, fmt.Errorf("failed to parse chisel cut spec: %w", err)
+	}
+	return spec, nil
 }

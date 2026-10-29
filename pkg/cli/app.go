@@ -14,6 +14,7 @@ import (
 	"github.com/ContainerHive/ContainerHive/pkg/discovery"
 	"github.com/ContainerHive/ContainerHive/pkg/logging"
 	"github.com/ContainerHive/ContainerHive/pkg/model"
+	"github.com/ContainerHive/ContainerHive/pkg/platform"
 	"github.com/ContainerHive/ContainerHive/pkg/progress"
 	"github.com/ContainerHive/ContainerHive/pkg/registry"
 	"github.com/ContainerHive/ContainerHive/pkg/rendering"
@@ -22,13 +23,11 @@ import (
 	"github.com/urfave/cli/v3"
 )
 
-func discoverProject(ctx context.Context, cmd *cli.Command) (*model.ContainerHiveProject, error) {
+func discoverProject(ctx context.Context, cmd *cli.Command, extra ...discovery.Option) (*model.ContainerHiveProject, error) {
 	projectRoot := cmd.String("project")
 
-	project, err := discovery.DiscoverProject(
-		ctx, projectRoot,
-		discovery.WithRefreshVersions(cmd.Bool("refresh-versions")),
-	)
+	opts := append([]discovery.Option{discovery.WithRefreshVersions(cmd.Bool("refresh-versions"))}, extra...)
+	project, err := discovery.DiscoverProject(ctx, projectRoot, opts...)
 	if err != nil {
 		return nil, fmt.Errorf("discovery failed: %w", err)
 	}
@@ -52,6 +51,25 @@ func setupRegistry(ctx context.Context, distPath string, config *model.RegistryC
 	slog.Info("Registry started", "local", reg.IsLocal(), "address", reg.Address())
 
 	return reg, nil
+}
+
+// validatePlatforms rejects --platform values that no project, image or
+// variant configures. --platform only selects within the configured
+// platforms, so such a value would silently select nothing.
+func validatePlatforms(project *model.ContainerHiveProject, requested []string) error {
+	configured := [][]string{project.Config.Platforms}
+	for _, img := range project.ImagesByIdentifier {
+		configured = append(configured, img.Platforms)
+		for _, variant := range img.Variants {
+			configured = append(configured, variant.Platforms)
+		}
+	}
+
+	unsupported := platform.Unsupported(requested, configured...)
+	if len(unsupported) == 0 {
+		return nil
+	}
+	return fmt.Errorf("platform(s) %v not configured in hive.yml or any image.yml, --platform only selects within configured platforms", unsupported)
 }
 
 func generateProject(ctx context.Context, cmd *cli.Command) error {
@@ -80,7 +98,10 @@ func buildProject(
 	s shard.Shard,
 ) error {
 	if len(platforms) == 0 && len(project.Config.Platforms) == 0 {
-		return fmt.Errorf("no platforms configured — set platforms in hive.yml or pass --platform")
+		return fmt.Errorf("no platforms configured — set platforms in hive.yml")
+	}
+	if err := validatePlatforms(project, platforms); err != nil {
+		return err
 	}
 
 	if _, err := os.Stat(distPath); err != nil {
@@ -209,6 +230,7 @@ func NewApp() *cli.Command {
 			licenseCmd(),
 			devCmd(),
 			reportCmd(),
+			graphCmd(),
 			mcpCmd(),
 		},
 	}

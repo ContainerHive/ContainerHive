@@ -12,6 +12,9 @@ replaced, so a re-run is safe.
 attribute of the result to the given feed URI. Pass it on every run, so a
 canonical feed URL change survives the next merge.
 
+The homepage and icon elements always come from the generated feed, so a
+template change reaches the published master feed with the next merge.
+
 The result is signed with a detached GPG signature embedded as a Base64
 comment block, the same format 0install clients accept. Requires gpg on
 PATH with the imported private key.
@@ -59,6 +62,20 @@ def group_index(interface):
         for path in run_command_paths(group):
             index.setdefault(path, group)
     return index
+
+
+def replace_metadata(master_doc, generated_root, tag):
+    """Replaces the master feed's top-level <tag> elements with the generated ones."""
+    master_root = master_doc.documentElement
+    generated = direct_children(generated_root, tag)
+    if not generated:
+        return
+    existing = direct_children(master_root, tag)
+    anchor = existing[0] if existing else None
+    for node in generated:
+        master_root.insertBefore(master_doc.importNode(node, True), anchor)
+    for node in existing:
+        master_root.removeChild(node)
 
 
 def strip_signature_block(data):
@@ -117,6 +134,9 @@ def merge(master_path, generated_path, init_uri, canonical_uri):
 
     if init_uri is not None:
         return master_doc
+
+    for tag in ("homepage", "icon"):
+        replace_metadata(master_doc, generated_root, tag)
 
     master_groups = group_index(master_root)
     for generated_group in direct_children(generated_root, "group"):

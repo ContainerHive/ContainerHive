@@ -54,7 +54,7 @@ func templateCICmd() *cli.Command {
 			},
 			&cli.StringFlag{
 				Name:  "image-name",
-				Usage: "Container image name for the CH CLI (default: containerhive/containerhive)",
+				Usage: "Container image name for the CH CLI (default: ghcr.io/containerhive/containerhive for github, registry.gitlab.com/containerhive/containerhive for gitlab)",
 			},
 		},
 		Action: func(ctx context.Context, cmd *cli.Command) error {
@@ -86,7 +86,7 @@ func templateCICmd() *cli.Command {
 			if imageName != "" {
 				ciCtx.ImageName = imageName
 			} else {
-				ciCtx.ImageName = "containerhive/containerhive"
+				ciCtx.ImageName = ci.ResolveDefaultImageName(cmd.String("provider"))
 			}
 
 			result, err := ci.Generate(cmd.String("provider"), ciCtx, cmd.String("template-dir"))

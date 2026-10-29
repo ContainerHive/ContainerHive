@@ -8,6 +8,7 @@ BUILD_ARGS=-ldflags "-X github.com/ContainerHive/ContainerHive/internal/buildinf
 BIN_PREFIX="dist/"
 CMD_CH_CLI = "./cmd/ch"
 CONTAINER_REGISTRY?="docker.io/containerhive"
+CONTAINER_FLOATING_TAG?=latest
 
 clean: ## Cleanup artifacts
 	@rm -rf dist/
@@ -84,12 +85,13 @@ generate-json-schema: ## Generate the json schemas
 	@go run tools/generate-image-schema.go
 	@go run tools/generate-project-schema.go
 	@go run tools/generate-structure-test-schema.go
+	@go run tools/generate-chisel-schema.go
 	@cp schemas/image.schema.json pkg/mcp/image.schema.json
 	@cp schemas/project.schema.json pkg/mcp/hive.schema.json
 	@cp schemas/structure-test.schema.json pkg/mcp/structure-test.schema.json
 
 build-docker: ## Build docker image based on the built linux builds in the dist folder
-	@docker buildx build --tag $(CONTAINER_REGISTRY)/containerhive:latest \
+	@docker buildx build --tag $(CONTAINER_REGISTRY)/containerhive:$(CONTAINER_FLOATING_TAG) \
 		--platform linux/amd64,linux/arm/v7,linux/arm64 \
 		--build-arg BUILD_TIME="$(NOW)" \
 		--build-arg BUILD_VERSION="$(VERSION)" \

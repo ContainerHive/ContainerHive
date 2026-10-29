@@ -1,0 +1,133 @@
+---
+name: "🐛 Bug Report"
+description: File a bug report
+title: "[Bug]: "
+labels:
+  - bug
+  - priority: low
+assignees:
+  - timo-reymann
+type: bug
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this bug report!
+
+        A small, complete report helps us find the cause faster. Include the
+        exact command, the configuration, and the full error output.
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: Tell us what you saw and what you expected to happen.
+      placeholder: Tell us what you saw.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Steps to reproduce
+      description: List the exact commands. Include the full `ch` command and
+        all flags.
+      placeholder: |
+        1. Run `ch build <image> --<flag>`
+        2. See error
+    validations:
+      required: true
+  - type: textarea
+    id: expected-behaviour
+    attributes:
+      label: Expected behavior
+      description: What should have happened?
+    validations:
+      required: true
+  - type: textarea
+    id: actual-behaviour
+    attributes:
+      label: Actual behavior
+      description: What happened instead?
+    validations:
+      required: true
+  - type: input
+    id: ch-version
+    attributes:
+      label: ContainerHive version
+      description: Paste the output of `ch version`.
+      placeholder: 1.15.1
+    validations:
+      required: true
+  - type: dropdown
+    id: os
+    attributes:
+      label: Operating system
+      description: Which operating system and architecture do you run `ch` on?
+      options:
+        - Linux (amd64)
+        - Linux (arm64)
+        - macOS (Intel)
+        - macOS (Apple Silicon)
+        - Windows
+    validations:
+      required: true
+  - type: dropdown
+    id: container-runtime
+    attributes:
+      label: How do you run BuildKit?
+      description: Which runtime provides your BuildKit daemon?
+      options:
+        - Docker
+        - Podman
+        - Kubernetes
+        - Native buildkitd
+        - Other
+        - not sure
+    validations:
+      required: false
+  - type: dropdown
+    id: backend
+    attributes:
+      label: Build backend
+      description: Which build backend did you use?
+      options:
+        - dockerfile
+        - nix
+        - chisel
+        - not sure
+    validations:
+      required: false
+  - type: textarea
+    id: config
+    attributes:
+      label: Configuration
+      description: Paste the relevant `hive.yml` or `image.yml` snippets.
+        Redact secrets.
+      render: yaml
+    validations:
+      required: false
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs
+      description: Paste the relevant logs or error output.
+      render: shell
+    validations:
+      required: false
+  - type: textarea
+    id: references
+    attributes:
+      label: References
+      description: Link related issues, pull requests, or vendor documentation.
+      placeholder: "You can reference issues with #"
+    validations:
+      required: false
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Contribution guidelines
+      description: |
+        Read the [contribution guidelines](https://github.com/ContainerHive/ContainerHive/blob/main/CONTRIBUTING.md)
+        before you submit this issue.
+      options:
+        - label: I read and agree to the contribution guidelines
+          required: true

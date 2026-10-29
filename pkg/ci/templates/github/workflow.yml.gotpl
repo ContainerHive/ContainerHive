@@ -80,7 +80,7 @@ jobs:
     needs:
 {{- range $img := .Images }}
 {{- range $p := $img.Platforms }}
-      - build-{{ $img.Name }}-{{ $p }}
+      - build-{{ $img.Name }}-{{ platform_id $p }}
 {{- end }}
 {{- end }}
     runs-on: ubuntu-latest
@@ -96,14 +96,14 @@ jobs:
           path: {{ .Dist }}/
 {{- range $img := .Images }}
 {{- range $p := $img.Platforms }}
-      - name: Download {{ $img.Name }}-{{ $p }} SBOM
+      - name: Download {{ $img.Name }}-{{ platform_id $p }} SBOM
         uses: actions/download-artifact@{{ option "actions_download_artifact_version" }}
         with:
 {{- if $.Artifacts }}
-          name: {{ $img.Name }}-{{ $p }}
+          name: {{ $img.Name }}-{{ platform_id $p }}
           path: {{ $.Dist }}/{{ $img.Name }}/
 {{- else }}
-          name: {{ $img.Name }}-{{ $p }}-sbom
+          name: {{ $img.Name }}-{{ platform_id $p }}-sbom
           path: {{ $.Dist }}/
 {{- end }}
 {{- end }}

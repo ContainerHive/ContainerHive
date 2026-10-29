@@ -27,6 +27,16 @@ func ensureNixConfig(cfg *model.NixConfig) model.NixConfig {
 	return *cfg
 }
 
+// ensureChiselConfig dereferences an optional ChiselConfig for the
+// value-typed field on model.Image. Zero values mean the build applies its
+// own defaults.
+func ensureChiselConfig(cfg *model.ChiselConfig) model.ChiselConfig {
+	if cfg == nil {
+		return model.ChiselConfig{}
+	}
+	return *cfg
+}
+
 const rootFsDirName = "rootfs"
 
 var imageConfigFileNames = []string{
@@ -104,7 +114,7 @@ func processImageConfig(projectRoot, configFilePath string) (*model.Image, error
 
 	description := parsedImageDef.Description
 
-	indexedVariants, err := processVariants(parsedImageDef, imageRoot, parentIcon)
+	indexedVariants, err := processVariants(parsedImageDef, imageRoot, relativeRoot, parentIcon)
 	if err != nil {
 		return nil, err
 	}
@@ -121,6 +131,10 @@ func processImageConfig(projectRoot, configFilePath string) (*model.Image, error
 		}
 	}
 
+	if err := validateChiselEntrypoint(entrypoint, relativeRoot); err != nil {
+		return nil, err
+	}
+
 	readmePath, err := getReadmePath(imageRoot)
 	if err != nil {
 		return nil, errors.Join(errors.New("failed to discover README"), err)
@@ -131,6 +145,7 @@ func processImageConfig(projectRoot, configFilePath string) (*model.Image, error
 		BuildEntryPointPath: entrypoint.Path,
 		BuildBackend:        entrypoint.Backend,
 		Nix:                 ensureNixConfig(parsedImageDef.Nix),
+		Chisel:              ensureChiselConfig(parsedImageDef.Chisel),
 		RunConfig:           parsedImageDef.Config,
 		ReadmePath:          readmePath,
 		RootFSDir:           rootFsPath,
@@ -153,6 +168,31 @@ func processImageConfig(projectRoot, configFilePath string) (*model.Image, error
 	}, nil
 }
 
+// validateChiselEntrypoint parses a plain chisel.yaml cut spec upfront, so a
+// broken spec fails discovery instead of the build. Templated cut specs
+// (.gotpl) cannot be evaluated at discovery time and validate on the
+// rendered file at build time. A git release without a pinned ref logs a
+// warning: the build tracks the default branch and is not reproducible.
+func validateChiselEntrypoint(entrypoint *buildEntrypoint, relativeRoot string) error {
+	if entrypoint.Backend != model.BuildBackendChisel {
+		return nil
+	}
+	if filepath.Ext(entrypoint.Path) != ".gotpl" {
+		data, err := os.ReadFile(entrypoint.Path)
+		if err != nil {
+			return errors.Join(errors.New("failed to read chisel cut spec"), err)
+		}
+		spec, err := model.ParseChiselCutSpec(data)
+		if err != nil {
+			return errors.Join(errors.New("failed to parse chisel cut spec"), err)
+		}
+		if spec.Release.IsGit() && spec.Release.GitRef == "" {
+			slog.Warn("No git ref for chisel release: the build checks out the default branch HEAD and is not reproducible — set release.ref in chisel.yaml", "image", relativeRoot)
+		}
+	}
+	return nil
+}
+
 func processTags(imageDef *model.ImageDefinitionConfig) map[string]*model.Tag {
 	tags := make(map[string]*model.Tag)
 	for _, tag := range imageDef.Tags {
@@ -161,7 +201,7 @@ func processTags(imageDef *model.ImageDefinitionConfig) map[string]*model.Tag {
 	return tags
 }
 
-func processVariants(imageDef *model.ImageDefinitionConfig, imageRoot, parentIcon string) (map[string]*model.ImageVariant, error) {
+func processVariants(imageDef *model.ImageDefinitionConfig, imageRoot, relativeRoot, parentIcon string) (map[string]*model.ImageVariant, error) {
 	indexedVariants := make(map[string]*model.ImageVariant)
 	for _, v := range imageDef.Variants {
 		variantRoot := filepath.Join(imageRoot, v.Name)
@@ -180,6 +220,9 @@ func processVariants(imageDef *model.ImageDefinitionConfig, imageRoot, parentIco
 		if err != nil {
 			return nil, errors.Join(errors.New("failed to discover build entrypoint for variant "+v.Name), err)
 		}
+		if err := validateChiselEntrypoint(variantEntrypoint, relativeRoot+"/"+v.Name); err != nil {
+			return nil, err
+		}
 		readmePath, err := getReadmePath(variantRoot)
 		if err != nil {
 			return nil, errors.Join(errors.New("failed to discover README for variant "+v.Name), err)
@@ -195,6 +238,7 @@ func processVariants(imageDef *model.ImageDefinitionConfig, imageRoot, parentIco
 			BuildEntryPointPath: variantEntrypoint.Path,
 			BuildBackend:        variantEntrypoint.Backend,
 			Nix:                 v.Nix,
+			Chisel:              v.Chisel,
 			RunConfig:           v.Config,
 			ReadmePath:          readmePath,
 			TestConfigFilePath:  testConfigFilePath,

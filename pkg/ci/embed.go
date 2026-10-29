@@ -16,11 +16,19 @@ func init() {
 		Name:       "gitlab",
 		TemplateFS: mustSub(gitlabTemplates, "templates/gitlab"),
 		Entrypoint: "pipeline.yml.gotpl",
+		// GitLab runners pull anonymously from Docker Hub and hit its rate
+		// limits, the GitLab registry is the closest mirror.
+		DefaultImageName: GitLabImageName,
+		DefaultOptions:   map[string]string{"ci_dind_image": GitLabDefaultDindImage},
 	})
 	RegisterProvider(&Provider{
 		Name:       "github",
 		TemplateFS: mustSub(githubTemplates, "templates/github"),
 		Entrypoint: "workflow.yml.gotpl",
+		// GitHub-hosted runners pull anonymously from Docker Hub and hit its
+		// rate limits, ghcr.io has none.
+		DefaultImageName: GHCRImageName,
+		DefaultOptions:   map[string]string{"ci_dind_image": GitHubDefaultDindImage},
 	})
 }
 

@@ -24,6 +24,10 @@ or set `BUILDKIT_HOST`, or `buildkit.address` in [`hive.yml`](configuration/hive
 
 Check the `FROM __hive__/<image>:<tag>` reference names the parent's directory and one of its tags, or declare the relationship with [`depends_on`](configuration/image.md#depends_on). See [How dependency resolution works](how-it-works/dependency-resolution.md).
 
+## The build fails with a BuildKit connection error
+
+Transient connection failures (`broken pipe`, `connection reset by peer`, `Unavailable`, worker listing timeouts) are retried up to three times on a fresh connection. Each retry waits 2, 5, then 10 seconds. Genuine build failures are never retried. If all retries fail, check that the BuildKit daemon is alive; for a remote daemon, check the network path and the proxy or load balancer timeouts. See [BuildKit setup](configuration/hive.md#buildkit).
+
 ## More logs
 
 Run with `--log-level debug` (or `LOG_LEVEL=debug`). Still stuck? Open an issue at the [issue tracker](https://github.com/ContainerHive/ContainerHive/issues).

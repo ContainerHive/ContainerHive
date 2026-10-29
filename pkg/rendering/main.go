@@ -213,6 +213,9 @@ func setupImageTagDir(tagPath string, image *model.Image, tag *model.Tag) error 
 		if err := copyFlakeLock(tagPath, image.BuildEntryPointPath); err != nil {
 			return errors.Join(errors.New("failed to copy flake.lock"), err)
 		}
+		if err := copyChiselSlices(tagPath, image.BuildEntryPointPath); err != nil {
+			return errors.Join(errors.New("failed to copy chisel slices"), err)
+		}
 	}
 
 	if image.ReadmePath != "" {
@@ -260,6 +263,9 @@ func setupVariantDir(variantPath string, image *model.Image, tagName string, tag
 		}
 		if err := copyFlakeLock(variantPath, variantDef.BuildEntryPointPath); err != nil {
 			return errors.Join(errors.New("failed to copy flake.lock for variant"), err)
+		}
+		if err := copyChiselSlices(variantPath, variantDef.BuildEntryPointPath); err != nil {
+			return errors.Join(errors.New("failed to copy chisel slices for variant"), err)
 		}
 		if err := replaceHiveParent(entrypoint, image.Name, tagName); err != nil {
 			return errors.Join(errors.New("failed to resolve __hive_parent__ in variant entrypoint"), err)

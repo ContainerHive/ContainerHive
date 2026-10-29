@@ -186,3 +186,29 @@ func TestRenderString_ReadFile(t *testing.T) {
 		})
 	}
 }
+
+func TestPlatformHelpers(t *testing.T) {
+	tests := []struct {
+		template string
+		want     string
+	}{
+		{`{{ platform_id "amd64" }}`, "amd64"},
+		{`{{ platform_id "linux/arm/v7" }}`, "linux-arm-v7"},
+		{`{{ platform_dir "amd64" }}`, "linux-amd64"},
+		{`{{ platform_dir "linux/arm/v7" }}`, "linux-arm-v7"},
+		{`{{ platform_arch "arm64" }}`, "arm64"},
+		{`{{ platform_arch "linux/arm64/v8" }}`, "arm64"},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.template, func(t *testing.T) {
+			result, err := RenderString("test", tt.template, nil)
+			if err != nil {
+				t.Fatal(err)
+			}
+			if got := string(result); got != tt.want {
+				t.Errorf("got %q, want %q", got, tt.want)
+			}
+		})
+	}
+}

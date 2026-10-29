@@ -4,7 +4,9 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/ContainerHive/ContainerHive/internal/buildkit"
 	"github.com/ContainerHive/ContainerHive/pkg/model"
+	"github.com/ContainerHive/ContainerHive/pkg/platform"
 )
 
 func TestBuildCIContext_NoDeps(t *testing.T) {
@@ -129,7 +131,7 @@ func TestBuildCIContext_Stages(t *testing.T) {
 func TestResolvePlatforms(t *testing.T) {
 	t.Run("strips linux prefix", func(t *testing.T) {
 		img := &model.Image{Platforms: []string{"linux/amd64", "linux/arm64"}}
-		result := resolvePlatforms(img, nil)
+		result := resolvePlatforms([]*model.Image{img}, nil)
 		if !reflect.DeepEqual(result, []string{"amd64", "arm64"}) {
 			t.Errorf("expected [amd64 arm64], got %v", result)
 		}
@@ -137,7 +139,7 @@ func TestResolvePlatforms(t *testing.T) {
 
 	t.Run("falls back to project defaults", func(t *testing.T) {
 		img := &model.Image{}
-		result := resolvePlatforms(img, []string{"linux/amd64"})
+		result := resolvePlatforms([]*model.Image{img}, []string{"linux/amd64"})
 		if !reflect.DeepEqual(result, []string{"amd64"}) {
 			t.Errorf("expected [amd64], got %v", result)
 		}
@@ -145,9 +147,59 @@ func TestResolvePlatforms(t *testing.T) {
 
 	t.Run("platform without prefix", func(t *testing.T) {
 		img := &model.Image{Platforms: []string{"amd64"}}
-		result := resolvePlatforms(img, nil)
+		result := resolvePlatforms([]*model.Image{img}, nil)
 		if !reflect.DeepEqual(result, []string{"amd64"}) {
 			t.Errorf("expected [amd64], got %v", result)
+		}
+	})
+
+	t.Run("keeps full value when more than an arch remains", func(t *testing.T) {
+		img := &model.Image{Platforms: []string{"linux/amd64", "linux/arm/v7", "windows/amd64"}}
+		result := resolvePlatforms([]*model.Image{img}, nil)
+		want := []string{"amd64", "linux/arm/v7", "windows/amd64"}
+		if !reflect.DeepEqual(result, want) {
+			t.Errorf("expected %v, got %v", want, result)
+		}
+		for i, p := range result {
+			if got := platform.Normalize(p); got != img.Platforms[i] {
+				t.Errorf("Normalize(%q) = %q, want %q", p, got, img.Platforms[i])
+			}
+		}
+	})
+
+	t.Run("includes variant-only platforms", func(t *testing.T) {
+		img := &model.Image{
+			Platforms: []string{"linux/amd64"},
+			Variants: map[string]*model.ImageVariant{
+				"riscv": {Name: "riscv", TagSuffix: "-riscv", Platforms: []string{"linux/riscv64"}},
+			},
+		}
+		result := resolvePlatforms([]*model.Image{img}, nil)
+		if !reflect.DeepEqual(result, []string{"amd64", "riscv64"}) {
+			t.Errorf("expected [amd64 riscv64], got %v", result)
+		}
+	})
+
+	t.Run("restricting variant does not drop base platforms", func(t *testing.T) {
+		img := &model.Image{
+			Variants: map[string]*model.ImageVariant{
+				"aspire": {Name: "aspire", TagSuffix: "-aspire", Platforms: []string{"linux/amd64"}},
+			},
+		}
+		result := resolvePlatforms([]*model.Image{img}, []string{"linux/amd64", "linux/arm64"})
+		if !reflect.DeepEqual(result, []string{"amd64", "arm64"}) {
+			t.Errorf("expected [amd64 arm64], got %v", result)
+		}
+	})
+
+	t.Run("deduplicates across images with the same name", func(t *testing.T) {
+		images := []*model.Image{
+			{Platforms: []string{"linux/amd64"}},
+			{Platforms: []string{"linux/amd64", "linux/arm64"}},
+		}
+		result := resolvePlatforms(images, nil)
+		if !reflect.DeepEqual(result, []string{"amd64", "arm64"}) {
+			t.Errorf("expected [amd64 arm64], got %v", result)
 		}
 	})
 }
@@ -182,11 +234,14 @@ func TestBuildCIContext_DefaultTemplateOptions(t *testing.T) {
 	if ctx.TemplateOptions["ci_cancel_outdated"] != "true" {
 		t.Errorf("expected default ci_cancel_outdated 'true', got %q", ctx.TemplateOptions["ci_cancel_outdated"])
 	}
-	if ctx.TemplateOptions["ci_buildkit_image"] != "moby/buildkit" {
-		t.Errorf("expected default ci_buildkit_image 'moby/buildkit', got %q", ctx.TemplateOptions["ci_buildkit_image"])
+	if ctx.TemplateOptions["ci_buildkit_image"] != buildkit.DefaultImage {
+		t.Errorf("expected default ci_buildkit_image %q, got %q", buildkit.DefaultImage, ctx.TemplateOptions["ci_buildkit_image"])
 	}
-	if ctx.TemplateOptions["ci_buildkit_version"] == "" {
-		t.Error("expected ci_buildkit_version to have a default value")
+	if ctx.TemplateOptions["ci_buildkit_version"] != buildkit.DefaultTag {
+		t.Errorf("expected default ci_buildkit_version %q, got %q", buildkit.DefaultTag, ctx.TemplateOptions["ci_buildkit_version"])
+	}
+	if v, ok := ctx.TemplateOptions["ci_dind_image"]; ok {
+		t.Errorf("expected no provider-independent ci_dind_image default, got %q", v)
 	}
 	if ctx.TemplateOptions["ci_lint"] != "true" {
 		t.Errorf("expected default ci_lint 'true', got %q", ctx.TemplateOptions["ci_lint"])
@@ -281,8 +336,8 @@ func TestBuildCIContext_UserOverridesTemplateOptions(t *testing.T) {
 	if ctx.TemplateOptions["ci_buildkit_image"] != "registry.io/buildkit" {
 		t.Errorf("expected user override 'registry.io/buildkit', got %q", ctx.TemplateOptions["ci_buildkit_image"])
 	}
-	if ctx.TemplateOptions["ci_buildkit_version"] == "" {
-		t.Error("expected ci_buildkit_version default to still be present")
+	if ctx.TemplateOptions["ci_buildkit_version"] != buildkit.Version {
+		t.Errorf("expected exact version %q for a custom image, got %q", buildkit.Version, ctx.TemplateOptions["ci_buildkit_version"])
 	}
 	if ctx.TemplateOptions["custom_var"] != "custom_value" {
 		t.Errorf("expected custom_var 'custom_value', got %q", ctx.TemplateOptions["custom_var"])

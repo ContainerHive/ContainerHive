@@ -89,3 +89,22 @@ func TestGenerate(t *testing.T) {
 		t.Errorf("result should contain image name, got: %s", got)
 	}
 }
+
+func TestResolveDefaultImageName(t *testing.T) {
+	tests := []struct {
+		provider string
+		want     string
+	}{
+		{provider: "github", want: "ghcr.io/containerhive/containerhive"},
+		{provider: "gitlab", want: "registry.gitlab.com/containerhive/containerhive"},
+		{provider: "does-not-exist", want: "containerhive/containerhive"},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.provider, func(t *testing.T) {
+			if got := ResolveDefaultImageName(tt.provider); got != tt.want {
+				t.Errorf("ResolveDefaultImageName(%q) = %q, want %q", tt.provider, got, tt.want)
+			}
+		})
+	}
+}

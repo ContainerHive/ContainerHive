@@ -7,9 +7,14 @@ import (
 
 func multiPlatformTemplateOutput(t *testing.T, provider string, artifacts bool) string {
 	t.Helper()
+	return platformTemplateOutput(t, provider, artifacts, []string{"linux/amd64", "linux/arm64"})
+}
+
+func platformTemplateOutput(t *testing.T, provider string, artifacts bool, platforms []string) string {
+	t.Helper()
 
 	project := singleImageProjectForTemplate()
-	project.Config.Platforms = []string{"linux/amd64", "linux/arm64"}
+	project.Config.Platforms = platforms
 	ctx, err := BuildCIContext(project, artifacts)
 	if err != nil {
 		t.Fatal(err)
@@ -43,6 +48,78 @@ func TestGitlabTemplate_TestJobsPerPlatform(t *testing.T) {
 
 	if strings.Contains(rendered, "test-app:\n") {
 		t.Errorf("expected architecture-specific GitLab test jobs, got generic test job:\n%s", rendered)
+	}
+}
+
+func TestGitlabTemplate_DindService(t *testing.T) {
+	tests := []struct {
+		name    string
+		options map[string]string
+		want    string
+	}{
+		{
+			name: "default is the rootless helper image",
+			want: "- name: " + GitLabDefaultDindImage + "\n      alias: dind\n      command: [\"dockerd\", \"--host=tcp://0.0.0.0:2375\"]",
+		},
+		{
+			name:    "ci_dind_image overrides the image",
+			options: map[string]string{"ci_dind_image": "docker:dind"},
+			want:    "- name: docker:dind\n      alias: dind",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			project := singleImageProjectForTemplate()
+			project.Config.TemplateOptions = tt.options
+			ctx, err := BuildCIContext(project, false)
+			if err != nil {
+				t.Fatal(err)
+			}
+			output, err := Generate("gitlab", ctx, "")
+			if err != nil {
+				t.Fatal(err)
+			}
+			if !strings.Contains(string(output), tt.want) {
+				t.Errorf("expected GitLab output to contain %q, got:\n%s", tt.want, output)
+			}
+		})
+	}
+}
+
+func TestGithubTemplate_DindService(t *testing.T) {
+	tests := []struct {
+		name    string
+		options map[string]string
+		want    string
+	}{
+		{
+			name: "default is the privileged helper image",
+			want: "--network ch-net -e DOCKER_TLS_CERTDIR=\"\" " + GitHubDefaultDindImage + " dockerd --host=tcp://0.0.0.0:2375",
+		},
+		{
+			name:    "ci_dind_image overrides the image",
+			options: map[string]string{"ci_dind_image": "docker:dind"},
+			want:    "--network ch-net -e DOCKER_TLS_CERTDIR=\"\" docker:dind dockerd --host=tcp://0.0.0.0:2375",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			project := singleImageProjectForTemplate()
+			project.Config.TemplateOptions = tt.options
+			ctx, err := BuildCIContext(project, false)
+			if err != nil {
+				t.Fatal(err)
+			}
+			output, err := Generate("github", ctx, "")
+			if err != nil {
+				t.Fatal(err)
+			}
+			if !strings.Contains(string(output), tt.want) {
+				t.Errorf("expected GitHub output to contain %q, got:\n%s", tt.want, output)
+			}
+		})
 	}
 }
 
@@ -92,5 +169,59 @@ func TestGithubTemplate_TestJobsDownloadMatchingPlatformArtifacts(t *testing.T) 
 	}
 	if strings.Contains(arm64Job, "name: app-amd64") {
 		t.Errorf("arm64 test job should not download amd64 artifacts, got:\n%s", arm64Job)
+	}
+}
+
+var multiComponentPlatforms = []string{"linux/arm/v7", "linux/arm64/v8", "windows/amd64"}
+
+func TestGithubTemplate_MultiComponentPlatforms(t *testing.T) {
+	rendered := platformTemplateOutput(t, "github", true, multiComponentPlatforms)
+
+	for _, expected := range []string{
+		"build-app-linux-arm-v7:\n    runs-on: ubuntu-24.04\n",
+		"build-app-linux-arm64-v8:\n    runs-on: ubuntu-24.04-arm\n",
+		"build-app-windows-amd64:\n    runs-on: ubuntu-24.04\n",
+		"test-app-linux-arm-v7:\n    runs-on: ubuntu-24.04\n    needs:\n      - build-app-linux-arm-v7",
+		"test-app-linux-arm64-v8:\n    runs-on: ubuntu-24.04-arm\n",
+		"build app --platform linux/arm/v7 --build-id",
+		"test app --platform linux/arm64/v8 --build-id",
+		"name: app-linux-arm-v7\n",
+		"path: dist/app/*/linux-arm-v7/",
+		"path: dist/app/*/linux-arm64-v8/",
+		"path: dist/app/*/windows-amd64/",
+	} {
+		if !strings.Contains(rendered, expected) {
+			t.Errorf("expected GitHub output to contain %q, got:\n%s", expected, rendered)
+		}
+	}
+
+	for _, unexpected := range []string{"-linux/", "-windows/", "linux-linux"} {
+		if strings.Contains(rendered, unexpected) {
+			t.Errorf("expected no raw platform in identifiers (%q), got:\n%s", unexpected, rendered)
+		}
+	}
+}
+
+func TestGitlabTemplate_MultiComponentPlatforms(t *testing.T) {
+	rendered := platformTemplateOutput(t, "gitlab", false, multiComponentPlatforms)
+
+	for _, expected := range []string{
+		".build-linux-arm-v7:\n  extends: .build",
+		".test-linux-arm-v7:\n  extends: .test",
+		"build-app-linux-arm-v7:\n  extends: .build-linux-arm-v7",
+		"test-app-linux-arm-v7:\n  extends: .test-linux-arm-v7",
+		"- build-app-linux-arm-v7",
+		"PLATFORM: linux/arm/v7",
+		"PLATFORM: windows/amd64",
+	} {
+		if !strings.Contains(rendered, expected) {
+			t.Errorf("expected GitLab output to contain %q, got:\n%s", expected, rendered)
+		}
+	}
+
+	for _, unexpected := range []string{"-linux/", "-windows/"} {
+		if strings.Contains(rendered, unexpected) {
+			t.Errorf("expected no raw platform in identifiers (%q), got:\n%s", unexpected, rendered)
+		}
 	}
 }

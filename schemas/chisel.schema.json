@@ -1,0 +1,54 @@
+{
+  "type": "object",
+  "properties": {
+    "release": {
+      "description": "Chisel release the slices cut from: a chisel-releases branch name (e.g. ubuntu-24.04) or a mapping with git and ref,required",
+      "anyOf": [
+        {
+          "type": "string",
+          "description": "Chisel-releases branch name (e.g. ubuntu-24.04)"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "git": {
+              "type": "string"
+            },
+            "ref": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "slices": {
+      "type": [
+        "null",
+        "array"
+      ],
+      "items": {
+        "type": "string"
+      },
+      "description": "Package slices to cut, in chisel notation \u003cpackage\u003e_\u003cslice\u003e,required"
+    },
+    "ignore": {
+      "type": [
+        "null",
+        "array"
+      ],
+      "items": {
+        "type": "string"
+      },
+      "description": "Release conditions to ignore (unstable, unmaintained)"
+    }
+  },
+  "$id": "https://schema-nest.timo-reymann.de/api/schema/json-schema/containerhive-chisel/latest",
+  "title": "Chisel cut spec",
+  "description": "chisel.yaml cut spec schema for ContainerHive.",
+  "required": [
+    "release",
+    "slices"
+  ],
+  "additionalProperties": false
+}

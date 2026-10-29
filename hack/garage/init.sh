@@ -24,9 +24,9 @@ NODE_ID=$(echo "$CLUSTER_STATUS" | jq -r '.nodes[0].id')
 LAYOUT=$(curl -sf -H "$AUTH_HEADER" "${GARAGE_ADMIN}/v2/GetClusterLayout")
 STAGED_COUNT=$(echo "$LAYOUT" | jq '.stagedRoleChanges | length')
 
-if [ "$STAGED_COUNT" -eq 0 ]; then
+if [[ "$STAGED_COUNT" -eq 0 ]]; then
     ROLES=$(echo "$LAYOUT" | jq '.roles | length')
-    if [ "$ROLES" -eq 0 ]; then
+    if [[ "$ROLES" -eq 0 ]]; then
         echo "Configuring node layout..."
         # v2 API uses roles array format
         curl -sf -X POST -H "$AUTH_HEADER" \
@@ -48,7 +48,7 @@ echo "Checking bucket..."
 BUCKETS=$(curl -sf -H "$AUTH_HEADER" "${GARAGE_ADMIN}/v2/ListBuckets")
 BUCKET_EXISTS=$(echo "$BUCKETS" | jq -r ".[] | select(.globalAliases[]? == \"$BUCKET_NAME\") | .id")
 
-if [ -z "$BUCKET_EXISTS" ]; then
+if [[ -z "$BUCKET_EXISTS" ]]; then
     echo "Creating bucket ${BUCKET_NAME}..."
     BUCKET_RESULT=$(curl -sf -X POST -H "$AUTH_HEADER" \
         -H "Content-Type: application/json" \
@@ -65,7 +65,7 @@ echo "Checking access key..."
 KEYS=$(curl -sf -H "$AUTH_HEADER" "${GARAGE_ADMIN}/v2/ListKeys")
 KEY_EXISTS=$(echo "$KEYS" | jq -r ".[] | select(.name == \"$KEY_NAME\") | .id")
 
-if [ -z "$KEY_EXISTS" ]; then
+if [[ -z "$KEY_EXISTS" ]]; then
     echo "Creating access key ${KEY_NAME}..."
     curl -sf -X POST -H "$AUTH_HEADER" \
         -H "Content-Type: application/json" \

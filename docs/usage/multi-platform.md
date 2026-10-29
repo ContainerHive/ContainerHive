@@ -36,6 +36,16 @@ variants:
 
 The resolution order is: **variant > image > project**. If a variant defines platforms, those are used. Otherwise the image-level platforms are used, falling back to the project-level default.
 
+### Selecting platforms with `--platform`
+
+`ch build`, `ch test` and `ch sbom` accept `--platform` to work on a subset of platforms, for example one platform per CI job. The flag selects within the resolved list, it does not replace it. A tag or variant whose resolved platforms do not include the requested platform is skipped.
+
+With the `slim` variant above restricted to `linux/amd64`, `ch build --platform linux/arm64` builds the arm64 base tags but skips `-slim`. Each skipped tag is logged. If no tag selected by the filters (and shard) supports the platform, the command logs a warning, does nothing and exits successfully.
+
+Requesting a platform that no project, image or variant configures (for example a typo such as `arm` for `linux/arm/v7`) fails with an error.
+
+An image that depends on another image (`FROM __hive__/base:1.0` or a `__hive__/` parent) can only be built for platforms that dependency configures. Building it for any other platform fails with an error naming the dependency and the platform. Add the platform to the dependency, or remove it from the dependent image.
+
 ## How multi-platform builds work
 
 When you run `ch build`, ContainerHive builds each image once per platform. The output is a platform-specific OCI tar file:

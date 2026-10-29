@@ -281,10 +281,10 @@ func TestRunProjectTests_ExplicitPlatformMissingImageForBaseAndVariant(t *testin
 				Variants: map[string]*model.ImageVariant{
 					"alpine": {Name: "alpine", TagSuffix: "-alpine"},
 				},
-				Platforms: []string{"linux/amd64"},
+				Platforms: []string{"linux/amd64", "linux/arm64"},
 			},
 		},
-		Config: model.HiveProjectConfig{Platforms: []string{"linux/amd64"}},
+		Config: model.HiveProjectConfig{Platforms: []string{"linux/amd64", "linux/arm64"}},
 	}
 
 	for _, tagName := range []string{"1.0", "1.0-alpine"} {
@@ -354,4 +354,42 @@ func TestRunProjectTests_MultipleImages(t *testing.T) {
 			t.Errorf("expected 0 failed, got %d", failed)
 		}
 	})
+}
+
+func TestRunProjectTests_ExplicitPlatformSkipsUnsupportedVariant(t *testing.T) {
+	project := &model.ContainerHiveProject{
+		ImagesByIdentifier: map[string]*model.Image{
+			"app": {
+				Identifier: "app",
+				Name:       "app",
+				Tags:       map[string]*model.Tag{"1.0": {Name: "1.0"}},
+				Variants: map[string]*model.ImageVariant{
+					"aspire": {Name: "aspire", TagSuffix: "-aspire", Platforms: []string{"linux/amd64"}},
+				},
+			},
+		},
+		Config: model.HiveProjectConfig{Platforms: []string{"linux/amd64", "linux/arm64"}},
+	}
+
+	distPath := t.TempDir()
+	testsDir := filepath.Join(distPath, "app", "1.0-aspire", "tests")
+	if err := os.MkdirAll(testsDir, 0755); err != nil {
+		t.Fatalf("failed to create tests directory: %v", err)
+	}
+	if err := os.WriteFile(filepath.Join(testsDir, "test.yaml"), []byte("test: true"), 0644); err != nil {
+		t.Fatalf("failed to write test definition: %v", err)
+	}
+
+	tested, failed, err := RunProjectTests(t.Context(), &Opts{
+		DistPath:  distPath,
+		Project:   project,
+		Filters:   []build.Filter{{ImageName: "app", TagName: "1.0-aspire"}},
+		Platforms: []string{"linux/arm64"},
+	})
+	if err != nil {
+		t.Fatalf("expected amd64-only variant to be skipped for arm64, got %v", err)
+	}
+	if tested != 0 || failed != 0 {
+		t.Errorf("expected 0 tested and 0 failed, got %d tested, %d failed", tested, failed)
+	}
 }

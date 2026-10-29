@@ -9,7 +9,9 @@ import (
 )
 
 // ExtractTar extracts a tar archive to the destination directory.
-// It validates that no entries escape the destination via path traversal.
+// The extraction is confined to destDir: entry names that escape it are
+// rejected, and the rooted filesystem operations also block symlink-based
+// escapes.
 func ExtractTar(tarPath, destDir string) error {
 	f, err := os.Open(tarPath)
 	if err != nil {
@@ -17,10 +19,14 @@ func ExtractTar(tarPath, destDir string) error {
 	}
 	defer f.Close()
 
-	absDestDir, err := filepath.Abs(destDir)
-	if err != nil {
+	if err := os.MkdirAll(destDir, 0o755); err != nil {
 		return err
 	}
+	root, err := os.OpenRoot(destDir)
+	if err != nil {
+		return errors.Join(errors.New("failed to open destination root"), err)
+	}
+	defer root.Close()
 
 	tr := tar.NewReader(f)
 	for {
@@ -32,22 +38,21 @@ func ExtractTar(tarPath, destDir string) error {
 			return err
 		}
 
-		clean := filepath.Clean(hdr.Name)
-		target := filepath.Join(absDestDir, clean)
-		if !filepath.IsLocal(clean) {
+		name := filepath.Clean(hdr.Name)
+		if !filepath.IsLocal(name) {
 			return errors.New("tar entry escapes destination: " + hdr.Name)
 		}
 
 		switch hdr.Typeflag {
 		case tar.TypeDir:
-			if err := os.MkdirAll(target, 0755); err != nil {
+			if err := root.MkdirAll(name, 0o755); err != nil {
 				return err
 			}
 		case tar.TypeReg:
-			if err := os.MkdirAll(filepath.Dir(target), 0755); err != nil {
+			if err := root.MkdirAll(filepath.Dir(name), 0o755); err != nil {
 				return err
 			}
-			out, err := os.Create(target)
+			out, err := root.Create(name)
 			if err != nil {
 				return err
 			}
@@ -55,7 +60,9 @@ func ExtractTar(tarPath, destDir string) error {
 				out.Close()
 				return err
 			}
-			out.Close()
+			if err := out.Close(); err != nil {
+				return err
+			}
 		}
 	}
 	return nil

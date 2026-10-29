@@ -23,6 +23,11 @@ ContainerHive runs `nix build` inside a Nix builder image through a custom Build
 
 Only the BuildKit worker needs to pull the builder image. Neither `ch` nor the CI pipeline needs Nix installed.
 
+The default builder image is the `nix` image of
+[ContainerHive/helper-images](https://github.com/ContainerHive/helper-images), the official `nixos/nix` image with
+flakes enabled. That repository is itself a ContainerHive project and publishes one tag per Nix release series
+(`2.35`, `2.34`, ...), so you can pin the Nix version your flakes need with a plain tag.
+
 ## The flake contract
 
 The build produces a **rootfs directory**. The installed attribute is a convention, never user configured:
@@ -116,7 +121,7 @@ The `nix` block configures the backend:
 build: nix
 
 nix:
-  builder_image: "nixos/nix:2.31.6"  # image providing the nix binary
+  builder_image: "ghcr.io/containerhive/helper-images/nix:2.35"  # image providing the nix binary (default)
   extra_args: [ "--impure" ]       # extra nix build arguments
 ```
 

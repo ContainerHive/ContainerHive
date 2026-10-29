@@ -1,0 +1,8 @@
+package: hello
+
+slices:
+    bins:
+        essential:
+            - base-files_base
+        contents:
+            /usr/bin/hello:

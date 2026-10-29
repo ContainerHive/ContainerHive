@@ -1,3 +1,144 @@
+## [1.25.1](https://github.com/ContainerHive/ContainerHive/compare/v1.25.0...v1.25.1) (2026-10-28)
+
+### Bug Fixes
+
+* **deps:** update module modernc.org/sqlite to v1.61.0 ([e3b8e13](https://github.com/ContainerHive/ContainerHive/commit/e3b8e139e1c0707f04b568861b6d0e0c02afa2ac))
+
+## [1.25.0](https://github.com/ContainerHive/ContainerHive/compare/v1.24.3...v1.25.0) (2026-10-28)
+
+### Features
+
+* **cli:** add graph command for image and variant dependencies ([8b74e8a](https://github.com/ContainerHive/ContainerHive/commit/8b74e8a2fa18cbfa85e50580123b93a9078737c0))
+* **dependency:** scan image and variant dependency graph ([d5a72de](https://github.com/ContainerHive/ContainerHive/commit/d5a72de7f3f9bab9c50964adf83f5b31e3c4c1f5))
+* **deps:** expose project graph with mermaid and dot renderers ([9b4fce6](https://github.com/ContainerHive/ContainerHive/commit/9b4fce6c1400d5a52c6377be5bbe408b30b33fa4))
+
+### Bug Fixes
+
+* **cli:** skip tag range resolution in graph command ([9e77e24](https://github.com/ContainerHive/ContainerHive/commit/9e77e242e2a980ef7a5b59ad4371027f3852afc0))
+* **dependency:** detect __hive_parent__ behind FROM flags ([40e4c5b](https://github.com/ContainerHive/ContainerHive/commit/40e4c5b74b95cbea60446eaf924e0f1f450a03e1))
+* **dependency:** link variants to their base image via __hive_parent__ ([360adbe](https://github.com/ContainerHive/ContainerHive/commit/360adbe40731ac1d86f41c45305492fde06b1bb0))
+* **deps:** copy graph accessors and group nested image names ([7b0b76a](https://github.com/ContainerHive/ContainerHive/commit/7b0b76ac040bcf7af0e6fb0068297ca71355fb60))
+
+## [1.24.3](https://github.com/ContainerHive/ContainerHive/compare/v1.24.2...v1.24.3) (2026-10-28)
+
+### Bug Fixes
+
+* **cache:** drop content hash from build cache scope ([41339f8](https://github.com/ContainerHive/ContainerHive/commit/41339f8e7194f0e797a7f2d11772da87fb5d6b53))
+
+## [1.24.2](https://github.com/ContainerHive/ContainerHive/compare/v1.24.1...v1.24.2) (2026-10-28)
+
+### Bug Fixes
+
+* **ci:** default to the ContainerHive helper images for dind and BuildKit ([e164669](https://github.com/ContainerHive/ContainerHive/commit/e164669f2f636e903552f10f7c7fe4a7ef349d65))
+
+## [1.24.1](https://github.com/ContainerHive/ContainerHive/compare/v1.24.0...v1.24.1) (2026-10-28)
+
+### Bug Fixes
+
+* **deps:** update module github.com/moby/buildkit to v0.34.1 ([e6ea898](https://github.com/ContainerHive/ContainerHive/commit/e6ea898f11802ac1a1a36f8338d1328fab6acd62))
+
+## [1.24.0](https://github.com/ContainerHive/ContainerHive/compare/v1.23.2...v1.24.0) (2026-10-27)
+
+### Features
+
+* **ci:** default GitLab dind service to the rootless helper image ([cb15687](https://github.com/ContainerHive/ContainerHive/commit/cb15687bc5835d4486b0965dbd5b95fd62cb3102))
+* **ci:** run GitHub Actions dind service from the rootless helper image ([ca4e07a](https://github.com/ContainerHive/ContainerHive/commit/ca4e07a5fc761be39527f81487cf00ce2997a69d))
+* **ci:** use the ghcr.io ContainerHive image for GitHub Actions ([3508129](https://github.com/ContainerHive/ContainerHive/commit/35081295ce7d80c013617bfee973f529766fb0c5))
+* **ci:** use the GitLab registry ContainerHive image for GitLab CI ([8785e53](https://github.com/ContainerHive/ContainerHive/commit/8785e531b37a6d48e1e98555d3fb4b4319e12fae))
+
+### Bug Fixes
+
+* **ci:** clear DOCKER_TLS_CERTDIR for the GitHub dind container ([a5f2279](https://github.com/ContainerHive/ContainerHive/commit/a5f2279bafed47cec49690349413667d2194d1f8))
+
+## [1.23.2](https://github.com/ContainerHive/ContainerHive/compare/v1.23.1...v1.23.2) (2026-10-27)
+
+### Bug Fixes
+
+* **mcp:** search docs on container-hive.eu ([207a168](https://github.com/ContainerHive/ContainerHive/commit/207a1686000cae54e4624f129557296717ecb9f9))
+* sync feed homepage and icon from the template on merge ([3868c8b](https://github.com/ContainerHive/ContainerHive/commit/3868c8b50e454c076ca8181b4131a284aa0bbd37))
+
+## [1.23.1](https://github.com/ContainerHive/ContainerHive/compare/v1.23.0...v1.23.1) (2026-10-27)
+
+### Bug Fixes
+
+* **build:** fail clearly when a dependency lacks the target platform ([f0e964f](https://github.com/ContainerHive/ContainerHive/commit/f0e964faa09361537970de6a5cf04bd26bfc4943))
+* **build:** warn when --platform leaves nothing to build ([1fde9b4](https://github.com/ContainerHive/ContainerHive/commit/1fde9b4d4d80c2d88c1f470419586508224ca408))
+* **ci:** include variant platforms in generated pipeline jobs ([5c0e2aa](https://github.com/ContainerHive/ContainerHive/commit/5c0e2aad41eff5e79e007b2998e0994b7577e17a)), closes [#339](https://github.com/ContainerHive/ContainerHive/issues/339)
+* **ci:** keep multi-component platforms intact in CI values ([2e73608](https://github.com/ContainerHive/ContainerHive/commit/2e736085b28f4630d2b615362ac7d8f671b588d6))
+* **ci:** use identifier-safe platform names in generated pipelines ([8676c4b](https://github.com/ContainerHive/ContainerHive/commit/8676c4b96dacfb24af2bd34807784932ee12cb32))
+* **cli:** describe --platform as selecting within configured platforms ([4d9e521](https://github.com/ContainerHive/ContainerHive/commit/4d9e52157e5593f76bd49354f11110cb4079cb8d))
+* **cli:** reject --platform values no level configures ([7c3c34f](https://github.com/ContainerHive/ContainerHive/commit/7c3c34f07a3520db49cab98bac346a46171dd456))
+* **platform:** drop duplicate platforms when resolving ([9085cc0](https://github.com/ContainerHive/ContainerHive/commit/9085cc0b911fa65a3d3c3b4fcc3a154294fad03f))
+* **platform:** log tags skipped by --platform and warn on empty test runs ([2f4e362](https://github.com/ContainerHive/ContainerHive/commit/2f4e362221403d9f8d600783b2feb2af6bd59fa0))
+* **platform:** make --platform select within configured platforms ([7979e07](https://github.com/ContainerHive/ContainerHive/commit/7979e0781f2a61731ed3030fdc0253fd4c65d939)), closes [#339](https://github.com/ContainerHive/ContainerHive/issues/339)
+* **sbom:** skip instead of failing when no tag supports --platform ([e09a6f9](https://github.com/ContainerHive/ContainerHive/commit/e09a6f9ee5dfa0c1cda431528dc247a2eee03400))
+* **test:** warn about an empty run only when --platform caused it ([648c71a](https://github.com/ContainerHive/ContainerHive/commit/648c71a11ba0f875af3d82713dc33dcdf0a51deb))
+
+## [1.23.0](https://github.com/ContainerHive/ContainerHive/compare/v1.22.0...v1.23.0) (2026-10-26)
+
+### Features
+
+* mirror release images to GHCR ([#338](https://github.com/ContainerHive/ContainerHive/issues/338)) ([aa17402](https://github.com/ContainerHive/ContainerHive/commit/aa174023a16c7e17889a6abc5902a749089d6156))
+
+## [1.22.0](https://github.com/ContainerHive/ContainerHive/compare/v1.21.0...v1.22.0) (2026-10-26)
+
+### Features
+
+* snapshot release helper — consume fixes straight from PRs or release internally ([#336](https://github.com/ContainerHive/ContainerHive/issues/336)) ([73ce29e](https://github.com/ContainerHive/ContainerHive/commit/73ce29e95a9c7109a3eef377da2fe4cf72ce8e92))
+
+## [1.21.0](https://github.com/ContainerHive/ContainerHive/compare/v1.20.1...v1.21.0) (2026-10-25)
+
+### Features
+
+* **chisel:** install git, ca-certificates and chisel only when the builder image lacks them ([200af96](https://github.com/ContainerHive/ContainerHive/commit/200af962be4bd6c362c6d4f01f99b74e62c9c082))
+* **nix:** default to the helper-images nix builder image ([7bf2744](https://github.com/ContainerHive/ContainerHive/commit/7bf2744a64fe087045e71b074c454d363ea65e8b))
+
+## [1.20.1](https://github.com/ContainerHive/ContainerHive/compare/v1.20.0...v1.20.1) (2026-10-25)
+
+### Bug Fixes
+
+* **security:** confine tar extraction with os.Root ([f56a435](https://github.com/ContainerHive/ContainerHive/commit/f56a435cbb69efe52cc517b6cb1a466f36979cdd))
+* **web:** use a native button for the copy-to-clipboard block ([ea01911](https://github.com/ContainerHive/ContainerHive/commit/ea01911732c4d05baab0e85b526f9ac12504cd69))
+
+## [1.20.0](https://github.com/ContainerHive/ContainerHive/compare/v1.19.0...v1.20.0) (2026-10-25)
+
+### Features
+
+* add experimental chisel build backend ([490cdc0](https://github.com/ContainerHive/ContainerHive/commit/490cdc039957fb69eb2acbd16dc94081389fcf86))
+* **buildkit:** retry builds on transient connection failures ([b085db5](https://github.com/ContainerHive/ContainerHive/commit/b085db583d561ae826972b3583ec794886001eef))
+
+### Bug Fixes
+
+* **chisel:** create the cut root directory before chisel cut ([731e537](https://github.com/ContainerHive/ContainerHive/commit/731e53728c315b6be602e5a5bfc47c0b96b4f3a3))
+
+## [1.19.0](https://github.com/ContainerHive/ContainerHive/compare/v1.18.0...v1.19.0) (2026-10-25)
+
+### Features
+
+* add pull request template with AI assistance section ([#325](https://github.com/ContainerHive/ContainerHive/issues/325)) ([d6f865d](https://github.com/ContainerHive/ContainerHive/commit/d6f865d03de772b46e302640f68a8828f34fff44))
+
+## [1.18.0](https://github.com/ContainerHive/ContainerHive/compare/v1.17.0...v1.18.0) (2026-10-25)
+
+### Features
+
+* set issue types and default low priority label ([#328](https://github.com/ContainerHive/ContainerHive/issues/328)) ([40fb596](https://github.com/ContainerHive/ContainerHive/commit/40fb5966007a8a385ccd535ceb71264478346911))
+
+### Bug Fixes
+
+* collect BuildKit runtime separately from OS in bug report ([#329](https://github.com/ContainerHive/ContainerHive/issues/329)) ([5496e5d](https://github.com/ContainerHive/ContainerHive/commit/5496e5df779fd62a5c295793628acc4be3049b9a))
+
+## [1.17.0](https://github.com/ContainerHive/ContainerHive/compare/v1.16.0...v1.17.0) (2026-10-24)
+
+### Features
+
+* add vulnerability report issue template ([#327](https://github.com/ContainerHive/ContainerHive/issues/327)) ([4dbfb07](https://github.com/ContainerHive/ContainerHive/commit/4dbfb0751264feb370575d93071bb552dcc5dcfb))
+
+## [1.16.0](https://github.com/ContainerHive/ContainerHive/compare/v1.15.1...v1.16.0) (2026-10-24)
+
+### Features
+
+* add GitHub issue templates for bugs and feature requests ([#323](https://github.com/ContainerHive/ContainerHive/issues/323)) ([5e6b3bd](https://github.com/ContainerHive/ContainerHive/commit/5e6b3bd6960e8483fe3b7b433c32075f4db9ac8d))
+
 ## [1.15.1](https://github.com/ContainerHive/ContainerHive/compare/v1.15.0...v1.15.1) (2026-10-24)
 
 ### Bug Fixes

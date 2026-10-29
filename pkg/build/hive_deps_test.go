@@ -5,6 +5,8 @@ import (
 	"path/filepath"
 	"strings"
 	"testing"
+
+	"github.com/ContainerHive/ContainerHive/pkg/model"
 )
 
 // fileExists is a helper function to check if a file exists
@@ -235,9 +237,9 @@ COPY --from=__hive__/util:1.0 /app /app
 	})
 }
 
-func TestResolveNixParent(t *testing.T) {
+func TestResolveParentImage(t *testing.T) {
 	t.Run("plain image reference", func(t *testing.T) {
-		result, err := ResolveNixParent("ubuntu:22.04", HiveDepsOpts{
+		result, err := ResolveParentImage("ubuntu:22.04", HiveDepsOpts{
 			DistPath:    t.TempDir(),
 			PlatformStr: "linux/amd64",
 		})
@@ -256,7 +258,7 @@ func TestResolveNixParent(t *testing.T) {
 	})
 
 	t.Run("hive reference not built yet", func(t *testing.T) {
-		result, err := ResolveNixParent("__hive__/base:latest", HiveDepsOpts{
+		result, err := ResolveParentImage("__hive__/base:latest", HiveDepsOpts{
 			DistPath:    t.TempDir(),
 			PlatformStr: "linux/amd64",
 		})
@@ -272,7 +274,7 @@ func TestResolveNixParent(t *testing.T) {
 	})
 
 	t.Run("hive reference falls back to registry", func(t *testing.T) {
-		result, err := ResolveNixParent("__hive__/base:1.0", HiveDepsOpts{
+		result, err := ResolveParentImage("__hive__/base:1.0", HiveDepsOpts{
 			DistPath:        t.TempDir(),
 			PlatformStr:     "linux/amd64",
 			RegistryAddress: "ghcr.io/myorg",
@@ -291,7 +293,7 @@ func TestResolveNixParent(t *testing.T) {
 	})
 
 	t.Run("invalid hive reference", func(t *testing.T) {
-		result, err := ResolveNixParent("__hive__/no-tag", HiveDepsOpts{
+		result, err := ResolveParentImage("__hive__/no-tag", HiveDepsOpts{
 			DistPath:    t.TempDir(),
 			PlatformStr: "linux/amd64",
 		})
@@ -355,4 +357,53 @@ RUN echo "__hive__should-not-be-replaced"
 		// Cleanup
 		os.Remove(rewritten)
 	})
+}
+
+func TestResolveHiveDeps_DependencyPlatformNotConfigured(t *testing.T) {
+	base := &model.Image{
+		Name:      "base",
+		Platforms: []string{"linux/amd64"},
+		Tags:      map[string]*model.Tag{"1.0": {Name: "1.0"}},
+		Variants: map[string]*model.ImageVariant{
+			"multi": {Name: "multi", TagSuffix: "-multi", Platforms: []string{"linux/amd64", "linux/arm64"}},
+		},
+	}
+	project := &model.ContainerHiveProject{
+		Config:       model.HiveProjectConfig{Platforms: []string{"linux/amd64", "linux/arm64"}},
+		ImagesByName: map[string][]*model.Image{"base": {base}},
+	}
+
+	tests := []struct {
+		name     string
+		from     string
+		platform string
+		wantErr  string
+	}{
+		{name: "base tag lacks platform", from: "__hive__/base:1.0", platform: "linux/arm64", wantErr: "dependency base:1.0 is not configured for platform linux/arm64"},
+		{name: "short platform is normalized", from: "__hive__/base:1.0", platform: "arm64", wantErr: "dependency base:1.0 is not configured for platform linux/arm64"},
+		{name: "base tag supports platform", from: "__hive__/base:1.0", platform: "linux/amd64", wantErr: "not built yet"},
+		{name: "variant adds platform", from: "__hive__/base:1.0-multi", platform: "linux/arm64", wantErr: "not built yet"},
+		{name: "unknown dependency is not checked", from: "__hive__/other:1.0", platform: "linux/arm64", wantErr: "not built yet"},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			dockerfile := filepath.Join(t.TempDir(), "Dockerfile")
+			if err := os.WriteFile(dockerfile, []byte("FROM "+tt.from+"\n"), 0644); err != nil {
+				t.Fatal(err)
+			}
+
+			_, err := ResolveHiveDeps(HiveDepsOpts{
+				DockerfilePath: dockerfile,
+				DistPath:       t.TempDir(),
+				PlatformStr:    tt.platform,
+				Project:        project,
+			})
+			if err == nil {
+				t.Fatalf("expected error containing %q, got nil", tt.wantErr)
+			}
+			if !strings.Contains(err.Error(), tt.wantErr) {
+				t.Errorf("expected error containing %q, got: %v", tt.wantErr, err)
+			}
+		})
+	}
 }

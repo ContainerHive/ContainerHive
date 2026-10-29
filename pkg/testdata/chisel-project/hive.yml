@@ -1,0 +1,5 @@
+platforms:
+  - linux/amd64
+
+buildkit:
+  address: tcp://127.0.0.1:8502

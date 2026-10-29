@@ -3,12 +3,12 @@
   <name>ContainerHive</name>
   <summary>command line tool for managing container image builds with dependency resolution</summary>
   <description>ContainerHive resolves the dependency graph between container images and builds them in the right order. It generates CI pipelines, runs structure tests, and produces SBOMs for the built images.</description>
-  <homepage>https://container-hive.timo-reymann.de</homepage>
+  <homepage>https://container-hive.eu</homepage>
   <category>Development</category>
 
-  <icon href="https://containerhive.github.io/0install/containerhive.png" type="image/png"/>
+  <icon href="https://0install.container-hive.eu/containerhive.png" type="image/png"/>
 
-  <feed-for interface="https://containerhive.github.io/0install/containerhive.xml"/>
+  <feed-for interface="https://0install.container-hive.eu/containerhive.xml"/>
 
   <entry-point binary-name="ch" command="run"/>
 

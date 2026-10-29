@@ -14,6 +14,31 @@ type Provider struct {
 	Name       string
 	TemplateFS fs.FS
 	Entrypoint string
+	// DefaultImageName is the ContainerHive CLI image used when --image-name is
+	// not set. Falls back to DockerHubImageName.
+	DefaultImageName string
+	// DefaultOptions are template option defaults specific to this provider.
+	// They apply when the option is not set in the project's template_options.
+	DefaultOptions map[string]string
+}
+
+const (
+	// DockerHubImageName is the ContainerHive CLI image on Docker Hub.
+	DockerHubImageName = "containerhive/containerhive"
+	// GitLabImageName is the ContainerHive CLI image on the GitLab container registry.
+	GitLabImageName = "registry.gitlab.com/containerhive/containerhive"
+	// GHCRImageName is the ContainerHive CLI image on the GitHub Container Registry.
+	GHCRImageName = "ghcr.io/containerhive/containerhive"
+)
+
+// ResolveDefaultImageName returns the default ContainerHive CLI image for the
+// given provider.
+func ResolveDefaultImageName(providerName string) string {
+	p, err := GetProvider(providerName)
+	if err != nil || p.DefaultImageName == "" {
+		return DockerHubImageName
+	}
+	return p.DefaultImageName
 }
 
 var (
@@ -54,5 +79,13 @@ func Generate(providerName string, ctx *CIContext, customTemplateDir string) ([]
 		templateFS = os.DirFS(customTemplateDir)
 	}
 
-	return templating.RenderWithOptions(templateFS, provider.Entrypoint, ctx, ctx.TemplateOptions)
+	options := make(map[string]string, len(provider.DefaultOptions)+len(ctx.TemplateOptions))
+	for k, v := range provider.DefaultOptions {
+		options[k] = v
+	}
+	for k, v := range ctx.TemplateOptions {
+		options[k] = v
+	}
+
+	return templating.RenderWithOptions(templateFS, provider.Entrypoint, ctx, options)
 }

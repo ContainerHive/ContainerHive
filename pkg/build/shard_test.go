@@ -239,3 +239,64 @@ func TestBuildProject_ShardWithDependenciesWarns(t *testing.T) {
 		t.Errorf("expected a warning about sharding combined with inter-image dependencies, got: %s", buf.String())
 	}
 }
+
+// TestBuildWithoutDeps_WarnsWhenPlatformSelectsNothing covers --platform
+// skipping every selected tag: the build must not pass silently.
+func TestBuildWithoutDeps_WarnsWhenPlatformSelectsNothing(t *testing.T) {
+	tests := []struct {
+		name     string
+		platform []string
+		filters  []Filter
+		wantWarn bool
+	}{
+		{name: "platform skips every tag", platform: []string{"linux/arm64"}, wantWarn: true},
+		{name: "filters select nothing", platform: []string{"linux/arm64"}, filters: []Filter{{ImageName: "other"}}, wantWarn: false},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			buf := captureSlog(t)
+			opts := &ProjectBuildOpts{
+				Project:      singleImageProject(true),
+				DistPath:     t.TempDir(),
+				ProgressOut:  os.Stdout,
+				Filters:      tt.filters,
+				CLIPlatforms: tt.platform,
+			}
+
+			if err := buildWithoutDeps(context.Background(), &Client{inner: nil}, opts); err != nil {
+				t.Fatalf("unexpected error: %v", err)
+			}
+			opts.warnIfNothingSelected()
+
+			gotWarn := strings.Contains(buf.String(), "nothing was built")
+			if gotWarn != tt.wantWarn {
+				t.Errorf("warning logged = %v, want %v, log:\n%s", gotWarn, tt.wantWarn, buf.String())
+			}
+		})
+	}
+}
+
+// TestBuildWithoutDeps_NoWarningWhenPlatformMatches ensures a tag that
+// supports the requested platform suppresses the warning, even when others
+// are skipped.
+func TestBuildWithoutDeps_NoWarningWhenPlatformMatches(t *testing.T) {
+	buf := captureSlog(t)
+	project := singleImageProject(true)
+	project.ImagesByName["myimg"][0].Variants["node"].Platforms = []string{"linux/arm64"}
+	opts := &ProjectBuildOpts{
+		Project:      project,
+		DistPath:     t.TempDir(),
+		ProgressOut:  os.Stdout,
+		CLIPlatforms: []string{"linux/arm64"},
+	}
+
+	// The variant is attempted and returns early on its missing entrypoint.
+	if err := buildWithoutDeps(context.Background(), &Client{inner: nil}, opts); err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	opts.warnIfNothingSelected()
+
+	if strings.Contains(buf.String(), "nothing was built") {
+		t.Errorf("unexpected warning, log:\n%s", buf.String())
+	}
+}

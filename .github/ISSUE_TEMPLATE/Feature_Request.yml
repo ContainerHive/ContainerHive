@@ -1,0 +1,34 @@
+---
+name: "🚀 Feature Request"
+description: "I have a suggestion (and might want to implement it myself 🙂)"
+title: "[Feature]: "
+labels:
+  - enhancement
+  - priority: low
+assignees:
+  - timo-reymann
+type: feature
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: Describe the feature and the problem it solves.
+      placeholder: I want to ...
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives
+      description: Describe workarounds or alternatives that you considered.
+    validations:
+      required: false
+  - type: textarea
+    id: references
+    attributes:
+      label: References
+      description: Link related issues, pull requests, or vendor documentation.
+      placeholder: "You can reference issues with #"
+    validations:
+      required: false

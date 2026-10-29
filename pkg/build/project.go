@@ -47,8 +47,9 @@ type ProjectBuildOpts struct {
 	BuildID        string   // if set, registry push/retag uses tags suffixed with -build.<BuildID>
 	Shard          shard.Shard
 
-	// CLIPlatforms, when set (from --platform), overrides the platform list
-	// for every image/tag/variant regardless of what hive.yml configures.
+	// CLIPlatforms, when set (from --platform), selects which of the
+	// platforms configured in hive.yml/image.yml are built. Tags and variants
+	// that support none of them are skipped.
 	CLIPlatforms []string
 
 	// OnBuild is called after each successful build with the image tag and tar path.
@@ -59,6 +60,11 @@ type ProjectBuildOpts struct {
 	// only once per run rather than once per tag.
 	baseOwns    func(identifier, baseTagName string) bool
 	variantOwns func(identifier, tagName string) bool
+
+	// platformMatched/platformSkipped count the tags platformsFor selected
+	// or skipped, so BuildProject can warn when --platform selects nothing.
+	platformMatched int
+	platformSkipped int
 }
 
 func (o *ProjectBuildOpts) pushTag(tagName, platformStr string) string {
@@ -131,6 +137,31 @@ func matchesFilters(filters []Filter, imageName, tagName string) bool {
 	return false
 }
 
+// platformsFor resolves the platforms to build for one tag. When --platform
+// selects none of the tag's configured platforms, the skip is logged so an
+// empty build is visible.
+func (o *ProjectBuildOpts) platformsFor(imageDef *model.Image, tagName string, variantPlatforms []string) []string {
+	platforms := platform.Resolve(o.CLIPlatforms, o.Project.Config.Platforms, imageDef.Platforms, variantPlatforms)
+	if len(platforms) > 0 {
+		o.platformMatched++
+		return platforms
+	}
+	if len(o.CLIPlatforms) > 0 {
+		o.platformSkipped++
+		slog.Info("Skipping, platform not supported", "image", imageDef.Name, "tag", tagName, "platform", o.CLIPlatforms)
+	}
+	return platforms
+}
+
+// warnIfNothingSelected warns when every tag selected by the filters (and
+// shard) was skipped by --platform, so an empty build does not pass silently.
+func (o *ProjectBuildOpts) warnIfNothingSelected() {
+	if o.platformMatched > 0 || o.platformSkipped == 0 {
+		return
+	}
+	slog.Warn("No selected tag supports the requested platform(s), nothing was built", "platform", o.CLIPlatforms)
+}
+
 // buildPlatforms builds every platform for a single image tag. A failing
 // platform does not stop the remaining ones, so a single broken or unsupported
 // platform cannot silently skip the others. All failures are joined.
@@ -167,10 +198,15 @@ func BuildProject(ctx context.Context, client *Client, opts *ProjectBuildOpts) e
 	opts.baseOwns = shard.NewBaseTagSharder(opts.Project, opts.Shard)
 	opts.variantOwns = shard.NewTagSharder(opts.Project, opts.Shard)
 
+	build := buildWithoutDeps
 	if opts.BuildOrder.HasDependencies() {
-		return buildWithDeps(ctx, client, opts)
+		build = buildWithDeps
 	}
-	return buildWithoutDeps(ctx, client, opts)
+	if err := build(ctx, client, opts); err != nil {
+		return err
+	}
+	opts.warnIfNothingSelected()
+	return nil
 }
 
 func buildWithDeps(ctx context.Context, client *Client, opts *ProjectBuildOpts) error {
@@ -186,7 +222,7 @@ func buildWithDeps(ctx context.Context, client *Client, opts *ProjectBuildOpts) 
 				buildBase := matchesFilters(opts.Filters, imgName, tagName) && opts.ownsBase(imageDef.Identifier, tagName)
 
 				if buildBase {
-					platforms := platform.Resolve(opts.CLIPlatforms, opts.Project.Config.Platforms, imageDef.Platforms, nil)
+					platforms := opts.platformsFor(imageDef, tagName, nil)
 					if err := buildPlatforms(platforms, func(platformStr string) error {
 						return buildTag(ctx, client, opts, imageDef, tagName, platformStr)
 					}); err != nil {
@@ -204,7 +240,7 @@ func buildWithDeps(ctx context.Context, client *Client, opts *ProjectBuildOpts) 
 						continue
 					}
 
-					platforms := platform.Resolve(opts.CLIPlatforms, opts.Project.Config.Platforms, imageDef.Platforms, variantDef.Platforms)
+					platforms := opts.platformsFor(imageDef, variantTagName, variantDef.Platforms)
 					if err := buildPlatforms(platforms, func(platformStr string) error {
 						return buildVariant(ctx, client, opts, imageDef, tagName, variantName, variantDef, platformStr)
 					}); err != nil {
@@ -222,7 +258,7 @@ func buildWithoutDeps(ctx context.Context, client *Client, opts *ProjectBuildOpt
 		for _, imageDef := range images {
 			for tagName := range imageDef.Tags {
 				if matchesFilters(opts.Filters, imageDef.Name, tagName) && opts.ownsBase(imageDef.Identifier, tagName) {
-					platforms := platform.Resolve(opts.CLIPlatforms, opts.Project.Config.Platforms, imageDef.Platforms, nil)
+					platforms := opts.platformsFor(imageDef, tagName, nil)
 					if err := buildPlatforms(platforms, func(platformStr string) error {
 						return buildTag(ctx, client, opts, imageDef, tagName, platformStr)
 					}); err != nil {
@@ -238,7 +274,7 @@ func buildWithoutDeps(ctx context.Context, client *Client, opts *ProjectBuildOpt
 					if !opts.ownsVariant(imageDef.Identifier, variantTag) {
 						continue
 					}
-					platforms := platform.Resolve(opts.CLIPlatforms, opts.Project.Config.Platforms, imageDef.Platforms, variantDef.Platforms)
+					platforms := opts.platformsFor(imageDef, variantTag, variantDef.Platforms)
 					if err := buildPlatforms(platforms, func(platformStr string) error {
 						return buildVariant(ctx, client, opts, imageDef, tagName, variantName, variantDef, platformStr)
 					}); err != nil {
@@ -264,6 +300,7 @@ func buildTag(ctx context.Context, client *Client, opts *ProjectBuildOpts, image
 		PlatformStr:     platformStr,
 		RegistryAddress: opts.registryAddress(),
 		BuildID:         opts.BuildID,
+		Project:         opts.Project,
 	})
 	if err != nil {
 		return fmt.Errorf("failed to resolve hive deps for %s:%s: %w", imageDef.Name, tagName, err)
@@ -285,17 +322,7 @@ func buildTag(ctx context.Context, client *Client, opts *ProjectBuildOpts, image
 		return fmt.Errorf("failed to resolve build args for %s:%s: %w", imageDef.Name, tagName, err)
 	}
 
-	builtDockerfilePath := dockerfilePath
-	if hiveDeps != nil {
-		builtDockerfilePath = hiveDeps.Dockerfile
-	}
-	hashContent, err := hashSource(builtDockerfilePath)
-	if err != nil {
-		return fmt.Errorf("failed to read build entrypoint for %s:%s: %w", imageDef.Name, tagName, err)
-	}
-	contentHash := cache.ComputeContentHash(hashContent, config.BuildArgs, platformStr)
-
-	scope := fmt.Sprintf("%s.%s.%s.%s", imageDef.Name, tagName, platformStr, contentHash)
+	scope := fmt.Sprintf("%s.%s.%s", imageDef.Name, tagName, platformStr)
 	scopedCache := opts.Cache
 	if opts.Cache != nil {
 		scopedCache = opts.Cache.WithScope(scope)
@@ -328,7 +355,7 @@ func buildTag(ctx context.Context, client *Client, opts *ProjectBuildOpts, image
 		if err != nil {
 			return fmt.Errorf("failed to resolve nix parent for %s:%s: %w", imageDef.Name, tagName, err)
 		}
-		parentDeps, err := resolveNixParent(nixConfig.Parent, opts, platformStr)
+		parentDeps, err := resolveParentImage(nixConfig.Parent, opts, platformStr)
 		if err != nil {
 			return fmt.Errorf("failed to resolve nix parent for %s:%s: %w", imageDef.Name, tagName, err)
 		}
@@ -338,11 +365,40 @@ func buildTag(ctx context.Context, client *Client, opts *ProjectBuildOpts, image
 				buildOpts.OCIStores = parentDeps.Deps.OCIStores
 			}
 		}
-		var parent *build_context.NixParent
+		var parent *build_context.ParentImage
 		if parentDeps != nil {
 			parent = parentDeps.Parent
 		}
 		buildOpts.BuildContext = nixBuildContext(root, nixConfig, imageDef.RunConfig, parent)
+	}
+	if imageDef.BuildBackend == model.BuildBackendChisel {
+		chiselConfig, err := chiselParentForBuild(imageDef.Chisel, imageDef, "")
+		if err != nil {
+			return fmt.Errorf("failed to resolve chisel parent for %s:%s: %w", imageDef.Name, tagName, err)
+		}
+		spec, err := parseChiselCutSpec(root)
+		if err != nil {
+			return err
+		}
+		parentDeps, err := resolveParentImage(chiselConfig.Parent, opts, platformStr)
+		if err != nil {
+			return fmt.Errorf("failed to resolve chisel parent for %s:%s: %w", imageDef.Name, tagName, err)
+		}
+		if parentDeps != nil && parentDeps.Deps != nil {
+			defer parentDeps.Deps.Cleanup()
+			if buildOpts.OCIStores == nil {
+				buildOpts.OCIStores = parentDeps.Deps.OCIStores
+			}
+		}
+		var parent *build_context.ParentImage
+		if parentDeps != nil {
+			parent = parentDeps.Parent
+		}
+		buildCtx, err := chiselBuildContext(root, spec, chiselConfig, imageDef.RunConfig, parent)
+		if err != nil {
+			return fmt.Errorf("failed to assemble chisel build context for %s:%s: %w", imageDef.Name, tagName, err)
+		}
+		buildOpts.BuildContext = buildCtx
 	}
 	if hiveDeps != nil {
 		buildOpts.OCIStores = hiveDeps.OCIStores
@@ -376,6 +432,7 @@ func buildVariant(ctx context.Context, client *Client, opts *ProjectBuildOpts, i
 		PlatformStr:     platformStr,
 		RegistryAddress: opts.registryAddress(),
 		BuildID:         opts.BuildID,
+		Project:         opts.Project,
 	})
 	if err != nil {
 		return fmt.Errorf("failed to resolve hive deps for variant %s:%s:%s: %w", imageDef.Name, tagName, variantName, err)
@@ -397,17 +454,7 @@ func buildVariant(ctx context.Context, client *Client, opts *ProjectBuildOpts, i
 		return fmt.Errorf("failed to resolve build args for variant %s:%s:%s: %w", imageDef.Name, tagName, variantName, err)
 	}
 
-	builtVariantDockerfilePath := variantDockerfilePath
-	if hiveDeps != nil {
-		builtVariantDockerfilePath = hiveDeps.Dockerfile
-	}
-	variantDockerfileContent, err := hashSource(builtVariantDockerfilePath)
-	if err != nil {
-		return fmt.Errorf("failed to read build entrypoint for variant %s:%s:%s: %w", imageDef.Name, tagName, variantName, err)
-	}
-	variantContentHash := cache.ComputeContentHash(variantDockerfileContent, config.BuildArgs, platformStr)
-
-	variantScope := fmt.Sprintf("%s.%s.%s.%s", imageDef.Name, variantTagName, platformStr, variantContentHash)
+	variantScope := fmt.Sprintf("%s.%s.%s", imageDef.Name, variantTagName, platformStr)
 	scopedCache := opts.Cache
 	if opts.Cache != nil {
 		scopedCache = opts.Cache.WithScope(variantScope)
@@ -442,7 +489,7 @@ func buildVariant(ctx context.Context, client *Client, opts *ProjectBuildOpts, i
 		if err != nil {
 			return fmt.Errorf("failed to resolve nix parent for %s:%s.%s: %w", imageDef.Name, tagName, variantName, err)
 		}
-		parentDeps, err := resolveNixParent(nixConfig.Parent, opts, platformStr)
+		parentDeps, err := resolveParentImage(nixConfig.Parent, opts, platformStr)
 		if err != nil {
 			return fmt.Errorf("failed to resolve nix parent for %s:%s.%s: %w", imageDef.Name, tagName, variantName, err)
 		}
@@ -452,11 +499,41 @@ func buildVariant(ctx context.Context, client *Client, opts *ProjectBuildOpts, i
 				buildOpts.OCIStores = parentDeps.Deps.OCIStores
 			}
 		}
-		var parent *build_context.NixParent
+		var parent *build_context.ParentImage
 		if parentDeps != nil {
 			parent = parentDeps.Parent
 		}
 		buildOpts.BuildContext = nixBuildContext(root, nixConfig, runConfigFor(imageDef, variantDef), parent)
+	}
+	if variantBackend(imageDef, variantDef) == model.BuildBackendChisel {
+		chiselConfig := chiselConfigFor(imageDef, variantDef)
+		chiselConfig, err := chiselParentForBuild(chiselConfig, imageDef, tagName)
+		if err != nil {
+			return fmt.Errorf("failed to resolve chisel parent for %s:%s.%s: %w", imageDef.Name, tagName, variantName, err)
+		}
+		spec, err := parseChiselCutSpec(root)
+		if err != nil {
+			return err
+		}
+		parentDeps, err := resolveParentImage(chiselConfig.Parent, opts, platformStr)
+		if err != nil {
+			return fmt.Errorf("failed to resolve chisel parent for %s:%s.%s: %w", imageDef.Name, tagName, variantName, err)
+		}
+		if parentDeps != nil && parentDeps.Deps != nil {
+			defer parentDeps.Deps.Cleanup()
+			if buildOpts.OCIStores == nil {
+				buildOpts.OCIStores = parentDeps.Deps.OCIStores
+			}
+		}
+		var parent *build_context.ParentImage
+		if parentDeps != nil {
+			parent = parentDeps.Parent
+		}
+		buildCtx, err := chiselBuildContext(root, spec, chiselConfig, runConfigFor(imageDef, variantDef), parent)
+		if err != nil {
+			return fmt.Errorf("failed to assemble chisel build context for %s:%s.%s: %w", imageDef.Name, tagName, variantName, err)
+		}
+		buildOpts.BuildContext = buildCtx
 	}
 	if hiveDeps != nil {
 		buildOpts.OCIStores = hiveDeps.OCIStores

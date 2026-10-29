@@ -29,9 +29,10 @@ type SecretValue struct {
 type VariantConfig struct {
 	Name      string            `yaml:"name" json:"name" jsonschema:"Name of the variant"`
 	TagSuffix string            `yaml:"tag_suffix" json:"tag_suffix" jsonschema:"Suffix to append to the tag name for this variant"`
-	Build     string            `yaml:"build,omitempty" json:"build,omitempty" jsonschema:"Build backend for this variant (dockerfile, nix). Omit to auto-detect from the variant build entrypoint."`
+	Build     string            `yaml:"build,omitempty" json:"build,omitempty" jsonschema:"Build backend for this variant (dockerfile, nix, chisel). Omit to auto-detect from the variant build entrypoint."`
 	Nix       *NixConfig        `yaml:"nix,omitempty" json:"nix,omitempty" jsonschema:"Nix flake build configuration for this variant, applies when build is nix"`
-	Config    *ImageRunConfig   `yaml:"config,omitempty" json:"config,omitempty" jsonschema:"Runtime configuration of the built image for this variant (nix backend)"`
+	Chisel    *ChiselConfig     `yaml:"chisel,omitempty" json:"chisel,omitempty" jsonschema:"Chisel build configuration for this variant, applies when build is chisel"`
+	Config    *ImageRunConfig   `yaml:"config,omitempty" json:"config,omitempty" jsonschema:"Runtime configuration of the built image for this variant (nix, chisel backend)"`
 	Versions  Versions          `yaml:"versions" json:"versions,omitempty" jsonschema:"Versions to use for this variant"`
 	BuildArgs BuildArgs         `yaml:"build_args" json:"build_args,omitempty" jsonschema:"Build args to add for this variant"`
 	Platforms []string          `yaml:"platforms,omitempty" json:"platforms,omitempty" jsonschema:"Target platforms for this variant (e.g. linux/amd64)"`
@@ -59,14 +60,15 @@ type LatestAliasConfig struct {
 type NixConfig struct {
 	// BuilderImage is the container image that provides nix for the build.
 	// Empty uses the built-in default builder image.
-	BuilderImage string `yaml:"builder_image,omitempty" json:"builder_image,omitempty" jsonschema:"Container image providing nix for the build (e.g. nixos/nix:2.31). Empty uses the default builder image."`
+	BuilderImage string `yaml:"builder_image,omitempty" json:"builder_image,omitempty" jsonschema:"Container image providing nix for the build (e.g. nixos/nix:2.31). Empty uses the ContainerHive nix helper image."`
 	// ExtraArgs holds additional arguments passed to nix build.
 	ExtraArgs []string `yaml:"extra_args,omitempty" json:"extra_args,omitempty" jsonschema:"Additional arguments passed to nix build (e.g. --impure)"`
 	// Parent mounts a parent image rootfs into the build. Hive references
 	// (`__hive__/<name>:<tag>`) resolve through the local build cache or the
-	// registry, like Dockerfile references. Plain image references resolve
-	// through the registry. The flake output overlays the parent rootfs.
-	Parent string `yaml:"parent,omitempty" json:"parent,omitempty" jsonschema:"Parent image rootfs mounted into the nix build (e.g. __hive__/base:1.0 or ubuntu:22.04). The flake output overlays it. Requires depends_on for hive references."`
+	// registry, like Dockerfile references, and add the build order edge
+	// without an explicit depends_on. Plain image references resolve through
+	// the registry. The flake output overlays the parent rootfs.
+	Parent string `yaml:"parent,omitempty" json:"parent,omitempty" jsonschema:"Parent image rootfs mounted into the nix build (e.g. __hive__/base:1.0 or ubuntu:22.04). The flake output overlays it."`
 	// StoreCache keeps the nix store across builds in a persistent cache
 	// mount. It warms rebuilds after a flake change inside one BuildKit
 	// daemon. It does not survive a fresh daemon; the registry cache and
@@ -80,8 +82,45 @@ func (c NixConfig) StoreCacheEnabled() bool {
 	return c.StoreCache != nil && *c.StoreCache
 }
 
+// ChiselConfig configures the Chisel cut build backend for an image or
+// variant. It only applies when Build is chisel.
+//
+// The slice selection and the release live in the chisel.yaml cut spec next
+// to image.yml; this block configures how the build runs.
+type ChiselConfig struct {
+	// BuilderImage is the container image the build stages run in. The build
+	// installs only what the image lacks: git and ca-certificates with
+	// apt-get (so Debian or Ubuntu based), and the pinned chisel release
+	// from GitHub when the image ships no chisel.
+	// Empty uses the ContainerHive chisel helper image, which ships all three.
+	BuilderImage string `yaml:"builder_image,omitempty" json:"builder_image,omitempty" jsonschema:"Container image providing the build base for the chisel build (e.g. ubuntu:24.04). Missing git, ca-certificates and chisel are added on top, so apt-get is needed unless the image ships them. Empty uses the ContainerHive chisel helper image."`
+	// ChiselVersion pins the chisel release fetched for the build, e.g.
+	// v1.5.1. Empty uses the chisel shipped by the builder image, or the
+	// built-in default version when the image ships none.
+	ChiselVersion string `yaml:"chisel_version,omitempty" json:"chisel_version,omitempty" jsonschema:"Chisel tool version for the build (e.g. v1.5.1). Downloaded unless the builder image already ships that version. Empty uses the version shipped by the builder image, or the default version."`
+	// ExtraArgs holds additional arguments passed to chisel cut.
+	ExtraArgs []string `yaml:"extra_args,omitempty" json:"extra_args,omitempty" jsonschema:"Additional arguments passed to chisel cut"`
+	// Parent mounts a parent image rootfs into the build. Hive references
+	// (`__hive__/<name>:<tag>`) resolve through the local build cache or the
+	// registry, like Dockerfile references, and add the build order edge
+	// without an explicit depends_on. Plain image references resolve through
+	// the registry. The cut rootfs overlays the parent rootfs.
+	Parent string `yaml:"parent,omitempty" json:"parent,omitempty" jsonschema:"Parent image rootfs mounted into the chisel build (e.g. __hive__/base:1.0 or ubuntu:22.04). The cut rootfs overlays it."`
+	// Cache keeps the chisel release git checkout and the downloaded
+	// packages across builds in a persistent cache mount. It warms rebuilds
+	// inside one BuildKit daemon. It does not survive a fresh daemon.
+	Cache *bool `yaml:"cache,omitempty" json:"cache,omitempty" jsonschema:"Keep the chisel release checkout and downloaded packages across builds with a persistent cache mount (default true)"`
+}
+
+// CacheEnabled reports whether the persistent chisel cache mount is active.
+// The default is on: the zero value keeps the cache enabled.
+func (c ChiselConfig) CacheEnabled() bool {
+	return c.Cache == nil || *c.Cache
+}
+
 // ImageRunConfig captures the runtime configuration applied to the image
-// built by the Nix backend, since flakes do not carry Dockerfile instructions.
+// built by the Nix or Chisel backends, since flakes and cut specs do not
+// carry Dockerfile instructions.
 type ImageRunConfig struct {
 	Entrypoint []string          `yaml:"entrypoint,omitempty" json:"entrypoint,omitempty" jsonschema:"Entrypoint of the built image"`
 	Cmd        []string          `yaml:"cmd,omitempty" json:"cmd,omitempty" jsonschema:"Default command of the built image"`
@@ -93,9 +132,10 @@ type ImageRunConfig struct {
 // ImageDefinitionConfig is the parsed content of an image definition YAML file.
 type ImageDefinitionConfig struct {
 	Description string             `yaml:"description" json:"description,omitempty" jsonschema:"Description of the image"`
-	Build       string             `yaml:"build,omitempty" json:"build,omitempty" jsonschema:"Build backend (dockerfile, nix). Omit to auto-detect from the build entrypoint."`
+	Build       string             `yaml:"build,omitempty" json:"build,omitempty" jsonschema:"Build backend (dockerfile, nix, chisel). Omit to auto-detect from the build entrypoint."`
 	Nix         *NixConfig         `yaml:"nix,omitempty" json:"nix,omitempty" jsonschema:"Nix flake build configuration, applies when build is nix"`
-	Config      *ImageRunConfig    `yaml:"config,omitempty" json:"config,omitempty" jsonschema:"Runtime configuration of the built image (nix backend)"`
+	Chisel      *ChiselConfig      `yaml:"chisel,omitempty" json:"chisel,omitempty" jsonschema:"Chisel build configuration, applies when build is chisel"`
+	Config      *ImageRunConfig    `yaml:"config,omitempty" json:"config,omitempty" jsonschema:"Runtime configuration of the built image (nix, chisel backend)"`
 	Tags        []*Tag             `yaml:"tags" json:"tags" jsonschema:"Tags to create for this image"`
 	TagRanges   []*TagRange        `yaml:"tag_ranges,omitempty" json:"tag_ranges,omitempty" jsonschema:"Tag ranges generating tags from external version sources at discovery time"`
 	Variants    []VariantConfig    `yaml:"variants" json:"variants,omitempty" jsonschema:"Variants to create for this image"`

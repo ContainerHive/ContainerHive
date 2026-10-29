@@ -1,10 +1,10 @@
 {{ define "test-job.yml.gotpl" }}
 {{- range $platform := .Image.Platforms }}
 {{- with $ }}
-  test-{{ $.Image.Name }}-{{ $platform }}:
-    runs-on: {{ if eq $platform "arm64" }}ubuntu-24.04-arm{{ else }}ubuntu-24.04{{ end }}
+  test-{{ $.Image.Name }}-{{ platform_id $platform }}:
+    runs-on: {{ if eq (platform_arch $platform) "arm64" }}ubuntu-24.04-arm{{ else }}ubuntu-24.04{{ end }}
     needs:
-      - build-{{ $.Image.Name }}-{{ $platform }}
+      - build-{{ $.Image.Name }}-{{ platform_id $platform }}
     steps:
       - name: Checkout code
         uses: actions/checkout@{{ option "actions_checkout_version" }}
@@ -19,7 +19,7 @@
       - name: Download build artifacts for {{ $platform }}
         uses: actions/download-artifact@{{ option "actions_download_artifact_version" }}
         with:
-          name: {{ $.Image.Name }}-{{ $platform }}
+          name: {{ $.Image.Name }}-{{ platform_id $platform }}
           path: {{ $.Ctx.Dist }}/
 {{- end }}
       - name: Prepare temp directory
@@ -36,7 +36,7 @@
       - name: Create Docker network
         run: docker network create ch-net
       - name: Start Docker-in-Docker
-        run: docker run -d --name dind --privileged --network ch-net -e DOCKER_TLS_CERTDIR="" docker:dind
+        run: docker run -d --name dind --privileged --network ch-net -e DOCKER_TLS_CERTDIR="" {{ option "ci_dind_image" }} dockerd --host=tcp://0.0.0.0:2375
 {{- if $.Ctx.Config.Registry }}
       - name: Login to registry
         run: echo "${{ "{{" }} secrets.CONTAINER_HIVE_REGISTRY_PASSWORD {{ "}}" }}" | docker run --rm --entrypoint="" -u "$(id -u):$(id -g)" -e CI=1 -i -e HOME="$RUNNER_TEMP/ch" -v "$RUNNER_TEMP/ch:$RUNNER_TEMP/ch" -v "$GITHUB_WORKSPACE:$GITHUB_WORKSPACE" -w "$GITHUB_WORKSPACE" --network ch-net -e DOCKER_HOST=tcp://dind:2375 $CH_IMAGE {{ $.Ctx.ChCmd }} login -u "${{ "{{" }} secrets.CONTAINER_HIVE_REGISTRY_USERNAME {{ "}}" }}" --password-stdin "{{ $.Ctx.Config.RegistryHost }}"

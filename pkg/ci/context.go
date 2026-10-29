@@ -9,6 +9,7 @@ import (
 	"github.com/ContainerHive/ContainerHive/internal/buildkit"
 	"github.com/ContainerHive/ContainerHive/internal/dependency"
 	"github.com/ContainerHive/ContainerHive/pkg/model"
+	"github.com/ContainerHive/ContainerHive/pkg/platform"
 	"github.com/ContainerHive/ContainerHive/pkg/rendering"
 	"github.com/ContainerHive/ContainerHive/pkg/shard"
 )
@@ -100,11 +101,23 @@ func (c *CIConfigContext) RegistryHost() string {
 	return addr
 }
 
+const (
+	// GitLabDefaultDindImage is the Docker-in-Docker service image used by the
+	// generated GitLab test jobs. The ContainerHive helper image runs rootless,
+	// so it works in unprivileged Kubernetes pods (no privileged security
+	// context needed).
+	GitLabDefaultDindImage = "ghcr.io/containerhive/helper-images/dind-rootless:29.9"
+	// GitHubDefaultDindImage is the Docker-in-Docker image used by the generated
+	// GitHub Actions test jobs. GitHub-hosted runners allow privileged
+	// containers but not the user namespaces the rootless daemon needs.
+	GitHubDefaultDindImage = "ghcr.io/containerhive/helper-images/dind:29.9"
+)
+
 // defaultTemplateOptions returns the built-in template option defaults.
 func defaultTemplateOptions() map[string]string {
 	return map[string]string{
 		"ci_buildkit_image":                     buildkit.DefaultImage,
-		"ci_buildkit_version":                   buildkit.Version,
+		"ci_buildkit_version":                   buildkit.DefaultTag,
 		"ci_cancel_outdated":                    "true",
 		"ci_lint":                               "true",
 		"ci_report":                             "true",
@@ -196,8 +209,8 @@ func BuildCIContext(project *model.ContainerHiveProject, artifacts bool) (*CICon
 		}
 		sort.Strings(tags)
 
-		// Resolve platforms: image-level or project default
-		platforms := resolvePlatforms(images[0], project.Config.Platforms)
+		// Resolve platforms: union over base tags and variants
+		platforms := resolvePlatforms(images, project.Config.Platforms)
 		for _, p := range platforms {
 			allPlatforms[p] = true
 		}
@@ -240,6 +253,11 @@ func BuildCIContext(project *model.ContainerHiveProject, artifacts bool) (*CICon
 	opts := defaultTemplateOptions()
 	for k, v := range project.Config.TemplateOptions {
 		opts[k] = v
+	}
+	// Only the default image is tagged per release series, a custom image
+	// without an explicit version keeps the exact BuildKit version.
+	if _, ok := project.Config.TemplateOptions["ci_buildkit_version"]; !ok {
+		opts["ci_buildkit_version"] = buildkit.TagFor(opts["ci_buildkit_image"])
 	}
 
 	// The gotpl template coerces these with sprig's atoi, which returns 0 for
@@ -353,25 +371,39 @@ func calculateDepths(imageNames map[string]bool, dependencies map[string][]strin
 	return depths
 }
 
-// resolvePlatforms returns the effective platforms for an image.
-// Uses image-level platforms if set, otherwise falls back to project defaults.
-// Platform prefixes like "linux/" are stripped for CI use (e.g. "linux/amd64" -> "amd64").
-func resolvePlatforms(img *model.Image, projectPlatforms []string) []string {
-	platforms := img.Platforms
-	if len(platforms) == 0 {
-		platforms = projectPlatforms
+// resolvePlatforms returns the effective platforms for an image: the union of
+// the platforms its base tags (image-level, falling back to project defaults)
+// and its variants (variant-level, falling back to the base tag platforms)
+// resolve to, in order of first appearance. This way a platform only a
+// variant supports still gets a job.
+// The "linux/" prefix is stripped for CI use when only an arch remains
+// (e.g. "linux/amd64" -> "amd64"); multi-component or non-linux platforms
+// such as "linux/arm/v7" or "windows/amd64" keep their full value.
+func resolvePlatforms(images []*model.Image, projectPlatforms []string) []string {
+	seen := make(map[string]bool)
+	var result []string
+	add := func(platforms []string) {
+		for _, p := range platforms {
+			p = platform.Short(p)
+			if seen[p] {
+				continue
+			}
+			seen[p] = true
+			result = append(result, p)
+		}
 	}
 
-	result := make([]string, 0, len(platforms))
-	for _, p := range platforms {
-		// Strip os prefix (e.g. "linux/amd64" -> "amd64")
-		for i := len(p) - 1; i >= 0; i-- {
-			if p[i] == '/' {
-				p = p[i+1:]
-				break
-			}
+	for _, img := range images {
+		add(platform.Resolve(nil, projectPlatforms, img.Platforms, nil))
+
+		variantNames := make([]string, 0, len(img.Variants))
+		for name := range img.Variants {
+			variantNames = append(variantNames, name)
 		}
-		result = append(result, p)
+		sort.Strings(variantNames)
+		for _, name := range variantNames {
+			add(platform.Resolve(nil, projectPlatforms, img.Platforms, img.Variants[name].Platforms))
+		}
 	}
 	return result
 }

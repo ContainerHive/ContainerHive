@@ -1,0 +1,8 @@
+description: "Hello image cut from Ubuntu package slices (chisel build backend, experimental)"
+build: chisel
+
+tags:
+  - name: 1.0.0
+
+platforms:
+  - linux/amd64

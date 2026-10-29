@@ -43,7 +43,7 @@ ch build [image:tag patterns...]
 | Flag | Description |
 |:-----|:------------|
 | `--registry` | Use registry from config (auto-enabled in CI) |
-| `--platform` | Target platform(s) to build (e.g. `linux/amd64`), overrides `hive.yml` |
+| `--platform` | Target platform(s) to build (e.g. `linux/amd64`). Selects within the platforms configured in `hive.yml`/`image.yml`; tags and variants that support none of them are skipped. A platform that nothing configures is an error |
 | `--max-shards` | Total number of shards to split work across — sourced from `CI_NODE_TOTAL` env (default: `1`) |
 | `--current-shard` | This shard's 1-based index — sourced from `CI_NODE_INDEX` env (default: `1`) |
 
@@ -60,7 +60,7 @@ ch test [image:tag patterns...]
 | Flag | Description |
 |:-----|:------------|
 | `--build` | Run build before tests |
-| `--platform` | Target platform(s) to test (e.g. `linux/amd64`), overrides `hive.yml`; also applies to `--build` |
+| `--platform` | Target platform(s) to test (e.g. `linux/amd64`). Selects within the configured platforms like `build --platform`; also applies to `--build` |
 | `--max-shards` | Total number of shards to split work across — sourced from `CI_NODE_TOTAL` env (default: `1`) |
 | `--current-shard` | This shard's 1-based index — sourced from `CI_NODE_INDEX` env (default: `1`) |
 
@@ -84,7 +84,7 @@ ch sbom [image:tag patterns...]
 
 | Flag | Description |
 |:-----|:------------|
-| `--platform` | Target platform(s) to generate SBOMs for (e.g. `linux/amd64`), overrides `hive.yml` |
+| `--platform` | Target platform(s) to generate SBOMs for (e.g. `linux/amd64`). Selects within the configured platforms like `build --platform` |
 | `--workers` | Number of concurrent workers for SBOM generation (default: 4) |
 | `--no-cpe` | Skip CPE generation to reduce SBOM size (may reduce vulnerability match accuracy for CPE-based scanners) |
 | `--max-shards` | Total number of shards to split work across — sourced from `CI_NODE_TOTAL` env (default: `1`) |
@@ -111,6 +111,21 @@ ch verify
 ```
 
 Validates `hive.yml` and image definitions. Useful as a quick check before building.
+
+### `graph`
+
+Print the dependency graph of all images and variants.
+
+```bash
+ch graph
+ch graph --format dot | dot -Tsvg > graph.svg
+```
+
+| Flag | Default | Description |
+|------|---------|-------------|
+| `--format` | `mermaid` | Output format: `mermaid` or `dot` |
+
+Every image and every variant is a node, named `<image>` or `<image>/<variant>`. Tags are not nodes. An arrow points from a node to a node it depends on, which is built first. A dependency comes from a `FROM` or `parent` reference or from `depends_on`, so it does not always mean the image is built from the other one. The graph is read from the project source, so `ch generate` is not needed first, and `tag_ranges` are not expanded, so no version source is contacted. See [Dependency resolution](../how-it-works/dependency-resolution.md#visualizing-the-graph) for how references map to variants.
 
 ### `lint`
 
@@ -204,7 +219,7 @@ ch template ci --provider <provider> --output <path>
 | `--template-dir` | Custom template directory (overrides built-in templates) |
 | `--artifacts` | Upload/download build artifacts between jobs |
 | `--version` | CH CLI version to use in CI templates (default: current CLI version) |
-| `--image-name` | Container image name for the CH CLI (default: `containerhive/containerhive`) |
+| `--image-name` | Container image name for the CH CLI (default: `ghcr.io/containerhive/containerhive` for `--provider github`, `registry.gitlab.com/containerhive/containerhive` for `--provider gitlab`) |
 
 ### `template custom`
 

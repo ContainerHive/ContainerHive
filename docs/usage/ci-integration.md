@@ -40,7 +40,7 @@ ch template ci --provider github --output .github/workflows/build.yml
 | `--template-dir` | Custom template directory to override built-in templates     |
 | `--artifacts`    | Upload/download build artifacts between jobs                 |
 | `--version`      | ContainerHive CLI version to use (default: current version)  |
-| `--image-name`   | Container image name for the CLI (default: `containerhive/containerhive`) |
+| `--image-name`   | Container image name for the CLI (default: `ghcr.io/containerhive/containerhive` for `github`, `registry.gitlab.com/containerhive/containerhive` for `gitlab`) |
 
 ### Example with custom image
 
@@ -102,7 +102,7 @@ Each image in `Images` provides:
 | `Aliases`      | map    | Alias name to the exact tag it points at: semantic version series aliases (`1.2.3` → `1.2`, `1`) and `latest_alias`, including variant-suffixed ones. Same resolution as the registry retagging step |
 | `Dependencies` | list   | Names of images this image depends on                          |
 | `Depth`        | int    | Dependency depth (0 = no dependencies)                         |
-| `Platforms`    | list   | Target platforms                                               |
+| `Platforms`    | list   | Target platforms: union of the base tag and variant platforms. Plain linux platforms are shortened to the architecture (`amd64`), others keep their full value (`linux/arm/v7`); use `platform_id` for identifiers |
 | `ReadmePath`   | string | Path to the image's `README.md`, empty if it has none. Load the content with `read_file` |
 | `ShardUnits`   | int    | Number of shard units (base + variant tags) — the useful max   |
 | `BuildShards`  | int    | Effective parallel for build jobs (min(ci_build_shards, ShardUnits)) |
@@ -146,6 +146,9 @@ Templates have access to [Sprig](http://masterminds.github.io/sprig/) functions 
 |:--------------------------|:----------------------------------------------------------------------------------------|
 | `resolve_base(name, tag)` | Produces an internal image reference (`__hive__/name:tag`) for inter-image dependencies |
 | `option(key)`             | Returns the value of a template option from `hive.yml`, or empty string if not set      |
+| `platform_id(platform)`   | Turns a platform into a value safe for job IDs and artifact names: `amd64` stays `amd64`, `linux/arm/v7` becomes `linux-arm-v7` |
+| `platform_dir(platform)`  | Returns the `dist/` directory name of a platform, e.g. `linux-amd64` for `amd64` |
+| `platform_arch(platform)` | Returns the architecture of a platform, e.g. `arm64` for `linux/arm64/v8` |
 | `read_file(path)`         | Returns the content of a file, or an empty string for an empty path — e.g. `{{ .Image.ReadmePath \| read_file }}`. Fails if the file does not exist |
 
 ### Example custom template
@@ -289,6 +292,36 @@ template_options:
   ci_cancel_outdated: "false"
 ```
 
+## Docker-in-Docker for test jobs
+
+[`ch test`](cli.md#test) needs a Docker daemon. The default image depends on the provider, both come from the
+[ContainerHive helper images](https://github.com/ContainerHive/helper-images):
+
+- **GitHub Actions** starts the privileged
+  [`dind`](https://github.com/ContainerHive/helper-images/blob/main/images/dind/README.md) image as a container on the
+  runner VM, with `--privileged`. The rootless image does not start on GitHub-hosted runners, because they restrict
+  unprivileged user namespaces.
+- **GitLab CI** starts the rootless
+  [`dind-rootless`](https://github.com/ContainerHive/helper-images/blob/main/images/dind-rootless/README.md) image as a
+  `dind` service, so the service runs without a privileged security context. This is what makes the pipeline work on
+  Kubernetes runners that forbid privileged pods.
+
+On the GitLab Kubernetes executor the rootless daemon needs a user mapping that fits the pod (`hostUsers: false`),
+which is a cluster-side setting. Use a privileged image, such as `docker:dind` or your own mirror, with
+`ci_dind_image`:
+
+```yaml
+template_options:
+  ci_dind_image: docker:dind
+```
+
+A privileged image needs the runner to allow a privileged Docker-in-Docker service. Setting the option does not
+replace `hostUsers: false` on a runner that forbids privileged pods; there the daemon does not start.
+
+The BuildKit daemon for the build jobs comes from the
+[`buildkit`](https://github.com/ContainerHive/helper-images/blob/main/images/buildkit/README.md) helper image. Use
+`ci_buildkit_image` and `ci_buildkit_version` to pin another one, for example the upstream `moby/buildkit`.
+
 ## Sharding build and test jobs
 
 For GitLab CI, `ci_build_shards` and `ci_test_shards` set an upper bound on `parallel: N` for each build/test job. The
@@ -296,8 +329,12 @@ actual value is capped per image to the number of shard units (base + variant ta
 tags than the configured value never spawn empty jobs that no-op. See [Split work across shards](sharding.md) for the
 full picture; the template option is set the same way as `ci_lint` above:
 
-Generated test jobs are split by platform and run on matching architecture runners. In GitLab, each job extends a shared
-`.test-amd64` or `.test-arm64` base, which can be extended in your root `.gitlab-ci.yml` to add runner tags:
+Generated build and test jobs are split by platform and pass `--platform` to `ch`, which skips tags and variants that do
+not support that platform (see [Selecting platforms](multi-platform.md#selecting-platforms-with-platform)).
+Generated test jobs run on matching architecture runners. In GitLab, each job extends a shared
+`.test-<platform>` (and `.build-<platform>`) base, which can be extended in your root `.gitlab-ci.yml` to add runner
+tags. `<platform>` is the platform with `linux/` dropped for plain architectures and `/` replaced by `-` otherwise:
+`amd64`, `arm64`, `linux-arm-v7`, `windows-amd64`. Job IDs and artifact names use the same form.
 
 ```yaml
 .test-arm64:

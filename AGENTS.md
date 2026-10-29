@@ -28,7 +28,7 @@ Go CLI tool for managing container image builds with dependency resolution.
 - Verify before pushing: `properdocs build --strict` (catches broken links and nav problems)
 - Navigation managed via `docs/.nav.yml` (awesome-nav plugin). Pages are listed explicitly, so add every new page there.
 - ADRs managed via mkdocs-decision-records plugin
-- Hosted at [container-hive.timo-reymann.de](https://container-hive.timo-reymann.de/)
+- Hosted at [container-hive.eu](https://container-hive.eu/)
 - JSON schemas in `schemas/`, published to the docs site
 
 ### Keep docs in sync with the code
@@ -46,6 +46,13 @@ Documentation is part of the change, not a follow-up. In the same PR:
 
 - GitHub PRs for all changes
 - CI runs on CircleCI
+
+### Commits and pushing
+
+- Never force-push. Do not amend or rebase commits that are already pushed. Add a follow-up commit instead.
+- Keep commits granular: one logical change per commit. A review fix, a new test, and a documentation update each get their own commit.
+- Answer review feedback with new commits on the same branch, so every round stays reviewable.
+- Add the `Co-Authored-By` trailer that names the model used to write the commit.
 
 ## Code Style
 

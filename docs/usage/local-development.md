@@ -48,7 +48,7 @@ ch build
 
 By default the image is resolved from your project's `template_options` in `hive.yml`, using the same `ci_buildkit_image` and `ci_buildkit_version` keys that control the version used in generated CI pipelines. This keeps your local daemon in sync with CI.
 
-If no overrides are configured, the version is taken from the `github.com/moby/buildkit` dependency in `go.mod`.
+If no overrides are configured, the [`buildkit` helper image](https://github.com/ContainerHive/helper-images/blob/main/images/buildkit/README.md) is used, in the release series of the `github.com/moby/buildkit` dependency in `go.mod` (for example `v0.34`).
 
 ```yaml
 # hive.yml — pin the same version locally and in CI

@@ -7,7 +7,7 @@
     },
     "build": {
       "type": "string",
-      "description": "Build backend (dockerfile, nix). Omit to auto-detect from the build entrypoint."
+      "description": "Build backend (dockerfile, nix, chisel). Omit to auto-detect from the build entrypoint."
     },
     "nix": {
       "type": [
@@ -17,7 +17,7 @@
       "properties": {
         "builder_image": {
           "type": "string",
-          "description": "Container image providing nix for the build (e.g. nixos/nix:2.31). Empty uses the default builder image."
+          "description": "Container image providing nix for the build (e.g. nixos/nix:2.31). Empty uses the ContainerHive nix helper image."
         },
         "extra_args": {
           "type": [
@@ -31,7 +31,7 @@
         },
         "parent": {
           "type": "string",
-          "description": "Parent image rootfs mounted into the nix build (e.g. __hive__/base:1.0 or ubuntu:22.04). The flake output overlays it. Requires depends_on for hive references."
+          "description": "Parent image rootfs mounted into the nix build (e.g. __hive__/base:1.0 or ubuntu:22.04). The flake output overlays it."
         },
         "store_cache": {
           "type": [
@@ -42,6 +42,45 @@
         }
       },
       "description": "Nix flake build configuration, applies when build is nix",
+      "additionalProperties": false
+    },
+    "chisel": {
+      "type": [
+        "null",
+        "object"
+      ],
+      "properties": {
+        "builder_image": {
+          "type": "string",
+          "description": "Container image providing the build base for the chisel build (e.g. ubuntu:24.04). Missing git, ca-certificates and chisel are added on top, so apt-get is needed unless the image ships them. Empty uses the ContainerHive chisel helper image."
+        },
+        "chisel_version": {
+          "type": "string",
+          "description": "Chisel tool version for the build (e.g. v1.5.1). Downloaded unless the builder image already ships that version. Empty uses the version shipped by the builder image, or the default version."
+        },
+        "extra_args": {
+          "type": [
+            "null",
+            "array"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "description": "Additional arguments passed to chisel cut"
+        },
+        "parent": {
+          "type": "string",
+          "description": "Parent image rootfs mounted into the chisel build (e.g. __hive__/base:1.0 or ubuntu:22.04). The cut rootfs overlays it."
+        },
+        "cache": {
+          "type": [
+            "null",
+            "boolean"
+          ],
+          "description": "Keep the chisel release checkout and downloaded packages across builds with a persistent cache mount (default true)"
+        }
+      },
+      "description": "Chisel build configuration, applies when build is chisel",
       "additionalProperties": false
     },
     "config": {
@@ -86,7 +125,7 @@
           "description": "Workdir of the built image"
         }
       },
-      "description": "Runtime configuration of the built image (nix backend)",
+      "description": "Runtime configuration of the built image (nix, chisel backend)",
       "additionalProperties": false
     },
     "tags": {
@@ -410,7 +449,7 @@
           },
           "build": {
             "type": "string",
-            "description": "Build backend for this variant (dockerfile, nix). Omit to auto-detect from the variant build entrypoint."
+            "description": "Build backend for this variant (dockerfile, nix, chisel). Omit to auto-detect from the variant build entrypoint."
           },
           "nix": {
             "type": [
@@ -420,7 +459,7 @@
             "properties": {
               "builder_image": {
                 "type": "string",
-                "description": "Container image providing nix for the build (e.g. nixos/nix:2.31). Empty uses the default builder image."
+                "description": "Container image providing nix for the build (e.g. nixos/nix:2.31). Empty uses the ContainerHive nix helper image."
               },
               "extra_args": {
                 "type": [
@@ -434,7 +473,7 @@
               },
               "parent": {
                 "type": "string",
-                "description": "Parent image rootfs mounted into the nix build (e.g. __hive__/base:1.0 or ubuntu:22.04). The flake output overlays it. Requires depends_on for hive references."
+                "description": "Parent image rootfs mounted into the nix build (e.g. __hive__/base:1.0 or ubuntu:22.04). The flake output overlays it."
               },
               "store_cache": {
                 "type": [
@@ -445,6 +484,45 @@
               }
             },
             "description": "Nix flake build configuration for this variant, applies when build is nix",
+            "additionalProperties": false
+          },
+          "chisel": {
+            "type": [
+              "null",
+              "object"
+            ],
+            "properties": {
+              "builder_image": {
+                "type": "string",
+                "description": "Container image providing the build base for the chisel build (e.g. ubuntu:24.04). Missing git, ca-certificates and chisel are added on top, so apt-get is needed unless the image ships them. Empty uses the ContainerHive chisel helper image."
+              },
+              "chisel_version": {
+                "type": "string",
+                "description": "Chisel tool version for the build (e.g. v1.5.1). Downloaded unless the builder image already ships that version. Empty uses the version shipped by the builder image, or the default version."
+              },
+              "extra_args": {
+                "type": [
+                  "null",
+                  "array"
+                ],
+                "items": {
+                  "type": "string"
+                },
+                "description": "Additional arguments passed to chisel cut"
+              },
+              "parent": {
+                "type": "string",
+                "description": "Parent image rootfs mounted into the chisel build (e.g. __hive__/base:1.0 or ubuntu:22.04). The cut rootfs overlays it."
+              },
+              "cache": {
+                "type": [
+                  "null",
+                  "boolean"
+                ],
+                "description": "Keep the chisel release checkout and downloaded packages across builds with a persistent cache mount (default true)"
+              }
+            },
+            "description": "Chisel build configuration for this variant, applies when build is chisel",
             "additionalProperties": false
           },
           "config": {
@@ -489,7 +567,7 @@
                 "description": "Workdir of the built image"
               }
             },
-            "description": "Runtime configuration of the built image for this variant (nix backend)",
+            "description": "Runtime configuration of the built image for this variant (nix, chisel backend)",
             "additionalProperties": false
           },
           "versions": {

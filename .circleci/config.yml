@@ -147,6 +147,7 @@ jobs:
           name: Build and publish images
           command: |
             export CONTAINER_REGISTRY="ghcr.io/containerhive"
+            export CONTAINER_FLOATING_TAG="edge"
             export VERSION="$(git rev-parse --short HEAD)"
             echo $GITHUB_TOKEN | docker login ghcr.io -u $GITHUB_USER --password-stdin
             docker buildx create --use
@@ -165,6 +166,26 @@ jobs:
             echo "$DOCKER_TOKEN" | docker login -u "$DOCKER_USERNAME" --password-stdin
             docker buildx create --use
             make build-docker
+      - run:
+          name: Mirror images to GHCR
+          command: |
+            echo "$GITHUB_TOKEN" | docker login ghcr.io -u "$GITHUB_USER" --password-stdin
+            VERSION="$(git describe --tags --always)"
+            for tag in "$VERSION" latest; do
+              docker buildx imagetools create \
+                --tag "ghcr.io/containerhive/containerhive:$tag" \
+                "docker.io/containerhive/containerhive:$tag"
+            done
+      - run:
+          name: Mirror images to GitLab registry
+          command: |
+            echo "$GITLAB_TOKEN" | docker login registry.gitlab.com -u "$GITLAB_USER" --password-stdin
+            VERSION="$(git describe --tags --always)"
+            for tag in "$VERSION" latest; do
+              docker buildx imagetools create \
+                --tag "registry.gitlab.com/containerhive/containerhive:$tag" \
+                "docker.io/containerhive/containerhive:$tag"
+            done
       - docker/update-description:
           image: containerhive/containerhive
           docker-username: DOCKER_USERNAME
@@ -200,6 +221,15 @@ jobs:
               --version "$CIRCLE_TAG" \
               --path schemas/structure-test.schema.json \
               --identifier containerhive-structure-test || true
+      - run:
+          name: Upload chisel cut spec schema to SchemaNest
+          command: |
+            schema-nest-cli upload-json-schema \
+              --base-url https://schema-nest.timo-reymann.de \
+              --api-key "$SCHEMA_NEST_UPLOAD_KEY" \
+              --version "$CIRCLE_TAG" \
+              --path schemas/chisel.schema.json \
+              --identifier containerhive-chisel
   publish-0install-feed:
     executor: zero-install
     steps:
@@ -235,7 +265,7 @@ jobs:
       - run:
           name: Set up CNAME
           command: |
-            echo "container-hive.timo-reymann.de" > gh-pages/CNAME
+            echo "container-hive.eu" > gh-pages/CNAME
       - github-utils/publish_github_pages:
           folder: gh-pages/
           git_commit_author_email: "no-reply@timo-reymann.de"
