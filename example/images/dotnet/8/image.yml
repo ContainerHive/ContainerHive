@@ -1,13 +1,40 @@
-tags:
-  - name: 8.0.100
+tag_ranges:
+  - tag_name: "{{.major}}.{{.minor}}"
+    source:
+      type: json
+      url: "https://builds.dotnet.microsoft.com/dotnet/release-metadata/8.0/releases.json"
+      transform: |
+        releases.{ "version": sdk.version }
+    select:
+      major: all
+      minor: all
+      patch: latest
     versions:
-      dotnet-sdk-channel: 8.0.1xx
-  - name: 8.0.300
+      dotnet-sdk: "{{.full}}"
+  - tag_name: "{{.major}}.{{.minor}}"
+    source:
+      type: json
+      url: "https://builds.dotnet.microsoft.com/dotnet/release-metadata/9.0/releases.json"
+      transform: |
+        releases.{ "version": sdk.version }
+    select:
+      major: all
+      minor: all
+      patch: latest
     versions:
-      dotnet-sdk-channel: 8.0.3xx
-  - name: 8.0.200
+      dotnet-sdk: "{{.full}}"
+  - tag_name: "{{.major}}.{{.minor}}"
+    source:
+      type: json
+      url: "https://builds.dotnet.microsoft.com/dotnet/release-metadata/10.0/releases.json"
+      transform: |
+        releases.{ "version": sdk.version }
+    select:
+      major: all
+      minor: all
+      patch: latest
     versions:
-      dotnet-sdk-channel: 8.0.2xx
+      dotnet-sdk: "{{.full}}"
 
 variants:
   - name: node
