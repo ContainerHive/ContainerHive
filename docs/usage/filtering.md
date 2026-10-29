@@ -53,7 +53,7 @@ ch sbom dotnet
 Variant tags include the tag suffix defined in `image.yml`. To filter for a variant, specify the full tag including the suffix:
 
 ```bash
-ch build dotnet:8.0.200-node
+ch build dotnet:8.0-node
 ```
 
 ## Matching rules
