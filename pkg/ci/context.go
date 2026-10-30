@@ -3,6 +3,7 @@ package ci
 import (
 	"fmt"
 	"path"
+	"slices"
 	"sort"
 	"strconv"
 	"strings"
@@ -135,6 +136,10 @@ const (
 	GitHubDefaultDindImage = "ghcr.io/containerhive/helper-images/dind:29.9"
 )
 
+// fixedStages are the stages the GitLab pipeline defines besides the image
+// stages.
+var fixedStages = []string{"generate", "lint", "report", "pages"}
+
 // defaultTemplateOptions returns the built-in template option defaults.
 func defaultTemplateOptions() map[string]string {
 	return map[string]string{
@@ -257,12 +262,16 @@ func BuildCIContext(project *model.ContainerHiveProject, artifacts bool) (*CICon
 		return ciImages[i].Name < ciImages[j].Name
 	})
 
-	// Generate stages
+	// One stage per image, in dependency order, holds its build, test and
+	// manifest jobs. Jobs run as soon as their needs finish, so the stage
+	// only groups them in the pipeline view. An image named like a fixed
+	// pipeline stage joins that stage instead of duplicating it.
 	var stages []string
 	for _, img := range ciImages {
-		stages = append(stages, fmt.Sprintf("build-%s", img.Name))
-		stages = append(stages, fmt.Sprintf("test-%s", img.Name))
-		stages = append(stages, fmt.Sprintf("manifest-%s", img.Name))
+		if slices.Contains(fixedStages, img.Name) {
+			continue
+		}
+		stages = append(stages, img.Name)
 	}
 
 	// Collect all unique platforms sorted
