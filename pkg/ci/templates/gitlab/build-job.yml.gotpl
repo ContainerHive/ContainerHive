@@ -3,6 +3,7 @@
 build-{{ $.Image.Name }}-{{ platform_id . }}:
   extends: .build-{{ platform_id . }}
   stage: build-{{ $.Image.Name }}
+{{- template "change-rules.yml.gotpl" $ }}
   variables:
     IMAGE_NAME: {{ $.Image.Name }}
     PLATFORM: {{ . }}
@@ -12,7 +13,12 @@ build-{{ $.Image.Name }}-{{ platform_id . }}:
   needs:
     - generate
 {{- range $.Image.Dependencies }}
+{{- if $.Ctx.ChangeDetection }}
+    - job: manifest-{{ . }}
+      optional: true
+{{- else }}
     - manifest-{{ . }}
+{{- end }}
 {{- end }}
   artifacts:
     paths:

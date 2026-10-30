@@ -2,6 +2,7 @@
 manifest-{{ .Image.Name }}:
   extends: .manifest
   stage: manifest-{{ .Image.Name }}
+{{- template "change-rules.yml.gotpl" . }}
   variables:
     IMAGE_NAME: {{ .Image.Name }}
   needs:

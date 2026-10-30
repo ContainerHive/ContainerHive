@@ -1,0 +1,15 @@
+{{ define "change-rules.yml.gotpl" }}
+{{- if .Ctx.ChangeDetection }}
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH && $CI_COMMIT_BRANCH != $CI_DEFAULT_BRANCH
+      changes:
+        paths:
+{{- range .Image.ChangePaths }}
+          - {{ $.Ctx.RepoPath . | quote }}
+{{- end }}
+        compare_to: refs/heads/$CI_DEFAULT_BRANCH
+    - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH && $CI_COMMIT_BRANCH != $CI_DEFAULT_BRANCH
+      when: never
+    - when: on_success
+{{- end }}
+{{- end }}

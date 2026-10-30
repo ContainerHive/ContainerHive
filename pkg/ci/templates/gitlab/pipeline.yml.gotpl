@@ -122,11 +122,27 @@ generate:
     paths:
       - {{ .VersionCacheDir }}/
     policy: pull-push
+{{- end }}
+{{- if or .ChangeDetection (and .HasTagRanges (ne (option "ci_version_cache") "false")) }}
   variables:
+{{- if and .HasTagRanges (ne (option "ci_version_cache") "false") }}
     CONTAINER_HIVE_CACHE_DIR: {{ .VersionCacheDir }}
+{{- end }}
+{{- if .ChangeDetection }}
+    # Change detection diffs against the default branch, which needs its
+    # history next to the pipeline commit.
+    GIT_DEPTH: "0"
+    GIT_FETCH_EXTRA_FLAGS: --prune --quiet +refs/heads/$CI_DEFAULT_BRANCH:refs/remotes/origin/$CI_DEFAULT_BRANCH
+{{- end }}
 {{- end }}
   script:
     - {{ .ChCmd }} generate --build-id "$SNAPSHOT_ID"
+{{- if .ChangeDetection }}
+    - |
+      if [ "$CI_PIPELINE_SOURCE" = "push" ] && [ -n "$CI_COMMIT_BRANCH" ] && [ "$CI_COMMIT_BRANCH" != "$CI_DEFAULT_BRANCH" ]; then
+        {{ .ChCmd }} changes --base "refs/remotes/origin/$CI_DEFAULT_BRANCH" --unmatched ignore --strict --write
+      fi
+{{- end }}
   artifacts:
     paths:
       - {{ .Dist }}/
@@ -160,7 +176,12 @@ report:
     - generate
   {{- range $img := .Images }}
   {{- range $p := $img.Platforms }}
+  {{- if $.ChangeDetection }}
+    - job: build-{{ $img.Name }}-{{ platform_id $p }}
+      optional: true
+  {{- else }}
     - build-{{ $img.Name }}-{{ platform_id $p }}
+  {{- end }}
   {{- end }}
   {{- end }}
   script:
