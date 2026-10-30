@@ -107,6 +107,23 @@ func TestBuildCIContext_ImagePlatformOverride(t *testing.T) {
 	}
 }
 
+func TestBuildCIContext_StagesSkipFixedStageNames(t *testing.T) {
+	project := &model.ContainerHiveProject{
+		Config: model.HiveProjectConfig{Platforms: []string{"linux/amd64"}},
+		ImagesByName: map[string][]*model.Image{
+			"report": {{Name: "report", Tags: map[string]*model.Tag{"v1": {Name: "v1"}}}},
+			"app":    {{Name: "app", Tags: map[string]*model.Tag{"v1": {Name: "v1"}}}},
+		},
+	}
+	ctx, err := BuildCIContext(project, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if expected := []string{"app"}; !reflect.DeepEqual(ctx.Stages, expected) {
+		t.Errorf("expected stages %v, got %v", expected, ctx.Stages)
+	}
+}
+
 func TestBuildCIContext_Stages(t *testing.T) {
 	project := &model.ContainerHiveProject{
 		Config: model.HiveProjectConfig{
@@ -122,7 +139,7 @@ func TestBuildCIContext_Stages(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	expected := []string{"build-alpha", "test-alpha", "manifest-alpha", "build-beta", "test-beta", "manifest-beta"}
+	expected := []string{"alpha", "beta"}
 	if !reflect.DeepEqual(ctx.Stages, expected) {
 		t.Errorf("expected stages %v, got %v", expected, ctx.Stages)
 	}

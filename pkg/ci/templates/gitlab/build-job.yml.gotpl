@@ -2,7 +2,7 @@
 {{- range .Image.Platforms }}
 build-{{ $.Image.Name }}-{{ platform_id . }}:
   extends: .build-{{ platform_id . }}
-  stage: build-{{ $.Image.Name }}
+  stage: {{ $.Image.Name }}
 {{- template "change-rules.yml.gotpl" $ }}
   variables:
     IMAGE_NAME: {{ $.Image.Name }}
