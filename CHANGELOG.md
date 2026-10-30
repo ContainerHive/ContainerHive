@@ -1,3 +1,28 @@
+## [1.27.0](https://github.com/ContainerHive/ContainerHive/compare/v1.26.0...v1.27.0) (2026-10-30)
+
+### Features
+
+* **build:** resolve skipped dependencies without build ID ([57b96b8](https://github.com/ContainerHive/ContainerHive/commit/57b96b8d1c5a92931e50ace4eb657420753cb458))
+* **changes:** add strict mode that fails on unknown changes ([7b97f1b](https://github.com/ContainerHive/ContainerHive/commit/7b97f1b3174679905b8d0e1b9a93ea36d1c1fb5c))
+* **changes:** detect images affected by changed files ([bf742f2](https://github.com/ContainerHive/ContainerHive/commit/bf742f2983074590ba48ea28748cb1f5be0b2ec3))
+* **ci:** default GitLab test jobs to the privileged dind image ([5506cf7](https://github.com/ContainerHive/ContainerHive/commit/5506cf7d7308dae844b10a5568738b1a1f5f983c))
+* **ci:** group GitLab jobs in one stage per image ([61edaf6](https://github.com/ContainerHive/ContainerHive/commit/61edaf67dbc5b48a9a48b1a01e5d87f2fe826289))
+* **ci:** skip unaffected image builds in GitHub pull requests ([2ff2b9e](https://github.com/ContainerHive/ContainerHive/commit/2ff2b9eae40e8821e68812464c3290cd934629f1))
+* **ci:** skip unaffected image jobs in GitLab branch pipelines ([6d08713](https://github.com/ContainerHive/ContainerHive/commit/6d08713ca4e61c7c1d59a9feb352a9305ae25921))
+* **cli:** add changes command for affected images ([457c9f6](https://github.com/ContainerHive/ContainerHive/commit/457c9f6d8c71fd7ee9426376dfd181d727dffbee))
+* **cli:** limit build, test, finalize and sbom to affected images ([96e1ec1](https://github.com/ContainerHive/ContainerHive/commit/96e1ec1a94d06a7417acb81651d422a08628742f))
+* **model:** add change_detection config to hive.yml ([cbc6baa](https://github.com/ContainerHive/ContainerHive/commit/cbc6baad51129ecee6b7c2d94e935e08282201fb))
+
+### Bug Fixes
+
+* **changes:** follow symlinked image directories ([f0fc2ea](https://github.com/ContainerHive/ContainerHive/commit/f0fc2ea8cd321a7df56b645a36120280902d932c))
+* **changes:** rebuild everything when the images symlink is retargeted ([6365e62](https://github.com/ContainerHive/ContainerHive/commit/6365e62728314abfc0436e2f9d131cdbb31b16df))
+* **ci:** keep an image stage named like a disabled fixed stage ([7f8ee0f](https://github.com/ContainerHive/ContainerHive/commit/7f8ee0f3df5ff892421311f79a9ef773fd6deb3b))
+* **ci:** keep GitLab image jobs out of merge request pipelines ([8c3b7cc](https://github.com/ContainerHive/ContainerHive/commit/8c3b7cc4663ce3297d5d1e0820e65af2f4ed5068))
+* **ci:** run affected image jobs in GitLab merge request pipelines ([ca093b0](https://github.com/ContainerHive/ContainerHive/commit/ca093b0ba28d3f72cd565dabf87b85c198bea19d))
+* **ci:** run GitHub tests and manifests after a skipped dependency ([e131561](https://github.com/ContainerHive/ContainerHive/commit/e1315610d7dbc89045a84d7e6c86828995f71529))
+* **ci:** stay within GitLab's rules:changes path limit ([7dd8976](https://github.com/ContainerHive/ContainerHive/commit/7dd89763826c050ce2a4ec6d8f38db66da7b2459))
+
 ## [1.26.0](https://github.com/ContainerHive/ContainerHive/compare/v1.25.1...v1.26.0) (2026-10-29)
 
 ### Features
