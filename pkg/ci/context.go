@@ -4,10 +4,12 @@ import (
 	"fmt"
 	"sort"
 	"strconv"
+	"strings"
 
 	"github.com/ContainerHive/ContainerHive/internal/actions"
 	"github.com/ContainerHive/ContainerHive/internal/buildkit"
 	"github.com/ContainerHive/ContainerHive/internal/dependency"
+	"github.com/ContainerHive/ContainerHive/pkg/changes"
 	"github.com/ContainerHive/ContainerHive/pkg/model"
 	"github.com/ContainerHive/ContainerHive/pkg/platform"
 	"github.com/ContainerHive/ContainerHive/pkg/rendering"
@@ -26,6 +28,11 @@ type CIImage struct {
 	ShardUnits   int    // number of tag units (base + variant tags) — the useful max
 	BuildShards  int    // effective parallel for build jobs (min(ci_build_shards, ShardUnits), ≥1)
 	TestShards   int    // effective parallel for test jobs (min(ci_test_shards, ShardUnits), ≥1)
+	// ChangePaths are the project-relative GitLab rules:changes globs whose
+	// changes affect the image: its directories, those of all its
+	// dependencies and the treat_as_global patterns. Prefix them with
+	// RepoPath. Empty when change detection is off.
+	ChangePaths []string
 }
 
 // CIContext holds all data needed to render CI templates.
@@ -48,6 +55,19 @@ type CIContext struct {
 	// TagRangeUnits is recorded in the header comment, so a stale
 	// committed pipeline is visible as a diff on the next generate.
 	TagRangeUnits int
+
+	// ChangeDetection gates the change detection jobs and rules, so
+	// ci_change_detection: "false" renders the pipeline without them.
+	ChangeDetection bool
+}
+
+// RepoPath returns a project-relative path relative to the repository root,
+// prefixed with the project path when set.
+func (c *CIContext) RepoPath(path string) string {
+	if c.ProjectPath != "" {
+		return c.ProjectPath + "/" + path
+	}
+	return path
 }
 
 // ChCmd returns the ch command prefix, including -p flag when a project path is set.
@@ -119,6 +139,7 @@ func defaultTemplateOptions() map[string]string {
 		"ci_buildkit_image":                     buildkit.DefaultImage,
 		"ci_buildkit_version":                   buildkit.DefaultTag,
 		"ci_cancel_outdated":                    "true",
+		"ci_change_detection":                   "true",
 		"ci_lint":                               "true",
 		"ci_report":                             "true",
 		"ci_sbom_generate_cpes":                 "true",
@@ -312,6 +333,13 @@ func BuildCIContext(project *model.ContainerHiveProject, artifacts bool) (*CICon
 		}
 	}
 
+	changeDetection := opts["ci_change_detection"] != "false"
+	if changeDetection {
+		if err := setChangePaths(project, ciImages); err != nil {
+			return nil, err
+		}
+	}
+
 	return &CIContext{
 		Images:    ciImages,
 		Platforms: platformList,
@@ -324,7 +352,39 @@ func BuildCIContext(project *model.ContainerHiveProject, artifacts bool) (*CICon
 		TemplateOptions: opts,
 		HasTagRanges:    hasTagRanges,
 		TagRangeUnits:   totalUnits,
+		ChangeDetection: changeDetection,
 	}, nil
+}
+
+// setChangePaths fills CIImage.ChangePaths from the image directories, the
+// directories of their dependencies and the treat_as_global patterns.
+func setChangePaths(project *model.ContainerHiveProject, ciImages []CIImage) error {
+	triggerDirs, err := changes.TriggerDirs(project)
+	if err != nil {
+		return err
+	}
+	var globals []string
+	for _, pattern := range project.Config.ChangeDetection.TreatAsGlobalPatterns() {
+		globals = append(globals, gitlabGlob(pattern))
+	}
+
+	for i := range ciImages {
+		var paths []string
+		for _, dir := range triggerDirs[ciImages[i].Name] {
+			paths = append(paths, dir+"/**/*")
+		}
+		ciImages[i].ChangePaths = append(paths, globals...)
+	}
+	return nil
+}
+
+// gitlabGlob adapts a doublestar pattern to GitLab rules:changes, which only
+// matches files: a trailing "/**" also needs "/*" to match the files below.
+func gitlabGlob(pattern string) string {
+	if strings.HasSuffix(pattern, "/**") {
+		return pattern + "/*"
+	}
+	return pattern
 }
 
 // calculateDepths computes dependency depth for each image.

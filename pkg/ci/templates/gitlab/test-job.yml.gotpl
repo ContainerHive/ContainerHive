@@ -3,6 +3,7 @@
 test-{{ $.Image.Name }}-{{ platform_id . }}:
   extends: .test-{{ platform_id . }}
   stage: test-{{ $.Image.Name }}
+{{- template "change-rules.yml.gotpl" $ }}
   variables:
     IMAGE_NAME: {{ $.Image.Name }}
     PLATFORM: {{ . }}
