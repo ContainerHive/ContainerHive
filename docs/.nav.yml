@@ -15,6 +15,7 @@ nav:
       - usage/multi-platform.md
       - usage/secrets-and-versions.md
       - usage/filtering.md
+      - usage/change-detection.md
       - usage/sharding.md
       - usage/testing.md
       - usage/ci-integration.md

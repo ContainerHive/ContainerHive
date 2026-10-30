@@ -127,6 +127,26 @@ ch graph --format dot | dot -Tsvg > graph.svg
 
 Every image and every variant is a node, named `<image>` or `<image>/<variant>`. Tags are not nodes. An arrow points from a node to a node it depends on, which is built first. A dependency comes from a `FROM` or `parent` reference or from `depends_on`, so it does not always mean the image is built from the other one. The graph is read from the project source, so `ch generate` is not needed first, and `tag_ranges` are not expanded, so no version source is contacted. See [Dependency resolution](../how-it-works/dependency-resolution.md#visualizing-the-graph) for how references map to variants.
 
+### `changes`
+
+Print the images affected by changes since a base revision.
+
+```bash
+ch changes --base origin/main
+git diff --name-only origin/main... | ch changes --files-from -
+```
+
+| Flag | Default | Description |
+|------|---------|-------------|
+| `--base` | | Git revision to compare `HEAD` against, via their merge base |
+| `--files-from` | | Read changed files, relative to the project root, one per line from this file (`-` for stdin) instead of git |
+| `--unmatched` | `all` | Files outside every image directory: `all` rebuilds every image, `ignore` drops them |
+| `--format` | `text` | Output format: `text` (one image per line) or `json` |
+| `--strict` | `false` | Fail when the changed files cannot be computed from git, instead of treating every image as affected |
+| `--write` | `false` | Store the result as `dist/changes.json`, which limits `build`, `test`, `finalize` and `sbom` to affected images |
+
+Set exactly one of `--base` and `--files-from`. Like `graph`, the command reads the project source and does not expand `tag_ranges`. See [Build only changed images](change-detection.md).
+
 ### `lint`
 
 Lint Dockerfiles in the project with [hadolint](https://github.com/hadolint/hadolint). The hadolint binary is embedded in `ch` — no separate install required.
