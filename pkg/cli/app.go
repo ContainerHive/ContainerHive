@@ -231,6 +231,7 @@ func NewApp() *cli.Command {
 			devCmd(),
 			reportCmd(),
 			graphCmd(),
+			changesCmd(),
 			mcpCmd(),
 		},
 	}
