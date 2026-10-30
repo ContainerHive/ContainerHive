@@ -92,6 +92,8 @@ func TestGithubTemplate_ChangeDetection(t *testing.T) {
 		"contains(fromJSON(needs.generate.outputs.affected), 'base')",
 		"if: ${{ !cancelled() && !failure() }}",
 		"continue-on-error: true",
+		"if: ${{ !cancelled() && !failure() && needs['build-app-amd64'].result == 'success' }}",
+		"if: ${{ !cancelled() && !failure() && needs['test-app-amd64'].result == 'success' }}",
 	} {
 		if !strings.Contains(out, want) {
 			t.Errorf("rendered workflow is missing %q", want)
@@ -103,7 +105,7 @@ func TestTemplates_ChangeDetectionDisabled(t *testing.T) {
 	for _, provider := range []string{"gitlab", "github"} {
 		t.Run(provider, func(t *testing.T) {
 			out := renderChangeDetection(t, provider, map[string]string{"ci_change_detection": "false"}, "")
-			for _, unwanted := range []string{"compare_to", "optional: true", "GIT_DEPTH", " changes --base", "needs.generate.outputs.affected", "fetch-depth", "continue-on-error"} {
+			for _, unwanted := range []string{"compare_to", "optional: true", "GIT_DEPTH", " changes --base", "needs.generate.outputs.affected", "fetch-depth", "continue-on-error", ".result == 'success'"} {
 				if strings.Contains(out, unwanted) {
 					t.Errorf("disabled change detection still renders %q", unwanted)
 				}

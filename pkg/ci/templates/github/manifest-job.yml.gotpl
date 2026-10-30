@@ -6,6 +6,11 @@
       - test-{{ $.Image.Name }}-{{ platform_id . }}
       - build-{{ $.Image.Name }}-{{ platform_id . }}
 {{- end }}
+{{- if .Ctx.ChangeDetection }}
+    # The implicit success() also fails for skipped jobs further upstream,
+    # such as an unaffected dependency, so check this image's tests.
+    if: ${{ "{{" }} !cancelled() && !failure(){{ range .Image.Platforms }} && needs['test-{{ $.Image.Name }}-{{ platform_id . }}'].result == 'success'{{ end }} {{ "}}" }}
+{{- end }}
     steps:
       - name: Checkout code
         uses: actions/checkout@{{ option "actions_checkout_version" }}
