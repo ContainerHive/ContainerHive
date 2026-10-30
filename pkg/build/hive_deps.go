@@ -10,6 +10,7 @@ import (
 	"github.com/ContainerHive/ContainerHive/internal/buildkit/build_context"
 	"github.com/ContainerHive/ContainerHive/internal/dependency"
 	"github.com/ContainerHive/ContainerHive/internal/ocistore"
+	"github.com/ContainerHive/ContainerHive/pkg/changes"
 	"github.com/ContainerHive/ContainerHive/pkg/model"
 	"github.com/ContainerHive/ContainerHive/pkg/platform"
 	"github.com/containerd/containerd/v2/core/content"
@@ -51,10 +52,24 @@ type HiveDepsOpts struct {
 	RegistryAddress string
 	// BuildID is appended to registry tags when resolving via registry.
 	BuildID string
+	// Changes, when set, holds the images this pipeline builds. A dependency
+	// it does not affect was not pushed with BuildID, so its registry tag
+	// resolves without it.
+	Changes *changes.Set
 	// Project, when set, is used to reject a dependency that the project
 	// does not build for PlatformStr, so a dependent fails with a clear error
 	// instead of a missing named context or registry pull failure.
 	Project *model.ContainerHiveProject
+}
+
+// depBuildID returns the build ID of a dependency's registry tag: empty for
+// a dependency that change detection skipped, since only its production tag
+// exists.
+func (o HiveDepsOpts) depBuildID(imageName string) string {
+	if !o.Changes.IsAffected(imageName) {
+		return ""
+	}
+	return o.BuildID
 }
 
 // ResolveHiveDeps scans a Dockerfile for __hive__/ references and resolves each
@@ -112,7 +127,7 @@ func resolveDepContext(d *HiveDeps, imageName, tag string, opts HiveDepsOpts) er
 			return fmt.Errorf("dependency %s:%s not built yet (expected %s) and no registry configured: %w", imageName, tag, tarPath, err)
 		}
 
-		registryTag := WithBuildID(tag, opts.BuildID)
+		registryTag := WithBuildID(tag, opts.depBuildID(imageName))
 		contextValue := fmt.Sprintf("docker-image://%s/%s:%s", opts.RegistryAddress, imageName, registryTag)
 		d.NamedContexts[contextKey] = contextValue
 		slog.Info("Resolved hive dep via registry", "image", imageName, "tag", tag, "ref", contextValue)
