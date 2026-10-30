@@ -61,12 +61,14 @@ With a [build ID](build-ids.md), a dependency that was not rebuilt has no `-buil
 
 | | GitHub Actions | GitLab CI |
 |:--|:--|:--|
-| Applies to | `pull_request` events | Push pipelines of branches other than the default branch |
-| Compared against | The pull request base | The default branch |
+| Applies to | `pull_request` events | Merge request pipelines, and push pipelines of branches other than the default branch |
+| Compared against | The pull request base | The merge request target branch, or the default branch for branch pipelines |
 | Unaffected images | Jobs are skipped | Jobs are not created (`rules:changes`) |
 | Unmatched files | Rebuild every image | Ignored |
 
 GitLab decides which jobs exist when it creates the pipeline, from static `rules:changes` paths. Those paths cannot express "any other file", so on GitLab unmatched files never trigger a build. Add such files to `treat_as_global` if they should. For the same reason the GitLab `generate` job runs `ch changes --strict`: if the diff cannot be computed, the pipeline fails instead of expecting jobs that GitLab did not create. GitLab `rules:changes:compare_to` with variables needs GitLab 17.2 or later.
+
+The image jobs carry rules for merge request pipelines, so `generate`, `lint` and `report` get an explicit rule as well. Projects that use `workflow:rules`, such as the `Workflows/MergeRequest-Pipelines` template, run one pipeline per change. A project without `workflow:rules` also gets a merge request pipeline next to the branch pipeline while a merge request is open. Add `workflow:rules` to choose one of them.
 
 GitLab accepts at most 50 paths in one `rules:changes` rule. An image whose directories, dependency directories and `treat_as_global` patterns add up to more gets no change rule: its jobs are always created, and `dist/changes.json` makes them skip the work when the image is not affected.
 
