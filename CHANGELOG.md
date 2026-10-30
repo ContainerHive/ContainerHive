@@ -1,3 +1,9 @@
+## [1.27.1](https://github.com/ContainerHive/ContainerHive/compare/v1.27.0...v1.27.1) (2026-10-30)
+
+### Bug Fixes
+
+* **ci:** wait up to 2 minutes for buildkitd and dind in GitLab jobs ([129c103](https://github.com/ContainerHive/ContainerHive/commit/129c103cf8bc0abccd7c5eab58600c7244533ffd))
+
 ## [1.27.0](https://github.com/ContainerHive/ContainerHive/compare/v1.26.0...v1.27.0) (2026-10-30)
 
 ### Features
