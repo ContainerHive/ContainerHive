@@ -22,7 +22,7 @@ ch template ci --provider github --output .github/workflows/build.yml
 ### How it works
 
 1. ContainerHive discovers your project and resolves image dependencies.
-2. Images are grouped into stages based on their dependency depth — images at the same depth can build in parallel.
+2. Jobs run as soon as the jobs they need have finished: an image's build waits for the images it depends on, its tests wait for its build. On GitLab, each image gets one stage, named after the image and ordered by dependency depth, that groups its build, test and manifest jobs.
 3. For each image, the pipeline includes jobs for building (per-platform), creating multi-arch manifests, and running
    tests.
 4. If an image has a `latest_alias` configured, the highest semantic version tag is automatically retagged as the
@@ -82,7 +82,7 @@ Custom templates receive a `CIContext` with the following fields:
 |:------------------|:-------|:---------------------------------------------------------------------------------------------------|
 | `Images`          | list   | All images (see below)                                                                             |
 | `Platforms`       | list   | All unique platforms across all images                                                             |
-| `Stages`          | list   | Ordered build stages (`build-<image>`, `test-<image>`, `manifest-<image>`)                          |
+| `Stages`          | list   | One stage per image, named after the image, in dependency order                                     |
 | `Config`          | object | Registry and cache configuration (see below)                                                       |
 | `Artifacts`       | bool   | Whether build artifacts are passed between jobs (set by `template ci --artifacts`)                 |
 | `TemplateOptions` | map    | Merged template options (defaults + `hive.yml`), same values the `option(key)` function returns     |
