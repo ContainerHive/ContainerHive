@@ -5,6 +5,11 @@
     runs-on: {{ if eq (platform_arch $platform) "arm64" }}ubuntu-24.04-arm{{ else }}ubuntu-24.04{{ end }}
     needs:
       - build-{{ $.Image.Name }}-{{ platform_id $platform }}
+{{- if $.Ctx.ChangeDetection }}
+    # The implicit success() also fails for skipped jobs further upstream,
+    # such as an unaffected dependency, so check this image's build.
+    if: ${{ "{{" }} !cancelled() && !failure() && needs['build-{{ $.Image.Name }}-{{ platform_id $platform }}'].result == 'success' {{ "}}" }}
+{{- end }}
     steps:
       - name: Checkout code
         uses: actions/checkout@{{ option "actions_checkout_version" }}
