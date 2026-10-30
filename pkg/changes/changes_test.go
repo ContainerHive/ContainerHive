@@ -205,3 +205,10 @@ func TestDetectFromGitFallsBackToEverything(t *testing.T) {
 		t.Errorf("Affected = %v, want %v", set.Affected, want)
 	}
 }
+
+func TestDetectFromGitStrict(t *testing.T) {
+	project := writeProject(t, "{}\n")
+	if _, err := DetectFromGit(project, "main", Options{Strict: true}); err == nil {
+		t.Error("DetectFromGit() with Strict outside a repository error = nil, want error")
+	}
+}

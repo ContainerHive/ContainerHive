@@ -59,6 +59,11 @@ func (s *Set) IsAffected(name string) bool {
 type Options struct {
 	// Unmatched is "all" (the default) or "ignore".
 	Unmatched string
+	// Strict makes DetectFromGit fail when the changed files cannot be
+	// computed, instead of affecting every image. CI providers that create
+	// jobs from static path rules need it: every image affected would expect
+	// jobs the pipeline does not have.
+	Strict bool
 }
 
 // Detect classifies files, given relative to the project root, and returns
@@ -102,9 +107,13 @@ func Detect(project *model.ContainerHiveProject, files []string, opts Options) (
 
 // DetectFromGit computes the files changed between the merge base of base and
 // HEAD and returns the affected images. When the diff cannot be computed, for
-// example in a shallow clone, every image is affected.
+// example in a shallow clone, every image is affected, or an error is returned
+// with Options.Strict.
 func DetectFromGit(project *model.ContainerHiveProject, base string, opts Options) (*Set, error) {
 	diff, err := changes.DiffFiles(project.RootDir, base)
+	if err != nil && opts.Strict {
+		return nil, fmt.Errorf("could not compute changed files against %q: %w", base, err)
+	}
 	if err != nil {
 		slog.Warn("Could not compute changed files, treating every image as affected", "base", base, "error", err)
 		return everything(project, base, fmt.Sprintf("changed files unknown: %v", err))
