@@ -2,6 +2,16 @@
 {{- if .Ctx.ChangeDetection }}
   rules:
 {{- if .Image.ChangePaths }}
+    # Merge request pipelines compare with the target branch.
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      changes:
+        paths:
+{{- range .Image.ChangePaths }}
+          - {{ $.Ctx.RepoPath . | quote }}
+{{- end }}
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      when: never
+    # Branch pipelines of other branches compare with the default branch.
     - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH && $CI_COMMIT_BRANCH != $CI_DEFAULT_BRANCH
       changes:
         paths:
@@ -12,8 +22,14 @@
     - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH && $CI_COMMIT_BRANCH != $CI_DEFAULT_BRANCH
       when: never
 {{- end }}
-    # Like jobs without rules, stay out of merge request pipelines, which
-    # have no generate job.
-    - if: $CI_PIPELINE_SOURCE != "merge_request_event"
+    - when: on_success
+{{- end }}
+{{- end }}
+{{ define "always-rules.yml.gotpl" }}
+{{- if .ChangeDetection }}
+  # Image jobs have rules for merge request pipelines, so these jobs need
+  # rules too to join them in projects without workflow:rules.
+  rules:
+    - when: on_success
 {{- end }}
 {{- end }}

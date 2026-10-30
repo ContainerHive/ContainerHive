@@ -1,6 +1,7 @@
 {{ define "lint-job.yml.gotpl" }}
 lint:
   stage: lint
+{{- template "always-rules.yml.gotpl" . }}
   needs:
     - generate
   image:
