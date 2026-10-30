@@ -49,7 +49,7 @@ type ProjectBuildOpts struct {
 	// Changes, when set, lists the images this pipeline builds. Hive
 	// dependencies outside it resolve to their tags without BuildID.
 	Changes *changes.Set
-	Shard          shard.Shard
+	Shard   shard.Shard
 
 	// CLIPlatforms, when set (from --platform), selects which of the
 	// platforms configured in hive.yml/image.yml are built. Tags and variants
