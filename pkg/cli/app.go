@@ -108,6 +108,14 @@ func buildProject(
 		return fmt.Errorf("dist/ not found — run 'ch generate' first: %w", err)
 	}
 
+	filters, changeSet, skip, err := limitToChanges(distPath, filters)
+	if err != nil {
+		return err
+	}
+	if skip {
+		return nil
+	}
+
 	buildOrder, err := deps.ResolveOrder(distPath, project)
 	if err != nil {
 		return fmt.Errorf("dependency resolution failed: %w", err)
@@ -152,6 +160,7 @@ func buildProject(
 		},
 		Filters:      filters,
 		BuildID:      buildID,
+		Changes:      changeSet,
 		Shard:        s,
 		CLIPlatforms: platforms,
 	}

@@ -57,6 +57,14 @@ func sbomCmd() *cli.Command {
 				return fmt.Errorf("dist/ not found — run 'ch generate' first: %w", err)
 			}
 
+			filters, _, skip, err := limitToChanges(distPath, filters)
+			if err != nil {
+				return err
+			}
+			if skip {
+				return nil
+			}
+
 			project, err := discoverProject(ctx, cmd)
 			if err != nil {
 				return err
