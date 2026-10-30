@@ -936,6 +936,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../usage/change-detection.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Build only changed images
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../usage/sharding.html" class="md-nav__link">
         
   
@@ -1425,6 +1453,17 @@
     <span class="md-ellipsis">
       
         report
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#change_detection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        change_detection
       
     </span>
   </a>
@@ -2231,6 +2270,41 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../adr/010-ci-change-detection.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    010 - Change detection in generated CI pipelines
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--accepted"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -2444,6 +2518,17 @@
     <span class="md-ellipsis">
       
         report
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#change_detection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        change_detection
       
     </span>
   </a>
@@ -2813,8 +2898,8 @@
 </tr>
 <tr>
 <td style="text-align: left;"><code>ci_dind_image</code></td>
-<td style="text-align: left;">GitHub Actions: <code>ghcr.io/containerhive/helper-images/dind:29.9</code>, GitLab: <code>ghcr.io/containerhive/helper-images/dind-rootless:29.9</code></td>
-<td style="text-align: left;">Docker-in-Docker image for the test jobs. The GitHub default runs privileged, the GitLab default runs rootless so it works in unprivileged Kubernetes pods. Set <code>docker:dind</code> to use the upstream privileged image</td>
+<td style="text-align: left;"><code>ghcr.io/containerhive/helper-images/dind:29.9</code></td>
+<td style="text-align: left;">Docker-in-Docker image for the test jobs. The default runs privileged. On Kubernetes runners without privileged pods, use the rootless <code>ghcr.io/containerhive/helper-images/dind-rootless:29.9</code>, see <a href="../usage/ci-integration.html#docker-in-docker-for-test-jobs">Docker-in-Docker for test jobs</a>. Set <code>docker:dind</code> to use the upstream image</td>
 </tr>
 <tr>
 <td style="text-align: left;"><code>ci_lint</code></td>
@@ -2964,6 +3049,57 @@
 </tbody>
 </table>
 <p>To restyle the report, see <a href="report-theme.html">Report theme</a>.</p>
+<h3 id="change_detection"><code>change_detection</code></h3>
+<p>Decides which changed files affect which images, see <a href="../usage/change-detection.html">Build only changed images</a>. Patterns are <a href="https://github.com/bmatcuk/doublestar#patterns">doublestar</a> globs relative to the project root, such as <code>docs/**</code> or <code>*.md</code>.</p>
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="nt">change_detection</span><span class="p">:</span>
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="w">  </span><span class="nt">exclude</span><span class="p">:</span>
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">README.md</span>
+</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">docs/**</span>
+</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="w">  </span><span class="nt">treat_as_global</span><span class="p">:</span>
+</span><span id="__span-8-6"><a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">.pre-commit-config.yaml</span>
+</span><span id="__span-8-7"><a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">hive.yml</span>
+</span><span id="__span-8-8"><a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">scripts/**</span>
+</span></code></pre></div>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Field</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>exclude</code></td>
+<td style="text-align: left;">string list</td>
+<td style="text-align: left;">Files that never trigger a build</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>treat_as_global</code></td>
+<td style="text-align: left;">string list</td>
+<td style="text-align: left;">Files that rebuild every image. Wins over <code>exclude</code></td>
+</tr>
+</tbody>
+</table>
+<p>A list you set replaces its default; set <code>[]</code> to turn a default off.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Field</th>
+<th style="text-align: left;">Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>exclude</code></td>
+<td style="text-align: left;"><code>renovate.json</code>, <code>renovate.json5</code>, <code>.renovaterc</code>, <code>.renovaterc.json</code>, <code>.github/renovate.json</code>, <code>.github/renovate.json5</code>, <code>README.md</code>, <code>CONTRIBUTING.md</code>, <code>mkdocs.yml</code>, <code>styles/**</code>, <code>.gitignore</code>, <code>.gitattributes</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>treat_as_global</code></td>
+<td style="text-align: left;"><code>.pre-commit-config.yaml</code>, <code>hive.yml</code>, <code>hive.yaml</code>, <code>container-hive.yml</code>, <code>container-hive.yaml</code></td>
+</tr>
+</tbody>
+</table>
 
 
 

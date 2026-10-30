@@ -843,6 +843,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#dependencies-that-were-not-rebuilt" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Dependencies that were not rebuilt
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1073,6 +1084,34 @@
     
   
     Filter images and tags
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="change-detection.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Build only changed images
   
 
     
@@ -2153,6 +2192,41 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../adr/010-ci-change-detection.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    010 - Change detection in generated CI pipelines
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--accepted"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -2255,6 +2329,17 @@
     <span class="md-ellipsis">
       
         4. Merge and build without build ID
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dependencies-that-were-not-rebuilt" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Dependencies that were not rebuilt
       
     </span>
   </a>
@@ -2421,6 +2506,8 @@
 </span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>ch<span class="w"> </span>finalize
 </span></code></pre></div>
 <p>This creates the clean <code>my-image:1.0.0</code> tag and aliases <code>my-image:1.0</code>, <code>my-image:1</code>.</p>
+<h3 id="dependencies-that-were-not-rebuilt">Dependencies that were not rebuilt</h3>
+<p>With <a href="change-detection.html">change detection</a>, a pipeline may skip a dependency. A skipped dependency has no <code>-build.&lt;id&gt;</code> tag, so dependent images pull its production tag (e.g. <code>base:1.0</code>) instead.</p>
 <h2 id="why-use-build-ids">Why use build IDs</h2>
 <p>Without build IDs, concurrent MR builds would overwrite each other's tags in the registry. Build IDs solve this by namespacing tags per MR:</p>
 <ul>
