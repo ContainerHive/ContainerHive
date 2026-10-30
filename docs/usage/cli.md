@@ -133,7 +133,7 @@ Print the images affected by changes since a base revision.
 
 ```bash
 ch changes --base origin/main
-git diff --name-only origin/main... | ch changes --files-from -
+git diff --no-renames --name-only origin/main... | ch changes --files-from -
 ```
 
 | Flag | Default | Description |
