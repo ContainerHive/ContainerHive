@@ -292,6 +292,17 @@ template_options:
   ci_cancel_outdated: "false"
 ```
 
+## Change detection
+
+Merge and pull request pipelines only build, test and finalize the images a change affects, see [Build only changed images](change-detection.md) for the rules and the provider differences. Configure which files count in [`change_detection`](../configuration/hive.md#change_detection).
+
+To build every image in every pipeline, set `ci_change_detection` to `false` in your `hive.yml`:
+
+```yaml
+template_options:
+  ci_change_detection: "false"
+```
+
 ## Docker-in-Docker for test jobs
 
 [`ch test`](cli.md#test) needs a Docker daemon. The default image depends on the provider, both come from the

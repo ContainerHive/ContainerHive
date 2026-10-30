@@ -215,3 +215,30 @@ report:
 | `styleSheet` | string | Path to a CSS file to embed in the generated HTML report for custom styling |
 
 To restyle the report, see [Report theme](report-theme.md).
+
+### `change_detection`
+
+Decides which changed files affect which images, see [Build only changed images](../usage/change-detection.md). Patterns are [doublestar](https://github.com/bmatcuk/doublestar#patterns) globs relative to the project root, such as `docs/**` or `*.md`.
+
+```yaml
+change_detection:
+  exclude:
+    - README.md
+    - docs/**
+  treat_as_global:
+    - .pre-commit-config.yaml
+    - hive.yml
+    - scripts/**
+```
+
+| Field             | Type        | Description |
+|:------------------|:------------|:------------|
+| `exclude`         | string list | Files that never trigger a build |
+| `treat_as_global` | string list | Files that rebuild every image. Wins over `exclude` |
+
+A list you set replaces its default; set `[]` to turn a default off.
+
+| Field             | Default |
+|:------------------|:--------|
+| `exclude`         | `renovate.json`, `renovate.json5`, `.renovaterc`, `.renovaterc.json`, `.github/renovate.json`, `.github/renovate.json5`, `README.md`, `CONTRIBUTING.md`, `mkdocs.yml`, `styles/**`, `.gitignore`, `.gitattributes` |
+| `treat_as_global` | `.pre-commit-config.yaml`, `hive.yml`, `hive.yaml`, `container-hive.yml`, `container-hive.yaml` |

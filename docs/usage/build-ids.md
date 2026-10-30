@@ -58,6 +58,10 @@ ch finalize
 
 This creates the clean `my-image:1.0.0` tag and aliases `my-image:1.0`, `my-image:1`.
 
+### Dependencies that were not rebuilt
+
+With [change detection](change-detection.md), a pipeline may skip a dependency. A skipped dependency has no `-build.<id>` tag, so dependent images pull its production tag (e.g. `base:1.0`) instead.
+
 ## Why use build IDs
 
 Without build IDs, concurrent MR builds would overwrite each other's tags in the registry. Build IDs solve this by namespacing tags per MR:
