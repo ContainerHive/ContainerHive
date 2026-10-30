@@ -136,6 +136,8 @@ ch changes --base origin/main
 git diff --no-renames --name-only origin/main... | ch changes --files-from -
 ```
 
+The piped form needs the project root to be the repository root, because `git diff` prints repository-relative paths. For a project in a subdirectory, use `--base`.
+
 | Flag | Default | Description |
 |------|---------|-------------|
 | `--base` | | Git revision to compare `HEAD` against, via their merge base |

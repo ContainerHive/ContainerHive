@@ -9,6 +9,7 @@ Every changed file is checked against these rules, in order:
 1. It matches a [`treat_as_global`](../configuration/hive.md#change_detection) pattern: every image is affected.
 2. It matches an [`exclude`](../configuration/hive.md#change_detection) pattern: it is ignored.
 3. It is inside an image directory (the directory holding `image.yml`, including variants): that image is changed.
+   A symlinked `images` directory counts as the directory it points to. Pointing the link elsewhere changes the link itself, which rebuilds every image.
 4. Anything else is unmatched. By default an unmatched file affects every image. Pass `--unmatched ignore` to drop unmatched files.
 
 A changed image is affected, and so is every image that depends on it, directly or transitively. Dependencies are the same as in [`ch graph`](cli.md#graph): `FROM __hive__/...`, `parent` references and `depends_on`.
@@ -38,6 +39,8 @@ Without git, pass the changed files yourself, relative to the project root. List
 ```bash
 git diff --no-renames --name-only origin/main... | ch changes --files-from -
 ```
+
+`git diff` prints paths relative to the repository root. The command above therefore needs the project root to be the repository root. For a project in a subdirectory, use `--base`, which converts the paths itself, or convert them yourself. Paths of files outside the project start with `../`, which only counts for image directories there, such as a symlinked `images` directory.
 
 If the diff cannot be computed, for example because the clone is shallow and the base commit is missing, every image is affected. Fetch the full history, or at least the base commit, in CI.
 
