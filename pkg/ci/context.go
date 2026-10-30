@@ -2,6 +2,7 @@ package ci
 
 import (
 	"fmt"
+	"path"
 	"sort"
 	"strconv"
 	"strings"
@@ -62,12 +63,13 @@ type CIContext struct {
 }
 
 // RepoPath returns a project-relative path relative to the repository root,
-// prefixed with the project path when set.
-func (c *CIContext) RepoPath(path string) string {
+// prefixed with the project path when set. The result is cleaned, so an image
+// directory behind a symlink (../shared/images) becomes shared/images.
+func (c *CIContext) RepoPath(p string) string {
 	if c.ProjectPath != "" {
-		return c.ProjectPath + "/" + path
+		return path.Clean(c.ProjectPath + "/" + p)
 	}
-	return path
+	return path.Clean(p)
 }
 
 // ChCmd returns the ch command prefix, including -p flag when a project path is set.

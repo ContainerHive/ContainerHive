@@ -11,6 +11,7 @@ func TestClassify(t *testing.T) {
 		"python":     {"images/python"},
 		"tools/lint": {"images/tools/lint"},
 		"dotnet":     {"images/dotnet/8", "images/dotnet/9"},
+		"node":       {"../shared/images/node"},
 	}
 	exclude := []string{"README.md", "styles/**", ".pre-commit-config.yaml"}
 	global := []string{".pre-commit-config.yaml", "hive.yml"}
@@ -35,6 +36,8 @@ func TestClassify(t *testing.T) {
 		{name: "unmatched rebuilds all by default", files: []string{"scripts/release.sh"}, wantGlobal: true, wantFile: "scripts/release.sh"},
 		{name: "unmatched ignored", files: []string{"scripts/release.sh"}, unmatched: UnmatchedIgnore},
 		{name: "blank lines skipped", files: []string{"", "  "}},
+		{name: "outside the project ignored", files: []string{"../other/hive.yml"}},
+		{name: "image dir outside the project", files: []string{"../shared/images/node/Dockerfile"}, wantChanged: []string{"node"}},
 	}
 
 	for _, tt := range tests {

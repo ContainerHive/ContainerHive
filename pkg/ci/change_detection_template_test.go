@@ -111,3 +111,19 @@ func TestTemplates_ChangeDetectionDisabled(t *testing.T) {
 		})
 	}
 }
+
+func TestCIContext_RepoPath(t *testing.T) {
+	tests := []struct {
+		projectPath, path, want string
+	}{
+		{"", "images/app/**/*", "images/app/**/*"},
+		{"gitlab", "images/app/**/*", "gitlab/images/app/**/*"},
+		{"gitlab", "../_base/images/app/**/*", "_base/images/app/**/*"},
+	}
+	for _, tt := range tests {
+		ctx := &CIContext{ProjectPath: tt.projectPath}
+		if got := ctx.RepoPath(tt.path); got != tt.want {
+			t.Errorf("RepoPath(%q) with project %q = %q, want %q", tt.path, tt.projectPath, got, tt.want)
+		}
+	}
+}
