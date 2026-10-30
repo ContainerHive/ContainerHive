@@ -2,6 +2,7 @@ package ci
 
 import (
 	"fmt"
+	"log/slog"
 	"path"
 	"slices"
 	"sort"
@@ -33,7 +34,8 @@ type CIImage struct {
 	// ChangePaths are the project-relative GitLab rules:changes globs whose
 	// changes affect the image: its directories, those of all its
 	// dependencies and the treat_as_global patterns. Prefix them with
-	// RepoPath. Empty when change detection is off.
+	// RepoPath. Empty when change detection is off or the image has more
+	// paths than GitLab accepts in one rule, so its jobs always run.
 	ChangePaths []string
 }
 
@@ -384,10 +386,23 @@ func setChangePaths(project *model.ContainerHiveProject, ciImages []CIImage) err
 		for _, dir := range triggerDirs[ciImages[i].Name] {
 			paths = append(paths, dir+"/**/*")
 		}
-		ciImages[i].ChangePaths = append(paths, globals...)
+		paths = append(paths, globals...)
+		// GitLab rejects a pipeline with more paths in one rule. Without a
+		// rule the jobs are always created, and dist/changes.json still
+		// turns them into no-ops when the image is not affected.
+		if len(paths) > gitlabMaxChangePaths {
+			slog.Warn("Too many change paths for GitLab rules:changes, image jobs always run in branch pipelines",
+				"image", ciImages[i].Name, "paths", len(paths), "max", gitlabMaxChangePaths)
+			continue
+		}
+		ciImages[i].ChangePaths = paths
 	}
 	return nil
 }
+
+// gitlabMaxChangePaths is the most paths GitLab accepts in one
+// rules:changes:paths list.
+const gitlabMaxChangePaths = 50
 
 // gitlabGlob adapts a doublestar pattern to GitLab rules:changes, which only
 // matches files: a trailing "/**" also needs "/*" to match the files below.
