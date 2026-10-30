@@ -1,6 +1,7 @@
 package ci
 
 import (
+	"fmt"
 	"slices"
 	"strings"
 	"testing"
@@ -128,5 +129,36 @@ func TestCIContext_RepoPath(t *testing.T) {
 		if got := ctx.RepoPath(tt.path); got != tt.want {
 			t.Errorf("RepoPath(%q) with project %q = %q, want %q", tt.path, tt.projectPath, got, tt.want)
 		}
+	}
+}
+
+func TestGitlabTemplate_ChangePathsOverLimit(t *testing.T) {
+	project := changeDetectionProject(nil)
+	var globals []string
+	for i := 0; i < gitlabMaxChangePaths; i++ {
+		globals = append(globals, fmt.Sprintf("global-%d.yml", i))
+	}
+	project.Config.ChangeDetection.TreatAsGlobal = globals
+
+	ctx, err := BuildCIContext(project, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, img := range ctx.Images {
+		if len(img.ChangePaths) != 0 {
+			t.Errorf("ChangePaths[%s] has %d paths, want none above the limit of %d", img.Name, len(img.ChangePaths), gitlabMaxChangePaths)
+		}
+	}
+
+	out, err := Generate("gitlab", ctx, "")
+	if err != nil {
+		t.Fatal(err)
+	}
+	rendered := string(out)
+	if strings.Contains(rendered, "compare_to") {
+		t.Error("over the path limit the rules must not filter on changes")
+	}
+	if !strings.Contains(rendered, "  rules:\n    # Like jobs without rules") {
+		t.Errorf("over the path limit the jobs must keep the merge request rule, got:\n%s", rendered)
 	}
 }
