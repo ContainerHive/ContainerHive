@@ -109,6 +109,13 @@ func TestDetectConfigOverride(t *testing.T) {
 	}
 }
 
+func TestImagesLinkPlainDirectory(t *testing.T) {
+	project := writeProject(t, "{}\n")
+	if got := ImagesLink(project); got != "" {
+		t.Errorf("ImagesLink() = %q, want none for a plain images directory", got)
+	}
+}
+
 func TestDetectInvalidUnmatched(t *testing.T) {
 	project := writeProject(t, "{}\n")
 	if _, err := Detect(project, nil, Options{Unmatched: "maybe"}); err == nil {
@@ -243,6 +250,17 @@ func TestDetectSymlinkedImages(t *testing.T) {
 
 	if got, want := ImageDirs(project)["base"], []string{"../shared/images/base"}; !slices.Equal(got, want) {
 		t.Errorf("ImageDirs()[base] = %v, want %v", got, want)
+	}
+
+	if got := ImagesLink(project); got != "images" {
+		t.Errorf("ImagesLink() = %q, want images", got)
+	}
+	retargeted, err := Detect(project, []string{"images"}, Options{Unmatched: UnmatchedIgnore})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !retargeted.Global {
+		t.Errorf("retargeting the images symlink must rebuild everything, got %+v", retargeted)
 	}
 
 	repoFiles := []string{"shared/images/base/Dockerfile", "github/hive.yml"}
