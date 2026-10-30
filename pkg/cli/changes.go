@@ -46,6 +46,10 @@ func changesCmd() *cli.Command {
 				Value: changesFormatText,
 			},
 			&cli.BoolFlag{
+				Name:  "strict",
+				Usage: "Fail when the changed files cannot be computed from git, instead of treating every image as affected",
+			},
+			&cli.BoolFlag{
 				Name:  "write",
 				Usage: "Store the result as dist/" + changes.FileName + ", which limits build, test, finalize and sbom to affected images",
 			},
@@ -71,7 +75,7 @@ func changesCmd() *cli.Command {
 				return err
 			}
 
-			opts := changes.Options{Unmatched: cmd.String("unmatched")}
+			opts := changes.Options{Unmatched: cmd.String("unmatched"), Strict: cmd.Bool("strict")}
 			var set *changes.Set
 			if filesFrom != "" {
 				files, err := readChangedFiles(cmd.Root().Reader, filesFrom)
