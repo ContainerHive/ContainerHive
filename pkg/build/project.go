@@ -11,6 +11,7 @@ import (
 
 	"github.com/ContainerHive/ContainerHive/internal/buildkit/build_context"
 	"github.com/ContainerHive/ContainerHive/pkg/cache"
+	"github.com/ContainerHive/ContainerHive/pkg/changes"
 	"github.com/ContainerHive/ContainerHive/pkg/deps"
 	"github.com/ContainerHive/ContainerHive/pkg/model"
 	"github.com/ContainerHive/ContainerHive/pkg/platform"
@@ -45,6 +46,9 @@ type ProjectBuildOpts struct {
 	ProgressConfig progress.Config
 	Filters        []Filter // empty = build everything
 	BuildID        string   // if set, registry push/retag uses tags suffixed with -build.<BuildID>
+	// Changes, when set, lists the images this pipeline builds. Hive
+	// dependencies outside it resolve to their tags without BuildID.
+	Changes *changes.Set
 	Shard          shard.Shard
 
 	// CLIPlatforms, when set (from --platform), selects which of the
@@ -300,6 +304,7 @@ func buildTag(ctx context.Context, client *Client, opts *ProjectBuildOpts, image
 		PlatformStr:     platformStr,
 		RegistryAddress: opts.registryAddress(),
 		BuildID:         opts.BuildID,
+		Changes:         opts.Changes,
 		Project:         opts.Project,
 	})
 	if err != nil {
@@ -432,6 +437,7 @@ func buildVariant(ctx context.Context, client *Client, opts *ProjectBuildOpts, i
 		PlatformStr:     platformStr,
 		RegistryAddress: opts.registryAddress(),
 		BuildID:         opts.BuildID,
+		Changes:         opts.Changes,
 		Project:         opts.Project,
 	})
 	if err != nil {
