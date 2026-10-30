@@ -58,7 +58,7 @@ before_script:
     CONTAINER_HIVE_CACHE_DIR: {{ .VersionCacheDir }}
 {{- end }}
   script:
-    - {{ .ChCmd }} wait --buildkitd
+    - {{ .ChCmd }} wait --buildkitd --timeout 2m
     - {{ .ChCmd }} build ${IMAGE_NAME} --platform ${PLATFORM} --build-id "$SNAPSHOT_ID"
     - {{ .ChCmd }} sbom ${IMAGE_NAME} --platform ${PLATFORM} --build-id "$SNAPSHOT_ID"{{ if eq (option "ci_sbom_generate_cpes") "false" }} --no-cpe{{ end }}
 {{ range .Platforms }}
@@ -103,7 +103,7 @@ before_script:
     CONTAINER_HIVE_CACHE_DIR: {{ .VersionCacheDir }}
 {{- end }}
   script:
-    - {{ .ChCmd }} wait --docker-socket
+    - {{ .ChCmd }} wait --docker-socket --timeout 2m
     - {{ .ChCmd }} test ${IMAGE_NAME} --platform ${PLATFORM} --build-id "$SNAPSHOT_ID"
 {{ range .Platforms }}
 .test-{{ platform_id . }}:
