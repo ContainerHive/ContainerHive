@@ -10,6 +10,8 @@
         compare_to: refs/heads/$CI_DEFAULT_BRANCH
     - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH && $CI_COMMIT_BRANCH != $CI_DEFAULT_BRANCH
       when: never
-    - when: on_success
+    # Like jobs without rules, stay out of merge request pipelines, which
+    # have no generate job.
+    - if: $CI_PIPELINE_SOURCE != "merge_request_event"
 {{- end }}
 {{- end }}

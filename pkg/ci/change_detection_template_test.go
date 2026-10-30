@@ -67,6 +67,7 @@ func TestGitlabTemplate_ChangeDetection(t *testing.T) {
 		"    - job: manifest-base\n      optional: true",
 		"    - job: build-app-amd64\n      optional: true",
 		`GIT_DEPTH: "0"`,
+		`- if: $CI_PIPELINE_SOURCE != "merge_request_event"`,
 		`changes --base "refs/remotes/origin/$CI_DEFAULT_BRANCH" --unmatched ignore --strict --write`,
 	} {
 		if !strings.Contains(out, want) {
