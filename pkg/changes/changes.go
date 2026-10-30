@@ -84,9 +84,13 @@ func Detect(project *model.ContainerHiveProject, files []string, opts Options) (
 	}
 
 	cfg := project.Config.ChangeDetection
+	global := cfg.TreatAsGlobalPatterns()
+	if link := ImagesLink(project); link != "" {
+		global = append(slices.Clone(global), link)
+	}
 	result, err := changes.Classify(files, changes.Rules{
 		Exclude:       cfg.ExcludePatterns(),
-		TreatAsGlobal: cfg.TreatAsGlobalPatterns(),
+		TreatAsGlobal: global,
 		ImageDirs:     ImageDirs(project),
 		Unmatched:     unmatched,
 	})
@@ -217,6 +221,21 @@ func imageGraph(project *model.ContainerHiveProject) (*dependency.Graph, error) 
 		return nil, fmt.Errorf("failed to build dependency graph: %w", err)
 	}
 	return graph, nil
+}
+
+// ImagesLink returns the project-relative path of the images directory when
+// it is a symlink, and "" otherwise. Git tracks the link itself, so pointing
+// it elsewhere reports this path and no file below it. Such a change can swap
+// every image directory, so it counts as a global change.
+func ImagesLink(project *model.ContainerHiveProject) string {
+	if project.RootDir == "" {
+		return ""
+	}
+	info, err := os.Lstat(filepath.Join(project.RootDir, "images"))
+	if err != nil || info.Mode()&fs.ModeSymlink == 0 {
+		return ""
+	}
+	return "images"
 }
 
 // imageDir returns the image directory relative to the symlink resolved

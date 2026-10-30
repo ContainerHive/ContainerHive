@@ -397,6 +397,11 @@ func setChangePaths(project *model.ContainerHiveProject, ciImages []CIImage) err
 	for _, pattern := range project.Config.ChangeDetection.TreatAsGlobalPatterns() {
 		globals = append(globals, gitlabGlob(pattern))
 	}
+	// Retargeting a symlinked images directory changes the link, not a file
+	// below it.
+	if link := changes.ImagesLink(project); link != "" {
+		globals = append(globals, link)
+	}
 
 	for i := range ciImages {
 		var paths []string

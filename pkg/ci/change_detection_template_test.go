@@ -2,10 +2,13 @@ package ci
 
 import (
 	"fmt"
+	"os"
+	"path/filepath"
 	"slices"
 	"strings"
 	"testing"
 
+	"github.com/ContainerHive/ContainerHive/pkg/discovery"
 	"github.com/ContainerHive/ContainerHive/pkg/model"
 )
 
@@ -164,5 +167,48 @@ func TestGitlabTemplate_ChangePathsOverLimit(t *testing.T) {
 	}
 	if !strings.Contains(rendered, "  rules:\n    - when: on_success\n  variables:\n    IMAGE_NAME: app") {
 		t.Errorf("over the path limit the jobs must keep the merge request rule, got:\n%s", rendered)
+	}
+}
+
+// TestBuildCIContext_ChangePathsIncludeImagesLink covers a symlinked images
+// directory: retargeting the link reports the link path, which no image
+// directory glob matches.
+func TestBuildCIContext_ChangePathsIncludeImagesLink(t *testing.T) {
+	repo := t.TempDir()
+	files := map[string]string{
+		"shared/images/app/image.yml":  "tags:\n  - name: \"1\"\n",
+		"shared/images/app/Dockerfile": "FROM ubuntu:24.04\n",
+		"proj/hive.yml":                "{}\n",
+	}
+	for name, content := range files {
+		path := filepath.Join(repo, name)
+		if err := os.MkdirAll(filepath.Dir(path), 0o755); err != nil {
+			t.Fatal(err)
+		}
+		if err := os.WriteFile(path, []byte(content), 0o644); err != nil {
+			t.Fatal(err)
+		}
+	}
+	if err := os.Symlink("../shared/images", filepath.Join(repo, "proj", "images")); err != nil {
+		t.Fatal(err)
+	}
+	project, err := discovery.DiscoverProject(t.Context(), filepath.Join(repo, "proj"), discovery.WithSkipTagRanges())
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	ctx, err := BuildCIContext(project, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+	ctx.ProjectPath = "proj"
+	out, err := Generate("gitlab", ctx, "")
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, want := range []string{`- "shared/images/app/**/*"`, `- "proj/images"`} {
+		if !strings.Contains(string(out), want) {
+			t.Errorf("rendered pipeline is missing %q", want)
+		}
 	}
 }
