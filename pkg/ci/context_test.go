@@ -1,6 +1,7 @@
 package ci
 
 import (
+	"slices"
 	"reflect"
 	"testing"
 
@@ -121,6 +122,44 @@ func TestBuildCIContext_StagesSkipFixedStageNames(t *testing.T) {
 	}
 	if expected := []string{"app"}; !reflect.DeepEqual(ctx.Stages, expected) {
 		t.Errorf("expected stages %v, got %v", expected, ctx.Stages)
+	}
+}
+
+// TestBuildCIContext_StagesKeepDisabledFixedStageNames covers an image named
+// like a fixed stage whose job is switched off: nothing else defines that
+// stage, so the image stage must stay.
+func TestBuildCIContext_StagesKeepDisabledFixedStageNames(t *testing.T) {
+	tests := []struct {
+		name    string
+		options map[string]string
+		want    []string
+	}{
+		{name: "lint and report on", want: []string{"app"}},
+		{name: "lint off", options: map[string]string{"ci_lint": "false"}, want: []string{"app", "lint"}},
+		{name: "report off", options: map[string]string{"ci_report": "false"}, want: []string{"app", "pages", "report"}},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			tag := map[string]*model.Tag{"v1": {Name: "v1"}}
+			project := &model.ContainerHiveProject{
+				Config: model.HiveProjectConfig{Platforms: []string{"linux/amd64"}, TemplateOptions: tt.options},
+				ImagesByName: map[string][]*model.Image{
+					"app":    {{Name: "app", Tags: tag}},
+					"lint":   {{Name: "lint", Tags: tag}},
+					"report": {{Name: "report", Tags: tag}},
+					"pages":  {{Name: "pages", Tags: tag}},
+				},
+			}
+			ctx, err := BuildCIContext(project, false)
+			if err != nil {
+				t.Fatal(err)
+			}
+			got := slices.Clone(ctx.Stages)
+			slices.Sort(got)
+			if !slices.Equal(got, tt.want) {
+				t.Errorf("stages = %v, want %v", got, tt.want)
+			}
+		})
 	}
 }
 

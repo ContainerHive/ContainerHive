@@ -143,9 +143,18 @@ const (
 	DindRootlessImage = "ghcr.io/containerhive/helper-images/dind-rootless:29.9"
 )
 
-// fixedStages are the stages the GitLab pipeline defines besides the image
-// stages.
-var fixedStages = []string{"generate", "lint", "report", "pages"}
+// fixedStages returns the stages the GitLab pipeline defines besides the
+// image stages, which depend on the lint and report options.
+func fixedStages(opts map[string]string) []string {
+	stages := []string{"generate"}
+	if opts["ci_lint"] != "false" {
+		stages = append(stages, "lint")
+	}
+	if opts["ci_report"] == "true" {
+		stages = append(stages, "report", "pages")
+	}
+	return stages
+}
 
 // defaultTemplateOptions returns the built-in template option defaults.
 func defaultTemplateOptions() map[string]string {
@@ -269,18 +278,6 @@ func BuildCIContext(project *model.ContainerHiveProject, artifacts bool) (*CICon
 		return ciImages[i].Name < ciImages[j].Name
 	})
 
-	// One stage per image, in dependency order, holds its build, test and
-	// manifest jobs. Jobs run as soon as their needs finish, so the stage
-	// only groups them in the pipeline view. An image named like a fixed
-	// pipeline stage joins that stage instead of duplicating it.
-	var stages []string
-	for _, img := range ciImages {
-		if slices.Contains(fixedStages, img.Name) {
-			continue
-		}
-		stages = append(stages, img.Name)
-	}
-
 	// Collect all unique platforms sorted
 	platformList := make([]string, 0, len(allPlatforms))
 	for p := range allPlatforms {
@@ -297,6 +294,21 @@ func BuildCIContext(project *model.ContainerHiveProject, artifacts bool) (*CICon
 	// without an explicit version keeps the exact BuildKit version.
 	if _, ok := project.Config.TemplateOptions["ci_buildkit_version"]; !ok {
 		opts["ci_buildkit_version"] = buildkit.TagFor(opts["ci_buildkit_image"])
+	}
+
+	// One stage per image, in dependency order, holds its build, test and
+	// manifest jobs. Jobs run as soon as their needs finish, so the stage
+	// only groups them in the pipeline view. An image named like a fixed
+	// pipeline stage joins that stage instead of duplicating it, but only
+	// while the template emits that stage: with ci_lint or ci_report off the
+	// image has to define the stage itself.
+	fixed := fixedStages(opts)
+	var stages []string
+	for _, img := range ciImages {
+		if slices.Contains(fixed, img.Name) {
+			continue
+		}
+		stages = append(stages, img.Name)
 	}
 
 	// The gotpl template coerces these with sprig's atoi, which returns 0 for
