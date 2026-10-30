@@ -36,11 +36,18 @@ jobs:
   # === GENERATE ===
   generate:
     runs-on: ubuntu-latest
+{{- if .ChangeDetection }}
+    outputs:
+      affected: ${{ "{{" }} steps.changes.outputs.affected {{ "}}" }}
+{{- end }}
     steps:
       - name: Checkout code
         uses: actions/checkout@{{ option "actions_checkout_version" }}
         with:
           lfs: true
+{{- if .ChangeDetection }}
+          fetch-depth: 0
+{{- end }}
       - name: Prepare temp directory
         run: mkdir -p "$RUNNER_TEMP/ch"
 {{- if and .HasTagRanges (ne (option "ci_version_cache") "false") }}
@@ -60,6 +67,17 @@ jobs:
         run: echo "${{ "{{" }} secrets.GITHUB_TOKEN {{ "}}" }}" | docker run --rm --entrypoint="" -u "$(id -u):$(id -g)" -e CI=1 -i -e HOME="$RUNNER_TEMP/ch" -v "$RUNNER_TEMP/ch:$RUNNER_TEMP/ch" -v "$GITHUB_WORKSPACE:$GITHUB_WORKSPACE" -w "$GITHUB_WORKSPACE" $CH_IMAGE {{ .ChCmd }} login -u "${{ "{{" }} github.actor {{ "}}" }}" --password-stdin ghcr.io
       - name: Generate build files
         run: docker run --rm --entrypoint="" -u "$(id -u):$(id -g)" -e CI=1 -e HOME="$RUNNER_TEMP/ch"{{ if .HasTagRanges }} -e CONTAINER_HIVE_CACHE_DIR="$GITHUB_WORKSPACE/{{ .VersionCacheDir }}"{{ end }} -v "$RUNNER_TEMP/ch:$RUNNER_TEMP/ch" -v "$GITHUB_WORKSPACE:$GITHUB_WORKSPACE" -w "$GITHUB_WORKSPACE" $CH_IMAGE {{ .ChCmd }} generate --build-id "$SNAPSHOT_ID"
+{{- if .ChangeDetection }}
+      - name: Detect changed images
+        id: changes
+        run: |
+          if [ "${{ "{{" }} github.event_name {{ "}}" }}" != "pull_request" ]; then
+            echo "affected=[]" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          docker run --rm --entrypoint="" -u "$(id -u):$(id -g)" -e CI=1 -e HOME="$RUNNER_TEMP/ch" -v "$RUNNER_TEMP/ch:$RUNNER_TEMP/ch" -v "$GITHUB_WORKSPACE:$GITHUB_WORKSPACE" -w "$GITHUB_WORKSPACE" $CH_IMAGE {{ .ChCmd }} changes --base "${{ "{{" }} github.event.pull_request.base.sha {{ "}}" }}" --format json --write > "$RUNNER_TEMP/ch/changes.json"
+          echo "affected=$(jq -c .affected "$RUNNER_TEMP/ch/changes.json")" >> "$GITHUB_OUTPUT"
+{{- end }}
       - name: Upload generated files
         uses: actions/upload-artifact@{{ option "actions_upload_artifact_version" }}
         with:
@@ -77,6 +95,10 @@ jobs:
 {{- end }}
 {{- if eq (option "ci_report") "true" }}
   report:
+{{- if .ChangeDetection }}
+    # Builds of unaffected images are skipped, which must not skip the report.
+    if: ${{ "{{" }} !cancelled() && !failure() {{ "}}" }}
+{{- end }}
     needs:
 {{- range $img := .Images }}
 {{- range $p := $img.Platforms }}
@@ -98,6 +120,10 @@ jobs:
 {{- range $p := $img.Platforms }}
       - name: Download {{ $img.Name }}-{{ platform_id $p }} SBOM
         uses: actions/download-artifact@{{ option "actions_download_artifact_version" }}
+{{- if $.ChangeDetection }}
+        # Missing when change detection skipped the build.
+        continue-on-error: true
+{{- end }}
         with:
 {{- if $.Artifacts }}
           name: {{ $img.Name }}-{{ platform_id $p }}

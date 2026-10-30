@@ -81,11 +81,29 @@ func TestGitlabTemplate_ChangeDetection(t *testing.T) {
 	}
 }
 
+func TestGithubTemplate_ChangeDetection(t *testing.T) {
+	out := renderChangeDetection(t, "github", nil, "")
+
+	for _, want := range []string{
+		"affected: ${{ steps.changes.outputs.affected }}",
+		"fetch-depth: 0",
+		`changes --base "${{ github.event.pull_request.base.sha }}" --format json --write`,
+		"contains(fromJSON(needs.generate.outputs.affected), 'app')",
+		"contains(fromJSON(needs.generate.outputs.affected), 'base')",
+		"if: ${{ !cancelled() && !failure() }}",
+		"continue-on-error: true",
+	} {
+		if !strings.Contains(out, want) {
+			t.Errorf("rendered workflow is missing %q", want)
+		}
+	}
+}
+
 func TestTemplates_ChangeDetectionDisabled(t *testing.T) {
-	for _, provider := range []string{"gitlab"} {
+	for _, provider := range []string{"gitlab", "github"} {
 		t.Run(provider, func(t *testing.T) {
 			out := renderChangeDetection(t, provider, map[string]string{"ci_change_detection": "false"}, "")
-			for _, unwanted := range []string{"compare_to", "optional: true", "GIT_DEPTH", " changes --base"} {
+			for _, unwanted := range []string{"compare_to", "optional: true", "GIT_DEPTH", " changes --base", "needs.generate.outputs.affected", "fetch-depth", "continue-on-error"} {
 				if strings.Contains(out, unwanted) {
 					t.Errorf("disabled change detection still renders %q", unwanted)
 				}
