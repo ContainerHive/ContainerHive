@@ -212,16 +212,69 @@ type ProjectReportConfig struct {
 	StyleSheet string `yaml:"styleSheet,omitempty" json:"styleSheet,omitempty"`
 }
 
+// DefaultChangeDetectionExclude lists the files that never trigger a build
+// when change_detection.exclude is not set.
+var DefaultChangeDetectionExclude = []string{
+	"renovate.json",
+	"renovate.json5",
+	".renovaterc",
+	".renovaterc.json",
+	".github/renovate.json",
+	".github/renovate.json5",
+	"README.md",
+	"CONTRIBUTING.md",
+	"mkdocs.yml",
+	"styles/**",
+	".gitignore",
+	".gitattributes",
+}
+
+// DefaultChangeDetectionTreatAsGlobal lists the files that rebuild every
+// image when change_detection.treat_as_global is not set.
+var DefaultChangeDetectionTreatAsGlobal = []string{
+	".pre-commit-config.yaml",
+	"hive.yml",
+	"hive.yaml",
+	"container-hive.yml",
+	"container-hive.yaml",
+}
+
+// ChangeDetectionConfig configures which changed files trigger which image
+// builds in merge and pull request pipelines. Patterns are doublestar globs
+// relative to the project root. A set list replaces its default.
+type ChangeDetectionConfig struct {
+	Exclude       []string `yaml:"exclude,omitempty" json:"exclude,omitempty" jsonschema:"Glob patterns of files that never trigger a build. Replaces the default list."`
+	TreatAsGlobal []string `yaml:"treat_as_global,omitempty" json:"treat_as_global,omitempty" jsonschema:"Glob patterns of files that rebuild every image. Win over exclude. Replaces the default list."`
+}
+
+// ExcludePatterns returns the exclude patterns, or the defaults when unset.
+func (c *ChangeDetectionConfig) ExcludePatterns() []string {
+	if c == nil || c.Exclude == nil {
+		return DefaultChangeDetectionExclude
+	}
+	return c.Exclude
+}
+
+// TreatAsGlobalPatterns returns the treat_as_global patterns, or the defaults
+// when unset.
+func (c *ChangeDetectionConfig) TreatAsGlobalPatterns() []string {
+	if c == nil || c.TreatAsGlobal == nil {
+		return DefaultChangeDetectionTreatAsGlobal
+	}
+	return c.TreatAsGlobal
+}
+
 // HiveProjectConfig is the top-level project configuration from hive.yml.
 type HiveProjectConfig struct {
-	BuildKit        *BuildKitConfig     `yaml:"buildkit,omitempty" json:"buildkit,omitempty" jsonschema:"BuildKit daemon configuration"`
-	Cache           *CacheConfig        `yaml:"cache,omitempty" json:"cache,omitempty" jsonschema:"Build cache configuration"`
-	Registry        *RegistryConfig     `yaml:"registry,omitempty" json:"registry,omitempty" jsonschema:"Container registry configuration"`
-	Platforms       []string            `yaml:"platforms,omitempty" json:"platforms,omitempty" jsonschema:"Default target platforms for all images (e.g. linux/amd64)"`
-	TemplateOptions map[string]string   `yaml:"template_options,omitempty" json:"template_options,omitempty" jsonschema:"Custom template variables available via the option function in CI and custom templates"`
-	Labels          *LabelsConfig       `yaml:"labels,omitempty" json:"labels,omitempty" jsonschema:"Project-level OCI image labels applied to every built image"`
-	Lint            *LintConfig         `yaml:"lint,omitempty" json:"lint,omitempty" jsonschema:"Dockerfile linting configuration (hadolint)"`
-	Report          ProjectReportConfig `yaml:"report,omitempty" json:"report" jsonSchema:"Report customization"`
+	BuildKit        *BuildKitConfig        `yaml:"buildkit,omitempty" json:"buildkit,omitempty" jsonschema:"BuildKit daemon configuration"`
+	Cache           *CacheConfig           `yaml:"cache,omitempty" json:"cache,omitempty" jsonschema:"Build cache configuration"`
+	Registry        *RegistryConfig        `yaml:"registry,omitempty" json:"registry,omitempty" jsonschema:"Container registry configuration"`
+	Platforms       []string               `yaml:"platforms,omitempty" json:"platforms,omitempty" jsonschema:"Default target platforms for all images (e.g. linux/amd64)"`
+	TemplateOptions map[string]string      `yaml:"template_options,omitempty" json:"template_options,omitempty" jsonschema:"Custom template variables available via the option function in CI and custom templates"`
+	Labels          *LabelsConfig          `yaml:"labels,omitempty" json:"labels,omitempty" jsonschema:"Project-level OCI image labels applied to every built image"`
+	Lint            *LintConfig            `yaml:"lint,omitempty" json:"lint,omitempty" jsonschema:"Dockerfile linting configuration (hadolint)"`
+	Report          ProjectReportConfig    `yaml:"report,omitempty" json:"report" jsonSchema:"Report customization"`
+	ChangeDetection *ChangeDetectionConfig `yaml:"change_detection,omitempty" json:"change_detection,omitempty" jsonschema:"Change detection for merge and pull request pipelines"`
 
 	// CacheDir and VersionCacheTTL configure ContainerHive's own local cache
 	// for external version lookups made by tag_ranges. This is distinct

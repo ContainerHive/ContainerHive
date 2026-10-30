@@ -198,6 +198,36 @@
       },
       "additionalProperties": false
     },
+    "change_detection": {
+      "type": [
+        "null",
+        "object"
+      ],
+      "properties": {
+        "exclude": {
+          "type": [
+            "null",
+            "array"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "description": "Glob patterns of files that never trigger a build. Replaces the default list."
+        },
+        "treat_as_global": {
+          "type": [
+            "null",
+            "array"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "description": "Glob patterns of files that rebuild every image. Win over exclude. Replaces the default list."
+        }
+      },
+      "description": "Change detection for merge and pull request pipelines",
+      "additionalProperties": false
+    },
     "cache_dir": {
       "type": "string",
       "description": "Directory for ContainerHive's local caches (tag_ranges external version lookups). Overridden by CONTAINER_HIVE_CACHE_DIR. Defaults to the XDG cache directory. Not the build cache configured by 'cache'."
