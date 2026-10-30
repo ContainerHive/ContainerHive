@@ -128,14 +128,19 @@ func (c *CIConfigContext) RegistryHost() string {
 
 const (
 	// GitLabDefaultDindImage is the Docker-in-Docker service image used by the
-	// generated GitLab test jobs. The ContainerHive helper image runs rootless,
-	// so it works in unprivileged Kubernetes pods (no privileged security
-	// context needed).
-	GitLabDefaultDindImage = "ghcr.io/containerhive/helper-images/dind-rootless:29.9"
+	// generated GitLab test jobs. It runs privileged, which GitLab.com hosted
+	// runners and most self-managed Docker executors allow. Kubernetes
+	// runners that forbid privileged pods can switch to
+	// DindRootlessImage with the ci_dind_image template option.
+	GitLabDefaultDindImage = "ghcr.io/containerhive/helper-images/dind:29.9"
 	// GitHubDefaultDindImage is the Docker-in-Docker image used by the generated
 	// GitHub Actions test jobs. GitHub-hosted runners allow privileged
 	// containers but not the user namespaces the rootless daemon needs.
 	GitHubDefaultDindImage = "ghcr.io/containerhive/helper-images/dind:29.9"
+	// DindRootlessImage is the rootless Docker-in-Docker helper image for
+	// runners without privileged containers. It needs a user namespace
+	// mapping, such as hostUsers: false on Kubernetes.
+	DindRootlessImage = "ghcr.io/containerhive/helper-images/dind-rootless:29.9"
 )
 
 // fixedStages are the stages the GitLab pipeline defines besides the image
