@@ -33,17 +33,17 @@ ch changes --base origin/main
 
 The command prints one affected image per line. Use `--format json` for the full result, including the changed images and the reason for a global rebuild.
 
-Without git, pass the changed files yourself, relative to the project root:
+Without git, pass the changed files yourself, relative to the project root. List both paths of a moved file, so the image it moved away from counts as changed too:
 
 ```bash
-git diff --name-only origin/main... | ch changes --files-from -
+git diff --no-renames --name-only origin/main... | ch changes --files-from -
 ```
 
 If the diff cannot be computed, for example because the clone is shallow and the base commit is missing, every image is affected. Fetch the full history, or at least the base commit, in CI.
 
 ## Limit a pipeline to the affected images
 
-`--write` stores the result as `dist/changes.json`. Run it after `ch generate`, which clears `dist/`:
+`--write` stores the result as `dist/changes.json`. Run it after `ch generate`, which clears `dist/`, and so does the global `--generate` flag. A stale change set therefore never limits a later build:
 
 ```bash
 ch generate --build-id "$ID"
@@ -67,6 +67,8 @@ With a [build ID](build-ids.md), a dependency that was not rebuilt has no `-buil
 | Unmatched files | Rebuild every image | Ignored |
 
 GitLab decides which jobs exist when it creates the pipeline, from static `rules:changes` paths. Those paths cannot express "any other file", so on GitLab unmatched files never trigger a build. Add such files to `treat_as_global` if they should. For the same reason the GitLab `generate` job runs `ch changes --strict`: if the diff cannot be computed, the pipeline fails instead of expecting jobs that GitLab did not create. GitLab `rules:changes:compare_to` with variables needs GitLab 17.2 or later.
+
+GitLab accepts at most 50 paths in one `rules:changes` rule. An image whose directories, dependency directories and `treat_as_global` patterns add up to more gets no change rule: its jobs are always created, and `dist/changes.json` makes them skip the work when the image is not affected.
 
 ## Configure the rules
 
