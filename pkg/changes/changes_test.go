@@ -178,7 +178,7 @@ func TestProjectRelative(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if want := []string{"images/a/Dockerfile"}; !slices.Equal(got, want) {
+	if want := []string{"../../README.md", "images/a/Dockerfile", "../github/hive.yml"}; !slices.Equal(got, want) {
 		t.Errorf("projectRelative() = %v, want %v", got, want)
 	}
 
@@ -210,5 +210,54 @@ func TestDetectFromGitStrict(t *testing.T) {
 	project := writeProject(t, "{}\n")
 	if _, err := DetectFromGit(project, "main", Options{Strict: true}); err == nil {
 		t.Error("DetectFromGit() with Strict outside a repository error = nil, want error")
+	}
+}
+
+// TestDetectSymlinkedImages covers projects whose images directory is a
+// symlink to a shared directory, as git reports the shared path.
+func TestDetectSymlinkedImages(t *testing.T) {
+	repo := t.TempDir()
+	files := map[string]string{
+		"shared/images/base/image.yml":    "tags:\n  - name: \"1\"\n",
+		"shared/images/base/Dockerfile":   "FROM ubuntu:24.04\n",
+		"shared/images/python/image.yml":  "tags:\n  - name: \"3\"\n",
+		"shared/images/python/Dockerfile": "FROM __hive__/base:1\n",
+		"gitlab/hive.yml":                 "{}\n",
+	}
+	for name, content := range files {
+		path := filepath.Join(repo, name)
+		if err := os.MkdirAll(filepath.Dir(path), 0o755); err != nil {
+			t.Fatal(err)
+		}
+		if err := os.WriteFile(path, []byte(content), 0o644); err != nil {
+			t.Fatal(err)
+		}
+	}
+	if err := os.Symlink("../shared/images", filepath.Join(repo, "gitlab", "images")); err != nil {
+		t.Fatal(err)
+	}
+	project, err := discovery.DiscoverProject(t.Context(), filepath.Join(repo, "gitlab"), discovery.WithSkipTagRanges())
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if got, want := ImageDirs(project)["base"], []string{"../shared/images/base"}; !slices.Equal(got, want) {
+		t.Errorf("ImageDirs()[base] = %v, want %v", got, want)
+	}
+
+	repoFiles := []string{"shared/images/base/Dockerfile", "github/hive.yml"}
+	projectFiles, err := projectRelative(repo, project.RootDir, repoFiles)
+	if err != nil {
+		t.Fatal(err)
+	}
+	set, err := Detect(project, projectFiles, Options{})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if set.Global {
+		t.Errorf("a file of another project must not rebuild everything, got %+v", set)
+	}
+	if want := []string{"base", "python"}; !slices.Equal(set.Affected, want) {
+		t.Errorf("Affected = %v, want %v", set.Affected, want)
 	}
 }

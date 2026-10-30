@@ -133,12 +133,14 @@ func DetectFromGit(project *model.ContainerHiveProject, base string, opts Option
 }
 
 // ImageDirs maps every image name to its directories relative to the project
-// root, slash-separated.
+// root, slash-separated. A symlinked images directory resolves to where git
+// tracks the files, which can be outside the project root (../shared/images).
 func ImageDirs(project *model.ContainerHiveProject) map[string][]string {
+	projectRoot := resolvedRoot(project.RootDir)
 	dirs := make(map[string][]string, len(project.ImagesByName))
 	for name, images := range project.ImagesByName {
 		for _, img := range images {
-			dirs[name] = append(dirs[name], imageDir(img))
+			dirs[name] = append(dirs[name], imageDir(projectRoot, img))
 		}
 		slices.Sort(dirs[name])
 	}
@@ -217,15 +219,34 @@ func imageGraph(project *model.ContainerHiveProject) (*dependency.Graph, error) 
 	return graph, nil
 }
 
-// imageDir returns the image directory relative to the project root. The
-// identifier is the path below images/, which avoids comparing the symlink
-// resolved image root with the project root.
-func imageDir(img *model.Image) string {
+// imageDir returns the image directory relative to the symlink resolved
+// project root. Discovery resolves symlinks in the image root, so the result
+// is where git tracks the files. Without a root dir, as in hand-built
+// projects, it falls back to the identifier below images/.
+func imageDir(projectRoot string, img *model.Image) string {
+	if projectRoot != "" && img.RootDir != "" {
+		if rel, err := filepath.Rel(projectRoot, resolvedRoot(img.RootDir)); err == nil {
+			return filepath.ToSlash(rel)
+		}
+	}
 	return "images/" + filepath.ToSlash(img.Identifier)
 }
 
+// resolvedRoot resolves symlinks in dir, or returns it unchanged when that
+// fails.
+func resolvedRoot(dir string) string {
+	if dir == "" {
+		return ""
+	}
+	if resolved, err := filepath.EvalSymlinks(dir); err == nil {
+		return resolved
+	}
+	return dir
+}
+
 // projectRelative converts repository-relative paths to project-relative
-// paths and drops files outside the project.
+// paths. Files outside the project start with ../, which only matters when
+// an image directory lives there.
 func projectRelative(repoRoot, projectRoot string, files []string) ([]string, error) {
 	prefix, err := relativeDir(repoRoot, projectRoot)
 	if err != nil {
@@ -235,11 +256,13 @@ func projectRelative(repoRoot, projectRoot string, files []string) ([]string, er
 		return files, nil
 	}
 
-	var result []string
+	result := make([]string, 0, len(files))
 	for _, file := range files {
-		if rel, ok := strings.CutPrefix(file, prefix+"/"); ok {
-			result = append(result, rel)
+		rel, err := filepath.Rel(filepath.FromSlash(prefix), filepath.FromSlash(file))
+		if err != nil {
+			return nil, err
 		}
+		result = append(result, filepath.ToSlash(rel))
 	}
 	return result, nil
 }

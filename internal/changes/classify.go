@@ -31,7 +31,7 @@ func ParseUnmatched(value string) (Unmatched, error) {
 }
 
 // Rules configures Classify. All paths are slash-separated and relative to
-// the project root.
+// the project root. Paths outside the project start with ../.
 type Rules struct {
 	Exclude       []string
 	TreatAsGlobal []string
@@ -91,6 +91,10 @@ func Classify(files []string, rules Rules) (Classification, error) {
 			for _, name := range names {
 				changed[name] = true
 			}
+			continue
+		}
+		// Files outside the project only count inside an image directory.
+		if file == ".." || strings.HasPrefix(file, "../") {
 			continue
 		}
 		if rules.Unmatched != UnmatchedIgnore {
