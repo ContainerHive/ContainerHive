@@ -8,6 +8,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/ContainerHive/ContainerHive/pkg/build"
 	"github.com/ContainerHive/ContainerHive/pkg/changes"
 )
 
@@ -125,5 +126,45 @@ func TestChangesCommandWrite(t *testing.T) {
 	}
 	if set == nil || !slices.Equal(set.Affected, []string{"python"}) {
 		t.Errorf("stored set = %+v, want python affected", set)
+	}
+}
+
+func TestLimitToChanges(t *testing.T) {
+	affected := &changes.Set{Affected: []string{"pre-commit", "python"}}
+
+	tests := []struct {
+		name     string
+		set      *changes.Set
+		filters  []build.Filter
+		want     []build.Filter
+		wantSkip bool
+	}{
+		{name: "no change set keeps filters", set: nil, filters: []build.Filter{{ImageName: "base"}}, want: []build.Filter{{ImageName: "base"}}},
+		{name: "no change set keeps empty filters", set: nil, filters: nil, want: nil},
+		{name: "empty filters become affected images", set: affected, filters: nil, want: []build.Filter{{ImageName: "pre-commit"}, {ImageName: "python"}}},
+		{name: "unaffected filter dropped", set: affected, filters: []build.Filter{{ImageName: "base"}, {ImageName: "python", TagName: "3"}}, want: []build.Filter{{ImageName: "python", TagName: "3"}}},
+		{name: "tag-only filter expands", set: affected, filters: []build.Filter{{TagName: "1"}}, want: []build.Filter{{ImageName: "pre-commit", TagName: "1"}, {ImageName: "python", TagName: "1"}}},
+		{name: "nothing affected skips", set: &changes.Set{Affected: []string{}}, filters: nil, wantSkip: true},
+		{name: "only unaffected filters skip", set: affected, filters: []build.Filter{{ImageName: "base"}}, wantSkip: true},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			dist := t.TempDir()
+			if tt.set != nil {
+				if err := changes.Write(dist, tt.set); err != nil {
+					t.Fatal(err)
+				}
+			}
+			got, _, skip, err := limitToChanges(dist, tt.filters)
+			if err != nil {
+				t.Fatalf("limitToChanges() error = %v", err)
+			}
+			if skip != tt.wantSkip {
+				t.Errorf("skip = %v, want %v", skip, tt.wantSkip)
+			}
+			if !slices.Equal(got, tt.want) {
+				t.Errorf("filters = %v, want %v", got, tt.want)
+			}
+		})
 	}
 }

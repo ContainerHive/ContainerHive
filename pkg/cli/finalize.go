@@ -35,6 +35,14 @@ func finalizeCmd() *cli.Command {
 				return fmt.Errorf("dist/ not found — run 'ch generate' first: %w", err)
 			}
 
+			filters, _, skip, err := limitToChanges(distPath, filters)
+			if err != nil {
+				return err
+			}
+			if skip {
+				return nil
+			}
+
 			reg, err := setupRegistry(ctx, distPath, project.Config.Registry)
 			if err != nil {
 				return err

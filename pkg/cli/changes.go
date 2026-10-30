@@ -11,6 +11,7 @@ import (
 	"os"
 	"strings"
 
+	"github.com/ContainerHive/ContainerHive/pkg/build"
 	"github.com/ContainerHive/ContainerHive/pkg/changes"
 	"github.com/ContainerHive/ContainerHive/pkg/discovery"
 	"github.com/urfave/cli/v3"
@@ -151,4 +152,39 @@ func readChangedFiles(stdin io.Reader, path string) ([]string, error) {
 		return nil, fmt.Errorf("failed to read changed files: %w", err)
 	}
 	return files, nil
+}
+
+// limitToChanges narrows filters to the images affected according to
+// dist/changes.json. Without the file, filters are returned unchanged and the
+// set is nil. skip reports that no filtered image is affected.
+func limitToChanges(distPath string, filters []build.Filter) (limited []build.Filter, set *changes.Set, skip bool, err error) {
+	set, err = changes.Load(distPath)
+	if err != nil {
+		return nil, nil, false, fmt.Errorf("failed to load %s: %w", changes.FileName, err)
+	}
+	if set == nil {
+		return filters, nil, false, nil
+	}
+
+	if len(filters) == 0 {
+		filters = []build.Filter{{}}
+	}
+	for _, filter := range filters {
+		if filter.ImageName != "" {
+			if set.IsAffected(filter.ImageName) {
+				limited = append(limited, filter)
+			}
+			continue
+		}
+		for _, name := range set.Affected {
+			limited = append(limited, build.Filter{ImageName: name, TagName: filter.TagName})
+		}
+	}
+
+	if len(limited) == 0 {
+		slog.Info("No affected images to process, skipping", "changes", changes.FileName)
+		return nil, set, true, nil
+	}
+	slog.Info("Limited to affected images", "affected", set.Affected)
+	return limited, set, false, nil
 }
