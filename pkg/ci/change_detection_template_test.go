@@ -68,7 +68,11 @@ func TestGitlabTemplate_ChangeDetection(t *testing.T) {
 		"    - job: manifest-base\n      optional: true",
 		"    - job: build-app-amd64\n      optional: true",
 		`GIT_DEPTH: "0"`,
-		`- if: $CI_PIPELINE_SOURCE != "merge_request_event"`,
+		"    - if: $CI_PIPELINE_SOURCE == \"merge_request_event\"\n      changes:\n        paths:\n          - \"sub/images/app/**/*\"",
+		`changes --base "$CI_MERGE_REQUEST_DIFF_BASE_SHA" --unmatched ignore --strict --write`,
+		"lint:\n  stage: lint\n  # Image jobs have rules for merge request pipelines",
+		"  stage: generate\n  # Image jobs have rules for merge request pipelines",
+		"  stage: report\n  # Image jobs have rules for merge request pipelines",
 		`changes --base "refs/remotes/origin/$CI_DEFAULT_BRANCH" --unmatched ignore --strict --write`,
 	} {
 		if !strings.Contains(out, want) {
@@ -107,7 +111,7 @@ func TestTemplates_ChangeDetectionDisabled(t *testing.T) {
 	for _, provider := range []string{"gitlab", "github"} {
 		t.Run(provider, func(t *testing.T) {
 			out := renderChangeDetection(t, provider, map[string]string{"ci_change_detection": "false"}, "")
-			for _, unwanted := range []string{"compare_to", "optional: true", "GIT_DEPTH", " changes --base", "needs.generate.outputs.affected", "fetch-depth", "continue-on-error", ".result == 'success'"} {
+			for _, unwanted := range []string{"compare_to", "optional: true", "GIT_DEPTH", "rules:\n    - when: on_success", " changes --base", "needs.generate.outputs.affected", "fetch-depth", "continue-on-error", ".result == 'success'"} {
 				if strings.Contains(out, unwanted) {
 					t.Errorf("disabled change detection still renders %q", unwanted)
 				}
@@ -158,7 +162,7 @@ func TestGitlabTemplate_ChangePathsOverLimit(t *testing.T) {
 	if strings.Contains(rendered, "compare_to") {
 		t.Error("over the path limit the rules must not filter on changes")
 	}
-	if !strings.Contains(rendered, "  rules:\n    # Like jobs without rules") {
+	if !strings.Contains(rendered, "  rules:\n    - when: on_success\n  variables:\n    IMAGE_NAME: app") {
 		t.Errorf("over the path limit the jobs must keep the merge request rule, got:\n%s", rendered)
 	}
 }
