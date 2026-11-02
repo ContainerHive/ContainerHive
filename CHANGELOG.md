@@ -1,3 +1,9 @@
+## [1.27.2](https://github.com/ContainerHive/ContainerHive/compare/v1.27.1...v1.27.2) (2026-11-02)
+
+### Bug Fixes
+
+* **deps:** update module github.com/bmatcuk/doublestar/v4 to v4.10.4 ([89b4a5d](https://github.com/ContainerHive/ContainerHive/commit/89b4a5d805962bd653cc09be8ef50d7bcf8d3487))
+
 ## [1.27.1](https://github.com/ContainerHive/ContainerHive/compare/v1.27.0...v1.27.1) (2026-10-30)
 
 ### Bug Fixes
