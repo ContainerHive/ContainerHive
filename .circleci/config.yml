@@ -33,7 +33,7 @@ executors:
       - image: cimg/python:3.15-node
   schema-nest-cli:
     docker:
-      - image: timoreymann/schemanest-cli:v0.8.9
+      - image: timoreymann/schemanest-cli:v0.8.11
   zero-install:
     # Bundles 0install, 0template, gpg and git for the feed pipeline.
     docker:
