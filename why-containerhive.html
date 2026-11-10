@@ -2483,9 +2483,9 @@
 </table>
 <h3 id="images-stack-layers-are-reused">Images stack, layers are reused</h3>
 <p>Each image only adds what is specific to it. Everything below comes from its parent, so the parent's layers exist once and are shared by every image built on top.</p>
-<p><img alt="Kroki" src="kroki-generated-f5c1d665-7fcc-38ae-98f7-f9a804beb169.svg#only-light" /><img alt="Kroki" src="kroki-generated-c27d700b-d904-3820-8935-b81e20c12f92.svg#only-dark" /></p>
+<p><img alt="Kroki" src="kroki-generated-a211efba-9513-3e5a-8850-ba43ee9ae496.svg#only-light" /><img alt="Kroki" src="kroki-generated-29d24e4c-c181-3850-a90c-16802763bab3.svg#only-dark" /></p>
 <p>A change to <code>ubuntu-base</code> ripples down both branches. A change to <code>python</code> only affects <code>python</code> and <code>pre-commit</code>, and <code>node</code> and <code>node-browsers</code> are left alone.</p>
-<p><img alt="Kroki" src="kroki-generated-57bacfa0-276c-3c28-bf86-c1303031a300.svg#only-light" /><img alt="Kroki" src="kroki-generated-41ef9436-c25f-3929-bf46-9e21f0f626ec.svg#only-dark" /></p>
+<p><img alt="Kroki" src="kroki-generated-5a01148c-671f-378d-84f9-e23af74bd1e3.svg#only-light" /><img alt="Kroki" src="kroki-generated-6a5ec4d9-7068-35ac-b223-99ad05e77ba5.svg#only-dark" /></p>
 <p>The bottom two layers of both images, the Ubuntu base and the <code>ubuntu-base</code> tools, are identical. They are built once, cached once, and pulled once.</p>
 <h3 id="without-containerhive">Without ContainerHive</h3>
 <p>You build the machinery yourself:</p>
@@ -2495,7 +2495,7 @@
 <li>A test setup for each image, and the glue to run it in the right place in the pipeline.</li>
 <li>Updates to all of the above whenever you add, rename, or re-parent an image.</li>
 </ul>
-<p><img alt="Kroki" src="kroki-generated-c08ece68-a586-36a9-97aa-542377c84ed3.svg#only-light" /><img alt="Kroki" src="kroki-generated-49dbf12c-a354-3733-9994-2d9cda3f4950.svg#only-dark" /></p>
+<p><img alt="Kroki" src="kroki-generated-8f6671ac-2ddf-3035-b5c9-e11f66634682.svg#only-light" /><img alt="Kroki" src="kroki-generated-71066a65-0ae0-320c-b5d2-297923a4749c.svg#only-dark" /></p>
 <h3 id="with-containerhive">With ContainerHive</h3>
 <p>You drop flat image directories into your project. Each image references its parent with <code>FROM __hive__/&lt;image&gt;:&lt;tag&gt;</code>. ContainerHive does the rest.</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>images/
@@ -2525,7 +2525,7 @@
 <li><strong>Detects which images have tests</strong> by looking for a <code>test.yml</code> next to the Dockerfile, and adds the test steps for exactly those images.</li>
 <li><strong>Passes parent images to children</strong> directly during the build, without a registry round trip.</li>
 </ul>
-<p><img alt="Kroki" src="kroki-generated-975ddb4c-3e3f-36ad-a3fb-8e31072a4869.svg#only-light" /><img alt="Kroki" src="kroki-generated-19378c75-5114-3056-bed6-6af86eaab6c2.svg#only-dark" /></p>
+<p><img alt="Kroki" src="kroki-generated-78212ba1-ac07-3897-8d68-fb2da95d38c9.svg#only-light" /><img alt="Kroki" src="kroki-generated-5da95ac0-f86b-3694-a833-d4cc543b5b4f.svg#only-dark" /></p>
 <p>Adding a new image, say a <code>go</code> image on top of <code>ubuntu-base</code>, means adding a directory with a Dockerfile that starts with <code>FROM __hive__/ubuntu-base:&lt;tag&gt;</code>. The pipeline, the ordering, and the test steps follow from that.</p>
 <h2 id="what-containerhive-does-instead">What ContainerHive does instead</h2>
 <p>ContainerHive gives every team the same declarative workflow:</p>
