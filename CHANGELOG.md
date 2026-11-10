@@ -1,3 +1,10 @@
+## [1.27.4](https://github.com/ContainerHive/ContainerHive/compare/v1.27.3...v1.27.4) (2026-11-10)
+
+### Bug Fixes
+
+* **deps:** update module golang.org/x/sync to v0.25.0 ([ddbbfea](https://github.com/ContainerHive/ContainerHive/commit/ddbbfea96a8090cece549c6504cd5fc87dfac49a))
+* **deps:** update module zotregistry.dev/zot/v2 to v2.1.23 ([0c9dad5](https://github.com/ContainerHive/ContainerHive/commit/0c9dad5ce6ac4808b68a67fdca7dd294598caff4))
+
 ## [1.27.3](https://github.com/ContainerHive/ContainerHive/compare/v1.27.2...v1.27.3) (2026-11-04)
 
 ### Bug Fixes
