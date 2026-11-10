@@ -36,7 +36,7 @@ require (
 	github.com/timo-reymann/go-hadolint v0.1.0
 	github.com/tonistiigi/fsutil v0.0.0-20261009124904-c1c5bffae3b5
 	github.com/urfave/cli/v3 v3.14.0
-	golang.org/x/sync v0.24.0
+	golang.org/x/sync v0.25.0
 	golang.org/x/term v0.47.0
 	google.golang.org/grpc v1.85.0
 	google.golang.org/protobuf v1.36.12
