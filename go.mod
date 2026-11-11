@@ -13,7 +13,7 @@ require (
 	github.com/anchore/syft v1.54.1
 	github.com/blues/jsonata-go v1.5.4
 	github.com/bmatcuk/doublestar/v4 v4.10.4
-	github.com/containerd/containerd/v2 v2.4.1
+	github.com/containerd/containerd/v2 v2.4.2
 	github.com/containerd/errdefs v1.0.0
 	github.com/containerd/platforms v1.0.0-rc.5
 	github.com/distribution/reference v0.6.0
@@ -26,7 +26,7 @@ require (
 	github.com/google/go-containerregistry v0.22.1
 	github.com/kcmvp/archunit v0.1.2
 	github.com/lmittmann/tint v1.2.1
-	github.com/moby/buildkit v0.34.1
+	github.com/moby/buildkit v0.34.2
 	github.com/moby/moby/api v1.56.1
 	github.com/modelcontextprotocol/go-sdk v1.6.1
 	github.com/opencontainers/go-digest v1.0.0
@@ -34,7 +34,7 @@ require (
 	github.com/sirupsen/logrus v1.10.2
 	github.com/testcontainers/testcontainers-go v0.44.0
 	github.com/timo-reymann/go-hadolint v0.1.0
-	github.com/tonistiigi/fsutil v0.0.0-20261009124904-c1c5bffae3b5
+	github.com/tonistiigi/fsutil v0.0.0-20261103091533-a72de9dcf763
 	github.com/urfave/cli/v3 v3.14.0
 	golang.org/x/sync v0.25.0
 	golang.org/x/term v0.47.0
