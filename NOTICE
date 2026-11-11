@@ -2095,10 +2095,10 @@ Apache License
 ================================================================================
 
 Module:  github.com/docker/cli
-Version: v29.9.0+incompatible
+Version: v29.9.3+incompatible
 Licence: Apache-2.0
 
-Contents of probable licence file $GOMODCACHE/github.com/docker/cli@v29.9.0+incompatible/LICENSE:
+Contents of probable licence file $GOMODCACHE/github.com/docker/cli@v29.9.3+incompatible/LICENSE:
 
 
                                  Apache License
