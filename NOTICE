@@ -1280,10 +1280,10 @@ SOFTWARE.
 ================================================================================
 
 Module:  github.com/containerd/containerd/v2
-Version: v2.4.1
+Version: v2.4.2
 Licence: Apache-2.0
 
-Contents of probable licence file $GOMODCACHE/github.com/containerd/containerd/v2@v2.4.1/LICENSE:
+Contents of probable licence file $GOMODCACHE/github.com/containerd/containerd/v2@v2.4.2/LICENSE:
 
 
                                  Apache License
@@ -3430,10 +3430,10 @@ SOFTWARE.
 ================================================================================
 
 Module:  github.com/moby/buildkit
-Version: v0.34.1
+Version: v0.34.2
 Licence: Apache-2.0
 
-Contents of probable licence file $GOMODCACHE/github.com/moby/buildkit@v0.34.1/LICENSE:
+Contents of probable licence file $GOMODCACHE/github.com/moby/buildkit@v0.34.2/LICENSE:
 
                                  Apache License
                            Version 2.0, January 2004
@@ -5228,10 +5228,10 @@ Public License instead of this License.  But first, please read
 ================================================================================
 
 Module:  github.com/tonistiigi/fsutil
-Version: v0.0.0-20261009124904-c1c5bffae3b5
+Version: v0.0.0-20261103091533-a72de9dcf763
 Licence: MIT
 
-Contents of probable licence file $GOMODCACHE/github.com/tonistiigi/fsutil@v0.0.0-20261009124904-c1c5bffae3b5/LICENSE:
+Contents of probable licence file $GOMODCACHE/github.com/tonistiigi/fsutil@v0.0.0-20261103091533-a72de9dcf763/LICENSE:
 
 MIT
 
