@@ -4513,10 +4513,10 @@ THE SOFTWARE.
 ================================================================================
 
 Module:  github.com/testcontainers/testcontainers-go
-Version: v0.44.0
+Version: v0.45.0
 Licence: MIT
 
-Contents of probable licence file $GOMODCACHE/github.com/testcontainers/testcontainers-go@v0.44.0/LICENSE:
+Contents of probable licence file $GOMODCACHE/github.com/testcontainers/testcontainers-go@v0.45.0/LICENSE:
 
 The MIT License (MIT)
 
@@ -8252,10 +8252,10 @@ Contents of probable licence file $GOMODCACHE/github.com/!azure/azure-sdk-for-go
 ================================================================================
 
 Module:  github.com/Azure/go-ansiterm
-Version: v0.0.0-20250102033503-faa5f7b0171c
+Version: v0.0.0-20261006220739-8c912ac31dd4
 Licence: MIT
 
-Contents of probable licence file $GOMODCACHE/github.com/!azure/go-ansiterm@v0.0.0-20250102033503-faa5f7b0171c/LICENSE:
+Contents of probable licence file $GOMODCACHE/github.com/!azure/go-ansiterm@v0.0.0-20261006220739-8c912ac31dd4/LICENSE:
 
 The MIT License (MIT)
 
@@ -47631,10 +47631,10 @@ Contents of probable licence file $GOMODCACHE/github.com/moby/locker@v1.0.1/LICE
 ================================================================================
 
 Module:  github.com/moby/moby/client
-Version: v0.6.1
+Version: v0.6.2
 Licence: Apache-2.0
 
-Contents of probable licence file $GOMODCACHE/github.com/moby/moby/client@v0.6.1/LICENSE:
+Contents of probable licence file $GOMODCACHE/github.com/moby/moby/client@v0.6.2/LICENSE:
 
 
                                  Apache License
