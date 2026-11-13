@@ -1,3 +1,11 @@
+## [1.27.5](https://github.com/ContainerHive/ContainerHive/compare/v1.27.4...v1.27.5) (2026-11-13)
+
+### Bug Fixes
+
+* **deps:** update github.com/tonistiigi/fsutil digest to e075fd9 ([7133685](https://github.com/ContainerHive/ContainerHive/commit/71336856d91781e34d740e76b97fab773e23c488))
+* **deps:** update module github.com/docker/cli to v29.9.3+incompatible ([9d4cc57](https://github.com/ContainerHive/ContainerHive/commit/9d4cc57e481ecc5558ba1e84fdd92a2bfa6ed933))
+* **deps:** update module github.com/testcontainers/testcontainers-go to v0.45.0 ([312991c](https://github.com/ContainerHive/ContainerHive/commit/312991c03ede054dfcd55b4320bb32026547e892))
+
 ## [1.27.4](https://github.com/ContainerHive/ContainerHive/compare/v1.27.3...v1.27.4) (2026-11-10)
 
 ### Bug Fixes
