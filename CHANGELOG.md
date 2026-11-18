@@ -1,3 +1,10 @@
+## [1.27.6](https://github.com/ContainerHive/ContainerHive/compare/v1.27.5...v1.27.6) (2026-11-18)
+
+### Bug Fixes
+
+* **deps:** update module golang.org/x/term to v0.48.0 ([#376](https://github.com/ContainerHive/ContainerHive/issues/376)) ([472d34a](https://github.com/ContainerHive/ContainerHive/commit/472d34aba9cd7c76b16b52e12420100cdd2403d2))
+* **deps:** update module modernc.org/sqlite to v1.62.0 ([#372](https://github.com/ContainerHive/ContainerHive/issues/372)) ([29324d2](https://github.com/ContainerHive/ContainerHive/commit/29324d2e0989db28b600aba9ea9dd1cb48d2391d))
+
 ## [1.27.5](https://github.com/ContainerHive/ContainerHive/compare/v1.27.4...v1.27.5) (2026-11-13)
 
 ### Bug Fixes
