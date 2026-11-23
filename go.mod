@@ -27,7 +27,7 @@ require (
 	github.com/kcmvp/archunit v0.1.2
 	github.com/lmittmann/tint v1.2.1
 	github.com/moby/buildkit v0.34.1
-	github.com/moby/moby/api v1.56.1
+	github.com/moby/moby/api v1.57.0
 	github.com/modelcontextprotocol/go-sdk v1.6.1
 	github.com/opencontainers/go-digest v1.0.0
 	github.com/opencontainers/image-spec v1.1.1
