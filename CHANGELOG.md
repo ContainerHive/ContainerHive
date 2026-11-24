@@ -1,3 +1,10 @@
+## [2.0.1](https://github.com/ContainerHive/ContainerHive/compare/v2.0.0...v2.0.1) (2026-11-24)
+
+### Bug Fixes
+
+* **deps:** update module github.com/anchore/syft to v1.57.2 ([3d4fbc7](https://github.com/ContainerHive/ContainerHive/commit/3d4fbc7ac891530fb8108fd162a62f2f51039416))
+* **deps:** update module github.com/docker/cli to v29.10.0+incompatible ([67dbaa6](https://github.com/ContainerHive/ContainerHive/commit/67dbaa691206c93b4282a55a9df038258201625d))
+
 ## [2.0.0](https://github.com/ContainerHive/ContainerHive/compare/v1.27.7...v2.0.0) (2026-11-24)
 
 ### ⚠ BREAKING CHANGES
