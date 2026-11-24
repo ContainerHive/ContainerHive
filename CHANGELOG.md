@@ -1,3 +1,17 @@
+## [2.0.0](https://github.com/ContainerHive/ContainerHive/compare/v1.27.7...v2.0.0) (2026-11-24)
+
+### ⚠ BREAKING CHANGES
+
+* the containerhive package stops receiving updates on
+PyPI. Install ch through 0install, Homebrew, the Docker image or the
+GitHub release binaries instead.
+
+Co-Authored-By: glm-5.3-flash <noreply@opencode.ai>
+
+### Features
+
+* stop publishing the Python wheel ([ba10d44](https://github.com/ContainerHive/ContainerHive/commit/ba10d449c3a76077bcba63cea3ff581f3a6c683d))
+
 ## [1.27.7](https://github.com/ContainerHive/ContainerHive/compare/v1.27.6...v1.27.7) (2026-11-24)
 
 ### Bug Fixes
